@@ -8,6 +8,7 @@ namespace Addmusic2.Model.Constants
 {
     internal static class MagicNumbers
     {
+        public static readonly int DefaultBankStart = 0x200000;
         public static readonly int ChannelCount = 9;
         public static readonly int MaxSamplesCount = 256;
         public static readonly int[] ValidPitches = { 9, 11, 0, 2, 4, 5, 7 };

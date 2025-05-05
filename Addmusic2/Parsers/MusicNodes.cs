@@ -28,7 +28,6 @@ namespace Addmusic2.Parsers
         Octave,
     }
 
-
     abstract class MusicNode { }
     internal class GeneralValueNode : MusicNode
     {

@@ -1,0 +1,11 @@
+{
+    "antlr4.generation": {
+        "mode": "external", 
+        "language": "CSharp",
+        "listeners": true,
+        "visitors": true,
+        "javaHomeOverride": "C:/Program Files/OpenLogic/jdk-22.0.2.9-hotspot/",
+        "alternativeJar": "C:/Program Files/OpenLogic/jdk-22.0.2.9-hotspot/lib/antlr-4.13.2-complete.jar",
+        "outputDir": "./Model/AntlrSchema/",
+    }
+}

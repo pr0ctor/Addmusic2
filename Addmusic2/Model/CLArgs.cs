@@ -35,7 +35,7 @@ namespace Addmusic2.Model
         public string RomName { get; set; }
         public bool Convert { get; set; } = true;
         public bool CheckEcho { get; set; } = true;
-        public int BankStart { get; set; } = 0x200000;
+        public int BankStart { get; set; } = MagicNumbers.DefaultBankStart;
         public bool Verbose { get; set; } = false;
         public bool Aggressive { get; set; } = false;
         public bool DuplicateCheck { get; set; } = true;

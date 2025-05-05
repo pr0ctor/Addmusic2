@@ -7,6 +7,7 @@ using Addmusic2.Model.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Localization;
 
 Console.WriteLine("Hello, World!");
 
@@ -58,6 +59,8 @@ var logger = logFactory.CreateLogger<IAddmusicLogic>();*/
 // Set up Dependency Injection
 
 var services = new ServiceCollection();
+
+services.AddLocalization();
 
 services.AddLogging(builder => builder.AddConsole());
 

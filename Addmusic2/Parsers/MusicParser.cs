@@ -1,4 +1,4 @@
-﻿using Pidgin;
+﻿/*using Pidgin;
 using Pidgin.Expression;
 using System;
 using System.Collections.Generic;
@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Addmusic2.Model.Constants;
 
 using static Pidgin.Parser;
 
@@ -13,56 +14,8 @@ namespace Addmusic2.Parsers
 {
     internal static class MusicParser
     {
-        public static List<string> ValidSpecialDirectives = [
-            "spc",
-            "instruments",
-            "samples",
-            "pad",
-            "define",
-            "undef",
-            "ifdef",
-            "ifndef",
-            "endif",
-            "louder",
-            "tempoimmunity",
-            "path",
-            "am4",
-            "amm",
-            "amk=",
-            "halvetempo",
-            "option",
-            "smwvtable",
-            "nspcvtable",
-            "noloop",
-        ];
 
-        public static List<char> ValidNoteCharacters = [
-            'a',
-            'b',
-            'c',
-            'd',
-            'e',
-            'f',
-            'g',
-            'r',
-        ];
-
-        public static List<char> ValidNoteSymbols = [
-            '+',
-            '-',
-
-        ];
-
-        public static List<char> ValidChannelNumbers = [
-            '0',
-            '1',
-            '2',
-            '3',
-            '4',
-            '5',
-            '6',
-            '7',
-        ];
+        public Result<char, SongNode> Parse(string input) => Try();
 
 
         private static Parser<char, T> Token<T>(Parser<char, T> parser) => Try(parser).Before(SkipWhitespaces);
@@ -87,8 +40,8 @@ namespace Addmusic2.Parsers
         private static Parser<char, char> _lessThan = Token('<');
         private static Parser<char, char> _doubleQuote = Token('"');
 
-        private static Parser<char, char> _noteChars = Letter.Or(OneOf(ValidNoteCharacters));
-        private static Parser<char, char> _channelNumbers = Letter.Or(OneOf(ValidChannelNumbers));
+        private static Parser<char, char> _noteChars = Letter.Or(OneOf(SongElements.ValidNoteCharacters));
+        private static Parser<char, char> _channelNumbers = Letter.Or(OneOf(SongElements.ValidChannelNumbers));
 
         private static Parser<char, T> Parenthesised<T>(Parser<char, T> p)
             => p.Between(_openParen, _closeParen);
@@ -114,6 +67,9 @@ namespace Addmusic2.Parsers
 
 
 
+        private static readonly Parser<char, MusicNode> _songParser = Rec
+
+
 
         private static Parser<char, char> _noteLetters = Letter.Or(OneOf(''));
 
@@ -124,3 +80,4 @@ namespace Addmusic2.Parsers
             ) //CIString(OneOf(ValidSpecialDirectives.ToArray()))
     }
 }
+*/

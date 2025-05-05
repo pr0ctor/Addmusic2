@@ -89,7 +89,7 @@ namespace Addmusic2.Model
         }
         public bool DoReplacement()
         {
-
+            return false;
         }
     }
 }
