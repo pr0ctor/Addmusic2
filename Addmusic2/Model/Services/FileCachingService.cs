@@ -9,6 +9,19 @@ namespace Addmusic2.Model.Services
 {
     internal class FileCachingService : IFileCachingService
     {
+
+        //public Dictionary<string, FileStream>;
+
+        public void AddToCache(string fileName, string filePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddToCache(string fileName, FileStream fileData)
+        {
+            throw new NotImplementedException();
+        }
+
         public void ClearCache()
         {
             throw new NotImplementedException();

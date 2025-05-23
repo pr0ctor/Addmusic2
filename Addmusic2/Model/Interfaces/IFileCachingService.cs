@@ -11,6 +11,8 @@ namespace Addmusic2.Model.Interfaces
 
         public void InitializeCache();
         public void ClearCache();
+        public void AddToCache(string fileName, string filePath);
+        public void AddToCache(string fileName, FileStream fileData);
 
         public object GetFileData(string fileName);
     }

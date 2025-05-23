@@ -8,10 +8,40 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Localization;
+using Antlr4.Runtime;
+using System.Text.RegularExpressions;
+using AddmusicTests;
 
 Console.WriteLine("Hello, World!");
 
-var clArgs = new CLArgs();
+var fileData = File.ReadAllText(@"Samples/Seenpoint Intro.txt");
+
+var replacementsRegex = new Regex(@$"""([^\s=""]+)\s*=\s*([^""]+)""");
+
+var matches = replacementsRegex.Matches(fileData);
+
+foreach (Match match in matches)
+{
+    var searchValue = match.Groups[1].Value;
+    var replaceValue = match.Groups[2].Value;
+
+    fileData = fileData.Replace(searchValue, replaceValue);
+}
+
+var stream = CharStreams.fromString(fileData);
+
+var lexer = new MmlLexer(stream);
+var tokenStream = new CommonTokenStream(lexer);
+var parser = new MmlParser(tokenStream);
+var newParser = new AdvMmlVisitor();
+
+var songContext = parser.song();
+
+var songNodeTree = newParser.VisitSong(songContext);
+
+var x = 1;
+
+/*var clArgs = new CLArgs();
 
 // clargs or load rom file
 if (File.Exists("Addmusic_options.txt"))
@@ -45,7 +75,7 @@ Console.WriteLine(Messages.IntroMessages.ReadTheReadMe);
 // load Asar here
 
 
-/*using var logFactory = LoggerFactory.Create(builder =>
+*//*using var logFactory = LoggerFactory.Create(builder =>
 {
     builder
         .AddFilter("Microsoft", LogLevel.Warning)
@@ -54,7 +84,7 @@ Console.WriteLine(Messages.IntroMessages.ReadTheReadMe);
         .AddConsole();
 });
 
-var logger = logFactory.CreateLogger<IAddmusicLogic>();*/
+var logger = logFactory.CreateLogger<IAddmusicLogic>();*//*
 
 // Set up Dependency Injection
 
@@ -75,4 +105,4 @@ cachingServie.InitializeCache();
 
 services.AddSingleton<IFileCachingService>(cachingServie);
 
-var addmusic = services.BuildServiceProvider();
+var addmusic = services.BuildServiceProvider();*/

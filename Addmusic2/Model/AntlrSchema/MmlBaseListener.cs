@@ -108,17 +108,47 @@ public partial class MmlBaseListener : IMmlListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitInstruments([NotNull] MmlParser.InstrumentsContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.instrumentsList"/>.
+	/// Enter a parse tree produced by the <c>NamedInstrumentListItem</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentsList"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterInstrumentsList([NotNull] MmlParser.InstrumentsListContext context) { }
+	public virtual void EnterNamedInstrumentListItem([NotNull] MmlParser.NamedInstrumentListItemContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.instrumentsList"/>.
+	/// Exit a parse tree produced by the <c>NamedInstrumentListItem</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentsList"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitInstrumentsList([NotNull] MmlParser.InstrumentsListContext context) { }
+	public virtual void ExitNamedInstrumentListItem([NotNull] MmlParser.NamedInstrumentListItemContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>InstrumentListItem</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentsList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterInstrumentListItem([NotNull] MmlParser.InstrumentListItemContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>InstrumentListItem</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentsList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitInstrumentListItem([NotNull] MmlParser.InstrumentListItemContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>NoiseInstrumentListItem</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentsList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterNoiseInstrumentListItem([NotNull] MmlParser.NoiseInstrumentListItemContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>NoiseInstrumentListItem</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentsList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitNoiseInstrumentListItem([NotNull] MmlParser.NoiseInstrumentListItemContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.spc"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -180,17 +210,33 @@ public partial class MmlBaseListener : IMmlListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitHalvetempo([NotNull] MmlParser.HalvetempoContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.option"/>.
+	/// Enter a parse tree produced by the <c>OptionGroup</c>
+	/// labeled alternative in <see cref="MmlParser.option"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterOption([NotNull] MmlParser.OptionContext context) { }
+	public virtual void EnterOptionGroup([NotNull] MmlParser.OptionGroupContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.option"/>.
+	/// Exit a parse tree produced by the <c>OptionGroup</c>
+	/// labeled alternative in <see cref="MmlParser.option"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitOption([NotNull] MmlParser.OptionContext context) { }
+	public virtual void ExitOptionGroup([NotNull] MmlParser.OptionGroupContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>SingleOption</c>
+	/// labeled alternative in <see cref="MmlParser.option"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterSingleOption([NotNull] MmlParser.SingleOptionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>SingleOption</c>
+	/// labeled alternative in <see cref="MmlParser.option"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitSingleOption([NotNull] MmlParser.SingleOptionContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.optionItem"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -204,17 +250,71 @@ public partial class MmlBaseListener : IMmlListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitOptionItem([NotNull] MmlParser.OptionItemContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.amk"/>.
+	/// Enter a parse tree produced by the <c>GeneralAmkVersion</c>
+	/// labeled alternative in <see cref="MmlParser.amk"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterAmk([NotNull] MmlParser.AmkContext context) { }
+	public virtual void EnterGeneralAmkVersion([NotNull] MmlParser.GeneralAmkVersionContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.amk"/>.
+	/// Exit a parse tree produced by the <c>GeneralAmkVersion</c>
+	/// labeled alternative in <see cref="MmlParser.amk"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitAmk([NotNull] MmlParser.AmkContext context) { }
+	public virtual void ExitGeneralAmkVersion([NotNull] MmlParser.GeneralAmkVersionContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>AmmVersion</c>
+	/// labeled alternative in <see cref="MmlParser.amk"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterAmmVersion([NotNull] MmlParser.AmmVersionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>AmmVersion</c>
+	/// labeled alternative in <see cref="MmlParser.amk"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitAmmVersion([NotNull] MmlParser.AmmVersionContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>Am4Version</c>
+	/// labeled alternative in <see cref="MmlParser.amk"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterAm4Version([NotNull] MmlParser.Am4VersionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>Am4Version</c>
+	/// labeled alternative in <see cref="MmlParser.amk"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitAm4Version([NotNull] MmlParser.Am4VersionContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.amm"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterAmm([NotNull] MmlParser.AmmContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.amm"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitAmm([NotNull] MmlParser.AmmContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.am4"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterAm4([NotNull] MmlParser.Am4Context context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.am4"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitAm4([NotNull] MmlParser.Am4Context context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.amkVersion"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -552,6 +652,18 @@ public partial class MmlBaseListener : IMmlListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitSuperLoop([NotNull] MmlParser.SuperLoopContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.superLoopContents"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterSuperLoopContents([NotNull] MmlParser.SuperLoopContentsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.superLoopContents"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitSuperLoopContents([NotNull] MmlParser.SuperLoopContentsContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.simpleLoop"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -563,6 +675,18 @@ public partial class MmlBaseListener : IMmlListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitSimpleLoop([NotNull] MmlParser.SimpleLoopContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.simpleLoopContents"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterSimpleLoopContents([NotNull] MmlParser.SimpleLoopContentsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.simpleLoopContents"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitSimpleLoopContents([NotNull] MmlParser.SimpleLoopContentsContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.terminalSuperLoop"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -576,6 +700,18 @@ public partial class MmlBaseListener : IMmlListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitTerminalSuperLoop([NotNull] MmlParser.TerminalSuperLoopContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.terminalSuperLoopContents"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterTerminalSuperLoopContents([NotNull] MmlParser.TerminalSuperLoopContentsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.terminalSuperLoopContents"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitTerminalSuperLoopContents([NotNull] MmlParser.TerminalSuperLoopContentsContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.terminalSimpleLoop"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -587,6 +723,18 @@ public partial class MmlBaseListener : IMmlListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitTerminalSimpleLoop([NotNull] MmlParser.TerminalSimpleLoopContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.terminalSimpleLoopContents"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterTerminalSimpleLoopContents([NotNull] MmlParser.TerminalSimpleLoopContentsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.terminalSimpleLoopContents"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitTerminalSimpleLoopContents([NotNull] MmlParser.TerminalSimpleLoopContentsContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.remoteCode"/>.
 	/// <para>The default implementation does nothing.</para>

@@ -16,8 +16,9 @@ songElement: specialDirective
     | replacements
     | noloopCommand
     | StringLiteral
-    | HexNumber+
+    | hexNumber
     | introEnd
+    | remoteCode
     ;
 
 // Special Directives
@@ -59,9 +60,9 @@ samplesList : SampleOptimization StringLiteral*
 //         n1F $aa $bb $cc $dd $ee
 // }
 instruments : Instruments LBRACE instrumentsList* RBRACE ;
-instrumentsList : StringLiteral HexNumber+
-    | Instrument HexNumber+
-    | noiseNote HexNumber+
+instrumentsList : StringLiteral HexNumber+ # NamedInstrumentListItem
+    | instrument HexNumber+ # InstrumentListItem
+    | noiseNote HexNumber+ # NoiseInstrumentListItem
     ;
 
 // #spc
@@ -96,19 +97,25 @@ halvetempo : Halvetempo ;
 //      #noloop
 //      #dividetempo    3
 // }
-option : Option LBRACE ( POUND optionItem )* RBRACE 
-    | Option optionItem
+option : Option LBRACE ( POUND optionItem )* RBRACE # OptionGroup
+    | Option optionItem # SingleOption
     ;
 optionItem : Tempoimmunity
     | Dividetempo NUMBERS
     | Smwvtable
+    | Nspcvtable
     | Noloop
     | Amk109hotpatch
     | StringLiteral NUMBERS
     | StringLiteral
     ;
 
-amk : Amk amkVersion ;
+amk : Amk amkVersion # GeneralAmkVersion
+    | amm # AmmVersion
+    | am4 # Am4Version
+    ;
+amm : Amm ;
+am4 : Am4 ;
 amkVersion : AmkV1
     | NUMBERS
     ;
@@ -181,8 +188,9 @@ pan : Pan ;
 vibrato : Vibrato ;
 // pitchslide : ( note | rest ) AMPER pitchslide
 //     | ( note | rest ) AMPER ( note | rest )
-//     ;
-pitchslide : Pitchslide ;
+//     ;( Note | Rest ) ( AMPER ( Note | Rest ) )+ ;
+// pitchslide : Pitchslide ;
+pitchslide : ( Note | Rest ) ( AMPER ( Note | Rest ) )+ ;
 
 triplet : LBRACE (note | rest) (note | rest) (note | rest) RBRACE
     ;
@@ -225,29 +233,55 @@ remoteLogicCalls : callRemoteCode
     ;
 
 // superloop : L2BRACK (atomics | logicCalls | terminalNamedSimpleloop | terminalSimpleloop )* R2BRACK NUMBERS? ;
-superLoop : L2BRACK (atomics | terminalSimpleLoop | logicCalls /*terminalNamedSimpleLoop |*/  | hexNumber )* R2BRACK NUMBERS? ;
-
+superLoop : L2BRACK superLoopContents* R2BRACK NUMBERS? ;
+superLoopContents : atomics
+    | terminalSimpleLoop
+    | logicCalls 
+    /* | terminalNamedSimpleLoop */
+    | hexNumber
+    ;
 // namedsimpleloop : LPAREN StringLiteral RPAREN simpleloop
 //     | LPAREN NUMBERS RPAREN simpleloop
 //     ;
 // namedSimpleLoop : LoopName simpleloop ;
 // namedSimpleLoop : LPAREN ( NUMBERS | StringLiteral ) RPAREN simpleloop ;
 // simpleLoop : ( LPAREN ( NUMBERS | StringLiteral ) RPAREN )? LBRACK (atomics | terminalSuperLoop | remoteLogicCalls | hexNumber)* RBRACK NUMBERS? ;
-simpleLoop : ( LoopName )? LBRACK (atomics | terminalSuperLoop | remoteLogicCalls | hexNumber)* RBRACK NUMBERS? ;
-
+simpleLoop : ( LoopName )? LBRACK simpleLoopContents* RBRACK NUMBERS? ;
+simpleLoopContents : atomics
+    | terminalSuperLoop
+    | remoteLogicCalls
+    | hexNumber
+    ;
 // simpleloop : LBRACK (atomics | terminalSuperLoop | remoteLogicCalls | hexNumber)* RBRACK NUMBERS? ;
 
-terminalSuperLoop : L2BRACK (atomics | logicCalls | hexNumber)* R2BRACK NUMBERS? ;
+terminalSuperLoop : L2BRACK terminalSuperLoopContents* R2BRACK NUMBERS? ;
+terminalSuperLoopContents : atomics
+    | logicCalls
+    | hexNumber
+    ;
 //terminalSimpleLoop : ( LPAREN ( NUMBERS | StringLiteral ) RPAREN )? LBRACK (atomics | remoteLogicCalls | hexNumber)* RBRACK NUMBERS? ;
-terminalSimpleLoop : ( LoopName )? LBRACK (atomics | remoteLogicCalls | hexNumber)* RBRACK NUMBERS? ;
+terminalSimpleLoop : ( LoopName )? LBRACK terminalSimpleLoopContents* RBRACK NUMBERS? ;
+terminalSimpleLoopContents : atomics
+    | remoteLogicCalls
+    | hexNumber
+    ;
 // terminalNamedSimpleLoop : LPAREN ( NUMBERS | StringLiteral ) RPAREN terminalSimpleLoop ;
 //terminalNamedSimpleloop : LoopName terminalSimpleloop ;
 
 // remoteCode : LPAREN BANG ( NUMBERS | StringLiteral ) RPAREN LBRACK remoteCodeContents RBRACK;
-remoteCode : RemoteCodeName LBRACK remoteCodeContents RBRACK;
+remoteCode : RemoteCodeName LBRACK remoteCodeContents* RBRACK;
 
-remoteCodeContents : HexNumber+ volume
-    | HexNumber+
+remoteCodeContents : octave
+    | lowerOctave
+    | raiseOctave
+    | volume
+    | tune
+    // | instrument
+    | quantization
+    | pan
+    | vibrato
+    | tempo
+    | HexNumber
     ;
 
 // callLoop : LPAREN ( NUMBERS | StringLiteral ) RPAREN NUMBERS?;
@@ -316,7 +350,7 @@ UNUMBERS : [\-]?NUMBER+ ;
 fragment CHANNELS : [0-7] ;
 fragment QUANTIZATION : [0-7] ;
 fragment OCTAVES : [0-6] ;
-NOTEDURATIONS : ONE | TWO | FOUR | EIGHT | SIXTEEN | THIRTYTWO | SIXTYFOUR ;
+// NOTEDURATIONS : ONE | TWO | FOUR | EIGHT | SIXTEEN | THIRTYTWO | SIXTYFOUR ;
 REMOTECODENUMBERS : NEGATIVEONE | ZERO | ONE | TWO | THREE | FOUR | SEVEN | EIGHT ; 
 
 ReplacementText : DQUOTE ~[=\n\r"]+ EQUAL ~[\n\r"]+ DQUOTE ;
@@ -361,20 +395,20 @@ fragment SIXTYFOUR : ('64') ;
 fragment AMKV1 : ('=1') ;
 
 fragment BasicNote : A | B | C | D | E | F | G ;
-Note : BasicNote ( SHARP | FLAT )? EQUAL? NOTEDURATIONS? DOT* ( Tie )* ;
-Rest : R EQUAL? NOTEDURATIONS? DOT* ( Tie )* ;
+Note : BasicNote ( SHARP | FLAT )? EQUAL? NUMBERS? DOT* ( Tie )* ;
+Rest : R EQUAL? NUMBERS? DOT* ( Tie )* ;
 Octave : O OCTAVES ;
 Noise : N HexDigits+ ;
 Tempo : T NUMBERS ( COMMA NUMBERS )? ;
 Volume : V NUMBERS ( COMMA NUMBERS )? ;
 Tune : H UNUMBERS ;
-Length : L NOTEDURATIONS ;
+Length : L NUMBERS ;
 Quantization : Q QUANTIZATION ( HexDigit | Volume ) ;
 GlobalVolume : W NUMBERS ( COMMA NUMBERS )? ;
 Pan : Y ( NUMBERS | NUMBERS COMMA ( ZERO | ONE ) COMMA ( ZERO | ONE ) ) ;
 Vibrato : P NUMBERS COMMA NUMBERS ( COMMA NUMBERS )? ;
 Tie : TIE EQUAL? NUMBERS DOT* ;
-Pitchslide : ( Note | Rest ) ( AMPER ( Note | Rest ) )+ ;
+// Pitchslide : ( Note | Rest ) ( AMPER ( Note | Rest ) )+ ;
 
 LoopName : LPAREN ( NUMBERS | StringLiteral ) RPAREN ;
 RemoteCodeName : LPAREN BANG ( NUMBERS | StringLiteral ) RPAREN ;
@@ -393,6 +427,8 @@ HexNumber : DOLLAR HexDigits ;
 Instrument : COMMAT [0-9]+ ;
 
 fragment AMK : ('amk') ;
+fragment AMM : ('amm') ;
+fragment AM4 : ('am4') ;
 fragment SAMPLES : ('samples') ;
 fragment INSTRUMENTS : ('instruments') ;
 fragment SPC : ('spc') ;
@@ -408,9 +444,12 @@ fragment OPTION : ('option') ;
 fragment TEMPOIMMUNITY : ('tempoimmunity') ;
 fragment DIVIDETEMPO : ('dividetempo') ;
 fragment SMWVTABLE : ('smwvtable') ;
+fragment NSPCVTABLE : ('nspcvtable') ;
 fragment NOLOOP : ('noloop') ;
 fragment AMK109HOTPATCH : ('amk109hotpatch') ;
 Amk : POUND AMK ;
+Amm : POUND AMM ;
+Am4 : POUND AM4 ;
 Samples : POUND SAMPLES ;
 Instruments : POUND INSTRUMENTS ;
 Spc : POUND SPC ;
@@ -427,6 +466,7 @@ Option : POUND OPTION ;
 Tempoimmunity : TEMPOIMMUNITY ;
 Dividetempo : DIVIDETEMPO ;
 Smwvtable : SMWVTABLE ;
+Nspcvtable : NSPCVTABLE ;
 Noloop : NOLOOP ;
 Amk109hotpatch : AMK109HOTPATCH ;
 

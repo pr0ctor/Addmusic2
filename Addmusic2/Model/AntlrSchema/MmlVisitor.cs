@@ -68,11 +68,26 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitInstruments([NotNull] MmlParser.InstrumentsContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.instrumentsList"/>.
+	/// Visit a parse tree produced by the <c>NamedInstrumentListItem</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentsList"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitInstrumentsList([NotNull] MmlParser.InstrumentsListContext context);
+	Result VisitNamedInstrumentListItem([NotNull] MmlParser.NamedInstrumentListItemContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>InstrumentListItem</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentsList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitInstrumentListItem([NotNull] MmlParser.InstrumentListItemContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>NoiseInstrumentListItem</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentsList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNoiseInstrumentListItem([NotNull] MmlParser.NoiseInstrumentListItemContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.spc"/>.
 	/// </summary>
@@ -104,11 +119,19 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitHalvetempo([NotNull] MmlParser.HalvetempoContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.option"/>.
+	/// Visit a parse tree produced by the <c>OptionGroup</c>
+	/// labeled alternative in <see cref="MmlParser.option"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitOption([NotNull] MmlParser.OptionContext context);
+	Result VisitOptionGroup([NotNull] MmlParser.OptionGroupContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>SingleOption</c>
+	/// labeled alternative in <see cref="MmlParser.option"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitSingleOption([NotNull] MmlParser.SingleOptionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.optionItem"/>.
 	/// </summary>
@@ -116,11 +139,38 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitOptionItem([NotNull] MmlParser.OptionItemContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.amk"/>.
+	/// Visit a parse tree produced by the <c>GeneralAmkVersion</c>
+	/// labeled alternative in <see cref="MmlParser.amk"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitAmk([NotNull] MmlParser.AmkContext context);
+	Result VisitGeneralAmkVersion([NotNull] MmlParser.GeneralAmkVersionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>AmmVersion</c>
+	/// labeled alternative in <see cref="MmlParser.amk"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAmmVersion([NotNull] MmlParser.AmmVersionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>Am4Version</c>
+	/// labeled alternative in <see cref="MmlParser.amk"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAm4Version([NotNull] MmlParser.Am4VersionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.amm"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAmm([NotNull] MmlParser.AmmContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.am4"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAm4([NotNull] MmlParser.Am4Context context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.amkVersion"/>.
 	/// </summary>
@@ -290,11 +340,23 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitSuperLoop([NotNull] MmlParser.SuperLoopContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.superLoopContents"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitSuperLoopContents([NotNull] MmlParser.SuperLoopContentsContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.simpleLoop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitSimpleLoop([NotNull] MmlParser.SimpleLoopContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.simpleLoopContents"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitSimpleLoopContents([NotNull] MmlParser.SimpleLoopContentsContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.terminalSuperLoop"/>.
 	/// </summary>
@@ -302,11 +364,23 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitTerminalSuperLoop([NotNull] MmlParser.TerminalSuperLoopContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.terminalSuperLoopContents"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTerminalSuperLoopContents([NotNull] MmlParser.TerminalSuperLoopContentsContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.terminalSimpleLoop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitTerminalSimpleLoop([NotNull] MmlParser.TerminalSimpleLoopContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.terminalSimpleLoopContents"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTerminalSimpleLoopContents([NotNull] MmlParser.TerminalSimpleLoopContentsContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.remoteCode"/>.
 	/// </summary>

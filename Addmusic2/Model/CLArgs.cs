@@ -11,26 +11,7 @@ namespace Addmusic2.Model
 {
     internal class CLArgs : ICLArgs
     {
-        private List<Argument> ValidArgs { get; } = new List<Argument>
-        {
-            new Argument("ROM Name", 50, false, "The Name of the ROM to modify.", ["--r","--rom"]),
-            new Argument("Convert", 100, false, "Force off conversion from Addmusic 4.05 and AddmusicM", ["--c"]),
-            new Argument("Check Echo", 200, false, "Turn off echo buffer checking.", ["--e"]),
-            new Argument("Bank Start", 300, false, "Do not attempt to save music data in bank 0x40 and above.", ["--b"]),
-            new Argument("Verbose Logging", 400, false, "Turn verbosity on.  More information will be displayed while using this.", ["--v","--verbose"]),
-            new Argument("Aggresive Free Space", 500, false, "Make free space finding more aggressive.", ["--a"]),
-            new Argument("Duplicate Checking", 600, false, "Turn off duplicate sample checking.", ["--d"]),
-            new Argument("Hex Validation", 700, false, "Turn off hex command validation.", ["--h"]),
-            new Argument("Create Patch", 800, false, "Create a patch, but do not patch it to the ROM.", ["--p"]),
-            new Argument("Optimize Sample Usage", 900, false, "Turn off Optimize Sample Usage.", ["--u"]),
-            new Argument("Allow SA1", 1000, false, "Turn off allowing SA1 enabled features.", ["--s"]),
-            new Argument("Dump Sound Effects", 1100, false, "Dump sound effects", ["--dumpsfx","--sfxdump"]),
-            new Argument("Visualize", 1200, false, "Generates a visualization of the SPC.", ["--visualize"]),
-            new Argument("Remove First Use Notification", 1300, false, "Removes the first use notification.", ["--noblock"], false),
-            new Argument("Name", 1400, false, "desc", ["--srd","--streamredirect"]),
-            new Argument("Generate SPC", 1500, false, "Only generate SPC files, no ROM required.", ["--norom"]),
-            new Argument("Help", 1600, false, "Lists and shows help information for the various commands.", ["--?","--help"]),
-        };
+        private List<Argument> ValidArgs { get; }
 
         public string RomName { get; set; }
         public bool Convert { get; set; } = true;
@@ -51,7 +32,26 @@ namespace Addmusic2.Model
 
         public CLArgs()
         {
-
+            ValidArgs = new List<Argument>
+            {
+                new Argument("ROM Name", 50, false, "The Name of the ROM to modify.", ["--r","--rom"]),
+                new Argument("Convert", 100, false, "Force off conversion from Addmusic 4.05 and AddmusicM", ["--c"]),
+                new Argument("Check Echo", 200, false, "Turn off echo buffer checking.", ["--e"]),
+                new Argument("Bank Start", 300, false, "Do not attempt to save music data in bank 0x40 and above.", ["--b"]),
+                new Argument("Verbose Logging", 400, false, "Turn verbosity on.  More information will be displayed while using this.", ["--v","--verbose"]),
+                new Argument("Aggresive Free Space", 500, false, "Make free space finding more aggressive.", ["--a"]),
+                new Argument("Duplicate Checking", 600, false, "Turn off duplicate sample checking.", ["--d"]),
+                new Argument("Hex Validation", 700, false, "Turn off hex command validation.", ["--h"]),
+                new Argument("Create Patch", 800, false, "Create a patch, but do not patch it to the ROM.", ["--p"]),
+                new Argument("Optimize Sample Usage", 900, false, "Turn off Optimize Sample Usage.", ["--u"]),
+                new Argument("Allow SA1", 1000, false, "Turn off allowing SA1 enabled features.", ["--s"]),
+                new Argument("Dump Sound Effects", 1100, false, "Dump sound effects", ["--dumpsfx","--sfxdump"]),
+                new Argument("Visualize", 1200, false, "Generates a visualization of the SPC.", ["--visualize"]),
+                new Argument("Remove First Use Notification", 1300, false, "Removes the first use notification.", ["--noblock"], false),
+                new Argument("Name", 1400, false, "desc", ["--srd","--streamredirect"]),
+                new Argument("Generate SPC", 1500, false, "Only generate SPC files, no ROM required.", ["--norom"]),
+                new Argument("Help", 1600, false, "Lists and shows help information for the various commands.", ["--?","--help"]),
+            };
         }
 
         public void ParseArguments(IConfiguration config, string[] args)
