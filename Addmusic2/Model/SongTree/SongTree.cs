@@ -27,5 +27,10 @@ namespace Addmusic2.Model.SongTree
             Nodes.Add(node);
         }
 
+        public List<ISongNode> GetNodes()
+        {
+            return Nodes;
+        }
+
     }
 }

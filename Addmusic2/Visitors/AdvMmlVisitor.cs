@@ -13,7 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace AddmusicTests
+namespace Addmusic2.Visitors
 {
     internal class AdvMmlVisitor : MmlBaseVisitor<ISongNode>//, IMmlVisitor<ISongNode>
     {
@@ -58,7 +58,8 @@ namespace AddmusicTests
             var children = VisitChildren(context);
             var songNode = new SongNode
             {
-                Children = children
+                NodeType = SongNodeType.Root,
+                Children = children,
             };
             return songNode;
         }
@@ -212,6 +213,10 @@ namespace AddmusicTests
                     instrumentDefinition.Type = InstrumentDefinition.InstrumentType.Noise;
                     instrumentDefinition.NoiseData = noiseNode;
                     instrumentDefinition.HexSettings = instr.HexNumber().Select(h => h.GetText()).ToList();
+                }
+                else
+                {
+                    throw new Exception("Invalid Instrument");
                 }
 
                 instruments.Add(instrumentDefinition);
@@ -459,7 +464,6 @@ namespace AddmusicTests
             throw new NotImplementedException();
         }
 
-        // Don't need because each visit is handled by the respective directive
         public override ISongNode VisitSpecialDirective([NotNull] MmlParser.SpecialDirectiveContext context)
         {
             return Visit(context.GetChild(0));
@@ -470,7 +474,6 @@ namespace AddmusicTests
 
         #region Atomics
         
-        // Don't need since all atomics have been handled by their rules
         public override ISongNode VisitAtomics([NotNull] MmlParser.AtomicsContext context)
         {
             if(context.ChildCount > 1)
@@ -599,32 +602,22 @@ namespace AddmusicTests
         public override ISongNode VisitNote([NotNull] MmlParser.NoteContext context)
         {
             var noteText = context.GetText();
-            var validNotes = new List<string>
-            {
-                "a",
-                "b",
-                "c",
-                "d",
-                "e",
-                "f",
-                "g",
-            };
             var notePayload = new NotePayload();
             var noteRegex = new Regex(@"([a-gA-G])(\+|\-)?\=?([0-9]*)(\.*)(\^[0-9]+\.*)*");
             var matches = noteRegex.Match(noteText);
 
-            var groups = matches.Groups;
-            notePayload.NoteValue = groups[0].Value;
-            for (int i = 1; i < groups.Count; i++)
+            var groups = matches.Groups.Values.ToList();
+            notePayload.NoteValue = groups.First().Value;
+            foreach (var group in groups.Take(1))
             {
-                var groupValue = groups[i].Value;
-                if(groupValue.Length == 0 || validNotes.Contains(groupValue))
+                var groupValue = group.Value;
+                if (groupValue.Length == 0)
                 {
                     continue;
                 }
                 if(groupValue == "+" || groupValue == "-")
                 {
-                    notePayload.Accidental = (groupValue == "+") ? NotePayload.Accidentals.Sharp : NotePayload.Accidentals.Flat;
+                    notePayload.Accidental = (groupValue.Contains("+")) ? NotePayload.Accidentals.Sharp : NotePayload.Accidentals.Flat;
                 }
                 else if(groupValue.Contains("^"))
                 {
@@ -696,11 +689,17 @@ namespace AddmusicTests
             }
             if(panValues.Length > 1)
             {
-                panPayload.SurroundSoundLeft = int.Parse(panValues[1]);
+                if(panValues[1].Length > 0)
+                {
+                    panPayload.SurroundSoundLeft = int.Parse(panValues[1]);
+                }
             }
             if(panValues.Length > 2)
             {
-                panPayload.SurroundSoundRight = int.Parse(panValues[2]);
+                if (panValues[2].Length > 0)
+                {
+                    panPayload.SurroundSoundRight = int.Parse(panValues[2]);
+                }
             }
             var panNode = new AtomicNode
             {
@@ -745,6 +744,23 @@ namespace AddmusicTests
             return quantizationNode;
         }
 
+        public override ISongNode VisitQmark([NotNull] MmlParser.QmarkContext context)
+        {
+            var qmarkText = context.GetText();
+            var qmarkPayload = new QuestionMarkPayload();
+            var qmarkNumber = int.Parse(qmarkText[1..1]);
+            qmarkPayload.MarkNumber = qmarkNumber;
+            var qmarkNode = new AtomicNode
+            {
+                NodeType = SongNodeType.QuestionMark,
+                NodeSource = qmarkText,
+                Payload = qmarkPayload,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+            };
+            return qmarkNode;
+        }
+
         public override ISongNode VisitRaiseOctave([NotNull] MmlParser.RaiseOctaveContext context)
         {
             return new AtomicNode
@@ -763,12 +779,12 @@ namespace AddmusicTests
             var restRegex = new Regex(@"([rR])\=?([0-9]*)(\.*)(\^[0-9]+\.*)*");
             var matches = restRegex.Match(restText);
 
-            var groups = matches.Groups;
-            restPayload.NoteValue = groups[0].Value;
-            for (int i = 1; i < groups.Count; i++)
+            var groups = matches.Groups.Values.ToList();
+            restPayload.NoteValue = groups.First().Value;
+            foreach (var group in groups.Take(1))
             {
-                var groupValue = groups[i].Value;
-                if(groupValue.Length == 0 || groupValue.ToLower() == "r")
+                var groupValue = group.Value;
+                if(groupValue.Length == 0)
                 {
                     continue;
                 }

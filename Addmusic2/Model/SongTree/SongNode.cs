@@ -30,10 +30,7 @@ namespace Addmusic2.Model.SongTree
         {
             var builder = new StringBuilder();
 
-            foreach (var child in Children)
-            {
-                builder.Append(child.ToString());
-            }
+            builder.Append(NodeSource);
 
             return builder.ToString();
         }

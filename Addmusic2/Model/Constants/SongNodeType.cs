@@ -9,6 +9,7 @@ namespace Addmusic2.Model.Constants
     public enum SongNodeType
     {
         // Overall Types
+        Root,
         Atomic,
         Composite,
         Directive,
@@ -32,6 +33,7 @@ namespace Addmusic2.Model.Constants
         Vibrato,
         Noise,
         NoLoopCommand,
+        QuestionMark,
         // Composite
         Triplet,
         PitchSlide,

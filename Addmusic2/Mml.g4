@@ -19,6 +19,7 @@ songElement: specialDirective
     | hexNumber
     | introEnd
     | remoteCode
+    | qmark
     ;
 
 // Special Directives
@@ -152,6 +153,7 @@ atomics: pitchslide
     | tempo
     | introEnd
     | nakedTie
+    | qmark
     ;
 
 // note : BasicNote ( SHARP | FLAT )? NOTEDURATIONS? DOT* ( TIE NUMBERS )*
@@ -211,6 +213,8 @@ tempo : Tempo ;
 instrument : Instrument ;
 
 nakedTie : Tie ;
+
+qmark : Question ;
 
 // End Channels
 
@@ -347,6 +351,7 @@ fragment NUMBER : [0-9] ;
 NUMBERS : NUMBER+ ;
 UNUMBERS : [\-]?NUMBER+ ;
 
+fragment QMARKVALUES : [0-2] ;
 fragment CHANNELS : [0-7] ;
 fragment QUANTIZATION : [0-7] ;
 fragment OCTAVES : [0-6] ;
@@ -408,6 +413,7 @@ GlobalVolume : W NUMBERS ( COMMA NUMBERS )? ;
 Pan : Y ( NUMBERS | NUMBERS COMMA ( ZERO | ONE ) COMMA ( ZERO | ONE ) ) ;
 Vibrato : P NUMBERS COMMA NUMBERS ( COMMA NUMBERS )? ;
 Tie : TIE EQUAL? NUMBERS DOT* ;
+Question : QMARK QMARKVALUES ;
 // Pitchslide : ( Note | Rest ) ( AMPER ( Note | Rest ) )+ ;
 
 LoopName : LPAREN ( NUMBERS | StringLiteral ) RPAREN ;

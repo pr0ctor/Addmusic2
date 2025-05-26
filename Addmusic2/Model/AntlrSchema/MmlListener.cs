@@ -497,6 +497,16 @@ public interface IMmlListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitNakedTie([NotNull] MmlParser.NakedTieContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.qmark"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterQmark([NotNull] MmlParser.QmarkContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.qmark"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitQmark([NotNull] MmlParser.QmarkContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.loopers"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

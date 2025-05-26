@@ -344,6 +344,22 @@ namespace Addmusic2.Model.SongTree
         }
     }
 
+    internal class QuestionMarkPayload : ISongNodePayload
+    {
+        public int MarkNumber { get; set; }
+        public QuestionMarkPayload() { }
+        public QuestionMarkPayload(int MarkNumber)
+        {
+            this.MarkNumber = MarkNumber;
+        }
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            builder.Append($"?{MarkNumber}");
+            return builder.ToString();
+        }
+    }
+
     internal class TempoPayload : ISongNodePayload
     {
         public int Tempo { get; set; }

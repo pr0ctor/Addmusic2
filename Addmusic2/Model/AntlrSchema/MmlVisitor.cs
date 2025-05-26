@@ -310,6 +310,12 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitNakedTie([NotNull] MmlParser.NakedTieContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.qmark"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitQmark([NotNull] MmlParser.QmarkContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.loopers"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
