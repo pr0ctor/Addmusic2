@@ -59,5 +59,374 @@ namespace Addmusic2.Localization {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attempted to use a tempo ratio on a value that was already going to output a fractional value. Song - {0) , Line - {1:D} , Column - {2:D}.
+        /// </summary>
+        internal static string ErrorAlreadyFractionalTempoRatio {
+            get {
+                return ResourceManager.GetString("ErrorAlreadyFractionalTempoRatio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Default Length Command (&quot;l&quot;) value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorDefaultLengthOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorDefaultLengthOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Detected duplicate loop name {0} found in a loop definition. Names can only be used once..
+        /// </summary>
+        internal static string ErrorDuplicateLoopNameDefined {
+            get {
+                return ResourceManager.GetString("ErrorDuplicateLoopNameDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Detected duplicate Remote Code definition name {0} found in a loop definition. Names can only be used once..
+        /// </summary>
+        internal static string ErrorDuplicateRemoteCodeDefinitionNameDefined {
+            get {
+                return ResourceManager.GetString("ErrorDuplicateRemoteCodeDefinitionNameDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using the tempo ratio on this value would result in a fractional value. Song - {0) , Line - {1:D} , Column - {2:D}.
+        /// </summary>
+        internal static string ErrorFractionalTempoRatio {
+            get {
+                return ResourceManager.GetString("ErrorFractionalTempoRatio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Global Volume Command (&quot;w&quot;) fade value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorGlobalVolumeFadeValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorGlobalVolumeFadeValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Global Volume Command (&quot;w&quot;) volume value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorGlobalVolumeVolumeValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorGlobalVolumeVolumeValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Hex Command value (${0}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorHexCommandValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorHexCommandValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error parsing instrument definition. Hex value found (0x{0}) must be between 0x{1} and 0x{2} ..
+        /// </summary>
+        internal static string ErrorInstrumentDefinitionHexValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorInstrumentDefinitionHexValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error parsing instrument definition; there were too few bytes following the sample (there must be 6)..
+        /// </summary>
+        internal static string ErrorInstrumentDefinitionMissingHexValues {
+            get {
+                return ResourceManager.GetString("ErrorInstrumentDefinitionMissingHexValues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximum number of named loops and remote code definitions reached..
+        /// </summary>
+        internal static string ErrorMaximumAllowedNumberOfLoopsReached {
+            get {
+                return ResourceManager.GetString("ErrorMaximumAllowedNumberOfLoopsReached", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Noise Command (&quot;n&quot;) value ({0:D}) found. Value must be in hex and between {1:D} and 0x{2:D} ..
+        /// </summary>
+        internal static string ErrorNoiseValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorNoiseValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Pan Command (&quot;y&quot;) direction value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorPanDirectionOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorPanDirectionOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Quantization Command (&quot;t&quot;) volume node..
+        /// </summary>
+        internal static string ErrorQuantizationVolumeValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorQuantizationVolumeValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Question Mark Command (&quot;?&quot;) value found. Value must be between 0-2..
+        /// </summary>
+        internal static string ErrorQuestionMarkValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorQuestionMarkValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Sample Load Command tuning value (${0}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorSampleLoadTuningValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorSampleLoadTuningValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error parsing SPC length field.  Format must be m:ss or &apos;auto&apos;..
+        /// </summary>
+        internal static string ErrorSpcLengthInvalidValue {
+            get {
+                return ResourceManager.GetString("ErrorSpcLengthInvalidValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Songs longer than 16:39 are not allowed by the SPC format..
+        /// </summary>
+        internal static string ErrorSpcLengthValueTooLong {
+            get {
+                return ResourceManager.GetString("ErrorSpcLengthValueTooLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Tempo Command (&quot;t&quot;) fade value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorTempoFadeValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorTempoFadeValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using the tempo ratio on this value would cause it to overflow. Song - {0) , Line - {1:D} , Column - {2:D}.
+        /// </summary>
+        internal static string ErrorTempoRatioValueOverflow {
+            get {
+                return ResourceManager.GetString("ErrorTempoRatioValueOverflow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Tempo Command (&quot;t&quot;) tempo value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorTempoTempoValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorTempoTempoValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loop Call contains a named loop that has not been defined..
+        /// </summary>
+        internal static string ErrorUndefinedNamedLoopCall {
+            get {
+                return ResourceManager.GetString("ErrorUndefinedNamedLoopCall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remote Code Call contains a remote code definition that has not been defined..
+        /// </summary>
+        internal static string ErrorUndefinedRemoteCodeCall {
+            get {
+                return ResourceManager.GetString("ErrorUndefinedRemoteCodeCall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Hex Command (${0}) found..
+        /// </summary>
+        internal static string ErrorUnknownHexCommand {
+            get {
+                return ResourceManager.GetString("ErrorUnknownHexCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Vibrato Command (&quot;p&quot;) delay value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorVibratoDelayOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorVibratoDelayOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Vibrato Command (&quot;p&quot;) extent value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorVibratoExtentOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorVibratoExtentOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Vibrato Command (&quot;p&quot;) rate value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorVibratoRateOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorVibratoRateOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Volume Command (&quot;v&quot;) fade value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorVolumeFadeValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorVolumeFadeValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Volume Command (&quot;v&quot;) volume value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorVolumeVolumeValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorVolumeVolumeValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string IntroAddmusicVersion {
+            get {
+                return ResourceManager.GetString("IntroAddmusicVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string IntroParserVersion {
+            get {
+                return ResourceManager.GetString("IntroParserVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Protip: Be sure to read the readme! If there&apos;s an error or something doesn&apos;t\nseem right, it may have your answer!\n\n.
+        /// </summary>
+        internal static string IntroReadTheReadMe {
+            get {
+                return ResourceManager.GetString("IntroReadTheReadMe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WARNING: A default note length was used that is not divisible by 192 ticks, and thus results in a fractional tick value..
+        /// </summary>
+        internal static string WarningDefaultLengthValidation {
+            get {
+                return ResourceManager.GetString("WarningDefaultLengthValidation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The tempo ratio resulted in a fractional value. Song - {0) , Line - {1:D} , Column - {2:D}.
+        /// </summary>
+        internal static string WarningFactionalTempoRatioValue {
+            get {
+                return ResourceManager.GetString("WarningFactionalTempoRatioValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WARNING: Adding {0:D} dots to this note results in a fractional tick value. Song - {1) , Line - {2:D} , Column - {3:D}.
+        /// </summary>
+        internal static string WarningFractionalTickValueFromDots {
+            get {
+                return ResourceManager.GetString("WarningFractionalTickValueFromDots", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid loop iteration count. Number of iterations must be between 1-255..
+        /// </summary>
+        internal static string WarningLoopIterationOutOfRange {
+            get {
+                return ResourceManager.GetString("WarningLoopIterationOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WARNING: A note length was used that is not divisible by {0:D} ticks, and thus results in a fractional tick value. Song - {1) , Line - {2:D} , Column - {3:D}.
+        /// </summary>
+        internal static string WarningNoteLengthFractionalTickValue {
+            get {
+                return ResourceManager.GetString("WarningNoteLengthFractionalTickValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The octave has been dropped too low..
+        /// </summary>
+        internal static string WarningOctaveDroppedTooLow {
+            get {
+                return ResourceManager.GetString("WarningOctaveDroppedTooLow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The octave has been raised too high..
+        /// </summary>
+        internal static string WarningOctaveRaisedTooHigh {
+            get {
+                return ResourceManager.GetString("WarningOctaveRaisedTooHigh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; field was too long. Truncating to &quot;{1}&quot;..
+        /// </summary>
+        internal static string WarningSpcTextValueTooLong {
+            get {
+                return ResourceManager.GetString("WarningSpcTextValueTooLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WARNING: Adding this note to a triplet results in a fractional tick value. Song - {1) , Line - {2:D} , Column - {3:D}.
+        /// </summary>
+        internal static string WarningTripletFractionalTickValueFromDots {
+            get {
+                return ResourceManager.GetString("WarningTripletFractionalTickValueFromDots", resourceCulture);
+            }
+        }
     }
 }

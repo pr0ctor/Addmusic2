@@ -1,101 +1,284 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-	<!-- 
-		Microsoft ResX Schema
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
 
-		Version 1.3
-
-		The primary goals of this format is to allow a simple XML format 
-		that is mostly human readable. The generation and parsing of the 
-		various data types are done through the TypeConverter classes 
-		associated with the data types.
-
-		Example:
-
-		... ado.net/XML headers & schema ...
-		<resheader name="resmimetype">text/microsoft-resx</resheader>
-		<resheader name="version">1.3</resheader>
-		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-		<data name="Name1">this is my long string</data>
-		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-			[base64 mime encoded serialized .NET Framework object]
-		</data>
-		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-			[base64 mime encoded string representing a byte array form of the .NET Framework object]
-		</data>
-
-		There are any number of "resheader" rows that contain simple 
-		name/value pairs.
-
-		Each data row contains a name, and value. The row also contains a 
-		type or mimetype. Type corresponds to a .NET class that support 
-		text/value conversion through the TypeConverter architecture. 
-		Classes that don't support this are serialized and stored with the 
-		mimetype set.
-
-		The mimetype is used for serialized objects, and tells the 
-		ResXResourceReader how to depersist the object. This is currently not 
-		extensible. For a given mimetype the value must be set accordingly:
-
-		Note - application/x-microsoft.net.object.binary.base64 is the format 
-		that the ResXResourceWriter will generate, however the reader can 
-		read any of the formats listed below.
-
-		mimetype: application/x-microsoft.net.object.binary.base64
-		value   : The object must be serialized with 
-			: System.Serialization.Formatters.Binary.BinaryFormatter
-			: and then encoded with base64 encoding.
-
-		mimetype: application/x-microsoft.net.object.soap.base64
-		value   : The object must be serialized with 
-			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-			: and then encoded with base64 encoding.
-
-		mimetype: application/x-microsoft.net.object.bytearray.base64
-		value   : The object must be serialized into a byte array 
-			: using a System.ComponentModel.TypeConverter
-			: and then encoded with base64 encoding.
-	-->
-	
-	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-		<xsd:element name="root" msdata:IsDataSet="true">
-			<xsd:complexType>
-				<xsd:choice maxOccurs="unbounded">
-					<xsd:element name="data">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
-							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="resheader">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" />
-						</xsd:complexType>
-					</xsd:element>
-				</xsd:choice>
-			</xsd:complexType>
-		</xsd:element>
-	</xsd:schema>
-	<resheader name="resmimetype">
-		<value>text/microsoft-resx</value>
-	</resheader>
-	<resheader name="version">
-		<value>1.3</value>
-	</resheader>
-	<resheader name="reader">
-		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<resheader name="writer">
-		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ErrorAlreadyFractionalTempoRatio" xml:space="preserve">
+    <value>Attempted to use a tempo ratio on a value that was already going to output a fractional value. Song - {0) , Line - {1:D} , Column - {2:D}</value>
+    <comment>Notice for when using a tempo ratio for an already fractional value</comment>
+  </data>
+  <data name="ErrorDefaultLengthOutOfRange" xml:space="preserve">
+    <value>Illegal Default Length Command ("l") value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Default Length Command</comment>
+  </data>
+  <data name="ErrorDuplicateLoopNameDefined" xml:space="preserve">
+    <value>Detected duplicate loop name {0} found in a loop definition. Names can only be used once.</value>
+    <comment>Error for when there exists two loops identified with the same name</comment>
+  </data>
+  <data name="ErrorDuplicateRemoteCodeDefinitionNameDefined" xml:space="preserve">
+    <value>Detected duplicate Remote Code definition name {0} found in a loop definition. Names can only be used once.</value>
+    <comment>Error for when there exists two Remote Code Definitions identified with the same name</comment>
+  </data>
+  <data name="ErrorFractionalTempoRatio" xml:space="preserve">
+    <value>Using the tempo ratio on this value would result in a fractional value. Song - {0) , Line - {1:D} , Column - {2:D}</value>
+    <comment>Notice for when a tempo ratio calculation would result in a fractional value</comment>
+  </data>
+  <data name="ErrorGlobalVolumeFadeValueOutOfRange" xml:space="preserve">
+    <value>Illegal Global Volume Command ("w") fade value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Global Volume Command's fade value</comment>
+  </data>
+  <data name="ErrorGlobalVolumeVolumeValueOutOfRange" xml:space="preserve">
+    <value>Illegal Global Volume Command ("w") volume value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Global Volume Command's volume value</comment>
+  </data>
+  <data name="ErrorHexCommandValueOutOfRange" xml:space="preserve">
+    <value>Illegal Hex Command value (${0}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid values for a hex command</comment>
+  </data>
+  <data name="ErrorInstrumentDefinitionHexValueOutOfRange" xml:space="preserve">
+    <value>Error parsing instrument definition. Hex value found (0x{0}) must be between 0x{1} and 0x{2} .</value>
+    <comment>Error for when an instrument definition contains a hex value that is out of range</comment>
+  </data>
+  <data name="ErrorInstrumentDefinitionMissingHexValues" xml:space="preserve">
+    <value>Error parsing instrument definition; there were too few bytes following the sample (there must be 6).</value>
+    <comment>Error for when an instrument definition is missing one or more hex numbers</comment>
+  </data>
+  <data name="ErrorMaximumAllowedNumberOfLoopsReached" xml:space="preserve">
+    <value>Maximum number of named loops and remote code definitions reached.</value>
+    <comment>Error for when there exists more than the maximum allowed named loops and remote code definitions within a song</comment>
+  </data>
+  <data name="ErrorNoiseValueOutOfRange" xml:space="preserve">
+    <value>Illegal Noise Command ("n") value ({0:D}) found. Value must be in hex and between {1:D} and 0x{2:D} .</value>
+    <comment>Error for invalid value for the Noise Command</comment>
+  </data>
+  <data name="ErrorPanDirectionOutOfRange" xml:space="preserve">
+    <value>Illegal Pan Command ("y") direction value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Pan Command's direction value</comment>
+  </data>
+  <data name="ErrorQuantizationVolumeValueOutOfRange" xml:space="preserve">
+    <value>Illegal Quantization Command ("t") volume node.</value>
+    <comment>Error for invalid volume node following Quantization node for its volume parameter</comment>
+  </data>
+  <data name="ErrorQuestionMarkValueOutOfRange" xml:space="preserve">
+    <value>Illegal Question Mark Command ("?") value found. Value must be between 0-2.</value>
+    <comment>Error for invalid value for the Question Mark Command's value</comment>
+  </data>
+  <data name="ErrorSampleLoadTuningValueOutOfRange" xml:space="preserve">
+    <value>Illegal Sample Load Command tuning value (${0}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Sample Load Command's tuning value</comment>
+  </data>
+  <data name="ErrorSpcLengthInvalidValue" xml:space="preserve">
+    <value>Error parsing SPC length field.  Format must be m:ss or 'auto'.</value>
+    <comment>Error for when the SPC directive's length is not in the correct format</comment>
+  </data>
+  <data name="ErrorSpcLengthValueTooLong" xml:space="preserve">
+    <value>Songs longer than 16:39 are not allowed by the SPC format.</value>
+    <comment>Error for when the SPC directive's length is longer than the supported maximum length of 16:39</comment>
+  </data>
+  <data name="ErrorTempoFadeValueOutOfRange" xml:space="preserve">
+    <value>Illegal Tempo Command ("t") fade value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Tempo Command's fade value</comment>
+  </data>
+  <data name="ErrorTempoRatioValueOverflow" xml:space="preserve">
+    <value>Using the tempo ratio on this value would cause it to overflow. Song - {0) , Line - {1:D} , Column - {2:D}</value>
+    <comment>Error for when the tempo ratio value overflows the allowed maximum</comment>
+  </data>
+  <data name="ErrorTempoTempoValueOutOfRange" xml:space="preserve">
+    <value>Illegal Tempo Command ("t") tempo value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Tempo Command's tempo value</comment>
+  </data>
+  <data name="ErrorUndefinedNamedLoopCall" xml:space="preserve">
+    <value>Loop Call contains a named loop that has not been defined.</value>
+    <comment>Error for when a loop is called by a name that hasn't been defined in the song</comment>
+  </data>
+  <data name="ErrorUndefinedRemoteCodeCall" xml:space="preserve">
+    <value>Remote Code Call contains a remote code definition that has not been defined.</value>
+    <comment>Error for when a remote code definition is called by a name that hasn't been defined in the song</comment>
+  </data>
+  <data name="ErrorUnknownHexCommand" xml:space="preserve">
+    <value>Illegal Hex Command (${0}) found.</value>
+    <comment>Error when an unknown hex command is used in the song</comment>
+  </data>
+  <data name="ErrorVibratoDelayOutOfRange" xml:space="preserve">
+    <value>Illegal Vibrato Command ("p") delay value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Vibrato Command's delay value</comment>
+  </data>
+  <data name="ErrorVibratoExtentOutOfRange" xml:space="preserve">
+    <value>Illegal Vibrato Command ("p") extent value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Vibrato Command's extent value</comment>
+  </data>
+  <data name="ErrorVibratoRateOutOfRange" xml:space="preserve">
+    <value>Illegal Vibrato Command ("p") rate value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Vibrato Command's rate value</comment>
+  </data>
+  <data name="ErrorVolumeFadeValueOutOfRange" xml:space="preserve">
+    <value>Illegal Volume Command ("v") fade value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Volume Command's fade value</comment>
+  </data>
+  <data name="ErrorVolumeVolumeValueOutOfRange" xml:space="preserve">
+    <value>Illegal Volume Command ("v") volume value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Volume Command's volume value</comment>
+  </data>
+  <data name="IntroAddmusicVersion" xml:space="preserve">
+    <value />
+    <comment>Message displaying the current version of the program</comment>
+  </data>
+  <data name="IntroParserVersion" xml:space="preserve">
+    <value />
+    <comment>Message displaying the current version of the parser</comment>
+  </data>
+  <data name="IntroReadTheReadMe" xml:space="preserve">
+    <value>Protip: Be sure to read the readme! If there's an error or something doesn't\nseem right, it may have your answer!\n\n</value>
+    <comment>Message prompting the user to read the readme</comment>
+  </data>
+  <data name="WarningDefaultLengthValidation" xml:space="preserve">
+    <value>WARNING: A default note length was used that is not divisible by 192 ticks, and thus results in a fractional tick value.</value>
+    <comment>Warning for note lengths that yield a fractional tick value</comment>
+  </data>
+  <data name="WarningFactionalTempoRatioValue" xml:space="preserve">
+    <value>The tempo ratio resulted in a fractional value. Song - {0) , Line - {1:D} , Column - {2:D}</value>
+    <comment>Warning for a fractional tempo ratio</comment>
+  </data>
+  <data name="WarningFractionalTickValueFromDots" xml:space="preserve">
+    <value>WARNING: Adding {0:D} dots to this note results in a fractional tick value. Song - {1) , Line - {2:D} , Column - {3:D}</value>
+    <comment>Error for fractional tick amounts when using dots at the end of notes</comment>
+  </data>
+  <data name="WarningLoopIterationOutOfRange" xml:space="preserve">
+    <value>Invalid loop iteration count. Number of iterations must be between 1-255.</value>
+    <comment>Warning for when the number of iterations for a loop is out of the range</comment>
+  </data>
+  <data name="WarningNoteLengthFractionalTickValue" xml:space="preserve">
+    <value>WARNING: A note length was used that is not divisible by {0:D} ticks, and thus results in a fractional tick value. Song - {1) , Line - {2:D} , Column - {3:D}</value>
+    <comment>Warning for when a note length is not divisible by the given amount and will yield a fractional tick value</comment>
+  </data>
+  <data name="WarningOctaveDroppedTooLow" xml:space="preserve">
+    <value>The octave has been dropped too low.</value>
+    <comment>Warning for when the octave is dropped too low during parsing</comment>
+  </data>
+  <data name="WarningOctaveRaisedTooHigh" xml:space="preserve">
+    <value>The octave has been raised too high.</value>
+    <comment>Warning for when the octave is raised too high during parsing</comment>
+  </data>
+  <data name="WarningSpcTextValueTooLong" xml:space="preserve">
+    <value>"{0}" field was too long. Truncating to "{1}".</value>
+    <comment>Warning for when the various SPC directive elements are longer than the supported maximum</comment>
+  </data>
+  <data name="WarningTripletFractionalTickValueFromDots" xml:space="preserve">
+    <value>WARNING: Adding this note to a triplet results in a fractional tick value. Song - {1) , Line - {2:D} , Column - {3:D}</value>
+    <comment>Error for fractional tick amounts when adding this note to a triplet</comment>
+  </data>
 </root>

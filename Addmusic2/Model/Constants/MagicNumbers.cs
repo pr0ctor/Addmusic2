@@ -8,7 +8,27 @@ namespace Addmusic2.Model.Constants
 {
     internal static class MagicNumbers
     {
-        public static readonly int DefaultBankStart = 0x200000;
+
+        public static class DefaultValues
+        {
+            public static readonly int DefaultBankStart = 0x200000;
+            public static readonly int InitialDefaultNoteLength = NoteLengthMaximum / 8;
+            public static readonly int StartingOctave = 4;
+            public static readonly int InitialTempoRatio = 1;
+        }
+
+        public static readonly int NoteLengthMaximum = 192;
+        public static readonly int EightBitMaximum = 255;
+        public static readonly ushort SixteenBitMaximum = 0xFFFF;
+        public static readonly byte HexCommandMaximum = 0xFF;
+        public static readonly int PanDirectionMaximum = 20;
+        public static readonly byte NoiseMaximum = 0x1F;
+        public static readonly int SpcTextMaximumLength = 32;
+        public static readonly byte ByteHexMaximum = 0xFF;
+        public static readonly int OctaveMinimum = -1;
+        public static readonly int OctaveMaximum = 7;
+
+
         public static readonly int ChannelCount = 9;
         public static readonly int MaxSamplesCount = 256;
         public static readonly int[] ValidPitches = { 9, 11, 0, 2, 4, 5, 7 };
@@ -23,6 +43,23 @@ namespace Addmusic2.Model.Constants
             2, 2, 3, 4, 4, 1, 2, 3, 2, 3, 2, 4, 2, 2, 3, 4, 2, 4, 4, 3, 2, 4,
             1, 4, 4, 3, 2, 9, 3, 4, 2, 3, 3, 2, 5, 1, 1 
         };
+
+        public static class CommandValues
+        {
+            public static readonly byte Instrument = 0xDA;
+            public static readonly byte Pan = 0xDB;
+            public static readonly byte Vibrato = 0xDE;
+            public static readonly byte GlobalVolume = 0xE0;
+            public static readonly byte GlobalVolumeWithFade = 0xE1;
+            public static readonly byte Tempo = 0xE2;
+            public static readonly byte TempoWithFade = 0xE3;
+            public static readonly byte SuperLoop = 0xE6;
+            public static readonly byte Volume = 0xE7;
+            public static readonly byte VolumeWithFade = 0xE8;
+            public static readonly byte Loop = 0xE9;
+            public static readonly byte Noise = 0xF8;
+            public static readonly byte RemoteCode = 0xFC;
+        }
     }
     
 }

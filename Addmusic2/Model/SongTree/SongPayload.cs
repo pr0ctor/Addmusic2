@@ -121,15 +121,15 @@ namespace Addmusic2.Model.SongTree
 
     internal class InstrumentsPayload : ISongNodePayload
     {
-        public List<string> Instruments { get; set; }
+        public List<InstrumentDefinition> Instruments { get; set; }
 
         public InstrumentsPayload()
         {
-            Instruments = new List<string>();
+            Instruments = new List<InstrumentDefinition>();
         }
-        public InstrumentsPayload(List<string> instruments)
+        public InstrumentsPayload(List<InstrumentDefinition> instruments)
         {
-            Instruments = instruments ?? new List<string>();
+            Instruments = instruments ?? new List<InstrumentDefinition>();
         }
 
         public override string ToString()
@@ -196,6 +196,7 @@ namespace Addmusic2.Model.SongTree
     internal class DefaultLengthPayload : ISongNodePayload
     {
         public int Length { get; set; }
+        public bool UsedEquals { get; set; } = false;
 
         public DefaultLengthPayload() { }
         public DefaultLengthPayload(int length)
@@ -205,7 +206,7 @@ namespace Addmusic2.Model.SongTree
 
         public override string ToString()
         {
-            return $"l{Length}";
+            return $"l{((UsedEquals) ? "=" : "")}{Length}";
         }
     }
 

@@ -7,7 +7,7 @@ using Addmusic2.Model.Constants;
 
 namespace Addmusic2.Model
 {
-    internal class Music
+    internal class SongData
     {
         public double IntroSeconds { get; set; }
         public double MainSeconds { get; set; }
@@ -17,7 +17,9 @@ namespace Addmusic2.Model
 
         public string Name { get; set; }
         public string PathlessSongName { get; set; }
-        public byte[] Data { get; set; } = new byte[MagicNumbers.ChannelCount];
+        //public byte[] Data { get; set; } = new byte[MagicNumbers.ChannelCount];
+        public Dictionary<int, List<byte>> ChannelData { get; set; } = new();
+        public bool[,] NoMusic { get; set; } = new bool[8,2];
         public ushort[] LoopLocations { get; set; } = new ushort[MagicNumbers.ChannelCount];
         public bool PlayOnce { get; set; }
         public bool HasIntro { get; set; }
@@ -60,36 +62,25 @@ namespace Addmusic2.Model
         public int MinSize { get; set; }
         public bool Exists { get; set; }
         public int PositionInARAM { get; set; }
-        public int RemoteDefinitionType { get; set; }
-        public bool InRemoteDefinition { get; set; }
+        //public int RemoteDefinitionType { get; set; }
+        //public bool InRemoteDefinition { get; set; }
         //public int RemoteDefinitionArg { get; set; }
 
-        public Dictionary<string, string> Replacements { get; set; } = new Dictionary<string, string>();
+        //public Dictionary<string, string> Replacements { get; set; } = new Dictionary<string, string>();
 
-        private bool guessLength;
+        public bool GuessLength { get; set; }
+        public bool DoesntLoop { get; set; }
+
         private int resizedChannel;
         private double[] channelLengths { get; set; } = new double[8];               // How many ticks are in each channel.
         private double[] loopLengths { get; set; } = new double[0x10000];                // How many ticks are in each loop.
         private double normalLoopLength;                // How many ticks were in the most previously declared normal loop.
         private double superLoopLength;                 // How many ticks were in the most previously declared super loop.
         //private std::vector<std::pair<double, int>> tempoChanges;   // Where any changes in tempo occur. A negative tempo marks the beginning of the main loop, if an intro exists.
-        private bool baseLoopIsNormal;
-        private bool baseLoopIsSuper;
-        private bool extraLoopIsNormal;
-        private bool extraLoopIsSuper;
 
-        public Music()
+        public SongData()
         {
 
-        }
-
-        public void Init()
-        {
-
-        }
-        public bool DoReplacement()
-        {
-            return false;
         }
     }
 }

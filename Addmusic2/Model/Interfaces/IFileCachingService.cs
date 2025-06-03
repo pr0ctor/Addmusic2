@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Addmusic2.Model.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,9 +12,10 @@ namespace Addmusic2.Model.Interfaces
 
         public void InitializeCache();
         public void ClearCache();
-        public void AddToCache(string fileName, string filePath);
-        public void AddToCache(string fileName, FileStream fileData);
+        public string AddToCache(string fileName, string filePath);
+        public string AddToCache(string fileName, FileStream fileData);
+        public string AddToCache(string fileName, MemoryStream fileData);
 
-        public object GetFileData(string fileName);
+        public MemoryStream GetFromCache(string fileName);
     }
 }

@@ -222,6 +222,11 @@ namespace Addmusic2.Visitors
                 instruments.Add(instrumentDefinition);
             }
 
+            if(instruments.Count > 0)
+            {
+                instrumentsPayload.Instruments = instruments;
+            }
+
             var instrumentsNode = new DirectiveNode
             {
                 NodeType = SongNodeType.Instruments,
@@ -373,7 +378,7 @@ namespace Addmusic2.Visitors
             var sampleOptimization = sampleListContext.SampleOptimization();
             var listOfSamples = sampleListContext.StringLiteral().Select(s => s.GetText()).ToList();
 
-            samplesPayload.SampleGroupPath = sampleOptimization.GetText() ?? "";
+            samplesPayload.SampleGroupPath = (sampleOptimization != null) ? sampleOptimization.GetText() : "";
             samplesPayload.Samples = listOfSamples;
 
             var samplesNode = new DirectiveNode
@@ -1348,6 +1353,7 @@ namespace Addmusic2.Visitors
                 NodeSource = tripletText,
                 LineNumber = context.Start.Line,
                 ColumnNumber = context.Start.Column,
+                Children = childNodes,
             };
             return tripletNode;
         }

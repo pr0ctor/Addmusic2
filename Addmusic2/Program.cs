@@ -10,11 +10,15 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Localization;
 using Antlr4.Runtime;
 using System.Text.RegularExpressions;
-using AddmusicTests;
+using Addmusic2.Visitors;
+using Addmusic2.Logic;
+using Addmusic2.Model.Localization;
+
+//[assembly: RootNamespace("Addmusic2")]
 
 Console.WriteLine("Hello, World!");
 
-var fileData = File.ReadAllText(@"Samples/Seenpoint Intro.txt");
+/*var fileData = File.ReadAllText(@"Samples/Seenpoint Intro.txt");
 
 var replacementsRegex = new Regex(@$"""([^\s=""]+)\s*=\s*([^""]+)""");
 
@@ -39,9 +43,9 @@ var songContext = parser.song();
 
 var songNodeTree = newParser.VisitSong(songContext);
 
-var x = 1;
+var x = 1;*/
 
-/*var clArgs = new CLArgs();
+var clArgs = new CLArgs();
 
 // clargs or load rom file
 if (File.Exists("Addmusic_options.txt"))
@@ -68,14 +72,10 @@ var globalSettings = new GlobalSettings();
 
 var startTime = DateTime.Now;
 
-Console.WriteLine(Messages.IntroMessages.AddmusicVersion);
-Console.WriteLine(Messages.IntroMessages.ParserVersion);
-Console.WriteLine(Messages.IntroMessages.ReadTheReadMe);
-
 // load Asar here
 
 
-*//*using var logFactory = LoggerFactory.Create(builder =>
+using var logFactory = LoggerFactory.Create(builder =>
 {
     builder
         .AddFilter("Microsoft", LogLevel.Warning)
@@ -84,20 +84,25 @@ Console.WriteLine(Messages.IntroMessages.ReadTheReadMe);
         .AddConsole();
 });
 
-var logger = logFactory.CreateLogger<IAddmusicLogic>();*//*
+var logger = logFactory.CreateLogger<IAddmusicLogic>();
 
 // Set up Dependency Injection
 
 var services = new ServiceCollection();
 
-services.AddLocalization();
+services.AddLocalization(options =>
+{
+    options.ResourcesPath = "Localization";
+});
+services.AddTransient<MessageService>();
 
 services.AddLogging(builder => builder.AddConsole());
 
 services.AddScoped<IRomOperations, RomOperations>();
 
-services.AddSingleton<IAsarInterface>();
+// services.AddSingleton<IAsarInterface>();
 services.AddSingleton<ICLArgs>(clArgs);
+services.AddSingleton<IAddmusicLogic, AddmusicLogic>();
 
 // Load Necessary file data into Cache
 var cachingServie = new FileCachingService();
@@ -105,4 +110,17 @@ cachingServie.InitializeCache();
 
 services.AddSingleton<IFileCachingService>(cachingServie);
 
-var addmusic = services.BuildServiceProvider();*/
+var serviceProvider = services.BuildServiceProvider();
+
+var addmusicLogic = serviceProvider.GetRequiredService<IAddmusicLogic>();
+var messageService = serviceProvider.GetRequiredService<MessageService>();
+
+logger.LogInformation(messageService.GetIntroAddmusicVersionMessage());
+logger.LogInformation(messageService.GetIntroParserVersionMessage());
+logger.LogInformation(messageService.GetIntroReadTheReadMeMessage());
+
+/*Console.WriteLine(Messages.IntroMessages.AddmusicVersion);
+Console.WriteLine(Messages.IntroMessages.ParserVersion);
+Console.WriteLine(Messages.IntroMessages.ReadTheReadMe);*/
+
+addmusicLogic.Run();

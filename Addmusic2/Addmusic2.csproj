@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Remove="Localization\Messages.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Samples\Seenpoint Intro.txt" />
   </ItemGroup>
 
@@ -27,8 +31,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Logic\" />
     <Folder Include="Model\AntlrSchema\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Localization\Messages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -37,13 +48,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Messages.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Localization\Messages.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

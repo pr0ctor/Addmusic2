@@ -49,9 +49,7 @@ specialDirective: amk
 //         "sample3.brr"
 // }
 samples : Samples LBRACE samplesList RBRACE ;
-samplesList : SampleOptimization StringLiteral*
-    | StringLiteral*
-    ;
+samplesList : SampleOptimization? StringLiteral* ;
 
 // #instruments
 // {
@@ -273,7 +271,7 @@ terminalSimpleLoopContents : atomics
 //terminalNamedSimpleloop : LoopName terminalSimpleloop ;
 
 // remoteCode : LPAREN BANG ( NUMBERS | StringLiteral ) RPAREN LBRACK remoteCodeContents RBRACK;
-remoteCode : RemoteCodeName LBRACK remoteCodeContents* RBRACK;
+remoteCode : RemoteCodeName LBRACK remoteCodeContents+ RBRACK;
 
 remoteCodeContents : octave
     | lowerOctave
