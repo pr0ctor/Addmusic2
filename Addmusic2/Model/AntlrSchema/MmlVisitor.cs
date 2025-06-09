@@ -238,17 +238,33 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitNoiseNote([NotNull] MmlParser.NoiseNoteContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.volume"/>.
+	/// Visit a parse tree produced by the <c>Volume</c>
+	/// labeled alternative in <see cref="MmlParser.volumeCommand"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitVolume([NotNull] MmlParser.VolumeContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.tune"/>.
+	/// Visit a parse tree produced by the <c>HexVolume</c>
+	/// labeled alternative in <see cref="MmlParser.volumeCommand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitHexVolume([NotNull] MmlParser.HexVolumeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>Tune</c>
+	/// labeled alternative in <see cref="MmlParser.tuneCommand"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitTune([NotNull] MmlParser.TuneContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>HexTune</c>
+	/// labeled alternative in <see cref="MmlParser.tuneCommand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitHexTune([NotNull] MmlParser.HexTuneContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.quantization"/>.
 	/// </summary>
@@ -256,17 +272,33 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitQuantization([NotNull] MmlParser.QuantizationContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.pan"/>.
+	/// Visit a parse tree produced by the <c>Pan</c>
+	/// labeled alternative in <see cref="MmlParser.panCommand"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitPan([NotNull] MmlParser.PanContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.vibrato"/>.
+	/// Visit a parse tree produced by the <c>HexPan</c>
+	/// labeled alternative in <see cref="MmlParser.panCommand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitHexPan([NotNull] MmlParser.HexPanContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>Vibrato</c>
+	/// labeled alternative in <see cref="MmlParser.vibratoCommand"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitVibrato([NotNull] MmlParser.VibratoContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>HexVibrato</c>
+	/// labeled alternative in <see cref="MmlParser.vibratoCommand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitHexVibrato([NotNull] MmlParser.HexVibratoContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.pitchslide"/>.
 	/// </summary>
@@ -286,23 +318,47 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitDefaultLength([NotNull] MmlParser.DefaultLengthContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.globalVolume"/>.
+	/// Visit a parse tree produced by the <c>GlobalVolume</c>
+	/// labeled alternative in <see cref="MmlParser.globalVolumeCommand"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitGlobalVolume([NotNull] MmlParser.GlobalVolumeContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.tempo"/>.
+	/// Visit a parse tree produced by the <c>HexGlobalVolume</c>
+	/// labeled alternative in <see cref="MmlParser.globalVolumeCommand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitHexGlobalVolume([NotNull] MmlParser.HexGlobalVolumeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>Tempo</c>
+	/// labeled alternative in <see cref="MmlParser.tempoCommand"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitTempo([NotNull] MmlParser.TempoContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.instrument"/>.
+	/// Visit a parse tree produced by the <c>HexTempo</c>
+	/// labeled alternative in <see cref="MmlParser.tempoCommand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitHexTempo([NotNull] MmlParser.HexTempoContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>Instrument</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentCommand"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitInstrument([NotNull] MmlParser.InstrumentContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>HexInstrument</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentCommand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitHexInstrument([NotNull] MmlParser.HexInstrumentContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.nakedTie"/>.
 	/// </summary>
@@ -430,17 +486,390 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitNoloopCommand([NotNull] MmlParser.NoloopCommandContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.sampleLoad"/>.
+	/// Visit a parse tree produced by the <c>SampleLoad</c>
+	/// labeled alternative in <see cref="MmlParser.sampleLoadCommand"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitSampleLoad([NotNull] MmlParser.SampleLoadContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>HexSampleLoad</c>
+	/// labeled alternative in <see cref="MmlParser.sampleLoadCommand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitHexSampleLoad([NotNull] MmlParser.HexSampleLoadContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.replacements"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitReplacements([NotNull] MmlParser.ReplacementsContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.globalHexCommands"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitGlobalHexCommands([NotNull] MmlParser.GlobalHexCommandsContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.channelHexCommands"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitChannelHexCommands([NotNull] MmlParser.ChannelHexCommandsContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.daInstrument"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDaInstrument([NotNull] MmlParser.DaInstrumentContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.dbPan"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDbPan([NotNull] MmlParser.DbPanContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.dcPanFade"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDcPanFade([NotNull] MmlParser.DcPanFadeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.ddPitchBlendCommand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDdPitchBlendCommand([NotNull] MmlParser.DdPitchBlendCommandContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.ddPitchBlendItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDdPitchBlendItems([NotNull] MmlParser.DdPitchBlendItemsContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.deVibratoStart"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDeVibratoStart([NotNull] MmlParser.DeVibratoStartContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.eaVibratoFade"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEaVibratoFade([NotNull] MmlParser.EaVibratoFadeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.dfVibratoEnd"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDfVibratoEnd([NotNull] MmlParser.DfVibratoEndContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.e0GlobalVolume"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitE0GlobalVolume([NotNull] MmlParser.E0GlobalVolumeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.e1GlobalVolumeFade"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitE1GlobalVolumeFade([NotNull] MmlParser.E1GlobalVolumeFadeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.e2Tempo"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitE2Tempo([NotNull] MmlParser.E2TempoContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.e3TempoFade"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitE3TempoFade([NotNull] MmlParser.E3TempoFadeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.e4GlobalTranspose"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitE4GlobalTranspose([NotNull] MmlParser.E4GlobalTransposeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.e5Tremolo"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitE5Tremolo([NotNull] MmlParser.E5TremoloContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.e6SubloopStart"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitE6SubloopStart([NotNull] MmlParser.E6SubloopStartContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.e6SubloopEnd"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitE6SubloopEnd([NotNull] MmlParser.E6SubloopEndContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.e7Volume"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitE7Volume([NotNull] MmlParser.E7VolumeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.e8VolumeFade"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitE8VolumeFade([NotNull] MmlParser.E8VolumeFadeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.ebPitchEnvelopeRelease"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEbPitchEnvelopeRelease([NotNull] MmlParser.EbPitchEnvelopeReleaseContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.ecPitchEnvelopeAttack"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEcPitchEnvelopeAttack([NotNull] MmlParser.EcPitchEnvelopeAttackContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>EDCustomGAIN</c>
+	/// labeled alternative in <see cref="MmlParser.edCustomADSROrGain"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEDCustomGAIN([NotNull] MmlParser.EDCustomGAINContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>EDCustomASDR</c>
+	/// labeled alternative in <see cref="MmlParser.edCustomADSROrGain"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEDCustomASDR([NotNull] MmlParser.EDCustomASDRContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.eeTuneChannel"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEeTuneChannel([NotNull] MmlParser.EeTuneChannelContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.efEcho1"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEfEcho1([NotNull] MmlParser.EfEcho1Context context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.f0EchoOff"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF0EchoOff([NotNull] MmlParser.F0EchoOffContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.f1Echo2"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF1Echo2([NotNull] MmlParser.F1Echo2Context context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.f2EchoFade"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF2EchoFade([NotNull] MmlParser.F2EchoFadeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.f3SampleLoad"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF3SampleLoad([NotNull] MmlParser.F3SampleLoadContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>F4EnableYoshiDrumsChannel5</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF4EnableYoshiDrumsChannel5([NotNull] MmlParser.F4EnableYoshiDrumsChannel5Context context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>F4ToggleLegato</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF4ToggleLegato([NotNull] MmlParser.F4ToggleLegatoContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>F4LightStaccato</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF4LightStaccato([NotNull] MmlParser.F4LightStaccatoContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>F4SNESSync</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF4SNESSync([NotNull] MmlParser.F4SNESSyncContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>F4EnableYoshiDrums</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF4EnableYoshiDrums([NotNull] MmlParser.F4EnableYoshiDrumsContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>F4TempoHikeOff</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF4TempoHikeOff([NotNull] MmlParser.F4TempoHikeOffContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>F4NSPCVelocityTable</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF4NSPCVelocityTable([NotNull] MmlParser.F4NSPCVelocityTableContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>F4EchoToggle</c>
+	/// labeled alternative in <see cref="MmlParser.f4ChannelItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF4EchoToggle([NotNull] MmlParser.F4EchoToggleContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>F4RestoreInstrument</c>
+	/// labeled alternative in <see cref="MmlParser.f4ChannelItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF4RestoreInstrument([NotNull] MmlParser.F4RestoreInstrumentContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.f5FIRFilter"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF5FIRFilter([NotNull] MmlParser.F5FIRFilterContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.f6DSPWrite"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF6DSPWrite([NotNull] MmlParser.F6DSPWriteContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.f8EnableNoise"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF8EnableNoise([NotNull] MmlParser.F8EnableNoiseContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.f9DataSend"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitF9DataSend([NotNull] MmlParser.F9DataSendContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>FAPitchModulation</c>
+	/// labeled alternative in <see cref="MmlParser.faChannelItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFAPitchModulation([NotNull] MmlParser.FAPitchModulationContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>FACurrentChannelGain</c>
+	/// labeled alternative in <see cref="MmlParser.faChannelItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFACurrentChannelGain([NotNull] MmlParser.FACurrentChannelGainContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>FASemitoneTune</c>
+	/// labeled alternative in <see cref="MmlParser.faChannelItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFASemitoneTune([NotNull] MmlParser.FASemitoneTuneContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>FAAmplify</c>
+	/// labeled alternative in <see cref="MmlParser.faChannelItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFAAmplify([NotNull] MmlParser.FAAmplifyContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>FAEchoBufferReserve</c>
+	/// labeled alternative in <see cref="MmlParser.faGlobalItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFAEchoBufferReserve([NotNull] MmlParser.FAEchoBufferReserveContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>FAHotPatchPreset</c>
+	/// labeled alternative in <see cref="MmlParser.faGlobalItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFAHotPatchPreset([NotNull] MmlParser.FAHotPatchPresetContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>FAHotPatchToggleBits</c>
+	/// labeled alternative in <see cref="MmlParser.faGlobalItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFAHotPatchToggleBits([NotNull] MmlParser.FAHotPatchToggleBitsContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>FBTrill</c>
+	/// labeled alternative in <see cref="MmlParser.fbItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFBTrill([NotNull] MmlParser.FBTrillContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>FBGlissando</c>
+	/// labeled alternative in <see cref="MmlParser.fbItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFBGlissando([NotNull] MmlParser.FBGlissandoContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>FBEnableArgeggio</c>
+	/// labeled alternative in <see cref="MmlParser.fbItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFBEnableArgeggio([NotNull] MmlParser.FBEnableArgeggioContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>FCHexRemoteGain</c>
+	/// labeled alternative in <see cref="MmlParser.fcItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFCHexRemoteGain([NotNull] MmlParser.FCHexRemoteGainContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>FCHexRemoteCommand</c>
+	/// labeled alternative in <see cref="MmlParser.fcItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFCHexRemoteCommand([NotNull] MmlParser.FCHexRemoteCommandContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.fdTremoloOff"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFdTremoloOff([NotNull] MmlParser.FdTremoloOffContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.fePitchEnvelopeOff"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFePitchEnvelopeOff([NotNull] MmlParser.FePitchEnvelopeOffContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.hexNumber"/>.
 	/// </summary>

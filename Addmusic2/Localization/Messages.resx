@@ -145,6 +145,10 @@
     <value>Illegal Global Volume Command ("w") volume value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
     <comment>Error for invalid value for the Global Volume Command's volume value</comment>
   </data>
+  <data name="ErrorHexCommandSuppliedValueOutOfRange" xml:space="preserve">
+    <value>Illegal value ({0}) for Hex Command {1} found. Value must be between {2:D} and {3:D} .</value>
+    <comment>Error when a hex value for a hex command is out of range</comment>
+  </data>
   <data name="ErrorHexCommandValueOutOfRange" xml:space="preserve">
     <value>Illegal Hex Command value (${0}) found. Value must be between {1:D} and {2:D} .</value>
     <comment>Error for invalid values for a hex command</comment>
@@ -156,6 +160,14 @@
   <data name="ErrorInstrumentDefinitionMissingHexValues" xml:space="preserve">
     <value>Error parsing instrument definition; there were too few bytes following the sample (there must be 6).</value>
     <comment>Error for when an instrument definition is missing one or more hex numbers</comment>
+  </data>
+  <data name="ErrorInstrumentValueOutOfRange" xml:space="preserve">
+    <value>Illegal Instrument Command ("@") instrument number value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Instrument Command</comment>
+  </data>
+  <data name="ErrorIntroDirectiveFoundInLoop" xml:space="preserve">
+    <value>An Intro Directive (/) cannot be used within a loop.</value>
+    <comment>Error when an intro directive is found in a loop</comment>
   </data>
   <data name="ErrorMaximumAllowedNumberOfLoopsReached" xml:space="preserve">
     <value>Maximum number of named loops and remote code definitions reached.</value>

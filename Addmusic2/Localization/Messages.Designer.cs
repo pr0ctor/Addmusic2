@@ -124,6 +124,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Illegal value ({0}) for Hex Command {1} found. Value must be between {2:D} and {3:D} ..
+        /// </summary>
+        internal static string ErrorHexCommandSuppliedValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorHexCommandSuppliedValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Illegal Hex Command value (${0}) found. Value must be between {1:D} and {2:D} ..
         /// </summary>
         internal static string ErrorHexCommandValueOutOfRange {
@@ -147,6 +156,24 @@ namespace Addmusic2.Localization {
         internal static string ErrorInstrumentDefinitionMissingHexValues {
             get {
                 return ResourceManager.GetString("ErrorInstrumentDefinitionMissingHexValues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Instrument Command (&quot;@&quot;) instrument number value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorInstrumentValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorInstrumentValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An Intro Directive (/) cannot be used within a loop..
+        /// </summary>
+        internal static string ErrorIntroDirectiveFoundInLoop {
+            get {
+                return ResourceManager.GetString("ErrorIntroDirectiveFoundInLoop", resourceCulture);
             }
         }
         

@@ -8,8 +8,9 @@ namespace Addmusic2.Model.Interfaces
 {
     internal interface ISongParser
     {
-
+        public SongData SongData { get; set; }
         public SongData ParseSongNodes(List<ISongNode> nodes);
         public IValidationResult ValidateNode(ISongNode node);
+        public void EvaluateNode(ISongNode node);
     }
 }

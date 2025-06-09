@@ -194,17 +194,17 @@ namespace Addmusic2.Visitors
                 if (instrument.GetType().Name == nameof(MmlParser.InstrumentListItemContext))
                 {
                     var instr = instrument as MmlParser.InstrumentListItemContext;
-                    var instrumentNode = VisitInstrument(instr.instrument());
+                    var instrumentNode = VisitInstrumentCommand(instr.instrumentCommand());
                     instrumentDefinition.Type = InstrumentDefinition.InstrumentType.Number;
                     instrumentDefinition.InstrumentNumber = instrumentNode;
-                    instrumentDefinition.HexSettings = instr.HexNumber().Select(h => h.GetText()).ToList();
+                    instrumentDefinition.HexSettings = instr.hexNumber().Select(h => h.GetText()).ToList();
                 }
                 else if(instrument.GetType().Name == nameof(MmlParser.NamedInstrumentListItemContext))
                 {
                     var instr = instrument as MmlParser.NamedInstrumentListItemContext;
                     instrumentDefinition.Type = InstrumentDefinition.InstrumentType.Sample;
                     instrumentDefinition.SampleName = instr.StringLiteral().GetText();
-                    instrumentDefinition.HexSettings = instr.HexNumber().Select(h => h.GetText()).ToList();
+                    instrumentDefinition.HexSettings = instr.hexNumber().Select(h => h.GetText()).ToList();
                 }
                 else if(instrument.GetType().Name == nameof(MmlParser.NoiseInstrumentListItemContext))
                 {
@@ -212,7 +212,7 @@ namespace Addmusic2.Visitors
                     var noiseNode = VisitNoiseNote(instr.noiseNote());
                     instrumentDefinition.Type = InstrumentDefinition.InstrumentType.Noise;
                     instrumentDefinition.NoiseData = noiseNode;
-                    instrumentDefinition.HexSettings = instr.HexNumber().Select(h => h.GetText()).ToList();
+                    instrumentDefinition.HexSettings = instr.hexNumber().Select(h => h.GetText()).ToList();
                 }
                 else
                 {
@@ -326,7 +326,7 @@ namespace Addmusic2.Visitors
 
         public override ISongNode VisitPad([NotNull] MmlParser.PadContext context)
         {
-            var padLength = context.HexNumber();
+            var padLength = context.hexNumber();
             var padNodePayload = new PadPayload(padLength.GetText());
             var padNode = new DirectiveNode
             {
@@ -528,6 +528,43 @@ namespace Addmusic2.Visitors
             return globalVolumeNode;
         }
 
+        public override ISongNode VisitHexGlobalVolume([NotNull] MmlParser.HexGlobalVolumeContext context)
+        {
+            var hexGlobalVolumeText = context.GetText();
+            var globalVolumePayload = new VolumePayload();
+            var volumeContext = context.e0GlobalVolume();
+            var volumeFadeContext = context.e1GlobalVolumeFade();
+
+            var nodes = (volumeContext != null)
+                ? new List<MmlParser.HexNumberContext>
+                    {
+                        volumeContext.hexNumber()
+                    }
+                : volumeFadeContext.hexNumber().ToList();
+            if (nodes.Count == 1)
+            {
+                var volume = Convert.ToInt32(nodes[0].GetText()[1..], 16);
+                globalVolumePayload.Volume = volume;
+            }
+            else
+            {
+                var duration = Convert.ToInt32(nodes[0].GetText()[1..], 16);
+                var volume = Convert.ToInt32(nodes[1].GetText()[1..], 16);
+                globalVolumePayload.Volume = volume;
+                globalVolumePayload.FadeValue = duration;
+            }
+            var globalVolumeNode = new AtomicNode
+            {
+                NodeType = SongNodeType.GlobalVolume,
+                NodeSource = hexGlobalVolumeText,
+                Payload = globalVolumePayload,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+            };
+            return globalVolumeNode;
+        }
+
+
         public override ISongNode VisitInstrument([NotNull] MmlParser.InstrumentContext context)
         {
             var instrumentText = context.GetText();
@@ -543,6 +580,40 @@ namespace Addmusic2.Visitors
             };
             return instrumentNode;
         }
+
+        public ISongNode VisitInstrumentCommand([NotNull] MmlParser.InstrumentCommandContext context)
+        {
+            var instrumentText = context.GetText();
+            var instrumentNumber = int.Parse(instrumentText[1..]);
+            var instrumentPayload = new InstrumentPayload(instrumentNumber);
+            var instrumentNode = new AtomicNode
+            {
+                NodeType = SongNodeType.Instrument,
+                NodeSource = instrumentText,
+                Payload = instrumentPayload,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+            };
+            return instrumentNode;
+        }
+
+        public override ISongNode VisitHexInstrument([NotNull] MmlParser.HexInstrumentContext context)
+        {
+            var hexInstrumentText = context.GetText();
+            var numbers = context.daInstrument().NUMBERS().GetText();
+            var instrumentNumber = Convert.ToInt32(numbers, 16);
+            var instrumentPayload = new InstrumentPayload(instrumentNumber);
+            var instrumentNode = new AtomicNode
+            {
+                NodeType = SongNodeType.Instrument,
+                NodeSource = hexInstrumentText,
+                Payload = instrumentPayload,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+            };
+            return instrumentNode;
+        }
+
 
         public override ISongNode VisitLowerOctave([NotNull] MmlParser.LowerOctaveContext context)
         {
@@ -717,6 +788,45 @@ namespace Addmusic2.Visitors
             return panNode;
         }
 
+        public override ISongNode VisitHexPan([NotNull] MmlParser.HexPanContext context)
+        {
+            var hexPanText = context.GetText();
+            var panPayload = new PanPayload()
+            {
+                HexSourced = true,
+            };
+            var padContext = context.dbPan();
+            var padFadeContext = context.dcPanFade();
+
+            var nodes = (padContext != null)
+                ? new List<MmlParser.HexNumberContext>
+                    {
+                        padContext.hexNumber()
+                    }
+                : padFadeContext.hexNumber().ToList();
+            if (nodes.Count == 1)
+            {
+                var panValue = Convert.ToInt32(nodes[0].GetText()[1..], 16);
+                panPayload.PanPosition = panValue;
+            }
+            else
+            {
+                var duration = Convert.ToInt32(nodes[0].GetText()[1..], 16);
+                var panValue = Convert.ToInt32(nodes[1].GetText()[1..], 16);
+                panPayload.PanPosition = panValue;
+                panPayload.PanDuration = duration;
+            }
+            var panNode = new AtomicNode
+            {
+                NodeType = SongNodeType.Pan,
+                NodeSource = hexPanText,
+                Payload = panPayload,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+            };
+            return panNode;
+        }
+
         public override ISongNode VisitQuantization([NotNull] MmlParser.QuantizationContext context)
         {
             var quantizationText = context.GetText();
@@ -858,6 +968,42 @@ namespace Addmusic2.Visitors
             return tempoNode;
         }
 
+        public override ISongNode VisitHexTempo([NotNull] MmlParser.HexTempoContext context)
+        {
+            var hexTempoText = context.GetText();
+            var tempoPayload = new TempoPayload();
+            var tempoContext = context.e2Tempo();
+            var tempoFadeContext = context.e3TempoFade();
+
+            var nodes = (tempoContext != null)
+                ? new List<MmlParser.HexNumberContext>
+                    {
+                        tempoContext.hexNumber()
+                    }
+                : tempoFadeContext.hexNumber().ToList();
+            if (nodes.Count == 1)
+            {
+                var tempo = Convert.ToInt32(nodes[0].GetText()[1..], 16);
+                tempoPayload.Tempo = tempo;
+            }
+            else
+            {
+                var duration = Convert.ToInt32(nodes[0].GetText()[1..], 16);
+                var tempo = Convert.ToInt32(nodes[1].GetText()[1..], 16);
+                tempoPayload.Tempo = tempo;
+                tempoPayload.FadeValue = duration;
+            }
+            var tempoNode = new AtomicNode
+            {
+                NodeType = SongNodeType.Tempo,
+                NodeSource = hexTempoText,
+                Payload = tempoPayload,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+            };
+            return tempoNode;
+        }
+
         public override ISongNode VisitTune([NotNull] MmlParser.TuneContext context)
         {
             var tuneText = context.GetText();
@@ -867,6 +1013,23 @@ namespace Addmusic2.Visitors
             {
                 NodeType = SongNodeType.Tune,
                 NodeSource = tuneText,
+                Payload = tunePayload,
+                LineNumber = tuneValue,
+                ColumnNumber = tuneValue,
+            };
+            return tuneNode;
+        }
+
+        public ISongNode VisitHexTune([NotNull] MmlParser.HexTuneContext context)
+        {
+            var hexTuneText = context.GetText();
+            var tuneValueText = context.eeTuneChannel().hexNumber().GetText();
+            var tuneValue = Convert.ToInt32(tuneValueText[1..], 16);
+            var tunePayload = new TunePayload(tuneValue);
+            var tuneNode = new AtomicNode
+            {
+                NodeType = SongNodeType.Tune,
+                NodeSource = hexTuneText,
                 Payload = tunePayload,
                 LineNumber = tuneValue,
                 ColumnNumber = tuneValue,
@@ -901,6 +1064,25 @@ namespace Addmusic2.Visitors
             return vibratoNode;
         }
 
+        public override ISongNode VisitHexVibrato([NotNull] MmlParser.HexVibratoContext context)
+        {
+            var vibratoHexText = context.GetText();
+            var vibratoPayload = new VibratoPayload();
+            var values = context.deVibratoStart().hexNumber().ToList();
+            vibratoPayload.DelayDurationValue = Convert.ToInt32(values[0].GetText()[1..], 16);
+            vibratoPayload.RateValue = Convert.ToInt32(values[1].GetText()[1..], 16);
+            vibratoPayload.ExtentValue = Convert.ToInt32(values[2].GetText()[1..], 16);
+            var vibratoNode = new AtomicNode
+            {
+                NodeType = SongNodeType.Vibrato,
+                NodeSource = vibratoHexText,
+                Payload = vibratoPayload,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+            };
+            return vibratoNode;
+        }
+
         public override ISongNode VisitVolume([NotNull] MmlParser.VolumeContext context)
         {
             var volumeText = context.GetText();
@@ -915,6 +1097,42 @@ namespace Addmusic2.Visitors
             {
                 NodeType = SongNodeType.Volume,
                 NodeSource = volumeText,
+                Payload = volumePayload,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+            };
+            return volumeNode;
+        }
+
+        public override ISongNode VisitHexVolume([NotNull] MmlParser.HexVolumeContext context)
+        {
+            var hexVolumeText = context.GetText();
+            var volumePayload = new VolumePayload();
+            var volumeContext = context.e7Volume();
+            var volumeFadeContext = context.e8VolumeFade();
+
+            var nodes = (volumeContext != null) 
+                ? new List<MmlParser.HexNumberContext>
+                    {
+                        volumeContext.hexNumber()
+                    } 
+                : volumeFadeContext.hexNumber().ToList();
+            if(nodes.Count == 1)
+            {
+                var volume = Convert.ToInt32(nodes[0].GetText()[1..], 16);
+                volumePayload.Volume = volume;
+            }
+            else
+            {
+                var duration = Convert.ToInt32(nodes[0].GetText()[1..], 16);
+                var volume = Convert.ToInt32(nodes[1].GetText()[1..], 16);
+                volumePayload.Volume = volume;
+                volumePayload.FadeValue = duration;
+            }
+            var volumeNode = new AtomicNode
+            {
+                NodeType = SongNodeType.Volume,
+                NodeSource = hexVolumeText,
                 Payload = volumePayload,
                 LineNumber = context.Start.Line,
                 ColumnNumber = context.Start.Column,
@@ -1340,6 +1558,27 @@ namespace Addmusic2.Visitors
             return sampleLoadNode;
         }
 
+        public override ISongNode VisitHexSampleLoad([NotNull] MmlParser.HexSampleLoadContext context)
+        {
+            var hexSampleLoadText = context.GetText();
+            var sampleHexs = context.f3SampleLoad().hexNumber();
+            var sampleLoadPayload = new SampleLoadPayload
+            {
+                SampleNumber = Convert.ToInt32(sampleHexs[0].GetText()[1..], 16),
+                TuningValue = sampleHexs[1].GetText(),
+                HexSourced = true,
+            };
+            var sampleLoadNode = new CompositeNode
+            {
+                NodeType = SongNodeType.SampleLoad,
+                NodeSource = hexSampleLoadText,
+                Payload = sampleLoadPayload,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+            };
+            return sampleLoadNode;
+        }
+
         public override ISongNode VisitTriplet([NotNull] MmlParser.TripletContext context)
         {
             var tripletText = context.GetText();
@@ -1359,5 +1598,844 @@ namespace Addmusic2.Visitors
         }
 
         #endregion
+
+
+        #region Named Hex Commands
+
+        public override ISongNode VisitGlobalHexCommands([NotNull] MmlParser.GlobalHexCommandsContext context)
+        {
+            return Visit(context.GetChild(0));
+        }
+
+        public override ISongNode VisitChannelHexCommands([NotNull] MmlParser.ChannelHexCommandsContext context)
+        {
+            return Visit(context.GetChild(0));
+        }
+
+        /*public ISongNode VisitDaInstrument([NotNull] MmlParser.DaInstrumentContext context)
+        {
+            throw new NotImplementedException();
+        }*/
+
+        /*public ISongNode VisitDbPan([NotNull] MmlParser.DbPanContext context)
+        {
+            throw new NotImplementedException();
+        }*/
+
+        /*public ISongNode VisitDcPanFade([NotNull] MmlParser.DcPanFadeContext context)
+        {
+            throw new NotImplementedException();
+        }*/
+
+        public override ISongNode VisitDdPitchBlendCommand([NotNull] MmlParser.DdPitchBlendCommandContext context)
+        {
+            var dbPitchBlendText = context.GetText();
+            var hexCommandValue = context.NDD().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            var noteData = new List<ISongNode>();
+            var blendItems = context.ddPitchBlendItems();
+            foreach ( var index in Enumerable.Range(0, blendItems.ChildCount))
+            {
+                noteData.Add(Visit(blendItems.GetChild(index)));
+            }
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = dbPitchBlendText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.DDPitchBlend,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+                Children = noteData,
+            };
+        }
+
+        /*public ISongNode VisitDdPitchBlendItems([NotNull] MmlParser.DdPitchBlendItemsContext context)
+        {
+            throw new NotImplementedException();
+        }*/
+
+        /*public ISongNode VisitDeVibratoStart([NotNull] MmlParser.DeVibratoStartContext context)
+        {
+            throw new NotImplementedException();
+        }*/
+
+        public override ISongNode VisitEaVibratoFade([NotNull] MmlParser.EaVibratoFadeContext context)
+        {
+            var eaVibratoFadeText = context.GetText();
+            var hexCommandValue = context.NEA().GetText();
+            var values = new List<string>
+            {
+                context.hexNumber().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = eaVibratoFadeText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.EAVibratoFade,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitDfVibratoEnd([NotNull] MmlParser.DfVibratoEndContext context)
+        {
+            var dfVibratoEndText = context.GetText();
+            var hexCommandValue = context.NDF().GetText();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = dfVibratoEndText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.DFVibratoEnd,
+                HexCommand = hexCommandValue,
+            };
+        }
+
+        /*public ISongNode VisitE0GlobalVolume([NotNull] MmlParser.E0GlobalVolumeContext context)
+        {
+            throw new NotImplementedException();
+        }*/
+
+        /*public ISongNode VisitE1GlobalVolumeFade([NotNull] MmlParser.E1GlobalVolumeFadeContext context)
+        {
+            throw new NotImplementedException();
+        }*/
+
+        /*public ISongNode VisitE2Tempo([NotNull] MmlParser.E2TempoContext context)
+        {
+            throw new NotImplementedException();
+        }*/
+
+        /*public ISongNode VisitE3TempoFade([NotNull] MmlParser.E3TempoFadeContext context)
+        {
+            throw new NotImplementedException();
+        }*/
+
+        public override ISongNode VisitE4GlobalTranspose([NotNull] MmlParser.E4GlobalTransposeContext context)
+        {
+            var e4GlobalTransposeText = context.GetText();
+            var hexCommandValue = context.NE4().GetText();
+            var values = new List<string>
+            {
+                context.hexNumber().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = e4GlobalTransposeText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.E4GlobalTranspose,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitE5Tremolo([NotNull] MmlParser.E5TremoloContext context)
+        {
+            var e5TremoloText = context.GetText();
+            var hexCommandValue = context.NE5().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = e5TremoloText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.E5Tremolo,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public ISongNode VisitE6SubloopStart([NotNull] MmlParser.E6SubloopStartContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISongNode VisitE6SubloopEnd([NotNull] MmlParser.E6SubloopEndContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        /*public ISongNode VisitE7Volume([NotNull] MmlParser.E7VolumeContext context)
+        {
+            throw new NotImplementedException();
+        }*/
+
+        /*public ISongNode VisitE8VolumeFade([NotNull] MmlParser.E8VolumeFadeContext context)
+        {
+            throw new NotImplementedException();
+        }*/
+
+        public override ISongNode VisitEbPitchEnvelopeRelease([NotNull] MmlParser.EbPitchEnvelopeReleaseContext context)
+        {
+            var ebPitchEnvelopeReleaseText = context.GetText();
+            var hexCommandValue = context.NEB().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = ebPitchEnvelopeReleaseText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.EBPitchEnvelopeRelease,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitEcPitchEnvelopeAttack([NotNull] MmlParser.EcPitchEnvelopeAttackContext context)
+        {
+            var ecPitchEnvelopeAttackText = context.GetText();
+            var hexCommandValue = context.NEC().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = ecPitchEnvelopeAttackText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.ECPitchEnvelopeAttack,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitEDCustomASDR([NotNull] MmlParser.EDCustomASDRContext context)
+        {
+            var edCustomASDRText = context.GetText();
+            var hexCommandValue = context.NED().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = edCustomASDRText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.EDCustomASDR,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitEDCustomGAIN([NotNull] MmlParser.EDCustomGAINContext context)
+        {
+            var edCustomGAINText = context.GetText();
+            var hexCommandValue = context.NED().GetText();
+            var values = new List<string>
+            {
+                context.N80().GetText(),
+                context.hexNumber().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = edCustomGAINText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.EDCustomGAIN,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        /*public ISongNode VisitEeTuneChannel([NotNull] MmlParser.EeTuneChannelContext context)
+        {
+            throw new NotImplementedException();
+        }*/
+
+        public override ISongNode VisitEfEcho1([NotNull] MmlParser.EfEcho1Context context)
+        {
+            var efEcho1Text = context.GetText();
+            var hexCommandValue = context.NEF().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = efEcho1Text,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.EFEcho1,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitF0EchoOff([NotNull] MmlParser.F0EchoOffContext context)
+        {
+            var f0EchoOffText = context.GetText();
+            var hexCommandValue = context.NF0().GetText();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f0EchoOffText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F0EchoOff,
+                HexCommand = hexCommandValue,
+            };
+        }
+
+        public override ISongNode VisitF1Echo2([NotNull] MmlParser.F1Echo2Context context)
+        {
+            var f1Echo2Text = context.GetText();
+            var hexCommandValue = context.NF1().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f1Echo2Text,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F1Echo2,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitF2EchoFade([NotNull] MmlParser.F2EchoFadeContext context)
+        {
+            var f2EchoFadeText = context.GetText();
+            var hexCommandValue = context.NF2().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f2EchoFadeText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F2EchoFade,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        /*public ISongNode VisitF3SampleLoad([NotNull] MmlParser.F3SampleLoadContext context)
+        {
+            throw new NotImplementedException();
+        }*/
+
+        public override ISongNode VisitF4EnableYoshiDrumsChannel5([NotNull] MmlParser.F4EnableYoshiDrumsChannel5Context context)
+        {
+            var f4EnableYoshiDrumsText = context.GetText();
+            var hexCommandValue = context.NF4().GetText();
+            var values = new List<string>
+            {
+                context.N00().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f4EnableYoshiDrumsText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F4EnableYoshiDrumsChannel5,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitF4ToggleLegato([NotNull] MmlParser.F4ToggleLegatoContext context)
+        {
+            var f4ToggleLegatoText = context.GetText();
+            var hexCommandValue = context.NF4().GetText();
+            var values = new List<string>
+            {
+                context.N01().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f4ToggleLegatoText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F4ToggleLegato,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitF4LightStaccato([NotNull] MmlParser.F4LightStaccatoContext context)
+        {
+            var f4LightStaccatoText = context.GetText();
+            var hexCommandValue = context.NF4().GetText();
+            var values = new List<string>
+            {
+                context.N02().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f4LightStaccatoText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F4LightStacctao,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitF4EchoToggle([NotNull] MmlParser.F4EchoToggleContext context)
+        {
+            var f4EchoToggleText = context.GetText();
+            var hexCommandValue = context.NF4().GetText();
+            var values = new List<string>
+            {
+                context.N03().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f4EchoToggleText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F4LightStacctao,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitF4SNESSync([NotNull] MmlParser.F4SNESSyncContext context)
+        {
+            var f4SNESSyncText = context.GetText();
+            var hexCommandValue = context.NF4().GetText();
+            var values = new List<string>
+            {
+                context.N05().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f4SNESSyncText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F4SNESSync,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitF4EnableYoshiDrums([NotNull] MmlParser.F4EnableYoshiDrumsContext context)
+        {
+            var f4EnableYoshiDrumsText = context.GetText();
+            var hexCommandValue = context.NF4().GetText();
+            var values = new List<string>
+            {
+                context.N06().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f4EnableYoshiDrumsText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F4EnableYoshiDrums,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitF4TempoHikeOff([NotNull] MmlParser.F4TempoHikeOffContext context)
+        {
+            var f4TempoHikeOffText = context.GetText();
+            var hexCommandValue = context.NF4().GetText();
+            var values = new List<string>
+            {
+                context.N07().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f4TempoHikeOffText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F4TempoHikeOff,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitF4NSPCVelocityTable([NotNull] MmlParser.F4NSPCVelocityTableContext context)
+        {
+            var f4NSPCVelocityTableText = context.GetText();
+            var hexCommandValue = context.NF4().GetText();
+            var values = new List<string>
+            {
+                context.N08().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f4NSPCVelocityTableText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F4NSPCVelocityTable,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitF4RestoreInstrument([NotNull] MmlParser.F4RestoreInstrumentContext context)
+        {
+            var f4RestoreInstrumentText = context.GetText();
+            var hexCommandValue = context.NF4().GetText();
+            var values = new List<string>
+            {
+                context.N09().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f4RestoreInstrumentText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F4RestoreInstrument,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitF5FIRFilter([NotNull] MmlParser.F5FIRFilterContext context)
+        {
+            var f5FIRFilterText = context.GetText();
+            var hexCommandValue = context.NF5().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f5FIRFilterText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F5FIRFilter,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitF6DSPWrite([NotNull] MmlParser.F6DSPWriteContext context)
+        {
+            var f6DSPWriteText = context.GetText();
+            var hexCommandValue = context.NF6().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f6DSPWriteText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F6DSPWrite,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitF8EnableNoise([NotNull] MmlParser.F8EnableNoiseContext context)
+        {
+            var f8EnableNoiseText = context.GetText();
+            var hexCommandValue = context.NF8().GetText();
+            var values = new List<string>
+            {
+                context.hexNumber().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f8EnableNoiseText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F8EnableNoise,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitF9DataSend([NotNull] MmlParser.F9DataSendContext context)
+        {
+            var f9DataSendText = context.GetText();
+            var hexCommandValue = context.NF9().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = f9DataSendText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.F9DataSend,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitFAPitchModulation([NotNull] MmlParser.FAPitchModulationContext context)
+        {
+            var faPitchModulationText = context.GetText();
+            var hexCommandValue = context.NFA().GetText();
+            var values = new List<string>
+            {
+                context.N00().GetText(),
+                context.hexNumber().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = faPitchModulationText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.FAPitchModulation,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitFACurrentChannelGain([NotNull] MmlParser.FACurrentChannelGainContext context)
+        {
+            var faCurrentChannelGainText = context.GetText();
+            var hexCommandValue = context.NFA().GetText();
+            var values = new List<string>
+            {
+                context.N01().GetText(),
+                context.hexNumber().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = faCurrentChannelGainText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.FACurrentChannelGain,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitFASemitoneTune([NotNull] MmlParser.FASemitoneTuneContext context)
+        {
+            var faSemitoneTuneText = context.GetText();
+            var hexCommandValue = context.NFA().GetText();
+            var values = new List<string>
+            {
+                context.N02().GetText(),
+                context.hexNumber().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = faSemitoneTuneText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.FASemitoneTune,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitFAAmplify([NotNull] MmlParser.FAAmplifyContext context)
+        {
+            var faAmplifyText = context.GetText();
+            var hexCommandValue = context.NFA().GetText();
+            var values = new List<string>
+            {
+                context.N03().GetText(),
+                context.hexNumber().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = faAmplifyText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.FAAmplify,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitFAEchoBufferReserve([NotNull] MmlParser.FAEchoBufferReserveContext context)
+        {
+            var faEchoBufferReserveText = context.GetText();
+            var hexCommandValue = context.NFA().GetText();
+            var values = new List<string>
+            {
+                context.N04().GetText(),
+                context.hexNumber().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = faEchoBufferReserveText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.FAEchoBufferReserve,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitFAHotPatchPreset([NotNull] MmlParser.FAHotPatchPresetContext context)
+        {
+            var faHotPatchPresetText = context.GetText();
+            var hexCommandValue = context.NFA().GetText();
+            var values = new List<string>
+            {
+                context.N7F().GetText(),
+                context.hexNumber().GetText(),
+            };
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = faHotPatchPresetText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.FAHotPatchPreset,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitFAHotPatchToggleBits([NotNull] MmlParser.FAHotPatchToggleBitsContext context)
+        {
+            var faHotPatchToggleBitsText = context.GetText();
+            var hexCommandValue = context.NFA().GetText();
+            var values = new List<string>
+            {
+                context.NFE().GetText(),
+            };
+            var daatValues = context.hexNumber().Select(h => h.GetText()).ToList();
+            values.AddRange(daatValues);
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = faHotPatchToggleBitsText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.FAHotPatchToggleBits,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitFBTrill([NotNull] MmlParser.FBTrillContext context)
+        {
+            var fbTrillText = context.GetText();
+            var hexCommandValue = context.NFB().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = fbTrillText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.FBTrill,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitFBGlissando([NotNull] MmlParser.FBGlissandoContext context)
+        {
+            var fbGlissandoText = context.GetText();
+            var hexCommandValue = context.NFB().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = fbGlissandoText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.FBGlissando,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitFBEnableArgeggio([NotNull] MmlParser.FBEnableArgeggioContext context)
+        {
+            var fbArgeggioText = context.GetText();
+            var hexCommandValue = context.NFB().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = fbArgeggioText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.FBEnableArgeggio,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitFCHexRemoteCommand([NotNull] MmlParser.FCHexRemoteCommandContext context)
+        {
+            var fcHexRemoteCommandText = context.GetText();
+            var hexCommandValue = context.NFC().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = fcHexRemoteCommandText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.FCHexRemoteCommand,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitFCHexRemoteGain([NotNull] MmlParser.FCHexRemoteGainContext context)
+        {
+            var fcHexRemoteGainText = context.GetText();
+            var hexCommandValue = context.NFC().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = fcHexRemoteGainText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.FCHexRemoteGain,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+            };
+        }
+
+        public override ISongNode VisitFdTremoloOff([NotNull] MmlParser.FdTremoloOffContext context)
+        {
+            var fdTremoloOffText = context.GetText();
+            var hexCommandValue = context.NFD().GetText();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = fdTremoloOffText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.FDTremoloOff,
+                HexCommand = hexCommandValue,
+            };
+        }
+
+        public override ISongNode VisitFePitchEnvelopeOff([NotNull] MmlParser.FePitchEnvelopeOffContext context)
+        {
+            var fePitchEnvelopeText = context.GetText();
+            var hexCommandValue = context.NFE().GetText();
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = fePitchEnvelopeText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.FDTremoloOff,
+                HexCommand = hexCommandValue,
+            };
+        }
+
+        #endregion
+
     }
 }

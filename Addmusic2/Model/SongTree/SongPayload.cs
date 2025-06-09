@@ -297,9 +297,11 @@ namespace Addmusic2.Model.SongTree
 
     internal class PanPayload : ISongNodePayload
     {
+        public bool HexSourced { get; set; } = false;
         public int PanPosition { get; set; }
         public int SurroundSoundLeft { get; set; } = -1;
         public int SurroundSoundRight { get; set; } = -1;
+        public int PanDuration { get; set; } = -1;
 
         public PanPayload() { }
 
@@ -549,8 +551,10 @@ namespace Addmusic2.Model.SongTree
 
     internal class SampleLoadPayload : ISongNodePayload
     {
+        public bool HexSourced { get; set; } = false;
         public string SampleName { get; set; }
         public string TuningValue { get; set; }
+        public int SampleNumber { get; set; } = -1;
 
         public SampleLoadPayload() { }
 

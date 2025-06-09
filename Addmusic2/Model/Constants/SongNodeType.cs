@@ -14,6 +14,7 @@ namespace Addmusic2.Model.Constants
         Composite,
         Directive,
         Loop,
+        Hex,
         Empty,
         // Atomic
         Note,

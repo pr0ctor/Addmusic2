@@ -36,20 +36,26 @@ public partial class MmlParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		POUND=1, DOLLAR=2, COMMAT=3, AMPER=4, BANG=5, STAR=6, LBRACE=7, RBRACE=8, 
-		LPAREN=9, RPAREN=10, LBRACK=11, RBRACK=12, L2BRACK=13, R2BRACK=14, DQUOTE=15, 
-		SQUOTE=16, SHARP=17, FLAT=18, DOT=19, TIE=20, GT=21, LT=22, COMMA=23, 
-		FSLASH=24, QMARK=25, EQUAL=26, SEMICOLON=27, NUMBERS=28, UNUMBERS=29, 
-		REMOTECODENUMBERS=30, ReplacementText=31, StringLiteral=32, Note=33, Rest=34, 
-		Octave=35, Noise=36, Tempo=37, Volume=38, Tune=39, Length=40, Quantization=41, 
-		GlobalVolume=42, Pan=43, Vibrato=44, Tie=45, Question=46, LoopName=47, 
-		RemoteCodeName=48, StopRemoteCode=49, CallRemoteCode=50, CallPreviousLoop=51, 
-		LoadSample=52, AmkV1=53, HexDigits=54, HexNumber=55, Instrument=56, Amk=57, 
-		Amm=58, Am4=59, Samples=60, Instruments=61, Spc=62, SpcAuthor=63, SpcGame=64, 
-		SpcComment=65, SpcTitle=66, SpcLength=67, Pad=68, Path=69, Halvetempo=70, 
-		Option=71, Tempoimmunity=72, Dividetempo=73, Smwvtable=74, Nspcvtable=75, 
-		Noloop=76, Amk109hotpatch=77, Channel=78, SampleOptimization=79, WHITESPACE=80, 
-		Comment=81;
+		POUND=1, DOLLAR=2, COMMAT=3, AMPER=4, BANG=5, PERCENT=6, STAR=7, LBRACE=8, 
+		RBRACE=9, LPAREN=10, RPAREN=11, LBRACK=12, RBRACK=13, L2BRACK=14, R2BRACK=15, 
+		DQUOTE=16, SQUOTE=17, SHARP=18, FLAT=19, DOT=20, TIE=21, GT=22, LT=23, 
+		COMMA=24, FSLASH=25, QMARK=26, EQUAL=27, SEMICOLON=28, ReplacementText=29, 
+		StringLiteral=30, PercentNumber=31, Note=32, Rest=33, Octave=34, Noise=35, 
+		Tempo=36, Volume=37, Tune=38, Length=39, Quantization=40, GlobalVolume=41, 
+		Pan=42, Vibrato=43, Tie=44, Question=45, Instrument=46, LoopName=47, RemoteCodeName=48, 
+		StopRemoteCode=49, CallRemoteCode=50, CallPreviousLoop=51, LoadSample=52, 
+		AmkV1=53, Amk=54, Amm=55, Am4=56, Samples=57, Instruments=58, Spc=59, 
+		SpcAuthor=60, SpcGame=61, SpcComment=62, SpcTitle=63, SpcLength=64, Pad=65, 
+		Path=66, Halvetempo=67, Option=68, Louder=69, Tempoimmunity=70, Dividetempo=71, 
+		Smwvtable=72, Nspcvtable=73, Noloop=74, Amk109hotpatch=75, Channel=76, 
+		SampleOptimization=77, N00=78, N01=79, N02=80, N03=81, N04=82, N05=83, 
+		N06=84, N07=85, N08=86, N09=87, N7F=88, N80=89, N81=90, NFE=91, NDA=92, 
+		NDB=93, NDC=94, NDD=95, NDE=96, NDF=97, NE0=98, NE1=99, NE2=100, NE3=101, 
+		NE4=102, NE5=103, NE6=104, NE7=105, NE8=106, NE9=107, NEA=108, NEB=109, 
+		NEC=110, NED=111, NEE=112, NEF=113, NF0=114, NF1=115, NF2=116, NF3=117, 
+		NF4=118, NF5=119, NF6=120, NF7=121, NF8=122, NF9=123, NFA=124, NFB=125, 
+		NFC=126, NFD=127, NUMBERS=128, UNUMBERS=129, HexDigits=130, HexNumber=131, 
+		WHITESPACE=132, Comment=133;
 	public const int
 		RULE_song = 0, RULE_songElement = 1, RULE_specialDirective = 2, RULE_samples = 3, 
 		RULE_samplesList = 4, RULE_instruments = 5, RULE_instrumentsList = 6, 
@@ -58,50 +64,78 @@ public partial class MmlParser : Parser {
 		RULE_am4 = 16, RULE_amkVersion = 17, RULE_soundChannel = 18, RULE_introEnd = 19, 
 		RULE_channelContents = 20, RULE_atomics = 21, RULE_note = 22, RULE_rest = 23, 
 		RULE_octave = 24, RULE_lowerOctave = 25, RULE_raiseOctave = 26, RULE_noiseNote = 27, 
-		RULE_volume = 28, RULE_tune = 29, RULE_quantization = 30, RULE_pan = 31, 
-		RULE_vibrato = 32, RULE_pitchslide = 33, RULE_triplet = 34, RULE_defaultLength = 35, 
-		RULE_globalVolume = 36, RULE_tempo = 37, RULE_instrument = 38, RULE_nakedTie = 39, 
+		RULE_volumeCommand = 28, RULE_tuneCommand = 29, RULE_quantization = 30, 
+		RULE_panCommand = 31, RULE_vibratoCommand = 32, RULE_pitchslide = 33, 
+		RULE_triplet = 34, RULE_defaultLength = 35, RULE_globalVolumeCommand = 36, 
+		RULE_tempoCommand = 37, RULE_instrumentCommand = 38, RULE_nakedTie = 39, 
 		RULE_qmark = 40, RULE_loopers = 41, RULE_logicControls = 42, RULE_logicCalls = 43, 
 		RULE_remoteLogicCalls = 44, RULE_superLoop = 45, RULE_superLoopContents = 46, 
 		RULE_simpleLoop = 47, RULE_simpleLoopContents = 48, RULE_terminalSuperLoop = 49, 
 		RULE_terminalSuperLoopContents = 50, RULE_terminalSimpleLoop = 51, RULE_terminalSimpleLoopContents = 52, 
 		RULE_remoteCode = 53, RULE_remoteCodeContents = 54, RULE_callLoop = 55, 
 		RULE_callRemoteCode = 56, RULE_stopRemoteCode = 57, RULE_callPreviousLoop = 58, 
-		RULE_noloopCommand = 59, RULE_sampleLoad = 60, RULE_replacements = 61, 
-		RULE_hexNumber = 62;
+		RULE_noloopCommand = 59, RULE_sampleLoadCommand = 60, RULE_replacements = 61, 
+		RULE_globalHexCommands = 62, RULE_channelHexCommands = 63, RULE_daInstrument = 64, 
+		RULE_dbPan = 65, RULE_dcPanFade = 66, RULE_ddPitchBlendCommand = 67, RULE_ddPitchBlendItems = 68, 
+		RULE_deVibratoStart = 69, RULE_eaVibratoFade = 70, RULE_dfVibratoEnd = 71, 
+		RULE_e0GlobalVolume = 72, RULE_e1GlobalVolumeFade = 73, RULE_e2Tempo = 74, 
+		RULE_e3TempoFade = 75, RULE_e4GlobalTranspose = 76, RULE_e5Tremolo = 77, 
+		RULE_e6SubloopStart = 78, RULE_e6SubloopEnd = 79, RULE_e7Volume = 80, 
+		RULE_e8VolumeFade = 81, RULE_ebPitchEnvelopeRelease = 82, RULE_ecPitchEnvelopeAttack = 83, 
+		RULE_edCustomADSROrGain = 84, RULE_eeTuneChannel = 85, RULE_efEcho1 = 86, 
+		RULE_f0EchoOff = 87, RULE_f1Echo2 = 88, RULE_f2EchoFade = 89, RULE_f3SampleLoad = 90, 
+		RULE_f4GlobalItems = 91, RULE_f4ChannelItems = 92, RULE_f5FIRFilter = 93, 
+		RULE_f6DSPWrite = 94, RULE_f8EnableNoise = 95, RULE_f9DataSend = 96, RULE_faChannelItems = 97, 
+		RULE_faGlobalItems = 98, RULE_fbItems = 99, RULE_fcItems = 100, RULE_fdTremoloOff = 101, 
+		RULE_fePitchEnvelopeOff = 102, RULE_hexNumber = 103;
 	public static readonly string[] ruleNames = {
 		"song", "songElement", "specialDirective", "samples", "samplesList", "instruments", 
 		"instrumentsList", "spc", "spcList", "pad", "path", "halvetempo", "option", 
 		"optionItem", "amk", "amm", "am4", "amkVersion", "soundChannel", "introEnd", 
 		"channelContents", "atomics", "note", "rest", "octave", "lowerOctave", 
-		"raiseOctave", "noiseNote", "volume", "tune", "quantization", "pan", "vibrato", 
-		"pitchslide", "triplet", "defaultLength", "globalVolume", "tempo", "instrument", 
-		"nakedTie", "qmark", "loopers", "logicControls", "logicCalls", "remoteLogicCalls", 
+		"raiseOctave", "noiseNote", "volumeCommand", "tuneCommand", "quantization", 
+		"panCommand", "vibratoCommand", "pitchslide", "triplet", "defaultLength", 
+		"globalVolumeCommand", "tempoCommand", "instrumentCommand", "nakedTie", 
+		"qmark", "loopers", "logicControls", "logicCalls", "remoteLogicCalls", 
 		"superLoop", "superLoopContents", "simpleLoop", "simpleLoopContents", 
 		"terminalSuperLoop", "terminalSuperLoopContents", "terminalSimpleLoop", 
 		"terminalSimpleLoopContents", "remoteCode", "remoteCodeContents", "callLoop", 
 		"callRemoteCode", "stopRemoteCode", "callPreviousLoop", "noloopCommand", 
-		"sampleLoad", "replacements", "hexNumber"
+		"sampleLoadCommand", "replacements", "globalHexCommands", "channelHexCommands", 
+		"daInstrument", "dbPan", "dcPanFade", "ddPitchBlendCommand", "ddPitchBlendItems", 
+		"deVibratoStart", "eaVibratoFade", "dfVibratoEnd", "e0GlobalVolume", "e1GlobalVolumeFade", 
+		"e2Tempo", "e3TempoFade", "e4GlobalTranspose", "e5Tremolo", "e6SubloopStart", 
+		"e6SubloopEnd", "e7Volume", "e8VolumeFade", "ebPitchEnvelopeRelease", 
+		"ecPitchEnvelopeAttack", "edCustomADSROrGain", "eeTuneChannel", "efEcho1", 
+		"f0EchoOff", "f1Echo2", "f2EchoFade", "f3SampleLoad", "f4GlobalItems", 
+		"f4ChannelItems", "f5FIRFilter", "f6DSPWrite", "f8EnableNoise", "f9DataSend", 
+		"faChannelItems", "faGlobalItems", "fbItems", "fcItems", "fdTremoloOff", 
+		"fePitchEnvelopeOff", "hexNumber"
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'#'", "'$'", "'@'", "'&'", "'!'", "'*'", "'{'", "'}'", "'('", "')'", 
-		"'['", "']'", "'[['", "']]'", "'\"'", "'''", "'+'", "'-'", "'.'", "'^'", 
-		"'>'", "'<'", "','", "'/'", "'?'", "'='", "';'"
+		null, "'#'", "'$'", "'@'", "'&'", "'!'", "'%'", "'*'", "'{'", "'}'", "'('", 
+		"')'", "'['", "']'", "'[['", "']]'", "'\"'", "'''", "'+'", "'-'", "'.'", 
+		"'^'", "'>'", "'<'", "','", "'/'", "'?'", "'='", "';'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "POUND", "DOLLAR", "COMMAT", "AMPER", "BANG", "STAR", "LBRACE", 
-		"RBRACE", "LPAREN", "RPAREN", "LBRACK", "RBRACK", "L2BRACK", "R2BRACK", 
-		"DQUOTE", "SQUOTE", "SHARP", "FLAT", "DOT", "TIE", "GT", "LT", "COMMA", 
-		"FSLASH", "QMARK", "EQUAL", "SEMICOLON", "NUMBERS", "UNUMBERS", "REMOTECODENUMBERS", 
-		"ReplacementText", "StringLiteral", "Note", "Rest", "Octave", "Noise", 
-		"Tempo", "Volume", "Tune", "Length", "Quantization", "GlobalVolume", "Pan", 
-		"Vibrato", "Tie", "Question", "LoopName", "RemoteCodeName", "StopRemoteCode", 
-		"CallRemoteCode", "CallPreviousLoop", "LoadSample", "AmkV1", "HexDigits", 
-		"HexNumber", "Instrument", "Amk", "Amm", "Am4", "Samples", "Instruments", 
-		"Spc", "SpcAuthor", "SpcGame", "SpcComment", "SpcTitle", "SpcLength", 
-		"Pad", "Path", "Halvetempo", "Option", "Tempoimmunity", "Dividetempo", 
-		"Smwvtable", "Nspcvtable", "Noloop", "Amk109hotpatch", "Channel", "SampleOptimization", 
+		null, "POUND", "DOLLAR", "COMMAT", "AMPER", "BANG", "PERCENT", "STAR", 
+		"LBRACE", "RBRACE", "LPAREN", "RPAREN", "LBRACK", "RBRACK", "L2BRACK", 
+		"R2BRACK", "DQUOTE", "SQUOTE", "SHARP", "FLAT", "DOT", "TIE", "GT", "LT", 
+		"COMMA", "FSLASH", "QMARK", "EQUAL", "SEMICOLON", "ReplacementText", "StringLiteral", 
+		"PercentNumber", "Note", "Rest", "Octave", "Noise", "Tempo", "Volume", 
+		"Tune", "Length", "Quantization", "GlobalVolume", "Pan", "Vibrato", "Tie", 
+		"Question", "Instrument", "LoopName", "RemoteCodeName", "StopRemoteCode", 
+		"CallRemoteCode", "CallPreviousLoop", "LoadSample", "AmkV1", "Amk", "Amm", 
+		"Am4", "Samples", "Instruments", "Spc", "SpcAuthor", "SpcGame", "SpcComment", 
+		"SpcTitle", "SpcLength", "Pad", "Path", "Halvetempo", "Option", "Louder", 
+		"Tempoimmunity", "Dividetempo", "Smwvtable", "Nspcvtable", "Noloop", "Amk109hotpatch", 
+		"Channel", "SampleOptimization", "N00", "N01", "N02", "N03", "N04", "N05", 
+		"N06", "N07", "N08", "N09", "N7F", "N80", "N81", "NFE", "NDA", "NDB", 
+		"NDC", "NDD", "NDE", "NDF", "NE0", "NE1", "NE2", "NE3", "NE4", "NE5", 
+		"NE6", "NE7", "NE8", "NE9", "NEA", "NEB", "NEC", "NED", "NEE", "NEF", 
+		"NF0", "NF1", "NF2", "NF3", "NF4", "NF5", "NF6", "NF7", "NF8", "NF9", 
+		"NFA", "NFB", "NFC", "NFD", "NUMBERS", "UNUMBERS", "HexDigits", "HexNumber", 
 		"WHITESPACE", "Comment"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
@@ -173,7 +207,7 @@ public partial class MmlParser : Parser {
 		EnterRule(_localctx, 0, RULE_song);
 		int _la;
 		try {
-			State = 132;
+			State = 214;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case FSLASH:
@@ -185,7 +219,6 @@ public partial class MmlParser : Parser {
 			case GlobalVolume:
 			case Question:
 			case RemoteCodeName:
-			case HexNumber:
 			case Amk:
 			case Amm:
 			case Am4:
@@ -197,28 +230,79 @@ public partial class MmlParser : Parser {
 			case Halvetempo:
 			case Option:
 			case Channel:
+			case N00:
+			case N01:
+			case N02:
+			case N03:
+			case N04:
+			case N05:
+			case N06:
+			case N07:
+			case N08:
+			case N09:
+			case N7F:
+			case N80:
+			case N81:
+			case NFE:
+			case NDA:
+			case NDB:
+			case NDC:
+			case NDD:
+			case NDE:
+			case NDF:
+			case NE0:
+			case NE1:
+			case NE2:
+			case NE3:
+			case NE4:
+			case NE5:
+			case NE6:
+			case NE7:
+			case NE8:
+			case NE9:
+			case NEA:
+			case NEB:
+			case NEC:
+			case NED:
+			case NEE:
+			case NEF:
+			case NF0:
+			case NF1:
+			case NF2:
+			case NF3:
+			case NF4:
+			case NF5:
+			case NF6:
+			case NF7:
+			case NF8:
+			case NF9:
+			case NFA:
+			case NFB:
+			case NFC:
+			case NFD:
+			case HexNumber:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 127;
+				State = 209;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				do {
 					{
 					{
-					State = 126;
+					State = 208;
 					songElement();
 					}
 					}
-					State = 129;
+					State = 211;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
-				} while ( ((((_la - 24)) & ~0x3f) == 0 && ((1L << (_la - 24)) & 18278824634818947L) != 0) );
+				} while ( ((((_la - 25)) & ~0x3f) == 0 && ((1L << (_la - 25)) & -6738872934250445L) != 0) || ((((_la - 89)) & ~0x3f) == 0 && ((1L << (_la - 89)) & 4947802324991L) != 0) );
 				}
 				break;
 			case Eof:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 131;
+				State = 213;
 				Match(Eof);
 				}
 				break;
@@ -250,11 +334,11 @@ public partial class MmlParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public DefaultLengthContext defaultLength() {
 			return GetRuleContext<DefaultLengthContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public GlobalVolumeContext globalVolume() {
-			return GetRuleContext<GlobalVolumeContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public GlobalVolumeCommandContext globalVolumeCommand() {
+			return GetRuleContext<GlobalVolumeCommandContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public TempoContext tempo() {
-			return GetRuleContext<TempoContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public TempoCommandContext tempoCommand() {
+			return GetRuleContext<TempoCommandContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ReplacementsContext replacements() {
 			return GetRuleContext<ReplacementsContext>(0);
@@ -263,6 +347,9 @@ public partial class MmlParser : Parser {
 			return GetRuleContext<NoloopCommandContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode StringLiteral() { return GetToken(MmlParser.StringLiteral, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public GlobalHexCommandsContext globalHexCommands() {
+			return GetRuleContext<GlobalHexCommandsContext>(0);
+		}
 		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
 			return GetRuleContext<HexNumberContext>(0);
 		}
@@ -300,97 +387,104 @@ public partial class MmlParser : Parser {
 		SongElementContext _localctx = new SongElementContext(Context, State);
 		EnterRule(_localctx, 2, RULE_songElement);
 		try {
-			State = 147;
+			State = 230;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,2,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 134;
+				State = 216;
 				specialDirective();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 135;
+				State = 217;
 				soundChannel();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 136;
+				State = 218;
 				remoteCode();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 137;
+				State = 219;
 				defaultLength();
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 138;
-				globalVolume();
+				State = 220;
+				globalVolumeCommand();
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 139;
-				tempo();
+				State = 221;
+				tempoCommand();
 				}
 				break;
 			case 7:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 140;
+				State = 222;
 				replacements();
 				}
 				break;
 			case 8:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 141;
+				State = 223;
 				noloopCommand();
 				}
 				break;
 			case 9:
 				EnterOuterAlt(_localctx, 9);
 				{
-				State = 142;
+				State = 224;
 				Match(StringLiteral);
 				}
 				break;
 			case 10:
 				EnterOuterAlt(_localctx, 10);
 				{
-				State = 143;
-				hexNumber();
+				State = 225;
+				globalHexCommands();
 				}
 				break;
 			case 11:
 				EnterOuterAlt(_localctx, 11);
 				{
-				State = 144;
-				introEnd();
+				State = 226;
+				hexNumber();
 				}
 				break;
 			case 12:
 				EnterOuterAlt(_localctx, 12);
 				{
-				State = 145;
-				remoteCode();
+				State = 227;
+				introEnd();
 				}
 				break;
 			case 13:
 				EnterOuterAlt(_localctx, 13);
 				{
-				State = 146;
+				State = 228;
+				remoteCode();
+				}
+				break;
+			case 14:
+				EnterOuterAlt(_localctx, 14);
+				{
+				State = 229;
 				qmark();
 				}
 				break;
@@ -460,7 +554,7 @@ public partial class MmlParser : Parser {
 		SpecialDirectiveContext _localctx = new SpecialDirectiveContext(Context, State);
 		EnterRule(_localctx, 4, RULE_specialDirective);
 		try {
-			State = 157;
+			State = 240;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Amk:
@@ -468,56 +562,56 @@ public partial class MmlParser : Parser {
 			case Am4:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 149;
+				State = 232;
 				amk();
 				}
 				break;
 			case Spc:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 150;
+				State = 233;
 				spc();
 				}
 				break;
 			case Samples:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 151;
+				State = 234;
 				samples();
 				}
 				break;
 			case Instruments:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 152;
+				State = 235;
 				instruments();
 				}
 				break;
 			case Path:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 153;
+				State = 236;
 				path();
 				}
 				break;
 			case Pad:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 154;
+				State = 237;
 				pad();
 				}
 				break;
 			case Halvetempo:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 155;
+				State = 238;
 				halvetempo();
 				}
 				break;
 			case Option:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 156;
+				State = 239;
 				option();
 				}
 				break;
@@ -573,13 +667,13 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 159;
+			State = 242;
 			Match(Samples);
-			State = 160;
+			State = 243;
 			Match(LBRACE);
-			State = 161;
+			State = 244;
 			samplesList();
-			State = 162;
+			State = 245;
 			Match(RBRACE);
 			}
 		}
@@ -631,27 +725,27 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 165;
+			State = 248;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==SampleOptimization) {
 				{
-				State = 164;
+				State = 247;
 				Match(SampleOptimization);
 				}
 			}
 
-			State = 170;
+			State = 253;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==StringLiteral) {
 				{
 				{
-				State = 167;
+				State = 250;
 				Match(StringLiteral);
 				}
 				}
-				State = 172;
+				State = 255;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -709,25 +803,25 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 173;
+			State = 256;
 			Match(Instruments);
-			State = 174;
+			State = 257;
 			Match(LBRACE);
-			State = 178;
+			State = 261;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 72057667052371968L) != 0)) {
+			while (((((_la - 30)) & ~0x3f) == 0 && ((1L << (_la - 30)) & 4611686018427453473L) != 0)) {
 				{
 				{
-				State = 175;
+				State = 258;
 				instrumentsList();
 				}
 				}
-				State = 180;
+				State = 263;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 181;
+			State = 264;
 			Match(RBRACE);
 			}
 		}
@@ -755,12 +849,14 @@ public partial class MmlParser : Parser {
 		}
 	}
 	public partial class InstrumentListItemContext : InstrumentsListContext {
-		[System.Diagnostics.DebuggerNonUserCode] public InstrumentContext instrument() {
-			return GetRuleContext<InstrumentContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public InstrumentCommandContext instrumentCommand() {
+			return GetRuleContext<InstrumentCommandContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] HexNumber() { return GetTokens(MmlParser.HexNumber); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HexNumber(int i) {
-			return GetToken(MmlParser.HexNumber, i);
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
 		}
 		public InstrumentListItemContext(InstrumentsListContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
@@ -782,9 +878,11 @@ public partial class MmlParser : Parser {
 	}
 	public partial class NamedInstrumentListItemContext : InstrumentsListContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode StringLiteral() { return GetToken(MmlParser.StringLiteral, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] HexNumber() { return GetTokens(MmlParser.HexNumber); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HexNumber(int i) {
-			return GetToken(MmlParser.HexNumber, i);
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
 		}
 		public NamedInstrumentListItemContext(InstrumentsListContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
@@ -808,9 +906,11 @@ public partial class MmlParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public NoiseNoteContext noiseNote() {
 			return GetRuleContext<NoiseNoteContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] HexNumber() { return GetTokens(MmlParser.HexNumber); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HexNumber(int i) {
-			return GetToken(MmlParser.HexNumber, i);
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
 		}
 		public NoiseInstrumentListItemContext(InstrumentsListContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
@@ -835,75 +935,94 @@ public partial class MmlParser : Parser {
 	public InstrumentsListContext instrumentsList() {
 		InstrumentsListContext _localctx = new InstrumentsListContext(Context, State);
 		EnterRule(_localctx, 12, RULE_instrumentsList);
-		int _la;
 		try {
-			State = 201;
+			int _alt;
+			State = 284;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case StringLiteral:
 				_localctx = new NamedInstrumentListItemContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 183;
+				State = 266;
 				Match(StringLiteral);
-				State = 185;
+				State = 268;
 				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
+				_alt = 1;
 				do {
-					{
-					{
-					State = 184;
-					Match(HexNumber);
+					switch (_alt) {
+					case 1:
+						{
+						{
+						State = 267;
+						hexNumber();
+						}
+						}
+						break;
+					default:
+						throw new NoViableAltException(this);
 					}
-					}
-					State = 187;
+					State = 270;
 					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				} while ( _la==HexNumber );
+					_alt = Interpreter.AdaptivePredict(TokenStream,7,Context);
+				} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
 				}
 				break;
 			case Instrument:
+			case NDA:
 				_localctx = new InstrumentListItemContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 189;
-				instrument();
-				State = 191;
+				State = 272;
+				instrumentCommand();
+				State = 274;
 				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
+				_alt = 1;
 				do {
-					{
-					{
-					State = 190;
-					Match(HexNumber);
+					switch (_alt) {
+					case 1:
+						{
+						{
+						State = 273;
+						hexNumber();
+						}
+						}
+						break;
+					default:
+						throw new NoViableAltException(this);
 					}
-					}
-					State = 193;
+					State = 276;
 					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				} while ( _la==HexNumber );
+					_alt = Interpreter.AdaptivePredict(TokenStream,8,Context);
+				} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
 				}
 				break;
 			case Noise:
 				_localctx = new NoiseInstrumentListItemContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 195;
+				State = 278;
 				noiseNote();
-				State = 197;
+				State = 280;
 				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
+				_alt = 1;
 				do {
-					{
-					{
-					State = 196;
-					Match(HexNumber);
+					switch (_alt) {
+					case 1:
+						{
+						{
+						State = 279;
+						hexNumber();
+						}
+						}
+						break;
+					default:
+						throw new NoViableAltException(this);
 					}
-					}
-					State = 199;
+					State = 282;
 					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				} while ( _la==HexNumber );
+					_alt = Interpreter.AdaptivePredict(TokenStream,9,Context);
+				} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
 				}
 				break;
 			default:
@@ -962,25 +1081,25 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 203;
+			State = 286;
 			Match(Spc);
-			State = 204;
+			State = 287;
 			Match(LBRACE);
-			State = 208;
+			State = 291;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while (((((_la - 63)) & ~0x3f) == 0 && ((1L << (_la - 63)) & 31L) != 0)) {
+			while (((((_la - 60)) & ~0x3f) == 0 && ((1L << (_la - 60)) & 31L) != 0)) {
 				{
 				{
-				State = 205;
+				State = 288;
 				spcList();
 				}
 				}
-				State = 210;
+				State = 293;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 211;
+			State = 294;
 			Match(RBRACE);
 			}
 		}
@@ -1030,51 +1149,51 @@ public partial class MmlParser : Parser {
 		SpcListContext _localctx = new SpcListContext(Context, State);
 		EnterRule(_localctx, 16, RULE_spcList);
 		try {
-			State = 223;
+			State = 306;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case SpcAuthor:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 213;
+				State = 296;
 				Match(SpcAuthor);
-				State = 214;
+				State = 297;
 				Match(StringLiteral);
 				}
 				break;
 			case SpcGame:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 215;
+				State = 298;
 				Match(SpcGame);
-				State = 216;
+				State = 299;
 				Match(StringLiteral);
 				}
 				break;
 			case SpcComment:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 217;
+				State = 300;
 				Match(SpcComment);
-				State = 218;
+				State = 301;
 				Match(StringLiteral);
 				}
 				break;
 			case SpcTitle:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 219;
+				State = 302;
 				Match(SpcTitle);
-				State = 220;
+				State = 303;
 				Match(StringLiteral);
 				}
 				break;
 			case SpcLength:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 221;
+				State = 304;
 				Match(SpcLength);
-				State = 222;
+				State = 305;
 				Match(StringLiteral);
 				}
 				break;
@@ -1095,7 +1214,9 @@ public partial class MmlParser : Parser {
 
 	public partial class PadContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Pad() { return GetToken(MmlParser.Pad, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HexNumber() { return GetToken(MmlParser.HexNumber, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
 		public PadContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -1126,10 +1247,10 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 225;
+			State = 308;
 			Match(Pad);
-			State = 226;
-			Match(HexNumber);
+			State = 309;
+			hexNumber();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1176,9 +1297,9 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 228;
+			State = 311;
 			Match(Path);
-			State = 229;
+			State = 312;
 			Match(StringLiteral);
 			}
 		}
@@ -1225,7 +1346,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 231;
+			State = 314;
 			Match(Halvetempo);
 			}
 		}
@@ -1314,34 +1435,34 @@ public partial class MmlParser : Parser {
 		EnterRule(_localctx, 24, RULE_option);
 		int _la;
 		try {
-			State = 245;
+			State = 328;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,14,Context) ) {
 			case 1:
 				_localctx = new OptionGroupContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 233;
+				State = 316;
 				Match(Option);
-				State = 234;
+				State = 317;
 				Match(LBRACE);
-				State = 239;
+				State = 322;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				while (_la==POUND) {
 					{
 					{
-					State = 235;
+					State = 318;
 					Match(POUND);
-					State = 236;
+					State = 319;
 					optionItem();
 					}
 					}
-					State = 241;
+					State = 324;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
-				State = 242;
+				State = 325;
 				Match(RBRACE);
 				}
 				break;
@@ -1349,9 +1470,9 @@ public partial class MmlParser : Parser {
 				_localctx = new SingleOptionContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 243;
+				State = 326;
 				Match(Option);
-				State = 244;
+				State = 327;
 				optionItem();
 				}
 				break;
@@ -1405,66 +1526,66 @@ public partial class MmlParser : Parser {
 		OptionItemContext _localctx = new OptionItemContext(Context, State);
 		EnterRule(_localctx, 26, RULE_optionItem);
 		try {
-			State = 257;
+			State = 340;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,15,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 247;
+				State = 330;
 				Match(Tempoimmunity);
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 248;
+				State = 331;
 				Match(Dividetempo);
-				State = 249;
+				State = 332;
 				Match(NUMBERS);
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 250;
+				State = 333;
 				Match(Smwvtable);
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 251;
+				State = 334;
 				Match(Nspcvtable);
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 252;
+				State = 335;
 				Match(Noloop);
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 253;
+				State = 336;
 				Match(Amk109hotpatch);
 				}
 				break;
 			case 7:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 254;
+				State = 337;
 				Match(StringLiteral);
-				State = 255;
+				State = 338;
 				Match(NUMBERS);
 				}
 				break;
 			case 8:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 256;
+				State = 339;
 				Match(StringLiteral);
 				}
 				break;
@@ -1566,16 +1687,16 @@ public partial class MmlParser : Parser {
 		AmkContext _localctx = new AmkContext(Context, State);
 		EnterRule(_localctx, 28, RULE_amk);
 		try {
-			State = 263;
+			State = 346;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Amk:
 				_localctx = new GeneralAmkVersionContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 259;
+				State = 342;
 				Match(Amk);
-				State = 260;
+				State = 343;
 				amkVersion();
 				}
 				break;
@@ -1583,7 +1704,7 @@ public partial class MmlParser : Parser {
 				_localctx = new AmmVersionContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 261;
+				State = 344;
 				amm();
 				}
 				break;
@@ -1591,7 +1712,7 @@ public partial class MmlParser : Parser {
 				_localctx = new Am4VersionContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 262;
+				State = 345;
 				am4();
 				}
 				break;
@@ -1642,7 +1763,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 265;
+			State = 348;
 			Match(Amm);
 			}
 		}
@@ -1689,7 +1810,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 267;
+			State = 350;
 			Match(Am4);
 			}
 		}
@@ -1738,9 +1859,9 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 269;
+			State = 352;
 			_la = TokenStream.LA(1);
-			if ( !(_la==NUMBERS || _la==AmkV1) ) {
+			if ( !(_la==AmkV1 || _la==NUMBERS) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -1799,21 +1920,21 @@ public partial class MmlParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 271;
+			State = 354;
 			Match(Channel);
-			State = 275;
+			State = 358;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,17,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					State = 272;
+					State = 355;
 					channelContents();
 					}
 					} 
 				}
-				State = 277;
+				State = 360;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,17,Context);
 			}
@@ -1862,7 +1983,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 278;
+			State = 361;
 			Match(FSLASH);
 			}
 		}
@@ -1884,10 +2005,15 @@ public partial class MmlParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public LoopersContext loopers() {
 			return GetRuleContext<LoopersContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public SampleLoadContext sampleLoad() {
-			return GetRuleContext<SampleLoadContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public SampleLoadCommandContext sampleLoadCommand() {
+			return GetRuleContext<SampleLoadCommandContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HexNumber() { return GetToken(MmlParser.HexNumber, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ChannelHexCommandsContext channelHexCommands() {
+			return GetRuleContext<ChannelHexCommandsContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
 		public ChannelContentsContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -1916,60 +2042,44 @@ public partial class MmlParser : Parser {
 		ChannelContentsContext _localctx = new ChannelContentsContext(Context, State);
 		EnterRule(_localctx, 40, RULE_channelContents);
 		try {
-			State = 284;
+			State = 368;
 			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case LBRACE:
-			case GT:
-			case LT:
-			case FSLASH:
-			case Note:
-			case Rest:
-			case Octave:
-			case Noise:
-			case Tempo:
-			case Volume:
-			case Tune:
-			case Quantization:
-			case Pan:
-			case Vibrato:
-			case Tie:
-			case Question:
-			case Instrument:
+			switch ( Interpreter.AdaptivePredict(TokenStream,18,Context) ) {
+			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 280;
+				State = 363;
 				atomics();
 				}
 				break;
-			case STAR:
-			case LBRACK:
-			case L2BRACK:
-			case LoopName:
-			case StopRemoteCode:
-			case CallRemoteCode:
+			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 281;
+				State = 364;
 				loopers();
 				}
 				break;
-			case LoadSample:
+			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 282;
-				sampleLoad();
+				State = 365;
+				sampleLoadCommand();
 				}
 				break;
-			case HexNumber:
+			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 283;
-				Match(HexNumber);
+				State = 366;
+				channelHexCommands();
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
+			case 5:
+				EnterOuterAlt(_localctx, 5);
+				{
+				State = 367;
+				hexNumber();
+				}
+				break;
 			}
 		}
 		catch (RecognitionException re) {
@@ -2008,26 +2118,26 @@ public partial class MmlParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public TripletContext triplet() {
 			return GetRuleContext<TripletContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public VolumeContext volume() {
-			return GetRuleContext<VolumeContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public VolumeCommandContext volumeCommand() {
+			return GetRuleContext<VolumeCommandContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public TuneContext tune() {
-			return GetRuleContext<TuneContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public TuneCommandContext tuneCommand() {
+			return GetRuleContext<TuneCommandContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public InstrumentContext instrument() {
-			return GetRuleContext<InstrumentContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public InstrumentCommandContext instrumentCommand() {
+			return GetRuleContext<InstrumentCommandContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public QuantizationContext quantization() {
 			return GetRuleContext<QuantizationContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public PanContext pan() {
-			return GetRuleContext<PanContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public PanCommandContext panCommand() {
+			return GetRuleContext<PanCommandContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public VibratoContext vibrato() {
-			return GetRuleContext<VibratoContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public VibratoCommandContext vibratoCommand() {
+			return GetRuleContext<VibratoCommandContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public TempoContext tempo() {
-			return GetRuleContext<TempoContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public TempoCommandContext tempoCommand() {
+			return GetRuleContext<TempoCommandContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public IntroEndContext introEnd() {
 			return GetRuleContext<IntroEndContext>(0);
@@ -2066,132 +2176,132 @@ public partial class MmlParser : Parser {
 		AtomicsContext _localctx = new AtomicsContext(Context, State);
 		EnterRule(_localctx, 42, RULE_atomics);
 		try {
-			State = 304;
+			State = 388;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,19,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 286;
+				State = 370;
 				pitchslide();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 287;
+				State = 371;
 				note();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 288;
+				State = 372;
 				rest();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 289;
+				State = 373;
 				octave();
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 290;
+				State = 374;
 				lowerOctave();
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 291;
+				State = 375;
 				raiseOctave();
 				}
 				break;
 			case 7:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 292;
+				State = 376;
 				noiseNote();
 				}
 				break;
 			case 8:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 293;
+				State = 377;
 				triplet();
 				}
 				break;
 			case 9:
 				EnterOuterAlt(_localctx, 9);
 				{
-				State = 294;
-				volume();
+				State = 378;
+				volumeCommand();
 				}
 				break;
 			case 10:
 				EnterOuterAlt(_localctx, 10);
 				{
-				State = 295;
-				tune();
+				State = 379;
+				tuneCommand();
 				}
 				break;
 			case 11:
 				EnterOuterAlt(_localctx, 11);
 				{
-				State = 296;
-				instrument();
+				State = 380;
+				instrumentCommand();
 				}
 				break;
 			case 12:
 				EnterOuterAlt(_localctx, 12);
 				{
-				State = 297;
+				State = 381;
 				quantization();
 				}
 				break;
 			case 13:
 				EnterOuterAlt(_localctx, 13);
 				{
-				State = 298;
-				pan();
+				State = 382;
+				panCommand();
 				}
 				break;
 			case 14:
 				EnterOuterAlt(_localctx, 14);
 				{
-				State = 299;
-				vibrato();
+				State = 383;
+				vibratoCommand();
 				}
 				break;
 			case 15:
 				EnterOuterAlt(_localctx, 15);
 				{
-				State = 300;
-				tempo();
+				State = 384;
+				tempoCommand();
 				}
 				break;
 			case 16:
 				EnterOuterAlt(_localctx, 16);
 				{
-				State = 301;
+				State = 385;
 				introEnd();
 				}
 				break;
 			case 17:
 				EnterOuterAlt(_localctx, 17);
 				{
-				State = 302;
+				State = 386;
 				nakedTie();
 				}
 				break;
 			case 18:
 				EnterOuterAlt(_localctx, 18);
 				{
-				State = 303;
+				State = 387;
 				qmark();
 				}
 				break;
@@ -2240,7 +2350,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 306;
+			State = 390;
 			Match(Note);
 			}
 		}
@@ -2287,7 +2397,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 308;
+			State = 392;
 			Match(Rest);
 			}
 		}
@@ -2334,7 +2444,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 310;
+			State = 394;
 			Match(Octave);
 			}
 		}
@@ -2381,7 +2491,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 312;
+			State = 396;
 			Match(LT);
 			}
 		}
@@ -2428,7 +2538,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 314;
+			State = 398;
 			Match(GT);
 			}
 		}
@@ -2475,7 +2585,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 316;
+			State = 400;
 			Match(Noise);
 			}
 		}
@@ -2490,13 +2600,46 @@ public partial class MmlParser : Parser {
 		return _localctx;
 	}
 
-	public partial class VolumeContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Volume() { return GetToken(MmlParser.Volume, 0); }
-		public VolumeContext(ParserRuleContext parent, int invokingState)
+	public partial class VolumeCommandContext : ParserRuleContext {
+		public VolumeCommandContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_volume; } }
+		public override int RuleIndex { get { return RULE_volumeCommand; } }
+	 
+		public VolumeCommandContext() { }
+		public virtual void CopyFrom(VolumeCommandContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class HexVolumeContext : VolumeCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public E7VolumeContext e7Volume() {
+			return GetRuleContext<E7VolumeContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public E8VolumeFadeContext e8VolumeFade() {
+			return GetRuleContext<E8VolumeFadeContext>(0);
+		}
+		public HexVolumeContext(VolumeCommandContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterHexVolume(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitHexVolume(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitHexVolume(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class VolumeContext : VolumeCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Volume() { return GetToken(MmlParser.Volume, 0); }
+		public VolumeContext(VolumeCommandContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
@@ -2516,14 +2659,48 @@ public partial class MmlParser : Parser {
 	}
 
 	[RuleVersion(0)]
-	public VolumeContext volume() {
-		VolumeContext _localctx = new VolumeContext(Context, State);
-		EnterRule(_localctx, 56, RULE_volume);
+	public VolumeCommandContext volumeCommand() {
+		VolumeCommandContext _localctx = new VolumeCommandContext(Context, State);
+		EnterRule(_localctx, 56, RULE_volumeCommand);
 		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 318;
-			Match(Volume);
+			State = 407;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case Volume:
+				_localctx = new VolumeContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 402;
+				Match(Volume);
+				}
+				break;
+			case NE7:
+			case NE8:
+				_localctx = new HexVolumeContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 405;
+				ErrorHandler.Sync(this);
+				switch (TokenStream.LA(1)) {
+				case NE7:
+					{
+					State = 403;
+					e7Volume();
+					}
+					break;
+				case NE8:
+					{
+					State = 404;
+					e8VolumeFade();
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2537,13 +2714,43 @@ public partial class MmlParser : Parser {
 		return _localctx;
 	}
 
-	public partial class TuneContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Tune() { return GetToken(MmlParser.Tune, 0); }
-		public TuneContext(ParserRuleContext parent, int invokingState)
+	public partial class TuneCommandContext : ParserRuleContext {
+		public TuneCommandContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_tune; } }
+		public override int RuleIndex { get { return RULE_tuneCommand; } }
+	 
+		public TuneCommandContext() { }
+		public virtual void CopyFrom(TuneCommandContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class HexTuneContext : TuneCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public EeTuneChannelContext eeTuneChannel() {
+			return GetRuleContext<EeTuneChannelContext>(0);
+		}
+		public HexTuneContext(TuneCommandContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterHexTune(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitHexTune(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitHexTune(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class TuneContext : TuneCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Tune() { return GetToken(MmlParser.Tune, 0); }
+		public TuneContext(TuneCommandContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
@@ -2563,14 +2770,31 @@ public partial class MmlParser : Parser {
 	}
 
 	[RuleVersion(0)]
-	public TuneContext tune() {
-		TuneContext _localctx = new TuneContext(Context, State);
-		EnterRule(_localctx, 58, RULE_tune);
+	public TuneCommandContext tuneCommand() {
+		TuneCommandContext _localctx = new TuneCommandContext(Context, State);
+		EnterRule(_localctx, 58, RULE_tuneCommand);
 		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 320;
-			Match(Tune);
+			State = 411;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case Tune:
+				_localctx = new TuneContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 409;
+				Match(Tune);
+				}
+				break;
+			case NEE:
+				_localctx = new HexTuneContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 410;
+				eeTuneChannel();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2616,7 +2840,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 322;
+			State = 413;
 			Match(Quantization);
 			}
 		}
@@ -2631,13 +2855,46 @@ public partial class MmlParser : Parser {
 		return _localctx;
 	}
 
-	public partial class PanContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Pan() { return GetToken(MmlParser.Pan, 0); }
-		public PanContext(ParserRuleContext parent, int invokingState)
+	public partial class PanCommandContext : ParserRuleContext {
+		public PanCommandContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_pan; } }
+		public override int RuleIndex { get { return RULE_panCommand; } }
+	 
+		public PanCommandContext() { }
+		public virtual void CopyFrom(PanCommandContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class HexPanContext : PanCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public DbPanContext dbPan() {
+			return GetRuleContext<DbPanContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public DcPanFadeContext dcPanFade() {
+			return GetRuleContext<DcPanFadeContext>(0);
+		}
+		public HexPanContext(PanCommandContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterHexPan(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitHexPan(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitHexPan(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class PanContext : PanCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Pan() { return GetToken(MmlParser.Pan, 0); }
+		public PanContext(PanCommandContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
@@ -2657,14 +2914,48 @@ public partial class MmlParser : Parser {
 	}
 
 	[RuleVersion(0)]
-	public PanContext pan() {
-		PanContext _localctx = new PanContext(Context, State);
-		EnterRule(_localctx, 62, RULE_pan);
+	public PanCommandContext panCommand() {
+		PanCommandContext _localctx = new PanCommandContext(Context, State);
+		EnterRule(_localctx, 62, RULE_panCommand);
 		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 324;
-			Match(Pan);
+			State = 420;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case Pan:
+				_localctx = new PanContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 415;
+				Match(Pan);
+				}
+				break;
+			case NDB:
+			case NDC:
+				_localctx = new HexPanContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 418;
+				ErrorHandler.Sync(this);
+				switch (TokenStream.LA(1)) {
+				case NDB:
+					{
+					State = 416;
+					dbPan();
+					}
+					break;
+				case NDC:
+					{
+					State = 417;
+					dcPanFade();
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2678,13 +2969,21 @@ public partial class MmlParser : Parser {
 		return _localctx;
 	}
 
-	public partial class VibratoContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Vibrato() { return GetToken(MmlParser.Vibrato, 0); }
-		public VibratoContext(ParserRuleContext parent, int invokingState)
+	public partial class VibratoCommandContext : ParserRuleContext {
+		public VibratoCommandContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_vibrato; } }
+		public override int RuleIndex { get { return RULE_vibratoCommand; } }
+	 
+		public VibratoCommandContext() { }
+		public virtual void CopyFrom(VibratoCommandContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class VibratoContext : VibratoCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Vibrato() { return GetToken(MmlParser.Vibrato, 0); }
+		public VibratoContext(VibratoCommandContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
@@ -2702,16 +3001,55 @@ public partial class MmlParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
+	public partial class HexVibratoContext : VibratoCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public DeVibratoStartContext deVibratoStart() {
+			return GetRuleContext<DeVibratoStartContext>(0);
+		}
+		public HexVibratoContext(VibratoCommandContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterHexVibrato(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitHexVibrato(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitHexVibrato(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
 
 	[RuleVersion(0)]
-	public VibratoContext vibrato() {
-		VibratoContext _localctx = new VibratoContext(Context, State);
-		EnterRule(_localctx, 64, RULE_vibrato);
+	public VibratoCommandContext vibratoCommand() {
+		VibratoCommandContext _localctx = new VibratoCommandContext(Context, State);
+		EnterRule(_localctx, 64, RULE_vibratoCommand);
 		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 326;
-			Match(Vibrato);
+			State = 424;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case Vibrato:
+				_localctx = new VibratoContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 422;
+				Match(Vibrato);
+				}
+				break;
+			case NDE:
+				_localctx = new HexVibratoContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 423;
+				deVibratoStart();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2769,7 +3107,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 328;
+			State = 426;
 			_la = TokenStream.LA(1);
 			if ( !(_la==Note || _la==Rest) ) {
 			ErrorHandler.RecoverInline(this);
@@ -2778,15 +3116,15 @@ public partial class MmlParser : Parser {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			State = 331;
+			State = 429;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 329;
+				State = 427;
 				Match(AMPER);
-				State = 330;
+				State = 428;
 				_la = TokenStream.LA(1);
 				if ( !(_la==Note || _la==Rest) ) {
 				ErrorHandler.RecoverInline(this);
@@ -2797,7 +3135,7 @@ public partial class MmlParser : Parser {
 				}
 				}
 				}
-				State = 333;
+				State = 431;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			} while ( _la==AMPER );
@@ -2859,63 +3197,63 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 335;
+			State = 433;
 			Match(LBRACE);
-			State = 338;
+			State = 436;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Note:
 				{
-				State = 336;
+				State = 434;
 				note();
 				}
 				break;
 			case Rest:
 				{
-				State = 337;
+				State = 435;
 				rest();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
-			State = 342;
+			State = 440;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Note:
 				{
-				State = 340;
+				State = 438;
 				note();
 				}
 				break;
 			case Rest:
 				{
-				State = 341;
+				State = 439;
 				rest();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
-			State = 346;
+			State = 444;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Note:
 				{
-				State = 344;
+				State = 442;
 				note();
 				}
 				break;
 			case Rest:
 				{
-				State = 345;
+				State = 443;
 				rest();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
-			State = 348;
+			State = 446;
 			Match(RBRACE);
 			}
 		}
@@ -2962,7 +3300,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 350;
+			State = 448;
 			Match(Length);
 			}
 		}
@@ -2977,13 +3315,21 @@ public partial class MmlParser : Parser {
 		return _localctx;
 	}
 
-	public partial class GlobalVolumeContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode GlobalVolume() { return GetToken(MmlParser.GlobalVolume, 0); }
-		public GlobalVolumeContext(ParserRuleContext parent, int invokingState)
+	public partial class GlobalVolumeCommandContext : ParserRuleContext {
+		public GlobalVolumeCommandContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_globalVolume; } }
+		public override int RuleIndex { get { return RULE_globalVolumeCommand; } }
+	 
+		public GlobalVolumeCommandContext() { }
+		public virtual void CopyFrom(GlobalVolumeCommandContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class GlobalVolumeContext : GlobalVolumeCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode GlobalVolume() { return GetToken(MmlParser.GlobalVolume, 0); }
+		public GlobalVolumeContext(GlobalVolumeCommandContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
@@ -3001,16 +3347,75 @@ public partial class MmlParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
+	public partial class HexGlobalVolumeContext : GlobalVolumeCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public E0GlobalVolumeContext e0GlobalVolume() {
+			return GetRuleContext<E0GlobalVolumeContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public E1GlobalVolumeFadeContext e1GlobalVolumeFade() {
+			return GetRuleContext<E1GlobalVolumeFadeContext>(0);
+		}
+		public HexGlobalVolumeContext(GlobalVolumeCommandContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterHexGlobalVolume(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitHexGlobalVolume(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitHexGlobalVolume(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
 
 	[RuleVersion(0)]
-	public GlobalVolumeContext globalVolume() {
-		GlobalVolumeContext _localctx = new GlobalVolumeContext(Context, State);
-		EnterRule(_localctx, 72, RULE_globalVolume);
+	public GlobalVolumeCommandContext globalVolumeCommand() {
+		GlobalVolumeCommandContext _localctx = new GlobalVolumeCommandContext(Context, State);
+		EnterRule(_localctx, 72, RULE_globalVolumeCommand);
 		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 352;
-			Match(GlobalVolume);
+			State = 455;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case GlobalVolume:
+				_localctx = new GlobalVolumeContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 450;
+				Match(GlobalVolume);
+				}
+				break;
+			case NE0:
+			case NE1:
+				_localctx = new HexGlobalVolumeContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 453;
+				ErrorHandler.Sync(this);
+				switch (TokenStream.LA(1)) {
+				case NE0:
+					{
+					State = 451;
+					e0GlobalVolume();
+					}
+					break;
+				case NE1:
+					{
+					State = 452;
+					e1GlobalVolumeFade();
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3024,13 +3429,21 @@ public partial class MmlParser : Parser {
 		return _localctx;
 	}
 
-	public partial class TempoContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Tempo() { return GetToken(MmlParser.Tempo, 0); }
-		public TempoContext(ParserRuleContext parent, int invokingState)
+	public partial class TempoCommandContext : ParserRuleContext {
+		public TempoCommandContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_tempo; } }
+		public override int RuleIndex { get { return RULE_tempoCommand; } }
+	 
+		public TempoCommandContext() { }
+		public virtual void CopyFrom(TempoCommandContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class TempoContext : TempoCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Tempo() { return GetToken(MmlParser.Tempo, 0); }
+		public TempoContext(TempoCommandContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
@@ -3048,16 +3461,75 @@ public partial class MmlParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
+	public partial class HexTempoContext : TempoCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public E2TempoContext e2Tempo() {
+			return GetRuleContext<E2TempoContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public E3TempoFadeContext e3TempoFade() {
+			return GetRuleContext<E3TempoFadeContext>(0);
+		}
+		public HexTempoContext(TempoCommandContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterHexTempo(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitHexTempo(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitHexTempo(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
 
 	[RuleVersion(0)]
-	public TempoContext tempo() {
-		TempoContext _localctx = new TempoContext(Context, State);
-		EnterRule(_localctx, 74, RULE_tempo);
+	public TempoCommandContext tempoCommand() {
+		TempoCommandContext _localctx = new TempoCommandContext(Context, State);
+		EnterRule(_localctx, 74, RULE_tempoCommand);
 		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 354;
-			Match(Tempo);
+			State = 462;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case Tempo:
+				_localctx = new TempoContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 457;
+				Match(Tempo);
+				}
+				break;
+			case NE2:
+			case NE3:
+				_localctx = new HexTempoContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 460;
+				ErrorHandler.Sync(this);
+				switch (TokenStream.LA(1)) {
+				case NE2:
+					{
+					State = 458;
+					e2Tempo();
+					}
+					break;
+				case NE3:
+					{
+					State = 459;
+					e3TempoFade();
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3071,13 +3543,43 @@ public partial class MmlParser : Parser {
 		return _localctx;
 	}
 
-	public partial class InstrumentContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Instrument() { return GetToken(MmlParser.Instrument, 0); }
-		public InstrumentContext(ParserRuleContext parent, int invokingState)
+	public partial class InstrumentCommandContext : ParserRuleContext {
+		public InstrumentCommandContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_instrument; } }
+		public override int RuleIndex { get { return RULE_instrumentCommand; } }
+	 
+		public InstrumentCommandContext() { }
+		public virtual void CopyFrom(InstrumentCommandContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class HexInstrumentContext : InstrumentCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public DaInstrumentContext daInstrument() {
+			return GetRuleContext<DaInstrumentContext>(0);
+		}
+		public HexInstrumentContext(InstrumentCommandContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterHexInstrument(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitHexInstrument(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitHexInstrument(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class InstrumentContext : InstrumentCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Instrument() { return GetToken(MmlParser.Instrument, 0); }
+		public InstrumentContext(InstrumentCommandContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
@@ -3097,14 +3599,31 @@ public partial class MmlParser : Parser {
 	}
 
 	[RuleVersion(0)]
-	public InstrumentContext instrument() {
-		InstrumentContext _localctx = new InstrumentContext(Context, State);
-		EnterRule(_localctx, 76, RULE_instrument);
+	public InstrumentCommandContext instrumentCommand() {
+		InstrumentCommandContext _localctx = new InstrumentCommandContext(Context, State);
+		EnterRule(_localctx, 76, RULE_instrumentCommand);
 		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 356;
-			Match(Instrument);
+			State = 466;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case Instrument:
+				_localctx = new InstrumentContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 464;
+				Match(Instrument);
+				}
+				break;
+			case NDA:
+				_localctx = new HexInstrumentContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 465;
+				daInstrument();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3150,7 +3669,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 358;
+			State = 468;
 			Match(Tie);
 			}
 		}
@@ -3197,7 +3716,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 360;
+			State = 470;
 			Match(Question);
 			}
 		}
@@ -3247,20 +3766,20 @@ public partial class MmlParser : Parser {
 		LoopersContext _localctx = new LoopersContext(Context, State);
 		EnterRule(_localctx, 82, RULE_loopers);
 		try {
-			State = 364;
+			State = 474;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,24,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,35,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 362;
+				State = 472;
 				logicControls();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 363;
+				State = 473;
 				logicCalls();
 				}
 				break;
@@ -3312,13 +3831,13 @@ public partial class MmlParser : Parser {
 		LogicControlsContext _localctx = new LogicControlsContext(Context, State);
 		EnterRule(_localctx, 84, RULE_logicControls);
 		try {
-			State = 368;
+			State = 478;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case L2BRACK:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 366;
+				State = 476;
 				superLoop();
 				}
 				break;
@@ -3326,7 +3845,7 @@ public partial class MmlParser : Parser {
 			case LoopName:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 367;
+				State = 477;
 				simpleLoop();
 				}
 				break;
@@ -3380,13 +3899,13 @@ public partial class MmlParser : Parser {
 		LogicCallsContext _localctx = new LogicCallsContext(Context, State);
 		EnterRule(_localctx, 86, RULE_logicCalls);
 		try {
-			State = 372;
+			State = 482;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case LoopName:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 370;
+				State = 480;
 				callLoop();
 				}
 				break;
@@ -3395,7 +3914,7 @@ public partial class MmlParser : Parser {
 			case CallRemoteCode:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 371;
+				State = 481;
 				remoteLogicCalls();
 				}
 				break;
@@ -3452,27 +3971,27 @@ public partial class MmlParser : Parser {
 		RemoteLogicCallsContext _localctx = new RemoteLogicCallsContext(Context, State);
 		EnterRule(_localctx, 88, RULE_remoteLogicCalls);
 		try {
-			State = 377;
+			State = 487;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case CallRemoteCode:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 374;
+				State = 484;
 				callRemoteCode();
 				}
 				break;
 			case STAR:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 375;
+				State = 485;
 				callPreviousLoop();
 				}
 				break;
 			case StopRemoteCode:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 376;
+				State = 486;
 				stopRemoteCode();
 				}
 				break;
@@ -3532,30 +4051,30 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 379;
+			State = 489;
 			Match(L2BRACK);
-			State = 383;
+			State = 493;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 110051209768863936L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 1967571809079680L) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & 10133099161583615L) != 0)) {
 				{
 				{
-				State = 380;
+				State = 490;
 				superLoopContents();
 				}
 				}
-				State = 385;
+				State = 495;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 386;
+			State = 496;
 			Match(R2BRACK);
-			State = 388;
+			State = 498;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==NUMBERS) {
 				{
-				State = 387;
+				State = 497;
 				Match(NUMBERS);
 				}
 			}
@@ -3614,34 +4133,34 @@ public partial class MmlParser : Parser {
 		SuperLoopContentsContext _localctx = new SuperLoopContentsContext(Context, State);
 		EnterRule(_localctx, 92, RULE_superLoopContents);
 		try {
-			State = 394;
+			State = 504;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,30,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,41,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 390;
+				State = 500;
 				atomics();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 391;
+				State = 501;
 				terminalSimpleLoop();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 392;
+				State = 502;
 				logicCalls();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 393;
+				State = 503;
 				hexNumber();
 				}
 				break;
@@ -3700,40 +4219,40 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 397;
+			State = 507;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==LoopName) {
 				{
-				State = 396;
+				State = 506;
 				Match(LoopName);
 				}
 			}
 
-			State = 399;
+			State = 509;
 			Match(LBRACK);
-			State = 403;
+			State = 513;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 109910472280514752L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 1826834320736640L) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & 10133099161583615L) != 0)) {
 				{
 				{
-				State = 400;
+				State = 510;
 				simpleLoopContents();
 				}
 				}
-				State = 405;
+				State = 515;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 406;
+			State = 516;
 			Match(RBRACK);
-			State = 408;
+			State = 518;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==NUMBERS) {
 				{
-				State = 407;
+				State = 517;
 				Match(NUMBERS);
 				}
 			}
@@ -3792,57 +4311,37 @@ public partial class MmlParser : Parser {
 		SimpleLoopContentsContext _localctx = new SimpleLoopContentsContext(Context, State);
 		EnterRule(_localctx, 96, RULE_simpleLoopContents);
 		try {
-			State = 414;
+			State = 524;
 			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case LBRACE:
-			case GT:
-			case LT:
-			case FSLASH:
-			case Note:
-			case Rest:
-			case Octave:
-			case Noise:
-			case Tempo:
-			case Volume:
-			case Tune:
-			case Quantization:
-			case Pan:
-			case Vibrato:
-			case Tie:
-			case Question:
-			case Instrument:
+			switch ( Interpreter.AdaptivePredict(TokenStream,45,Context) ) {
+			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 410;
+				State = 520;
 				atomics();
 				}
 				break;
-			case L2BRACK:
+			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 411;
+				State = 521;
 				terminalSuperLoop();
 				}
 				break;
-			case STAR:
-			case StopRemoteCode:
-			case CallRemoteCode:
+			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 412;
+				State = 522;
 				remoteLogicCalls();
 				}
 				break;
-			case HexNumber:
+			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 413;
+				State = 523;
 				hexNumber();
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3897,30 +4396,30 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 416;
+			State = 526;
 			Match(L2BRACK);
-			State = 420;
+			State = 530;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 110051209768861888L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 1967571809075584L) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & 10133099161583615L) != 0)) {
 				{
 				{
-				State = 417;
+				State = 527;
 				terminalSuperLoopContents();
 				}
 				}
-				State = 422;
+				State = 532;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 423;
+			State = 533;
 			Match(R2BRACK);
-			State = 425;
+			State = 535;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==NUMBERS) {
 				{
-				State = 424;
+				State = 534;
 				Match(NUMBERS);
 				}
 			}
@@ -3976,51 +4475,30 @@ public partial class MmlParser : Parser {
 		TerminalSuperLoopContentsContext _localctx = new TerminalSuperLoopContentsContext(Context, State);
 		EnterRule(_localctx, 100, RULE_terminalSuperLoopContents);
 		try {
-			State = 430;
+			State = 540;
 			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case LBRACE:
-			case GT:
-			case LT:
-			case FSLASH:
-			case Note:
-			case Rest:
-			case Octave:
-			case Noise:
-			case Tempo:
-			case Volume:
-			case Tune:
-			case Quantization:
-			case Pan:
-			case Vibrato:
-			case Tie:
-			case Question:
-			case Instrument:
+			switch ( Interpreter.AdaptivePredict(TokenStream,48,Context) ) {
+			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 427;
+				State = 537;
 				atomics();
 				}
 				break;
-			case STAR:
-			case LoopName:
-			case StopRemoteCode:
-			case CallRemoteCode:
+			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 428;
+				State = 538;
 				logicCalls();
 				}
 				break;
-			case HexNumber:
+			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 429;
+				State = 539;
 				hexNumber();
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -4076,40 +4554,40 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 433;
+			State = 543;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==LoopName) {
 				{
-				State = 432;
+				State = 542;
 				Match(LoopName);
 				}
 			}
 
-			State = 435;
+			State = 545;
 			Match(LBRACK);
-			State = 439;
+			State = 549;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 109910472280506560L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 1826834320720256L) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & 10133099161583615L) != 0)) {
 				{
 				{
-				State = 436;
+				State = 546;
 				terminalSimpleLoopContents();
 				}
 				}
-				State = 441;
+				State = 551;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 442;
+			State = 552;
 			Match(RBRACK);
-			State = 444;
+			State = 554;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==NUMBERS) {
 				{
-				State = 443;
+				State = 553;
 				Match(NUMBERS);
 				}
 			}
@@ -4165,50 +4643,30 @@ public partial class MmlParser : Parser {
 		TerminalSimpleLoopContentsContext _localctx = new TerminalSimpleLoopContentsContext(Context, State);
 		EnterRule(_localctx, 104, RULE_terminalSimpleLoopContents);
 		try {
-			State = 449;
+			State = 559;
 			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case LBRACE:
-			case GT:
-			case LT:
-			case FSLASH:
-			case Note:
-			case Rest:
-			case Octave:
-			case Noise:
-			case Tempo:
-			case Volume:
-			case Tune:
-			case Quantization:
-			case Pan:
-			case Vibrato:
-			case Tie:
-			case Question:
-			case Instrument:
+			switch ( Interpreter.AdaptivePredict(TokenStream,52,Context) ) {
+			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 446;
+				State = 556;
 				atomics();
 				}
 				break;
-			case STAR:
-			case StopRemoteCode:
-			case CallRemoteCode:
+			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 447;
+				State = 557;
 				remoteLogicCalls();
 				}
 				break;
-			case HexNumber:
+			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 448;
+				State = 558;
 				hexNumber();
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -4263,25 +4721,25 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 451;
+			State = 561;
 			Match(RemoteCodeName);
-			State = 452;
+			State = 562;
 			Match(LBRACK);
-			State = 454;
+			State = 564;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 453;
+				State = 563;
 				remoteCodeContents();
 				}
 				}
-				State = 456;
+				State = 566;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 36058380759990272L) != 0) );
-			State = 458;
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 14791879950336L) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & 10133099161583615L) != 0) );
+			State = 568;
 			Match(RBRACK);
 			}
 		}
@@ -4306,25 +4764,27 @@ public partial class MmlParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public RaiseOctaveContext raiseOctave() {
 			return GetRuleContext<RaiseOctaveContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public VolumeContext volume() {
-			return GetRuleContext<VolumeContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public VolumeCommandContext volumeCommand() {
+			return GetRuleContext<VolumeCommandContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public TuneContext tune() {
-			return GetRuleContext<TuneContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public TuneCommandContext tuneCommand() {
+			return GetRuleContext<TuneCommandContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public QuantizationContext quantization() {
 			return GetRuleContext<QuantizationContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public PanContext pan() {
-			return GetRuleContext<PanContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public PanCommandContext panCommand() {
+			return GetRuleContext<PanCommandContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public VibratoContext vibrato() {
-			return GetRuleContext<VibratoContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public VibratoCommandContext vibratoCommand() {
+			return GetRuleContext<VibratoCommandContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public TempoContext tempo() {
-			return GetRuleContext<TempoContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public TempoCommandContext tempoCommand() {
+			return GetRuleContext<TempoCommandContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HexNumber() { return GetToken(MmlParser.HexNumber, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
 		public RemoteCodeContentsContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -4353,81 +4813,79 @@ public partial class MmlParser : Parser {
 		RemoteCodeContentsContext _localctx = new RemoteCodeContentsContext(Context, State);
 		EnterRule(_localctx, 108, RULE_remoteCodeContents);
 		try {
-			State = 470;
+			State = 580;
 			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case Octave:
+			switch ( Interpreter.AdaptivePredict(TokenStream,54,Context) ) {
+			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 460;
+				State = 570;
 				octave();
 				}
 				break;
-			case LT:
+			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 461;
+				State = 571;
 				lowerOctave();
 				}
 				break;
-			case GT:
+			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 462;
+				State = 572;
 				raiseOctave();
 				}
 				break;
-			case Volume:
+			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 463;
-				volume();
+				State = 573;
+				volumeCommand();
 				}
 				break;
-			case Tune:
+			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 464;
-				tune();
+				State = 574;
+				tuneCommand();
 				}
 				break;
-			case Quantization:
+			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 465;
+				State = 575;
 				quantization();
 				}
 				break;
-			case Pan:
+			case 7:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 466;
-				pan();
+				State = 576;
+				panCommand();
 				}
 				break;
-			case Vibrato:
+			case 8:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 467;
-				vibrato();
+				State = 577;
+				vibratoCommand();
 				}
 				break;
-			case Tempo:
+			case 9:
 				EnterOuterAlt(_localctx, 9);
 				{
-				State = 468;
-				tempo();
+				State = 578;
+				tempoCommand();
 				}
 				break;
-			case HexNumber:
+			case 10:
 				EnterOuterAlt(_localctx, 10);
 				{
-				State = 469;
-				Match(HexNumber);
+				State = 579;
+				hexNumber();
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -4475,14 +4933,14 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 472;
+			State = 582;
 			Match(LoopName);
-			State = 474;
+			State = 584;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==NUMBERS) {
 				{
-				State = 473;
+				State = 583;
 				Match(NUMBERS);
 				}
 			}
@@ -4532,7 +4990,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 476;
+			State = 586;
 			Match(CallRemoteCode);
 			}
 		}
@@ -4579,7 +5037,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 478;
+			State = 588;
 			Match(StopRemoteCode);
 			}
 		}
@@ -4628,14 +5086,14 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 480;
+			State = 590;
 			Match(STAR);
-			State = 482;
+			State = 592;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==NUMBERS) {
 				{
-				State = 481;
+				State = 591;
 				Match(NUMBERS);
 				}
 			}
@@ -4685,7 +5143,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 484;
+			State = 594;
 			Match(QMARK);
 			}
 		}
@@ -4700,13 +5158,43 @@ public partial class MmlParser : Parser {
 		return _localctx;
 	}
 
-	public partial class SampleLoadContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LoadSample() { return GetToken(MmlParser.LoadSample, 0); }
-		public SampleLoadContext(ParserRuleContext parent, int invokingState)
+	public partial class SampleLoadCommandContext : ParserRuleContext {
+		public SampleLoadCommandContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_sampleLoad; } }
+		public override int RuleIndex { get { return RULE_sampleLoadCommand; } }
+	 
+		public SampleLoadCommandContext() { }
+		public virtual void CopyFrom(SampleLoadCommandContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class HexSampleLoadContext : SampleLoadCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public F3SampleLoadContext f3SampleLoad() {
+			return GetRuleContext<F3SampleLoadContext>(0);
+		}
+		public HexSampleLoadContext(SampleLoadCommandContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterHexSampleLoad(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitHexSampleLoad(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitHexSampleLoad(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class SampleLoadContext : SampleLoadCommandContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LoadSample() { return GetToken(MmlParser.LoadSample, 0); }
+		public SampleLoadContext(SampleLoadCommandContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
@@ -4726,14 +5214,31 @@ public partial class MmlParser : Parser {
 	}
 
 	[RuleVersion(0)]
-	public SampleLoadContext sampleLoad() {
-		SampleLoadContext _localctx = new SampleLoadContext(Context, State);
-		EnterRule(_localctx, 120, RULE_sampleLoad);
+	public SampleLoadCommandContext sampleLoadCommand() {
+		SampleLoadCommandContext _localctx = new SampleLoadCommandContext(Context, State);
+		EnterRule(_localctx, 120, RULE_sampleLoadCommand);
 		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 486;
-			Match(LoadSample);
+			State = 598;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case LoadSample:
+				_localctx = new SampleLoadContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 596;
+				Match(LoadSample);
+				}
+				break;
+			case NF3:
+				_localctx = new HexSampleLoadContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 597;
+				f3SampleLoad();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -4779,7 +5284,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 488;
+			State = 600;
 			Match(ReplacementText);
 			}
 		}
@@ -4794,7 +5299,3360 @@ public partial class MmlParser : Parser {
 		return _localctx;
 	}
 
+	public partial class GlobalHexCommandsContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public F5FIRFilterContext f5FIRFilter() {
+			return GetRuleContext<F5FIRFilterContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public E4GlobalTransposeContext e4GlobalTranspose() {
+			return GetRuleContext<E4GlobalTransposeContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public F4GlobalItemsContext f4GlobalItems() {
+			return GetRuleContext<F4GlobalItemsContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public EfEcho1Context efEcho1() {
+			return GetRuleContext<EfEcho1Context>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public F1Echo2Context f1Echo2() {
+			return GetRuleContext<F1Echo2Context>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public F0EchoOffContext f0EchoOff() {
+			return GetRuleContext<F0EchoOffContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public F2EchoFadeContext f2EchoFade() {
+			return GetRuleContext<F2EchoFadeContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public F6DSPWriteContext f6DSPWrite() {
+			return GetRuleContext<F6DSPWriteContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public F9DataSendContext f9DataSend() {
+			return GetRuleContext<F9DataSendContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public FaGlobalItemsContext faGlobalItems() {
+			return GetRuleContext<FaGlobalItemsContext>(0);
+		}
+		public GlobalHexCommandsContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_globalHexCommands; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterGlobalHexCommands(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitGlobalHexCommands(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitGlobalHexCommands(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public GlobalHexCommandsContext globalHexCommands() {
+		GlobalHexCommandsContext _localctx = new GlobalHexCommandsContext(Context, State);
+		EnterRule(_localctx, 124, RULE_globalHexCommands);
+		try {
+			State = 612;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case NF5:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 602;
+				f5FIRFilter();
+				}
+				break;
+			case NE4:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 603;
+				e4GlobalTranspose();
+				}
+				break;
+			case NF4:
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 604;
+				f4GlobalItems();
+				}
+				break;
+			case NEF:
+				EnterOuterAlt(_localctx, 4);
+				{
+				State = 605;
+				efEcho1();
+				}
+				break;
+			case NF1:
+				EnterOuterAlt(_localctx, 5);
+				{
+				State = 606;
+				f1Echo2();
+				}
+				break;
+			case NF0:
+				EnterOuterAlt(_localctx, 6);
+				{
+				State = 607;
+				f0EchoOff();
+				}
+				break;
+			case NF2:
+				EnterOuterAlt(_localctx, 7);
+				{
+				State = 608;
+				f2EchoFade();
+				}
+				break;
+			case NF6:
+				EnterOuterAlt(_localctx, 8);
+				{
+				State = 609;
+				f6DSPWrite();
+				}
+				break;
+			case NF9:
+				EnterOuterAlt(_localctx, 9);
+				{
+				State = 610;
+				f9DataSend();
+				}
+				break;
+			case NFA:
+				EnterOuterAlt(_localctx, 10);
+				{
+				State = 611;
+				faGlobalItems();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ChannelHexCommandsContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public E5TremoloContext e5Tremolo() {
+			return GetRuleContext<E5TremoloContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public FbItemsContext fbItems() {
+			return GetRuleContext<FbItemsContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public EaVibratoFadeContext eaVibratoFade() {
+			return GetRuleContext<EaVibratoFadeContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public DfVibratoEndContext dfVibratoEnd() {
+			return GetRuleContext<DfVibratoEndContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public EbPitchEnvelopeReleaseContext ebPitchEnvelopeRelease() {
+			return GetRuleContext<EbPitchEnvelopeReleaseContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public EcPitchEnvelopeAttackContext ecPitchEnvelopeAttack() {
+			return GetRuleContext<EcPitchEnvelopeAttackContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public EdCustomADSROrGainContext edCustomADSROrGain() {
+			return GetRuleContext<EdCustomADSROrGainContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public F0EchoOffContext f0EchoOff() {
+			return GetRuleContext<F0EchoOffContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public F2EchoFadeContext f2EchoFade() {
+			return GetRuleContext<F2EchoFadeContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public F4ChannelItemsContext f4ChannelItems() {
+			return GetRuleContext<F4ChannelItemsContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public F6DSPWriteContext f6DSPWrite() {
+			return GetRuleContext<F6DSPWriteContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public F8EnableNoiseContext f8EnableNoise() {
+			return GetRuleContext<F8EnableNoiseContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public F9DataSendContext f9DataSend() {
+			return GetRuleContext<F9DataSendContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public FaChannelItemsContext faChannelItems() {
+			return GetRuleContext<FaChannelItemsContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public FcItemsContext fcItems() {
+			return GetRuleContext<FcItemsContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public FdTremoloOffContext fdTremoloOff() {
+			return GetRuleContext<FdTremoloOffContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public FePitchEnvelopeOffContext fePitchEnvelopeOff() {
+			return GetRuleContext<FePitchEnvelopeOffContext>(0);
+		}
+		public ChannelHexCommandsContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_channelHexCommands; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterChannelHexCommands(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitChannelHexCommands(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitChannelHexCommands(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ChannelHexCommandsContext channelHexCommands() {
+		ChannelHexCommandsContext _localctx = new ChannelHexCommandsContext(Context, State);
+		EnterRule(_localctx, 126, RULE_channelHexCommands);
+		try {
+			State = 632;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,59,Context) ) {
+			case 1:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 614;
+				e5Tremolo();
+				}
+				break;
+			case 2:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 615;
+				fbItems();
+				}
+				break;
+			case 3:
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 616;
+				eaVibratoFade();
+				}
+				break;
+			case 4:
+				EnterOuterAlt(_localctx, 4);
+				{
+				State = 617;
+				dfVibratoEnd();
+				}
+				break;
+			case 5:
+				EnterOuterAlt(_localctx, 5);
+				{
+				State = 618;
+				ebPitchEnvelopeRelease();
+				}
+				break;
+			case 6:
+				EnterOuterAlt(_localctx, 6);
+				{
+				State = 619;
+				ecPitchEnvelopeAttack();
+				}
+				break;
+			case 7:
+				EnterOuterAlt(_localctx, 7);
+				{
+				State = 620;
+				edCustomADSROrGain();
+				}
+				break;
+			case 8:
+				EnterOuterAlt(_localctx, 8);
+				{
+				State = 621;
+				f0EchoOff();
+				}
+				break;
+			case 9:
+				EnterOuterAlt(_localctx, 9);
+				{
+				State = 622;
+				f2EchoFade();
+				}
+				break;
+			case 10:
+				EnterOuterAlt(_localctx, 10);
+				{
+				State = 623;
+				f4ChannelItems();
+				}
+				break;
+			case 11:
+				EnterOuterAlt(_localctx, 11);
+				{
+				State = 624;
+				f6DSPWrite();
+				}
+				break;
+			case 12:
+				EnterOuterAlt(_localctx, 12);
+				{
+				State = 625;
+				f8EnableNoise();
+				}
+				break;
+			case 13:
+				EnterOuterAlt(_localctx, 13);
+				{
+				State = 626;
+				f9DataSend();
+				}
+				break;
+			case 14:
+				EnterOuterAlt(_localctx, 14);
+				{
+				State = 627;
+				faChannelItems();
+				}
+				break;
+			case 15:
+				EnterOuterAlt(_localctx, 15);
+				{
+				State = 628;
+				fbItems();
+				}
+				break;
+			case 16:
+				EnterOuterAlt(_localctx, 16);
+				{
+				State = 629;
+				fcItems();
+				}
+				break;
+			case 17:
+				EnterOuterAlt(_localctx, 17);
+				{
+				State = 630;
+				fdTremoloOff();
+				}
+				break;
+			case 18:
+				EnterOuterAlt(_localctx, 18);
+				{
+				State = 631;
+				fePitchEnvelopeOff();
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class DaInstrumentContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NDA() { return GetToken(MmlParser.NDA, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NUMBERS() { return GetToken(MmlParser.NUMBERS, 0); }
+		public DaInstrumentContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_daInstrument; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterDaInstrument(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitDaInstrument(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDaInstrument(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public DaInstrumentContext daInstrument() {
+		DaInstrumentContext _localctx = new DaInstrumentContext(Context, State);
+		EnterRule(_localctx, 128, RULE_daInstrument);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 634;
+			Match(NDA);
+			State = 635;
+			Match(NUMBERS);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class DbPanContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NDB() { return GetToken(MmlParser.NDB, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public DbPanContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_dbPan; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterDbPan(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitDbPan(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDbPan(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public DbPanContext dbPan() {
+		DbPanContext _localctx = new DbPanContext(Context, State);
+		EnterRule(_localctx, 130, RULE_dbPan);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 637;
+			Match(NDB);
+			State = 638;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class DcPanFadeContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NDC() { return GetToken(MmlParser.NDC, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public DcPanFadeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_dcPanFade; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterDcPanFade(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitDcPanFade(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDcPanFade(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public DcPanFadeContext dcPanFade() {
+		DcPanFadeContext _localctx = new DcPanFadeContext(Context, State);
+		EnterRule(_localctx, 132, RULE_dcPanFade);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 640;
+			Match(NDC);
+			State = 641;
+			hexNumber();
+			State = 642;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class DdPitchBlendCommandContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NDD() { return GetToken(MmlParser.NDD, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public DdPitchBlendItemsContext ddPitchBlendItems() {
+			return GetRuleContext<DdPitchBlendItemsContext>(0);
+		}
+		public DdPitchBlendCommandContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_ddPitchBlendCommand; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterDdPitchBlendCommand(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitDdPitchBlendCommand(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDdPitchBlendCommand(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public DdPitchBlendCommandContext ddPitchBlendCommand() {
+		DdPitchBlendCommandContext _localctx = new DdPitchBlendCommandContext(Context, State);
+		EnterRule(_localctx, 134, RULE_ddPitchBlendCommand);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 644;
+			Match(NDD);
+			State = 645;
+			hexNumber();
+			State = 648;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case N00:
+			case N01:
+			case N02:
+			case N03:
+			case N04:
+			case N05:
+			case N06:
+			case N07:
+			case N08:
+			case N09:
+			case N7F:
+			case N80:
+			case N81:
+			case NFE:
+			case NDA:
+			case NDB:
+			case NDC:
+			case NDD:
+			case NDE:
+			case NDF:
+			case NE0:
+			case NE1:
+			case NE2:
+			case NE3:
+			case NE4:
+			case NE5:
+			case NE6:
+			case NE7:
+			case NE8:
+			case NE9:
+			case NEA:
+			case NEB:
+			case NEC:
+			case NED:
+			case NEE:
+			case NEF:
+			case NF0:
+			case NF1:
+			case NF2:
+			case NF3:
+			case NF4:
+			case NF5:
+			case NF6:
+			case NF7:
+			case NF8:
+			case NF9:
+			case NFA:
+			case NFB:
+			case NFC:
+			case NFD:
+			case HexNumber:
+				{
+				State = 646;
+				hexNumber();
+				}
+				break;
+			case GT:
+			case LT:
+			case Note:
+			case Octave:
+				{
+				State = 647;
+				ddPitchBlendItems();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class DdPitchBlendItemsContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public NoteContext note() {
+			return GetRuleContext<NoteContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public OctaveContext[] octave() {
+			return GetRuleContexts<OctaveContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public OctaveContext octave(int i) {
+			return GetRuleContext<OctaveContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public RaiseOctaveContext[] raiseOctave() {
+			return GetRuleContexts<RaiseOctaveContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public RaiseOctaveContext raiseOctave(int i) {
+			return GetRuleContext<RaiseOctaveContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public LowerOctaveContext[] lowerOctave() {
+			return GetRuleContexts<LowerOctaveContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public LowerOctaveContext lowerOctave(int i) {
+			return GetRuleContext<LowerOctaveContext>(i);
+		}
+		public DdPitchBlendItemsContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_ddPitchBlendItems; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterDdPitchBlendItems(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitDdPitchBlendItems(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDdPitchBlendItems(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public DdPitchBlendItemsContext ddPitchBlendItems() {
+		DdPitchBlendItemsContext _localctx = new DdPitchBlendItemsContext(Context, State);
+		EnterRule(_localctx, 136, RULE_ddPitchBlendItems);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 655;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 17192452096L) != 0)) {
+				{
+				State = 653;
+				ErrorHandler.Sync(this);
+				switch (TokenStream.LA(1)) {
+				case Octave:
+					{
+					State = 650;
+					octave();
+					}
+					break;
+				case GT:
+					{
+					State = 651;
+					raiseOctave();
+					}
+					break;
+				case LT:
+					{
+					State = 652;
+					lowerOctave();
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				}
+				State = 657;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+			}
+			State = 658;
+			note();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class DeVibratoStartContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NDE() { return GetToken(MmlParser.NDE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public DeVibratoStartContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_deVibratoStart; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterDeVibratoStart(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitDeVibratoStart(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDeVibratoStart(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public DeVibratoStartContext deVibratoStart() {
+		DeVibratoStartContext _localctx = new DeVibratoStartContext(Context, State);
+		EnterRule(_localctx, 138, RULE_deVibratoStart);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 660;
+			Match(NDE);
+			State = 661;
+			hexNumber();
+			State = 662;
+			hexNumber();
+			State = 663;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class EaVibratoFadeContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEA() { return GetToken(MmlParser.NEA, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public EaVibratoFadeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_eaVibratoFade; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterEaVibratoFade(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitEaVibratoFade(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitEaVibratoFade(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public EaVibratoFadeContext eaVibratoFade() {
+		EaVibratoFadeContext _localctx = new EaVibratoFadeContext(Context, State);
+		EnterRule(_localctx, 140, RULE_eaVibratoFade);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 665;
+			Match(NEA);
+			State = 666;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class DfVibratoEndContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NDF() { return GetToken(MmlParser.NDF, 0); }
+		public DfVibratoEndContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_dfVibratoEnd; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterDfVibratoEnd(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitDfVibratoEnd(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDfVibratoEnd(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public DfVibratoEndContext dfVibratoEnd() {
+		DfVibratoEndContext _localctx = new DfVibratoEndContext(Context, State);
+		EnterRule(_localctx, 142, RULE_dfVibratoEnd);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 668;
+			Match(NDF);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class E0GlobalVolumeContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE0() { return GetToken(MmlParser.NE0, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public E0GlobalVolumeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_e0GlobalVolume; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterE0GlobalVolume(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitE0GlobalVolume(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitE0GlobalVolume(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public E0GlobalVolumeContext e0GlobalVolume() {
+		E0GlobalVolumeContext _localctx = new E0GlobalVolumeContext(Context, State);
+		EnterRule(_localctx, 144, RULE_e0GlobalVolume);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 670;
+			Match(NE0);
+			State = 671;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class E1GlobalVolumeFadeContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE1() { return GetToken(MmlParser.NE1, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public E1GlobalVolumeFadeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_e1GlobalVolumeFade; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterE1GlobalVolumeFade(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitE1GlobalVolumeFade(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitE1GlobalVolumeFade(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public E1GlobalVolumeFadeContext e1GlobalVolumeFade() {
+		E1GlobalVolumeFadeContext _localctx = new E1GlobalVolumeFadeContext(Context, State);
+		EnterRule(_localctx, 146, RULE_e1GlobalVolumeFade);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 673;
+			Match(NE1);
+			State = 674;
+			hexNumber();
+			State = 675;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class E2TempoContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE2() { return GetToken(MmlParser.NE2, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public E2TempoContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_e2Tempo; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterE2Tempo(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitE2Tempo(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitE2Tempo(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public E2TempoContext e2Tempo() {
+		E2TempoContext _localctx = new E2TempoContext(Context, State);
+		EnterRule(_localctx, 148, RULE_e2Tempo);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 677;
+			Match(NE2);
+			State = 678;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class E3TempoFadeContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE3() { return GetToken(MmlParser.NE3, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public E3TempoFadeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_e3TempoFade; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterE3TempoFade(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitE3TempoFade(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitE3TempoFade(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public E3TempoFadeContext e3TempoFade() {
+		E3TempoFadeContext _localctx = new E3TempoFadeContext(Context, State);
+		EnterRule(_localctx, 150, RULE_e3TempoFade);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 680;
+			Match(NE3);
+			State = 681;
+			hexNumber();
+			State = 682;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class E4GlobalTransposeContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE4() { return GetToken(MmlParser.NE4, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public E4GlobalTransposeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_e4GlobalTranspose; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterE4GlobalTranspose(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitE4GlobalTranspose(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitE4GlobalTranspose(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public E4GlobalTransposeContext e4GlobalTranspose() {
+		E4GlobalTransposeContext _localctx = new E4GlobalTransposeContext(Context, State);
+		EnterRule(_localctx, 152, RULE_e4GlobalTranspose);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 684;
+			Match(NE4);
+			State = 685;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class E5TremoloContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE5() { return GetToken(MmlParser.NE5, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public E5TremoloContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_e5Tremolo; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterE5Tremolo(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitE5Tremolo(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitE5Tremolo(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public E5TremoloContext e5Tremolo() {
+		E5TremoloContext _localctx = new E5TremoloContext(Context, State);
+		EnterRule(_localctx, 154, RULE_e5Tremolo);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 687;
+			Match(NE5);
+			State = 688;
+			hexNumber();
+			State = 689;
+			hexNumber();
+			State = 690;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class E6SubloopStartContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE6() { return GetToken(MmlParser.NE6, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N00() { return GetToken(MmlParser.N00, 0); }
+		public E6SubloopStartContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_e6SubloopStart; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterE6SubloopStart(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitE6SubloopStart(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitE6SubloopStart(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public E6SubloopStartContext e6SubloopStart() {
+		E6SubloopStartContext _localctx = new E6SubloopStartContext(Context, State);
+		EnterRule(_localctx, 156, RULE_e6SubloopStart);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 692;
+			Match(NE6);
+			State = 693;
+			Match(N00);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class E6SubloopEndContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE6() { return GetToken(MmlParser.NE6, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public E6SubloopEndContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_e6SubloopEnd; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterE6SubloopEnd(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitE6SubloopEnd(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitE6SubloopEnd(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public E6SubloopEndContext e6SubloopEnd() {
+		E6SubloopEndContext _localctx = new E6SubloopEndContext(Context, State);
+		EnterRule(_localctx, 158, RULE_e6SubloopEnd);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 695;
+			Match(NE6);
+			State = 696;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class E7VolumeContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE7() { return GetToken(MmlParser.NE7, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public E7VolumeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_e7Volume; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterE7Volume(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitE7Volume(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitE7Volume(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public E7VolumeContext e7Volume() {
+		E7VolumeContext _localctx = new E7VolumeContext(Context, State);
+		EnterRule(_localctx, 160, RULE_e7Volume);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 698;
+			Match(NE7);
+			State = 699;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class E8VolumeFadeContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE8() { return GetToken(MmlParser.NE8, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public E8VolumeFadeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_e8VolumeFade; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterE8VolumeFade(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitE8VolumeFade(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitE8VolumeFade(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public E8VolumeFadeContext e8VolumeFade() {
+		E8VolumeFadeContext _localctx = new E8VolumeFadeContext(Context, State);
+		EnterRule(_localctx, 162, RULE_e8VolumeFade);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 701;
+			Match(NE8);
+			State = 702;
+			hexNumber();
+			State = 703;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class EbPitchEnvelopeReleaseContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEB() { return GetToken(MmlParser.NEB, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public EbPitchEnvelopeReleaseContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_ebPitchEnvelopeRelease; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterEbPitchEnvelopeRelease(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitEbPitchEnvelopeRelease(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitEbPitchEnvelopeRelease(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public EbPitchEnvelopeReleaseContext ebPitchEnvelopeRelease() {
+		EbPitchEnvelopeReleaseContext _localctx = new EbPitchEnvelopeReleaseContext(Context, State);
+		EnterRule(_localctx, 164, RULE_ebPitchEnvelopeRelease);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 705;
+			Match(NEB);
+			State = 706;
+			hexNumber();
+			State = 707;
+			hexNumber();
+			State = 708;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class EcPitchEnvelopeAttackContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEC() { return GetToken(MmlParser.NEC, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public EcPitchEnvelopeAttackContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_ecPitchEnvelopeAttack; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterEcPitchEnvelopeAttack(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitEcPitchEnvelopeAttack(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitEcPitchEnvelopeAttack(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public EcPitchEnvelopeAttackContext ecPitchEnvelopeAttack() {
+		EcPitchEnvelopeAttackContext _localctx = new EcPitchEnvelopeAttackContext(Context, State);
+		EnterRule(_localctx, 166, RULE_ecPitchEnvelopeAttack);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 710;
+			Match(NEC);
+			State = 711;
+			hexNumber();
+			State = 712;
+			hexNumber();
+			State = 713;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class EdCustomADSROrGainContext : ParserRuleContext {
+		public EdCustomADSROrGainContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_edCustomADSROrGain; } }
+	 
+		public EdCustomADSROrGainContext() { }
+		public virtual void CopyFrom(EdCustomADSROrGainContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class EDCustomASDRContext : EdCustomADSROrGainContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NED() { return GetToken(MmlParser.NED, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public EDCustomASDRContext(EdCustomADSROrGainContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterEDCustomASDR(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitEDCustomASDR(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitEDCustomASDR(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class EDCustomGAINContext : EdCustomADSROrGainContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NED() { return GetToken(MmlParser.NED, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N80() { return GetToken(MmlParser.N80, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public EDCustomGAINContext(EdCustomADSROrGainContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterEDCustomGAIN(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitEDCustomGAIN(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitEDCustomGAIN(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public EdCustomADSROrGainContext edCustomADSROrGain() {
+		EdCustomADSROrGainContext _localctx = new EdCustomADSROrGainContext(Context, State);
+		EnterRule(_localctx, 168, RULE_edCustomADSROrGain);
+		try {
+			State = 722;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,63,Context) ) {
+			case 1:
+				_localctx = new EDCustomGAINContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 715;
+				Match(NED);
+				State = 716;
+				Match(N80);
+				State = 717;
+				hexNumber();
+				}
+				break;
+			case 2:
+				_localctx = new EDCustomASDRContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 718;
+				Match(NED);
+				State = 719;
+				hexNumber();
+				State = 720;
+				hexNumber();
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class EeTuneChannelContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEE() { return GetToken(MmlParser.NEE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public EeTuneChannelContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_eeTuneChannel; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterEeTuneChannel(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitEeTuneChannel(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitEeTuneChannel(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public EeTuneChannelContext eeTuneChannel() {
+		EeTuneChannelContext _localctx = new EeTuneChannelContext(Context, State);
+		EnterRule(_localctx, 170, RULE_eeTuneChannel);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 724;
+			Match(NEE);
+			State = 725;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class EfEcho1Context : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEF() { return GetToken(MmlParser.NEF, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public EfEcho1Context(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_efEcho1; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterEfEcho1(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitEfEcho1(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitEfEcho1(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public EfEcho1Context efEcho1() {
+		EfEcho1Context _localctx = new EfEcho1Context(Context, State);
+		EnterRule(_localctx, 172, RULE_efEcho1);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 727;
+			Match(NEF);
+			State = 728;
+			hexNumber();
+			State = 729;
+			hexNumber();
+			State = 730;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class F0EchoOffContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF0() { return GetToken(MmlParser.NF0, 0); }
+		public F0EchoOffContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_f0EchoOff; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF0EchoOff(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF0EchoOff(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF0EchoOff(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public F0EchoOffContext f0EchoOff() {
+		F0EchoOffContext _localctx = new F0EchoOffContext(Context, State);
+		EnterRule(_localctx, 174, RULE_f0EchoOff);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 732;
+			Match(NF0);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class F1Echo2Context : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF1() { return GetToken(MmlParser.NF1, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public F1Echo2Context(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_f1Echo2; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF1Echo2(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF1Echo2(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF1Echo2(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public F1Echo2Context f1Echo2() {
+		F1Echo2Context _localctx = new F1Echo2Context(Context, State);
+		EnterRule(_localctx, 176, RULE_f1Echo2);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 734;
+			Match(NF1);
+			State = 735;
+			hexNumber();
+			State = 736;
+			hexNumber();
+			State = 737;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class F2EchoFadeContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF2() { return GetToken(MmlParser.NF2, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public F2EchoFadeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_f2EchoFade; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF2EchoFade(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF2EchoFade(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF2EchoFade(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public F2EchoFadeContext f2EchoFade() {
+		F2EchoFadeContext _localctx = new F2EchoFadeContext(Context, State);
+		EnterRule(_localctx, 178, RULE_f2EchoFade);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 739;
+			Match(NF2);
+			State = 740;
+			hexNumber();
+			State = 741;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class F3SampleLoadContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF3() { return GetToken(MmlParser.NF3, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public F3SampleLoadContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_f3SampleLoad; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF3SampleLoad(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF3SampleLoad(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF3SampleLoad(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public F3SampleLoadContext f3SampleLoad() {
+		F3SampleLoadContext _localctx = new F3SampleLoadContext(Context, State);
+		EnterRule(_localctx, 180, RULE_f3SampleLoad);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 743;
+			Match(NF3);
+			State = 744;
+			hexNumber();
+			State = 745;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class F4GlobalItemsContext : ParserRuleContext {
+		public F4GlobalItemsContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_f4GlobalItems; } }
+	 
+		public F4GlobalItemsContext() { }
+		public virtual void CopyFrom(F4GlobalItemsContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class F4LightStaccatoContext : F4GlobalItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF4() { return GetToken(MmlParser.NF4, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N02() { return GetToken(MmlParser.N02, 0); }
+		public F4LightStaccatoContext(F4GlobalItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF4LightStaccato(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF4LightStaccato(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF4LightStaccato(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class F4EnableYoshiDrumsChannel5Context : F4GlobalItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF4() { return GetToken(MmlParser.NF4, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N00() { return GetToken(MmlParser.N00, 0); }
+		public F4EnableYoshiDrumsChannel5Context(F4GlobalItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF4EnableYoshiDrumsChannel5(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF4EnableYoshiDrumsChannel5(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF4EnableYoshiDrumsChannel5(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class F4NSPCVelocityTableContext : F4GlobalItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF4() { return GetToken(MmlParser.NF4, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N08() { return GetToken(MmlParser.N08, 0); }
+		public F4NSPCVelocityTableContext(F4GlobalItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF4NSPCVelocityTable(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF4NSPCVelocityTable(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF4NSPCVelocityTable(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class F4SNESSyncContext : F4GlobalItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF4() { return GetToken(MmlParser.NF4, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N05() { return GetToken(MmlParser.N05, 0); }
+		public F4SNESSyncContext(F4GlobalItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF4SNESSync(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF4SNESSync(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF4SNESSync(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class F4TempoHikeOffContext : F4GlobalItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF4() { return GetToken(MmlParser.NF4, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N07() { return GetToken(MmlParser.N07, 0); }
+		public F4TempoHikeOffContext(F4GlobalItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF4TempoHikeOff(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF4TempoHikeOff(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF4TempoHikeOff(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class F4ToggleLegatoContext : F4GlobalItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF4() { return GetToken(MmlParser.NF4, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N01() { return GetToken(MmlParser.N01, 0); }
+		public F4ToggleLegatoContext(F4GlobalItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF4ToggleLegato(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF4ToggleLegato(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF4ToggleLegato(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class F4EnableYoshiDrumsContext : F4GlobalItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF4() { return GetToken(MmlParser.NF4, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N06() { return GetToken(MmlParser.N06, 0); }
+		public F4EnableYoshiDrumsContext(F4GlobalItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF4EnableYoshiDrums(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF4EnableYoshiDrums(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF4EnableYoshiDrums(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public F4GlobalItemsContext f4GlobalItems() {
+		F4GlobalItemsContext _localctx = new F4GlobalItemsContext(Context, State);
+		EnterRule(_localctx, 182, RULE_f4GlobalItems);
+		try {
+			State = 761;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,64,Context) ) {
+			case 1:
+				_localctx = new F4EnableYoshiDrumsChannel5Context(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 747;
+				Match(NF4);
+				State = 748;
+				Match(N00);
+				}
+				break;
+			case 2:
+				_localctx = new F4ToggleLegatoContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 749;
+				Match(NF4);
+				State = 750;
+				Match(N01);
+				}
+				break;
+			case 3:
+				_localctx = new F4LightStaccatoContext(_localctx);
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 751;
+				Match(NF4);
+				State = 752;
+				Match(N02);
+				}
+				break;
+			case 4:
+				_localctx = new F4SNESSyncContext(_localctx);
+				EnterOuterAlt(_localctx, 4);
+				{
+				State = 753;
+				Match(NF4);
+				State = 754;
+				Match(N05);
+				}
+				break;
+			case 5:
+				_localctx = new F4EnableYoshiDrumsContext(_localctx);
+				EnterOuterAlt(_localctx, 5);
+				{
+				State = 755;
+				Match(NF4);
+				State = 756;
+				Match(N06);
+				}
+				break;
+			case 6:
+				_localctx = new F4TempoHikeOffContext(_localctx);
+				EnterOuterAlt(_localctx, 6);
+				{
+				State = 757;
+				Match(NF4);
+				State = 758;
+				Match(N07);
+				}
+				break;
+			case 7:
+				_localctx = new F4NSPCVelocityTableContext(_localctx);
+				EnterOuterAlt(_localctx, 7);
+				{
+				State = 759;
+				Match(NF4);
+				State = 760;
+				Match(N08);
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class F4ChannelItemsContext : ParserRuleContext {
+		public F4ChannelItemsContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_f4ChannelItems; } }
+	 
+		public F4ChannelItemsContext() { }
+		public virtual void CopyFrom(F4ChannelItemsContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class F4RestoreInstrumentContext : F4ChannelItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF4() { return GetToken(MmlParser.NF4, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N09() { return GetToken(MmlParser.N09, 0); }
+		public F4RestoreInstrumentContext(F4ChannelItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF4RestoreInstrument(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF4RestoreInstrument(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF4RestoreInstrument(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class F4EchoToggleContext : F4ChannelItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF4() { return GetToken(MmlParser.NF4, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N03() { return GetToken(MmlParser.N03, 0); }
+		public F4EchoToggleContext(F4ChannelItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF4EchoToggle(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF4EchoToggle(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF4EchoToggle(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public F4ChannelItemsContext f4ChannelItems() {
+		F4ChannelItemsContext _localctx = new F4ChannelItemsContext(Context, State);
+		EnterRule(_localctx, 184, RULE_f4ChannelItems);
+		try {
+			State = 767;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,65,Context) ) {
+			case 1:
+				_localctx = new F4EchoToggleContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 763;
+				Match(NF4);
+				State = 764;
+				Match(N03);
+				}
+				break;
+			case 2:
+				_localctx = new F4RestoreInstrumentContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 765;
+				Match(NF4);
+				State = 766;
+				Match(N09);
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class F5FIRFilterContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF5() { return GetToken(MmlParser.NF5, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public F5FIRFilterContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_f5FIRFilter; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF5FIRFilter(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF5FIRFilter(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF5FIRFilter(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public F5FIRFilterContext f5FIRFilter() {
+		F5FIRFilterContext _localctx = new F5FIRFilterContext(Context, State);
+		EnterRule(_localctx, 186, RULE_f5FIRFilter);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 769;
+			Match(NF5);
+			State = 770;
+			hexNumber();
+			State = 771;
+			hexNumber();
+			State = 772;
+			hexNumber();
+			State = 773;
+			hexNumber();
+			State = 774;
+			hexNumber();
+			State = 775;
+			hexNumber();
+			State = 776;
+			hexNumber();
+			State = 777;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class F6DSPWriteContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF6() { return GetToken(MmlParser.NF6, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public F6DSPWriteContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_f6DSPWrite; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF6DSPWrite(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF6DSPWrite(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF6DSPWrite(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public F6DSPWriteContext f6DSPWrite() {
+		F6DSPWriteContext _localctx = new F6DSPWriteContext(Context, State);
+		EnterRule(_localctx, 188, RULE_f6DSPWrite);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 779;
+			Match(NF6);
+			State = 780;
+			hexNumber();
+			State = 781;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class F8EnableNoiseContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF8() { return GetToken(MmlParser.NF8, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public F8EnableNoiseContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_f8EnableNoise; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF8EnableNoise(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF8EnableNoise(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF8EnableNoise(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public F8EnableNoiseContext f8EnableNoise() {
+		F8EnableNoiseContext _localctx = new F8EnableNoiseContext(Context, State);
+		EnterRule(_localctx, 190, RULE_f8EnableNoise);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 783;
+			Match(NF8);
+			State = 784;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class F9DataSendContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF9() { return GetToken(MmlParser.NF9, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public F9DataSendContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_f9DataSend; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterF9DataSend(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitF9DataSend(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitF9DataSend(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public F9DataSendContext f9DataSend() {
+		F9DataSendContext _localctx = new F9DataSendContext(Context, State);
+		EnterRule(_localctx, 192, RULE_f9DataSend);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 786;
+			Match(NF9);
+			State = 787;
+			hexNumber();
+			State = 788;
+			hexNumber();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class FaChannelItemsContext : ParserRuleContext {
+		public FaChannelItemsContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_faChannelItems; } }
+	 
+		public FaChannelItemsContext() { }
+		public virtual void CopyFrom(FaChannelItemsContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class FACurrentChannelGainContext : FaChannelItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFA() { return GetToken(MmlParser.NFA, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N01() { return GetToken(MmlParser.N01, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public FACurrentChannelGainContext(FaChannelItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterFACurrentChannelGain(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitFACurrentChannelGain(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFACurrentChannelGain(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class FAPitchModulationContext : FaChannelItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFA() { return GetToken(MmlParser.NFA, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N00() { return GetToken(MmlParser.N00, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public FAPitchModulationContext(FaChannelItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterFAPitchModulation(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitFAPitchModulation(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFAPitchModulation(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class FASemitoneTuneContext : FaChannelItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFA() { return GetToken(MmlParser.NFA, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N02() { return GetToken(MmlParser.N02, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public FASemitoneTuneContext(FaChannelItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterFASemitoneTune(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitFASemitoneTune(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFASemitoneTune(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class FAAmplifyContext : FaChannelItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFA() { return GetToken(MmlParser.NFA, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N03() { return GetToken(MmlParser.N03, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public FAAmplifyContext(FaChannelItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterFAAmplify(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitFAAmplify(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFAAmplify(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public FaChannelItemsContext faChannelItems() {
+		FaChannelItemsContext _localctx = new FaChannelItemsContext(Context, State);
+		EnterRule(_localctx, 194, RULE_faChannelItems);
+		try {
+			State = 802;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,66,Context) ) {
+			case 1:
+				_localctx = new FAPitchModulationContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 790;
+				Match(NFA);
+				State = 791;
+				Match(N00);
+				State = 792;
+				hexNumber();
+				}
+				break;
+			case 2:
+				_localctx = new FACurrentChannelGainContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 793;
+				Match(NFA);
+				State = 794;
+				Match(N01);
+				State = 795;
+				hexNumber();
+				}
+				break;
+			case 3:
+				_localctx = new FASemitoneTuneContext(_localctx);
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 796;
+				Match(NFA);
+				State = 797;
+				Match(N02);
+				State = 798;
+				hexNumber();
+				}
+				break;
+			case 4:
+				_localctx = new FAAmplifyContext(_localctx);
+				EnterOuterAlt(_localctx, 4);
+				{
+				State = 799;
+				Match(NFA);
+				State = 800;
+				Match(N03);
+				State = 801;
+				hexNumber();
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class FaGlobalItemsContext : ParserRuleContext {
+		public FaGlobalItemsContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_faGlobalItems; } }
+	 
+		public FaGlobalItemsContext() { }
+		public virtual void CopyFrom(FaGlobalItemsContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class FAEchoBufferReserveContext : FaGlobalItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFA() { return GetToken(MmlParser.NFA, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N04() { return GetToken(MmlParser.N04, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public FAEchoBufferReserveContext(FaGlobalItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterFAEchoBufferReserve(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitFAEchoBufferReserve(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFAEchoBufferReserve(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class FAHotPatchPresetContext : FaGlobalItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFA() { return GetToken(MmlParser.NFA, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N7F() { return GetToken(MmlParser.N7F, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
+			return GetRuleContext<HexNumberContext>(0);
+		}
+		public FAHotPatchPresetContext(FaGlobalItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterFAHotPatchPreset(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitFAHotPatchPreset(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFAHotPatchPreset(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class FAHotPatchToggleBitsContext : FaGlobalItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFA() { return GetToken(MmlParser.NFA, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFE() { return GetToken(MmlParser.NFE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public FAHotPatchToggleBitsContext(FaGlobalItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterFAHotPatchToggleBits(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitFAHotPatchToggleBits(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFAHotPatchToggleBits(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public FaGlobalItemsContext faGlobalItems() {
+		FaGlobalItemsContext _localctx = new FaGlobalItemsContext(Context, State);
+		EnterRule(_localctx, 196, RULE_faGlobalItems);
+		try {
+			int _alt;
+			State = 819;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,68,Context) ) {
+			case 1:
+				_localctx = new FAEchoBufferReserveContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 804;
+				Match(NFA);
+				State = 805;
+				Match(N04);
+				State = 806;
+				hexNumber();
+				}
+				break;
+			case 2:
+				_localctx = new FAHotPatchPresetContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 807;
+				Match(NFA);
+				State = 808;
+				Match(N7F);
+				State = 809;
+				hexNumber();
+				}
+				break;
+			case 3:
+				_localctx = new FAHotPatchToggleBitsContext(_localctx);
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 810;
+				Match(NFA);
+				State = 811;
+				Match(NFE);
+				State = 812;
+				hexNumber();
+				State = 816;
+				ErrorHandler.Sync(this);
+				_alt = Interpreter.AdaptivePredict(TokenStream,67,Context);
+				while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
+					if ( _alt==1 ) {
+						{
+						{
+						State = 813;
+						hexNumber();
+						}
+						} 
+					}
+					State = 818;
+					ErrorHandler.Sync(this);
+					_alt = Interpreter.AdaptivePredict(TokenStream,67,Context);
+				}
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class FbItemsContext : ParserRuleContext {
+		public FbItemsContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_fbItems; } }
+	 
+		public FbItemsContext() { }
+		public virtual void CopyFrom(FbItemsContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class FBEnableArgeggioContext : FbItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFB() { return GetToken(MmlParser.NFB, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public FBEnableArgeggioContext(FbItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterFBEnableArgeggio(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitFBEnableArgeggio(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFBEnableArgeggio(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class FBTrillContext : FbItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFB() { return GetToken(MmlParser.NFB, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N80() { return GetToken(MmlParser.N80, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public FBTrillContext(FbItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterFBTrill(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitFBTrill(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFBTrill(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class FBGlissandoContext : FbItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFB() { return GetToken(MmlParser.NFB, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N81() { return GetToken(MmlParser.N81, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public FBGlissandoContext(FbItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterFBGlissando(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitFBGlissando(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFBGlissando(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public FbItemsContext fbItems() {
+		FbItemsContext _localctx = new FbItemsContext(Context, State);
+		EnterRule(_localctx, 198, RULE_fbItems);
+		try {
+			State = 835;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,69,Context) ) {
+			case 1:
+				_localctx = new FBTrillContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 821;
+				Match(NFB);
+				State = 822;
+				Match(N80);
+				State = 823;
+				hexNumber();
+				State = 824;
+				hexNumber();
+				}
+				break;
+			case 2:
+				_localctx = new FBGlissandoContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 826;
+				Match(NFB);
+				State = 827;
+				Match(N81);
+				State = 828;
+				hexNumber();
+				State = 829;
+				hexNumber();
+				}
+				break;
+			case 3:
+				_localctx = new FBEnableArgeggioContext(_localctx);
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 831;
+				Match(NFB);
+				State = 832;
+				hexNumber();
+				State = 833;
+				hexNumber();
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class FcItemsContext : ParserRuleContext {
+		public FcItemsContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_fcItems; } }
+	 
+		public FcItemsContext() { }
+		public virtual void CopyFrom(FcItemsContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class FCHexRemoteCommandContext : FcItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFC() { return GetToken(MmlParser.NFC, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		public FCHexRemoteCommandContext(FcItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterFCHexRemoteCommand(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitFCHexRemoteCommand(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFCHexRemoteCommand(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class FCHexRemoteGainContext : FcItemsContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFC() { return GetToken(MmlParser.NFC, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
+			return GetRuleContexts<HexNumberContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber(int i) {
+			return GetRuleContext<HexNumberContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N01() { return GetToken(MmlParser.N01, 0); }
+		public FCHexRemoteGainContext(FcItemsContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterFCHexRemoteGain(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitFCHexRemoteGain(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFCHexRemoteGain(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public FcItemsContext fcItems() {
+		FcItemsContext _localctx = new FcItemsContext(Context, State);
+		EnterRule(_localctx, 200, RULE_fcItems);
+		try {
+			State = 849;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,70,Context) ) {
+			case 1:
+				_localctx = new FCHexRemoteGainContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 837;
+				Match(NFC);
+				State = 838;
+				hexNumber();
+				State = 839;
+				Match(N01);
+				State = 840;
+				hexNumber();
+				State = 841;
+				hexNumber();
+				}
+				break;
+			case 2:
+				_localctx = new FCHexRemoteCommandContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 843;
+				Match(NFC);
+				State = 844;
+				hexNumber();
+				State = 845;
+				hexNumber();
+				State = 846;
+				hexNumber();
+				State = 847;
+				hexNumber();
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class FdTremoloOffContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFD() { return GetToken(MmlParser.NFD, 0); }
+		public FdTremoloOffContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_fdTremoloOff; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterFdTremoloOff(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitFdTremoloOff(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFdTremoloOff(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public FdTremoloOffContext fdTremoloOff() {
+		FdTremoloOffContext _localctx = new FdTremoloOffContext(Context, State);
+		EnterRule(_localctx, 202, RULE_fdTremoloOff);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 851;
+			Match(NFD);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class FePitchEnvelopeOffContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFE() { return GetToken(MmlParser.NFE, 0); }
+		public FePitchEnvelopeOffContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_fePitchEnvelopeOff; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterFePitchEnvelopeOff(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitFePitchEnvelopeOff(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFePitchEnvelopeOff(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public FePitchEnvelopeOffContext fePitchEnvelopeOff() {
+		FePitchEnvelopeOffContext _localctx = new FePitchEnvelopeOffContext(Context, State);
+		EnterRule(_localctx, 204, RULE_fePitchEnvelopeOff);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 853;
+			Match(NFE);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
 	public partial class HexNumberContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N00() { return GetToken(MmlParser.N00, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N01() { return GetToken(MmlParser.N01, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N02() { return GetToken(MmlParser.N02, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N03() { return GetToken(MmlParser.N03, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N04() { return GetToken(MmlParser.N04, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N05() { return GetToken(MmlParser.N05, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N06() { return GetToken(MmlParser.N06, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N07() { return GetToken(MmlParser.N07, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N08() { return GetToken(MmlParser.N08, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N09() { return GetToken(MmlParser.N09, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N7F() { return GetToken(MmlParser.N7F, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N80() { return GetToken(MmlParser.N80, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N81() { return GetToken(MmlParser.N81, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFE() { return GetToken(MmlParser.NFE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NDA() { return GetToken(MmlParser.NDA, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NDB() { return GetToken(MmlParser.NDB, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NDC() { return GetToken(MmlParser.NDC, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NDD() { return GetToken(MmlParser.NDD, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NDE() { return GetToken(MmlParser.NDE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NDF() { return GetToken(MmlParser.NDF, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE0() { return GetToken(MmlParser.NE0, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE1() { return GetToken(MmlParser.NE1, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE2() { return GetToken(MmlParser.NE2, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE3() { return GetToken(MmlParser.NE3, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE4() { return GetToken(MmlParser.NE4, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE5() { return GetToken(MmlParser.NE5, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE6() { return GetToken(MmlParser.NE6, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE7() { return GetToken(MmlParser.NE7, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE8() { return GetToken(MmlParser.NE8, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE9() { return GetToken(MmlParser.NE9, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEA() { return GetToken(MmlParser.NEA, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEB() { return GetToken(MmlParser.NEB, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEC() { return GetToken(MmlParser.NEC, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NED() { return GetToken(MmlParser.NED, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEE() { return GetToken(MmlParser.NEE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEF() { return GetToken(MmlParser.NEF, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF0() { return GetToken(MmlParser.NF0, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF1() { return GetToken(MmlParser.NF1, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF2() { return GetToken(MmlParser.NF2, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF3() { return GetToken(MmlParser.NF3, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF4() { return GetToken(MmlParser.NF4, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF5() { return GetToken(MmlParser.NF5, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF6() { return GetToken(MmlParser.NF6, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF7() { return GetToken(MmlParser.NF7, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF8() { return GetToken(MmlParser.NF8, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NF9() { return GetToken(MmlParser.NF9, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFA() { return GetToken(MmlParser.NFA, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFB() { return GetToken(MmlParser.NFB, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFC() { return GetToken(MmlParser.NFC, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NFD() { return GetToken(MmlParser.NFD, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode HexNumber() { return GetToken(MmlParser.HexNumber, 0); }
 		public HexNumberContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -4822,12 +8680,20 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public HexNumberContext hexNumber() {
 		HexNumberContext _localctx = new HexNumberContext(Context, State);
-		EnterRule(_localctx, 124, RULE_hexNumber);
+		EnterRule(_localctx, 206, RULE_hexNumber);
+		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 490;
-			Match(HexNumber);
+			State = 855;
+			_la = TokenStream.LA(1);
+			if ( !(((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & 10133099161583615L) != 0)) ) {
+			ErrorHandler.RecoverInline(this);
+			}
+			else {
+				ErrorHandler.ReportMatch(this);
+			    Consume();
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -4842,173 +8708,300 @@ public partial class MmlParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,81,493,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
-		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
+		4,1,133,858,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+		7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,
 		2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,28,
 		2,29,7,29,2,30,7,30,2,31,7,31,2,32,7,32,2,33,7,33,2,34,7,34,2,35,7,35,
 		2,36,7,36,2,37,7,37,2,38,7,38,2,39,7,39,2,40,7,40,2,41,7,41,2,42,7,42,
 		2,43,7,43,2,44,7,44,2,45,7,45,2,46,7,46,2,47,7,47,2,48,7,48,2,49,7,49,
 		2,50,7,50,2,51,7,51,2,52,7,52,2,53,7,53,2,54,7,54,2,55,7,55,2,56,7,56,
-		2,57,7,57,2,58,7,58,2,59,7,59,2,60,7,60,2,61,7,61,2,62,7,62,1,0,4,0,128,
-		8,0,11,0,12,0,129,1,0,3,0,133,8,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,1,1,1,1,1,1,1,3,1,148,8,1,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,2,158,8,
-		2,1,3,1,3,1,3,1,3,1,3,1,4,3,4,166,8,4,1,4,5,4,169,8,4,10,4,12,4,172,9,
-		4,1,5,1,5,1,5,5,5,177,8,5,10,5,12,5,180,9,5,1,5,1,5,1,6,1,6,4,6,186,8,
-		6,11,6,12,6,187,1,6,1,6,4,6,192,8,6,11,6,12,6,193,1,6,1,6,4,6,198,8,6,
-		11,6,12,6,199,3,6,202,8,6,1,7,1,7,1,7,5,7,207,8,7,10,7,12,7,210,9,7,1,
-		7,1,7,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,3,8,224,8,8,1,9,1,9,1,9,
-		1,10,1,10,1,10,1,11,1,11,1,12,1,12,1,12,1,12,5,12,238,8,12,10,12,12,12,
-		241,9,12,1,12,1,12,1,12,3,12,246,8,12,1,13,1,13,1,13,1,13,1,13,1,13,1,
-		13,1,13,1,13,1,13,3,13,258,8,13,1,14,1,14,1,14,1,14,3,14,264,8,14,1,15,
-		1,15,1,16,1,16,1,17,1,17,1,18,1,18,5,18,274,8,18,10,18,12,18,277,9,18,
-		1,19,1,19,1,20,1,20,1,20,1,20,3,20,285,8,20,1,21,1,21,1,21,1,21,1,21,1,
-		21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,3,21,305,
-		8,21,1,22,1,22,1,23,1,23,1,24,1,24,1,25,1,25,1,26,1,26,1,27,1,27,1,28,
-		1,28,1,29,1,29,1,30,1,30,1,31,1,31,1,32,1,32,1,33,1,33,1,33,4,33,332,8,
-		33,11,33,12,33,333,1,34,1,34,1,34,3,34,339,8,34,1,34,1,34,3,34,343,8,34,
-		1,34,1,34,3,34,347,8,34,1,34,1,34,1,35,1,35,1,36,1,36,1,37,1,37,1,38,1,
-		38,1,39,1,39,1,40,1,40,1,41,1,41,3,41,365,8,41,1,42,1,42,3,42,369,8,42,
-		1,43,1,43,3,43,373,8,43,1,44,1,44,1,44,3,44,378,8,44,1,45,1,45,5,45,382,
-		8,45,10,45,12,45,385,9,45,1,45,1,45,3,45,389,8,45,1,46,1,46,1,46,1,46,
-		3,46,395,8,46,1,47,3,47,398,8,47,1,47,1,47,5,47,402,8,47,10,47,12,47,405,
-		9,47,1,47,1,47,3,47,409,8,47,1,48,1,48,1,48,1,48,3,48,415,8,48,1,49,1,
-		49,5,49,419,8,49,10,49,12,49,422,9,49,1,49,1,49,3,49,426,8,49,1,50,1,50,
-		1,50,3,50,431,8,50,1,51,3,51,434,8,51,1,51,1,51,5,51,438,8,51,10,51,12,
-		51,441,9,51,1,51,1,51,3,51,445,8,51,1,52,1,52,1,52,3,52,450,8,52,1,53,
-		1,53,1,53,4,53,455,8,53,11,53,12,53,456,1,53,1,53,1,54,1,54,1,54,1,54,
-		1,54,1,54,1,54,1,54,1,54,1,54,3,54,471,8,54,1,55,1,55,3,55,475,8,55,1,
-		56,1,56,1,57,1,57,1,58,1,58,3,58,483,8,58,1,59,1,59,1,60,1,60,1,61,1,61,
-		1,62,1,62,1,62,0,0,63,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,
-		36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,
-		84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,
-		124,0,2,2,0,28,28,53,53,1,0,33,34,536,0,132,1,0,0,0,2,147,1,0,0,0,4,157,
-		1,0,0,0,6,159,1,0,0,0,8,165,1,0,0,0,10,173,1,0,0,0,12,201,1,0,0,0,14,203,
-		1,0,0,0,16,223,1,0,0,0,18,225,1,0,0,0,20,228,1,0,0,0,22,231,1,0,0,0,24,
-		245,1,0,0,0,26,257,1,0,0,0,28,263,1,0,0,0,30,265,1,0,0,0,32,267,1,0,0,
-		0,34,269,1,0,0,0,36,271,1,0,0,0,38,278,1,0,0,0,40,284,1,0,0,0,42,304,1,
-		0,0,0,44,306,1,0,0,0,46,308,1,0,0,0,48,310,1,0,0,0,50,312,1,0,0,0,52,314,
-		1,0,0,0,54,316,1,0,0,0,56,318,1,0,0,0,58,320,1,0,0,0,60,322,1,0,0,0,62,
-		324,1,0,0,0,64,326,1,0,0,0,66,328,1,0,0,0,68,335,1,0,0,0,70,350,1,0,0,
-		0,72,352,1,0,0,0,74,354,1,0,0,0,76,356,1,0,0,0,78,358,1,0,0,0,80,360,1,
-		0,0,0,82,364,1,0,0,0,84,368,1,0,0,0,86,372,1,0,0,0,88,377,1,0,0,0,90,379,
-		1,0,0,0,92,394,1,0,0,0,94,397,1,0,0,0,96,414,1,0,0,0,98,416,1,0,0,0,100,
-		430,1,0,0,0,102,433,1,0,0,0,104,449,1,0,0,0,106,451,1,0,0,0,108,470,1,
-		0,0,0,110,472,1,0,0,0,112,476,1,0,0,0,114,478,1,0,0,0,116,480,1,0,0,0,
-		118,484,1,0,0,0,120,486,1,0,0,0,122,488,1,0,0,0,124,490,1,0,0,0,126,128,
-		3,2,1,0,127,126,1,0,0,0,128,129,1,0,0,0,129,127,1,0,0,0,129,130,1,0,0,
-		0,130,133,1,0,0,0,131,133,5,0,0,1,132,127,1,0,0,0,132,131,1,0,0,0,133,
-		1,1,0,0,0,134,148,3,4,2,0,135,148,3,36,18,0,136,148,3,106,53,0,137,148,
-		3,70,35,0,138,148,3,72,36,0,139,148,3,74,37,0,140,148,3,122,61,0,141,148,
-		3,118,59,0,142,148,5,32,0,0,143,148,3,124,62,0,144,148,3,38,19,0,145,148,
-		3,106,53,0,146,148,3,80,40,0,147,134,1,0,0,0,147,135,1,0,0,0,147,136,1,
-		0,0,0,147,137,1,0,0,0,147,138,1,0,0,0,147,139,1,0,0,0,147,140,1,0,0,0,
-		147,141,1,0,0,0,147,142,1,0,0,0,147,143,1,0,0,0,147,144,1,0,0,0,147,145,
-		1,0,0,0,147,146,1,0,0,0,148,3,1,0,0,0,149,158,3,28,14,0,150,158,3,14,7,
-		0,151,158,3,6,3,0,152,158,3,10,5,0,153,158,3,20,10,0,154,158,3,18,9,0,
-		155,158,3,22,11,0,156,158,3,24,12,0,157,149,1,0,0,0,157,150,1,0,0,0,157,
-		151,1,0,0,0,157,152,1,0,0,0,157,153,1,0,0,0,157,154,1,0,0,0,157,155,1,
-		0,0,0,157,156,1,0,0,0,158,5,1,0,0,0,159,160,5,60,0,0,160,161,5,7,0,0,161,
-		162,3,8,4,0,162,163,5,8,0,0,163,7,1,0,0,0,164,166,5,79,0,0,165,164,1,0,
-		0,0,165,166,1,0,0,0,166,170,1,0,0,0,167,169,5,32,0,0,168,167,1,0,0,0,169,
-		172,1,0,0,0,170,168,1,0,0,0,170,171,1,0,0,0,171,9,1,0,0,0,172,170,1,0,
-		0,0,173,174,5,61,0,0,174,178,5,7,0,0,175,177,3,12,6,0,176,175,1,0,0,0,
-		177,180,1,0,0,0,178,176,1,0,0,0,178,179,1,0,0,0,179,181,1,0,0,0,180,178,
-		1,0,0,0,181,182,5,8,0,0,182,11,1,0,0,0,183,185,5,32,0,0,184,186,5,55,0,
-		0,185,184,1,0,0,0,186,187,1,0,0,0,187,185,1,0,0,0,187,188,1,0,0,0,188,
-		202,1,0,0,0,189,191,3,76,38,0,190,192,5,55,0,0,191,190,1,0,0,0,192,193,
-		1,0,0,0,193,191,1,0,0,0,193,194,1,0,0,0,194,202,1,0,0,0,195,197,3,54,27,
-		0,196,198,5,55,0,0,197,196,1,0,0,0,198,199,1,0,0,0,199,197,1,0,0,0,199,
-		200,1,0,0,0,200,202,1,0,0,0,201,183,1,0,0,0,201,189,1,0,0,0,201,195,1,
-		0,0,0,202,13,1,0,0,0,203,204,5,62,0,0,204,208,5,7,0,0,205,207,3,16,8,0,
-		206,205,1,0,0,0,207,210,1,0,0,0,208,206,1,0,0,0,208,209,1,0,0,0,209,211,
-		1,0,0,0,210,208,1,0,0,0,211,212,5,8,0,0,212,15,1,0,0,0,213,214,5,63,0,
-		0,214,224,5,32,0,0,215,216,5,64,0,0,216,224,5,32,0,0,217,218,5,65,0,0,
-		218,224,5,32,0,0,219,220,5,66,0,0,220,224,5,32,0,0,221,222,5,67,0,0,222,
-		224,5,32,0,0,223,213,1,0,0,0,223,215,1,0,0,0,223,217,1,0,0,0,223,219,1,
-		0,0,0,223,221,1,0,0,0,224,17,1,0,0,0,225,226,5,68,0,0,226,227,5,55,0,0,
-		227,19,1,0,0,0,228,229,5,69,0,0,229,230,5,32,0,0,230,21,1,0,0,0,231,232,
-		5,70,0,0,232,23,1,0,0,0,233,234,5,71,0,0,234,239,5,7,0,0,235,236,5,1,0,
-		0,236,238,3,26,13,0,237,235,1,0,0,0,238,241,1,0,0,0,239,237,1,0,0,0,239,
-		240,1,0,0,0,240,242,1,0,0,0,241,239,1,0,0,0,242,246,5,8,0,0,243,244,5,
-		71,0,0,244,246,3,26,13,0,245,233,1,0,0,0,245,243,1,0,0,0,246,25,1,0,0,
-		0,247,258,5,72,0,0,248,249,5,73,0,0,249,258,5,28,0,0,250,258,5,74,0,0,
-		251,258,5,75,0,0,252,258,5,76,0,0,253,258,5,77,0,0,254,255,5,32,0,0,255,
-		258,5,28,0,0,256,258,5,32,0,0,257,247,1,0,0,0,257,248,1,0,0,0,257,250,
-		1,0,0,0,257,251,1,0,0,0,257,252,1,0,0,0,257,253,1,0,0,0,257,254,1,0,0,
-		0,257,256,1,0,0,0,258,27,1,0,0,0,259,260,5,57,0,0,260,264,3,34,17,0,261,
-		264,3,30,15,0,262,264,3,32,16,0,263,259,1,0,0,0,263,261,1,0,0,0,263,262,
-		1,0,0,0,264,29,1,0,0,0,265,266,5,58,0,0,266,31,1,0,0,0,267,268,5,59,0,
-		0,268,33,1,0,0,0,269,270,7,0,0,0,270,35,1,0,0,0,271,275,5,78,0,0,272,274,
-		3,40,20,0,273,272,1,0,0,0,274,277,1,0,0,0,275,273,1,0,0,0,275,276,1,0,
-		0,0,276,37,1,0,0,0,277,275,1,0,0,0,278,279,5,24,0,0,279,39,1,0,0,0,280,
-		285,3,42,21,0,281,285,3,82,41,0,282,285,3,120,60,0,283,285,5,55,0,0,284,
-		280,1,0,0,0,284,281,1,0,0,0,284,282,1,0,0,0,284,283,1,0,0,0,285,41,1,0,
-		0,0,286,305,3,66,33,0,287,305,3,44,22,0,288,305,3,46,23,0,289,305,3,48,
-		24,0,290,305,3,50,25,0,291,305,3,52,26,0,292,305,3,54,27,0,293,305,3,68,
-		34,0,294,305,3,56,28,0,295,305,3,58,29,0,296,305,3,76,38,0,297,305,3,60,
-		30,0,298,305,3,62,31,0,299,305,3,64,32,0,300,305,3,74,37,0,301,305,3,38,
-		19,0,302,305,3,78,39,0,303,305,3,80,40,0,304,286,1,0,0,0,304,287,1,0,0,
-		0,304,288,1,0,0,0,304,289,1,0,0,0,304,290,1,0,0,0,304,291,1,0,0,0,304,
-		292,1,0,0,0,304,293,1,0,0,0,304,294,1,0,0,0,304,295,1,0,0,0,304,296,1,
-		0,0,0,304,297,1,0,0,0,304,298,1,0,0,0,304,299,1,0,0,0,304,300,1,0,0,0,
-		304,301,1,0,0,0,304,302,1,0,0,0,304,303,1,0,0,0,305,43,1,0,0,0,306,307,
-		5,33,0,0,307,45,1,0,0,0,308,309,5,34,0,0,309,47,1,0,0,0,310,311,5,35,0,
-		0,311,49,1,0,0,0,312,313,5,22,0,0,313,51,1,0,0,0,314,315,5,21,0,0,315,
-		53,1,0,0,0,316,317,5,36,0,0,317,55,1,0,0,0,318,319,5,38,0,0,319,57,1,0,
-		0,0,320,321,5,39,0,0,321,59,1,0,0,0,322,323,5,41,0,0,323,61,1,0,0,0,324,
-		325,5,43,0,0,325,63,1,0,0,0,326,327,5,44,0,0,327,65,1,0,0,0,328,331,7,
-		1,0,0,329,330,5,4,0,0,330,332,7,1,0,0,331,329,1,0,0,0,332,333,1,0,0,0,
-		333,331,1,0,0,0,333,334,1,0,0,0,334,67,1,0,0,0,335,338,5,7,0,0,336,339,
-		3,44,22,0,337,339,3,46,23,0,338,336,1,0,0,0,338,337,1,0,0,0,339,342,1,
-		0,0,0,340,343,3,44,22,0,341,343,3,46,23,0,342,340,1,0,0,0,342,341,1,0,
-		0,0,343,346,1,0,0,0,344,347,3,44,22,0,345,347,3,46,23,0,346,344,1,0,0,
-		0,346,345,1,0,0,0,347,348,1,0,0,0,348,349,5,8,0,0,349,69,1,0,0,0,350,351,
-		5,40,0,0,351,71,1,0,0,0,352,353,5,42,0,0,353,73,1,0,0,0,354,355,5,37,0,
-		0,355,75,1,0,0,0,356,357,5,56,0,0,357,77,1,0,0,0,358,359,5,45,0,0,359,
-		79,1,0,0,0,360,361,5,46,0,0,361,81,1,0,0,0,362,365,3,84,42,0,363,365,3,
-		86,43,0,364,362,1,0,0,0,364,363,1,0,0,0,365,83,1,0,0,0,366,369,3,90,45,
-		0,367,369,3,94,47,0,368,366,1,0,0,0,368,367,1,0,0,0,369,85,1,0,0,0,370,
-		373,3,110,55,0,371,373,3,88,44,0,372,370,1,0,0,0,372,371,1,0,0,0,373,87,
-		1,0,0,0,374,378,3,112,56,0,375,378,3,116,58,0,376,378,3,114,57,0,377,374,
-		1,0,0,0,377,375,1,0,0,0,377,376,1,0,0,0,378,89,1,0,0,0,379,383,5,13,0,
-		0,380,382,3,92,46,0,381,380,1,0,0,0,382,385,1,0,0,0,383,381,1,0,0,0,383,
-		384,1,0,0,0,384,386,1,0,0,0,385,383,1,0,0,0,386,388,5,14,0,0,387,389,5,
-		28,0,0,388,387,1,0,0,0,388,389,1,0,0,0,389,91,1,0,0,0,390,395,3,42,21,
-		0,391,395,3,102,51,0,392,395,3,86,43,0,393,395,3,124,62,0,394,390,1,0,
-		0,0,394,391,1,0,0,0,394,392,1,0,0,0,394,393,1,0,0,0,395,93,1,0,0,0,396,
-		398,5,47,0,0,397,396,1,0,0,0,397,398,1,0,0,0,398,399,1,0,0,0,399,403,5,
-		11,0,0,400,402,3,96,48,0,401,400,1,0,0,0,402,405,1,0,0,0,403,401,1,0,0,
-		0,403,404,1,0,0,0,404,406,1,0,0,0,405,403,1,0,0,0,406,408,5,12,0,0,407,
-		409,5,28,0,0,408,407,1,0,0,0,408,409,1,0,0,0,409,95,1,0,0,0,410,415,3,
-		42,21,0,411,415,3,98,49,0,412,415,3,88,44,0,413,415,3,124,62,0,414,410,
-		1,0,0,0,414,411,1,0,0,0,414,412,1,0,0,0,414,413,1,0,0,0,415,97,1,0,0,0,
-		416,420,5,13,0,0,417,419,3,100,50,0,418,417,1,0,0,0,419,422,1,0,0,0,420,
-		418,1,0,0,0,420,421,1,0,0,0,421,423,1,0,0,0,422,420,1,0,0,0,423,425,5,
-		14,0,0,424,426,5,28,0,0,425,424,1,0,0,0,425,426,1,0,0,0,426,99,1,0,0,0,
-		427,431,3,42,21,0,428,431,3,86,43,0,429,431,3,124,62,0,430,427,1,0,0,0,
-		430,428,1,0,0,0,430,429,1,0,0,0,431,101,1,0,0,0,432,434,5,47,0,0,433,432,
-		1,0,0,0,433,434,1,0,0,0,434,435,1,0,0,0,435,439,5,11,0,0,436,438,3,104,
-		52,0,437,436,1,0,0,0,438,441,1,0,0,0,439,437,1,0,0,0,439,440,1,0,0,0,440,
-		442,1,0,0,0,441,439,1,0,0,0,442,444,5,12,0,0,443,445,5,28,0,0,444,443,
-		1,0,0,0,444,445,1,0,0,0,445,103,1,0,0,0,446,450,3,42,21,0,447,450,3,88,
-		44,0,448,450,3,124,62,0,449,446,1,0,0,0,449,447,1,0,0,0,449,448,1,0,0,
-		0,450,105,1,0,0,0,451,452,5,48,0,0,452,454,5,11,0,0,453,455,3,108,54,0,
-		454,453,1,0,0,0,455,456,1,0,0,0,456,454,1,0,0,0,456,457,1,0,0,0,457,458,
-		1,0,0,0,458,459,5,12,0,0,459,107,1,0,0,0,460,471,3,48,24,0,461,471,3,50,
-		25,0,462,471,3,52,26,0,463,471,3,56,28,0,464,471,3,58,29,0,465,471,3,60,
-		30,0,466,471,3,62,31,0,467,471,3,64,32,0,468,471,3,74,37,0,469,471,5,55,
-		0,0,470,460,1,0,0,0,470,461,1,0,0,0,470,462,1,0,0,0,470,463,1,0,0,0,470,
-		464,1,0,0,0,470,465,1,0,0,0,470,466,1,0,0,0,470,467,1,0,0,0,470,468,1,
-		0,0,0,470,469,1,0,0,0,471,109,1,0,0,0,472,474,5,47,0,0,473,475,5,28,0,
-		0,474,473,1,0,0,0,474,475,1,0,0,0,475,111,1,0,0,0,476,477,5,50,0,0,477,
-		113,1,0,0,0,478,479,5,49,0,0,479,115,1,0,0,0,480,482,5,6,0,0,481,483,5,
-		28,0,0,482,481,1,0,0,0,482,483,1,0,0,0,483,117,1,0,0,0,484,485,5,25,0,
-		0,485,119,1,0,0,0,486,487,5,52,0,0,487,121,1,0,0,0,488,489,5,31,0,0,489,
-		123,1,0,0,0,490,491,5,55,0,0,491,125,1,0,0,0,46,129,132,147,157,165,170,
-		178,187,193,199,201,208,223,239,245,257,263,275,284,304,333,338,342,346,
-		364,368,372,377,383,388,394,397,403,408,414,420,425,430,433,439,444,449,
-		456,470,474,482
+		2,57,7,57,2,58,7,58,2,59,7,59,2,60,7,60,2,61,7,61,2,62,7,62,2,63,7,63,
+		2,64,7,64,2,65,7,65,2,66,7,66,2,67,7,67,2,68,7,68,2,69,7,69,2,70,7,70,
+		2,71,7,71,2,72,7,72,2,73,7,73,2,74,7,74,2,75,7,75,2,76,7,76,2,77,7,77,
+		2,78,7,78,2,79,7,79,2,80,7,80,2,81,7,81,2,82,7,82,2,83,7,83,2,84,7,84,
+		2,85,7,85,2,86,7,86,2,87,7,87,2,88,7,88,2,89,7,89,2,90,7,90,2,91,7,91,
+		2,92,7,92,2,93,7,93,2,94,7,94,2,95,7,95,2,96,7,96,2,97,7,97,2,98,7,98,
+		2,99,7,99,2,100,7,100,2,101,7,101,2,102,7,102,2,103,7,103,1,0,4,0,210,
+		8,0,11,0,12,0,211,1,0,3,0,215,8,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,3,1,231,8,1,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,2,241,
+		8,2,1,3,1,3,1,3,1,3,1,3,1,4,3,4,249,8,4,1,4,5,4,252,8,4,10,4,12,4,255,
+		9,4,1,5,1,5,1,5,5,5,260,8,5,10,5,12,5,263,9,5,1,5,1,5,1,6,1,6,4,6,269,
+		8,6,11,6,12,6,270,1,6,1,6,4,6,275,8,6,11,6,12,6,276,1,6,1,6,4,6,281,8,
+		6,11,6,12,6,282,3,6,285,8,6,1,7,1,7,1,7,5,7,290,8,7,10,7,12,7,293,9,7,
+		1,7,1,7,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,3,8,307,8,8,1,9,1,9,1,
+		9,1,10,1,10,1,10,1,11,1,11,1,12,1,12,1,12,1,12,5,12,321,8,12,10,12,12,
+		12,324,9,12,1,12,1,12,1,12,3,12,329,8,12,1,13,1,13,1,13,1,13,1,13,1,13,
+		1,13,1,13,1,13,1,13,3,13,341,8,13,1,14,1,14,1,14,1,14,3,14,347,8,14,1,
+		15,1,15,1,16,1,16,1,17,1,17,1,18,1,18,5,18,357,8,18,10,18,12,18,360,9,
+		18,1,19,1,19,1,20,1,20,1,20,1,20,1,20,3,20,369,8,20,1,21,1,21,1,21,1,21,
+		1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,
+		3,21,389,8,21,1,22,1,22,1,23,1,23,1,24,1,24,1,25,1,25,1,26,1,26,1,27,1,
+		27,1,28,1,28,1,28,3,28,406,8,28,3,28,408,8,28,1,29,1,29,3,29,412,8,29,
+		1,30,1,30,1,31,1,31,1,31,3,31,419,8,31,3,31,421,8,31,1,32,1,32,3,32,425,
+		8,32,1,33,1,33,1,33,4,33,430,8,33,11,33,12,33,431,1,34,1,34,1,34,3,34,
+		437,8,34,1,34,1,34,3,34,441,8,34,1,34,1,34,3,34,445,8,34,1,34,1,34,1,35,
+		1,35,1,36,1,36,1,36,3,36,454,8,36,3,36,456,8,36,1,37,1,37,1,37,3,37,461,
+		8,37,3,37,463,8,37,1,38,1,38,3,38,467,8,38,1,39,1,39,1,40,1,40,1,41,1,
+		41,3,41,475,8,41,1,42,1,42,3,42,479,8,42,1,43,1,43,3,43,483,8,43,1,44,
+		1,44,1,44,3,44,488,8,44,1,45,1,45,5,45,492,8,45,10,45,12,45,495,9,45,1,
+		45,1,45,3,45,499,8,45,1,46,1,46,1,46,1,46,3,46,505,8,46,1,47,3,47,508,
+		8,47,1,47,1,47,5,47,512,8,47,10,47,12,47,515,9,47,1,47,1,47,3,47,519,8,
+		47,1,48,1,48,1,48,1,48,3,48,525,8,48,1,49,1,49,5,49,529,8,49,10,49,12,
+		49,532,9,49,1,49,1,49,3,49,536,8,49,1,50,1,50,1,50,3,50,541,8,50,1,51,
+		3,51,544,8,51,1,51,1,51,5,51,548,8,51,10,51,12,51,551,9,51,1,51,1,51,3,
+		51,555,8,51,1,52,1,52,1,52,3,52,560,8,52,1,53,1,53,1,53,4,53,565,8,53,
+		11,53,12,53,566,1,53,1,53,1,54,1,54,1,54,1,54,1,54,1,54,1,54,1,54,1,54,
+		1,54,3,54,581,8,54,1,55,1,55,3,55,585,8,55,1,56,1,56,1,57,1,57,1,58,1,
+		58,3,58,593,8,58,1,59,1,59,1,60,1,60,3,60,599,8,60,1,61,1,61,1,62,1,62,
+		1,62,1,62,1,62,1,62,1,62,1,62,1,62,1,62,3,62,613,8,62,1,63,1,63,1,63,1,
+		63,1,63,1,63,1,63,1,63,1,63,1,63,1,63,1,63,1,63,1,63,1,63,1,63,1,63,1,
+		63,3,63,633,8,63,1,64,1,64,1,64,1,65,1,65,1,65,1,66,1,66,1,66,1,66,1,67,
+		1,67,1,67,1,67,3,67,649,8,67,1,68,1,68,1,68,5,68,654,8,68,10,68,12,68,
+		657,9,68,1,68,1,68,1,69,1,69,1,69,1,69,1,69,1,70,1,70,1,70,1,71,1,71,1,
+		72,1,72,1,72,1,73,1,73,1,73,1,73,1,74,1,74,1,74,1,75,1,75,1,75,1,75,1,
+		76,1,76,1,76,1,77,1,77,1,77,1,77,1,77,1,78,1,78,1,78,1,79,1,79,1,79,1,
+		80,1,80,1,80,1,81,1,81,1,81,1,81,1,82,1,82,1,82,1,82,1,82,1,83,1,83,1,
+		83,1,83,1,83,1,84,1,84,1,84,1,84,1,84,1,84,1,84,3,84,723,8,84,1,85,1,85,
+		1,85,1,86,1,86,1,86,1,86,1,86,1,87,1,87,1,88,1,88,1,88,1,88,1,88,1,89,
+		1,89,1,89,1,89,1,90,1,90,1,90,1,90,1,91,1,91,1,91,1,91,1,91,1,91,1,91,
+		1,91,1,91,1,91,1,91,1,91,1,91,1,91,3,91,762,8,91,1,92,1,92,1,92,1,92,3,
+		92,768,8,92,1,93,1,93,1,93,1,93,1,93,1,93,1,93,1,93,1,93,1,93,1,94,1,94,
+		1,94,1,94,1,95,1,95,1,95,1,96,1,96,1,96,1,96,1,97,1,97,1,97,1,97,1,97,
+		1,97,1,97,1,97,1,97,1,97,1,97,1,97,3,97,803,8,97,1,98,1,98,1,98,1,98,1,
+		98,1,98,1,98,1,98,1,98,1,98,5,98,815,8,98,10,98,12,98,818,9,98,3,98,820,
+		8,98,1,99,1,99,1,99,1,99,1,99,1,99,1,99,1,99,1,99,1,99,1,99,1,99,1,99,
+		1,99,3,99,836,8,99,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,
+		1,100,1,100,1,100,3,100,850,8,100,1,101,1,101,1,102,1,102,1,103,1,103,
+		1,103,0,0,104,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,
+		42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,
+		90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,
+		128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,
+		164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,194,196,198,
+		200,202,204,206,0,3,2,0,53,53,128,128,1,0,32,33,2,0,78,127,131,131,921,
+		0,214,1,0,0,0,2,230,1,0,0,0,4,240,1,0,0,0,6,242,1,0,0,0,8,248,1,0,0,0,
+		10,256,1,0,0,0,12,284,1,0,0,0,14,286,1,0,0,0,16,306,1,0,0,0,18,308,1,0,
+		0,0,20,311,1,0,0,0,22,314,1,0,0,0,24,328,1,0,0,0,26,340,1,0,0,0,28,346,
+		1,0,0,0,30,348,1,0,0,0,32,350,1,0,0,0,34,352,1,0,0,0,36,354,1,0,0,0,38,
+		361,1,0,0,0,40,368,1,0,0,0,42,388,1,0,0,0,44,390,1,0,0,0,46,392,1,0,0,
+		0,48,394,1,0,0,0,50,396,1,0,0,0,52,398,1,0,0,0,54,400,1,0,0,0,56,407,1,
+		0,0,0,58,411,1,0,0,0,60,413,1,0,0,0,62,420,1,0,0,0,64,424,1,0,0,0,66,426,
+		1,0,0,0,68,433,1,0,0,0,70,448,1,0,0,0,72,455,1,0,0,0,74,462,1,0,0,0,76,
+		466,1,0,0,0,78,468,1,0,0,0,80,470,1,0,0,0,82,474,1,0,0,0,84,478,1,0,0,
+		0,86,482,1,0,0,0,88,487,1,0,0,0,90,489,1,0,0,0,92,504,1,0,0,0,94,507,1,
+		0,0,0,96,524,1,0,0,0,98,526,1,0,0,0,100,540,1,0,0,0,102,543,1,0,0,0,104,
+		559,1,0,0,0,106,561,1,0,0,0,108,580,1,0,0,0,110,582,1,0,0,0,112,586,1,
+		0,0,0,114,588,1,0,0,0,116,590,1,0,0,0,118,594,1,0,0,0,120,598,1,0,0,0,
+		122,600,1,0,0,0,124,612,1,0,0,0,126,632,1,0,0,0,128,634,1,0,0,0,130,637,
+		1,0,0,0,132,640,1,0,0,0,134,644,1,0,0,0,136,655,1,0,0,0,138,660,1,0,0,
+		0,140,665,1,0,0,0,142,668,1,0,0,0,144,670,1,0,0,0,146,673,1,0,0,0,148,
+		677,1,0,0,0,150,680,1,0,0,0,152,684,1,0,0,0,154,687,1,0,0,0,156,692,1,
+		0,0,0,158,695,1,0,0,0,160,698,1,0,0,0,162,701,1,0,0,0,164,705,1,0,0,0,
+		166,710,1,0,0,0,168,722,1,0,0,0,170,724,1,0,0,0,172,727,1,0,0,0,174,732,
+		1,0,0,0,176,734,1,0,0,0,178,739,1,0,0,0,180,743,1,0,0,0,182,761,1,0,0,
+		0,184,767,1,0,0,0,186,769,1,0,0,0,188,779,1,0,0,0,190,783,1,0,0,0,192,
+		786,1,0,0,0,194,802,1,0,0,0,196,819,1,0,0,0,198,835,1,0,0,0,200,849,1,
+		0,0,0,202,851,1,0,0,0,204,853,1,0,0,0,206,855,1,0,0,0,208,210,3,2,1,0,
+		209,208,1,0,0,0,210,211,1,0,0,0,211,209,1,0,0,0,211,212,1,0,0,0,212,215,
+		1,0,0,0,213,215,5,0,0,1,214,209,1,0,0,0,214,213,1,0,0,0,215,1,1,0,0,0,
+		216,231,3,4,2,0,217,231,3,36,18,0,218,231,3,106,53,0,219,231,3,70,35,0,
+		220,231,3,72,36,0,221,231,3,74,37,0,222,231,3,122,61,0,223,231,3,118,59,
+		0,224,231,5,30,0,0,225,231,3,124,62,0,226,231,3,206,103,0,227,231,3,38,
+		19,0,228,231,3,106,53,0,229,231,3,80,40,0,230,216,1,0,0,0,230,217,1,0,
+		0,0,230,218,1,0,0,0,230,219,1,0,0,0,230,220,1,0,0,0,230,221,1,0,0,0,230,
+		222,1,0,0,0,230,223,1,0,0,0,230,224,1,0,0,0,230,225,1,0,0,0,230,226,1,
+		0,0,0,230,227,1,0,0,0,230,228,1,0,0,0,230,229,1,0,0,0,231,3,1,0,0,0,232,
+		241,3,28,14,0,233,241,3,14,7,0,234,241,3,6,3,0,235,241,3,10,5,0,236,241,
+		3,20,10,0,237,241,3,18,9,0,238,241,3,22,11,0,239,241,3,24,12,0,240,232,
+		1,0,0,0,240,233,1,0,0,0,240,234,1,0,0,0,240,235,1,0,0,0,240,236,1,0,0,
+		0,240,237,1,0,0,0,240,238,1,0,0,0,240,239,1,0,0,0,241,5,1,0,0,0,242,243,
+		5,57,0,0,243,244,5,8,0,0,244,245,3,8,4,0,245,246,5,9,0,0,246,7,1,0,0,0,
+		247,249,5,77,0,0,248,247,1,0,0,0,248,249,1,0,0,0,249,253,1,0,0,0,250,252,
+		5,30,0,0,251,250,1,0,0,0,252,255,1,0,0,0,253,251,1,0,0,0,253,254,1,0,0,
+		0,254,9,1,0,0,0,255,253,1,0,0,0,256,257,5,58,0,0,257,261,5,8,0,0,258,260,
+		3,12,6,0,259,258,1,0,0,0,260,263,1,0,0,0,261,259,1,0,0,0,261,262,1,0,0,
+		0,262,264,1,0,0,0,263,261,1,0,0,0,264,265,5,9,0,0,265,11,1,0,0,0,266,268,
+		5,30,0,0,267,269,3,206,103,0,268,267,1,0,0,0,269,270,1,0,0,0,270,268,1,
+		0,0,0,270,271,1,0,0,0,271,285,1,0,0,0,272,274,3,76,38,0,273,275,3,206,
+		103,0,274,273,1,0,0,0,275,276,1,0,0,0,276,274,1,0,0,0,276,277,1,0,0,0,
+		277,285,1,0,0,0,278,280,3,54,27,0,279,281,3,206,103,0,280,279,1,0,0,0,
+		281,282,1,0,0,0,282,280,1,0,0,0,282,283,1,0,0,0,283,285,1,0,0,0,284,266,
+		1,0,0,0,284,272,1,0,0,0,284,278,1,0,0,0,285,13,1,0,0,0,286,287,5,59,0,
+		0,287,291,5,8,0,0,288,290,3,16,8,0,289,288,1,0,0,0,290,293,1,0,0,0,291,
+		289,1,0,0,0,291,292,1,0,0,0,292,294,1,0,0,0,293,291,1,0,0,0,294,295,5,
+		9,0,0,295,15,1,0,0,0,296,297,5,60,0,0,297,307,5,30,0,0,298,299,5,61,0,
+		0,299,307,5,30,0,0,300,301,5,62,0,0,301,307,5,30,0,0,302,303,5,63,0,0,
+		303,307,5,30,0,0,304,305,5,64,0,0,305,307,5,30,0,0,306,296,1,0,0,0,306,
+		298,1,0,0,0,306,300,1,0,0,0,306,302,1,0,0,0,306,304,1,0,0,0,307,17,1,0,
+		0,0,308,309,5,65,0,0,309,310,3,206,103,0,310,19,1,0,0,0,311,312,5,66,0,
+		0,312,313,5,30,0,0,313,21,1,0,0,0,314,315,5,67,0,0,315,23,1,0,0,0,316,
+		317,5,68,0,0,317,322,5,8,0,0,318,319,5,1,0,0,319,321,3,26,13,0,320,318,
+		1,0,0,0,321,324,1,0,0,0,322,320,1,0,0,0,322,323,1,0,0,0,323,325,1,0,0,
+		0,324,322,1,0,0,0,325,329,5,9,0,0,326,327,5,68,0,0,327,329,3,26,13,0,328,
+		316,1,0,0,0,328,326,1,0,0,0,329,25,1,0,0,0,330,341,5,70,0,0,331,332,5,
+		71,0,0,332,341,5,128,0,0,333,341,5,72,0,0,334,341,5,73,0,0,335,341,5,74,
+		0,0,336,341,5,75,0,0,337,338,5,30,0,0,338,341,5,128,0,0,339,341,5,30,0,
+		0,340,330,1,0,0,0,340,331,1,0,0,0,340,333,1,0,0,0,340,334,1,0,0,0,340,
+		335,1,0,0,0,340,336,1,0,0,0,340,337,1,0,0,0,340,339,1,0,0,0,341,27,1,0,
+		0,0,342,343,5,54,0,0,343,347,3,34,17,0,344,347,3,30,15,0,345,347,3,32,
+		16,0,346,342,1,0,0,0,346,344,1,0,0,0,346,345,1,0,0,0,347,29,1,0,0,0,348,
+		349,5,55,0,0,349,31,1,0,0,0,350,351,5,56,0,0,351,33,1,0,0,0,352,353,7,
+		0,0,0,353,35,1,0,0,0,354,358,5,76,0,0,355,357,3,40,20,0,356,355,1,0,0,
+		0,357,360,1,0,0,0,358,356,1,0,0,0,358,359,1,0,0,0,359,37,1,0,0,0,360,358,
+		1,0,0,0,361,362,5,25,0,0,362,39,1,0,0,0,363,369,3,42,21,0,364,369,3,82,
+		41,0,365,369,3,120,60,0,366,369,3,126,63,0,367,369,3,206,103,0,368,363,
+		1,0,0,0,368,364,1,0,0,0,368,365,1,0,0,0,368,366,1,0,0,0,368,367,1,0,0,
+		0,369,41,1,0,0,0,370,389,3,66,33,0,371,389,3,44,22,0,372,389,3,46,23,0,
+		373,389,3,48,24,0,374,389,3,50,25,0,375,389,3,52,26,0,376,389,3,54,27,
+		0,377,389,3,68,34,0,378,389,3,56,28,0,379,389,3,58,29,0,380,389,3,76,38,
+		0,381,389,3,60,30,0,382,389,3,62,31,0,383,389,3,64,32,0,384,389,3,74,37,
+		0,385,389,3,38,19,0,386,389,3,78,39,0,387,389,3,80,40,0,388,370,1,0,0,
+		0,388,371,1,0,0,0,388,372,1,0,0,0,388,373,1,0,0,0,388,374,1,0,0,0,388,
+		375,1,0,0,0,388,376,1,0,0,0,388,377,1,0,0,0,388,378,1,0,0,0,388,379,1,
+		0,0,0,388,380,1,0,0,0,388,381,1,0,0,0,388,382,1,0,0,0,388,383,1,0,0,0,
+		388,384,1,0,0,0,388,385,1,0,0,0,388,386,1,0,0,0,388,387,1,0,0,0,389,43,
+		1,0,0,0,390,391,5,32,0,0,391,45,1,0,0,0,392,393,5,33,0,0,393,47,1,0,0,
+		0,394,395,5,34,0,0,395,49,1,0,0,0,396,397,5,23,0,0,397,51,1,0,0,0,398,
+		399,5,22,0,0,399,53,1,0,0,0,400,401,5,35,0,0,401,55,1,0,0,0,402,408,5,
+		37,0,0,403,406,3,160,80,0,404,406,3,162,81,0,405,403,1,0,0,0,405,404,1,
+		0,0,0,406,408,1,0,0,0,407,402,1,0,0,0,407,405,1,0,0,0,408,57,1,0,0,0,409,
+		412,5,38,0,0,410,412,3,170,85,0,411,409,1,0,0,0,411,410,1,0,0,0,412,59,
+		1,0,0,0,413,414,5,40,0,0,414,61,1,0,0,0,415,421,5,42,0,0,416,419,3,130,
+		65,0,417,419,3,132,66,0,418,416,1,0,0,0,418,417,1,0,0,0,419,421,1,0,0,
+		0,420,415,1,0,0,0,420,418,1,0,0,0,421,63,1,0,0,0,422,425,5,43,0,0,423,
+		425,3,138,69,0,424,422,1,0,0,0,424,423,1,0,0,0,425,65,1,0,0,0,426,429,
+		7,1,0,0,427,428,5,4,0,0,428,430,7,1,0,0,429,427,1,0,0,0,430,431,1,0,0,
+		0,431,429,1,0,0,0,431,432,1,0,0,0,432,67,1,0,0,0,433,436,5,8,0,0,434,437,
+		3,44,22,0,435,437,3,46,23,0,436,434,1,0,0,0,436,435,1,0,0,0,437,440,1,
+		0,0,0,438,441,3,44,22,0,439,441,3,46,23,0,440,438,1,0,0,0,440,439,1,0,
+		0,0,441,444,1,0,0,0,442,445,3,44,22,0,443,445,3,46,23,0,444,442,1,0,0,
+		0,444,443,1,0,0,0,445,446,1,0,0,0,446,447,5,9,0,0,447,69,1,0,0,0,448,449,
+		5,39,0,0,449,71,1,0,0,0,450,456,5,41,0,0,451,454,3,144,72,0,452,454,3,
+		146,73,0,453,451,1,0,0,0,453,452,1,0,0,0,454,456,1,0,0,0,455,450,1,0,0,
+		0,455,453,1,0,0,0,456,73,1,0,0,0,457,463,5,36,0,0,458,461,3,148,74,0,459,
+		461,3,150,75,0,460,458,1,0,0,0,460,459,1,0,0,0,461,463,1,0,0,0,462,457,
+		1,0,0,0,462,460,1,0,0,0,463,75,1,0,0,0,464,467,5,46,0,0,465,467,3,128,
+		64,0,466,464,1,0,0,0,466,465,1,0,0,0,467,77,1,0,0,0,468,469,5,44,0,0,469,
+		79,1,0,0,0,470,471,5,45,0,0,471,81,1,0,0,0,472,475,3,84,42,0,473,475,3,
+		86,43,0,474,472,1,0,0,0,474,473,1,0,0,0,475,83,1,0,0,0,476,479,3,90,45,
+		0,477,479,3,94,47,0,478,476,1,0,0,0,478,477,1,0,0,0,479,85,1,0,0,0,480,
+		483,3,110,55,0,481,483,3,88,44,0,482,480,1,0,0,0,482,481,1,0,0,0,483,87,
+		1,0,0,0,484,488,3,112,56,0,485,488,3,116,58,0,486,488,3,114,57,0,487,484,
+		1,0,0,0,487,485,1,0,0,0,487,486,1,0,0,0,488,89,1,0,0,0,489,493,5,14,0,
+		0,490,492,3,92,46,0,491,490,1,0,0,0,492,495,1,0,0,0,493,491,1,0,0,0,493,
+		494,1,0,0,0,494,496,1,0,0,0,495,493,1,0,0,0,496,498,5,15,0,0,497,499,5,
+		128,0,0,498,497,1,0,0,0,498,499,1,0,0,0,499,91,1,0,0,0,500,505,3,42,21,
+		0,501,505,3,102,51,0,502,505,3,86,43,0,503,505,3,206,103,0,504,500,1,0,
+		0,0,504,501,1,0,0,0,504,502,1,0,0,0,504,503,1,0,0,0,505,93,1,0,0,0,506,
+		508,5,47,0,0,507,506,1,0,0,0,507,508,1,0,0,0,508,509,1,0,0,0,509,513,5,
+		12,0,0,510,512,3,96,48,0,511,510,1,0,0,0,512,515,1,0,0,0,513,511,1,0,0,
+		0,513,514,1,0,0,0,514,516,1,0,0,0,515,513,1,0,0,0,516,518,5,13,0,0,517,
+		519,5,128,0,0,518,517,1,0,0,0,518,519,1,0,0,0,519,95,1,0,0,0,520,525,3,
+		42,21,0,521,525,3,98,49,0,522,525,3,88,44,0,523,525,3,206,103,0,524,520,
+		1,0,0,0,524,521,1,0,0,0,524,522,1,0,0,0,524,523,1,0,0,0,525,97,1,0,0,0,
+		526,530,5,14,0,0,527,529,3,100,50,0,528,527,1,0,0,0,529,532,1,0,0,0,530,
+		528,1,0,0,0,530,531,1,0,0,0,531,533,1,0,0,0,532,530,1,0,0,0,533,535,5,
+		15,0,0,534,536,5,128,0,0,535,534,1,0,0,0,535,536,1,0,0,0,536,99,1,0,0,
+		0,537,541,3,42,21,0,538,541,3,86,43,0,539,541,3,206,103,0,540,537,1,0,
+		0,0,540,538,1,0,0,0,540,539,1,0,0,0,541,101,1,0,0,0,542,544,5,47,0,0,543,
+		542,1,0,0,0,543,544,1,0,0,0,544,545,1,0,0,0,545,549,5,12,0,0,546,548,3,
+		104,52,0,547,546,1,0,0,0,548,551,1,0,0,0,549,547,1,0,0,0,549,550,1,0,0,
+		0,550,552,1,0,0,0,551,549,1,0,0,0,552,554,5,13,0,0,553,555,5,128,0,0,554,
+		553,1,0,0,0,554,555,1,0,0,0,555,103,1,0,0,0,556,560,3,42,21,0,557,560,
+		3,88,44,0,558,560,3,206,103,0,559,556,1,0,0,0,559,557,1,0,0,0,559,558,
+		1,0,0,0,560,105,1,0,0,0,561,562,5,48,0,0,562,564,5,12,0,0,563,565,3,108,
+		54,0,564,563,1,0,0,0,565,566,1,0,0,0,566,564,1,0,0,0,566,567,1,0,0,0,567,
+		568,1,0,0,0,568,569,5,13,0,0,569,107,1,0,0,0,570,581,3,48,24,0,571,581,
+		3,50,25,0,572,581,3,52,26,0,573,581,3,56,28,0,574,581,3,58,29,0,575,581,
+		3,60,30,0,576,581,3,62,31,0,577,581,3,64,32,0,578,581,3,74,37,0,579,581,
+		3,206,103,0,580,570,1,0,0,0,580,571,1,0,0,0,580,572,1,0,0,0,580,573,1,
+		0,0,0,580,574,1,0,0,0,580,575,1,0,0,0,580,576,1,0,0,0,580,577,1,0,0,0,
+		580,578,1,0,0,0,580,579,1,0,0,0,581,109,1,0,0,0,582,584,5,47,0,0,583,585,
+		5,128,0,0,584,583,1,0,0,0,584,585,1,0,0,0,585,111,1,0,0,0,586,587,5,50,
+		0,0,587,113,1,0,0,0,588,589,5,49,0,0,589,115,1,0,0,0,590,592,5,7,0,0,591,
+		593,5,128,0,0,592,591,1,0,0,0,592,593,1,0,0,0,593,117,1,0,0,0,594,595,
+		5,26,0,0,595,119,1,0,0,0,596,599,5,52,0,0,597,599,3,180,90,0,598,596,1,
+		0,0,0,598,597,1,0,0,0,599,121,1,0,0,0,600,601,5,29,0,0,601,123,1,0,0,0,
+		602,613,3,186,93,0,603,613,3,152,76,0,604,613,3,182,91,0,605,613,3,172,
+		86,0,606,613,3,176,88,0,607,613,3,174,87,0,608,613,3,178,89,0,609,613,
+		3,188,94,0,610,613,3,192,96,0,611,613,3,196,98,0,612,602,1,0,0,0,612,603,
+		1,0,0,0,612,604,1,0,0,0,612,605,1,0,0,0,612,606,1,0,0,0,612,607,1,0,0,
+		0,612,608,1,0,0,0,612,609,1,0,0,0,612,610,1,0,0,0,612,611,1,0,0,0,613,
+		125,1,0,0,0,614,633,3,154,77,0,615,633,3,198,99,0,616,633,3,140,70,0,617,
+		633,3,142,71,0,618,633,3,164,82,0,619,633,3,166,83,0,620,633,3,168,84,
+		0,621,633,3,174,87,0,622,633,3,178,89,0,623,633,3,184,92,0,624,633,3,188,
+		94,0,625,633,3,190,95,0,626,633,3,192,96,0,627,633,3,194,97,0,628,633,
+		3,198,99,0,629,633,3,200,100,0,630,633,3,202,101,0,631,633,3,204,102,0,
+		632,614,1,0,0,0,632,615,1,0,0,0,632,616,1,0,0,0,632,617,1,0,0,0,632,618,
+		1,0,0,0,632,619,1,0,0,0,632,620,1,0,0,0,632,621,1,0,0,0,632,622,1,0,0,
+		0,632,623,1,0,0,0,632,624,1,0,0,0,632,625,1,0,0,0,632,626,1,0,0,0,632,
+		627,1,0,0,0,632,628,1,0,0,0,632,629,1,0,0,0,632,630,1,0,0,0,632,631,1,
+		0,0,0,633,127,1,0,0,0,634,635,5,92,0,0,635,636,5,128,0,0,636,129,1,0,0,
+		0,637,638,5,93,0,0,638,639,3,206,103,0,639,131,1,0,0,0,640,641,5,94,0,
+		0,641,642,3,206,103,0,642,643,3,206,103,0,643,133,1,0,0,0,644,645,5,95,
+		0,0,645,648,3,206,103,0,646,649,3,206,103,0,647,649,3,136,68,0,648,646,
+		1,0,0,0,648,647,1,0,0,0,649,135,1,0,0,0,650,654,3,48,24,0,651,654,3,52,
+		26,0,652,654,3,50,25,0,653,650,1,0,0,0,653,651,1,0,0,0,653,652,1,0,0,0,
+		654,657,1,0,0,0,655,653,1,0,0,0,655,656,1,0,0,0,656,658,1,0,0,0,657,655,
+		1,0,0,0,658,659,3,44,22,0,659,137,1,0,0,0,660,661,5,96,0,0,661,662,3,206,
+		103,0,662,663,3,206,103,0,663,664,3,206,103,0,664,139,1,0,0,0,665,666,
+		5,108,0,0,666,667,3,206,103,0,667,141,1,0,0,0,668,669,5,97,0,0,669,143,
+		1,0,0,0,670,671,5,98,0,0,671,672,3,206,103,0,672,145,1,0,0,0,673,674,5,
+		99,0,0,674,675,3,206,103,0,675,676,3,206,103,0,676,147,1,0,0,0,677,678,
+		5,100,0,0,678,679,3,206,103,0,679,149,1,0,0,0,680,681,5,101,0,0,681,682,
+		3,206,103,0,682,683,3,206,103,0,683,151,1,0,0,0,684,685,5,102,0,0,685,
+		686,3,206,103,0,686,153,1,0,0,0,687,688,5,103,0,0,688,689,3,206,103,0,
+		689,690,3,206,103,0,690,691,3,206,103,0,691,155,1,0,0,0,692,693,5,104,
+		0,0,693,694,5,78,0,0,694,157,1,0,0,0,695,696,5,104,0,0,696,697,3,206,103,
+		0,697,159,1,0,0,0,698,699,5,105,0,0,699,700,3,206,103,0,700,161,1,0,0,
+		0,701,702,5,106,0,0,702,703,3,206,103,0,703,704,3,206,103,0,704,163,1,
+		0,0,0,705,706,5,109,0,0,706,707,3,206,103,0,707,708,3,206,103,0,708,709,
+		3,206,103,0,709,165,1,0,0,0,710,711,5,110,0,0,711,712,3,206,103,0,712,
+		713,3,206,103,0,713,714,3,206,103,0,714,167,1,0,0,0,715,716,5,111,0,0,
+		716,717,5,89,0,0,717,723,3,206,103,0,718,719,5,111,0,0,719,720,3,206,103,
+		0,720,721,3,206,103,0,721,723,1,0,0,0,722,715,1,0,0,0,722,718,1,0,0,0,
+		723,169,1,0,0,0,724,725,5,112,0,0,725,726,3,206,103,0,726,171,1,0,0,0,
+		727,728,5,113,0,0,728,729,3,206,103,0,729,730,3,206,103,0,730,731,3,206,
+		103,0,731,173,1,0,0,0,732,733,5,114,0,0,733,175,1,0,0,0,734,735,5,115,
+		0,0,735,736,3,206,103,0,736,737,3,206,103,0,737,738,3,206,103,0,738,177,
+		1,0,0,0,739,740,5,116,0,0,740,741,3,206,103,0,741,742,3,206,103,0,742,
+		179,1,0,0,0,743,744,5,117,0,0,744,745,3,206,103,0,745,746,3,206,103,0,
+		746,181,1,0,0,0,747,748,5,118,0,0,748,762,5,78,0,0,749,750,5,118,0,0,750,
+		762,5,79,0,0,751,752,5,118,0,0,752,762,5,80,0,0,753,754,5,118,0,0,754,
+		762,5,83,0,0,755,756,5,118,0,0,756,762,5,84,0,0,757,758,5,118,0,0,758,
+		762,5,85,0,0,759,760,5,118,0,0,760,762,5,86,0,0,761,747,1,0,0,0,761,749,
+		1,0,0,0,761,751,1,0,0,0,761,753,1,0,0,0,761,755,1,0,0,0,761,757,1,0,0,
+		0,761,759,1,0,0,0,762,183,1,0,0,0,763,764,5,118,0,0,764,768,5,81,0,0,765,
+		766,5,118,0,0,766,768,5,87,0,0,767,763,1,0,0,0,767,765,1,0,0,0,768,185,
+		1,0,0,0,769,770,5,119,0,0,770,771,3,206,103,0,771,772,3,206,103,0,772,
+		773,3,206,103,0,773,774,3,206,103,0,774,775,3,206,103,0,775,776,3,206,
+		103,0,776,777,3,206,103,0,777,778,3,206,103,0,778,187,1,0,0,0,779,780,
+		5,120,0,0,780,781,3,206,103,0,781,782,3,206,103,0,782,189,1,0,0,0,783,
+		784,5,122,0,0,784,785,3,206,103,0,785,191,1,0,0,0,786,787,5,123,0,0,787,
+		788,3,206,103,0,788,789,3,206,103,0,789,193,1,0,0,0,790,791,5,124,0,0,
+		791,792,5,78,0,0,792,803,3,206,103,0,793,794,5,124,0,0,794,795,5,79,0,
+		0,795,803,3,206,103,0,796,797,5,124,0,0,797,798,5,80,0,0,798,803,3,206,
+		103,0,799,800,5,124,0,0,800,801,5,81,0,0,801,803,3,206,103,0,802,790,1,
+		0,0,0,802,793,1,0,0,0,802,796,1,0,0,0,802,799,1,0,0,0,803,195,1,0,0,0,
+		804,805,5,124,0,0,805,806,5,82,0,0,806,820,3,206,103,0,807,808,5,124,0,
+		0,808,809,5,88,0,0,809,820,3,206,103,0,810,811,5,124,0,0,811,812,5,91,
+		0,0,812,816,3,206,103,0,813,815,3,206,103,0,814,813,1,0,0,0,815,818,1,
+		0,0,0,816,814,1,0,0,0,816,817,1,0,0,0,817,820,1,0,0,0,818,816,1,0,0,0,
+		819,804,1,0,0,0,819,807,1,0,0,0,819,810,1,0,0,0,820,197,1,0,0,0,821,822,
+		5,125,0,0,822,823,5,89,0,0,823,824,3,206,103,0,824,825,3,206,103,0,825,
+		836,1,0,0,0,826,827,5,125,0,0,827,828,5,90,0,0,828,829,3,206,103,0,829,
+		830,3,206,103,0,830,836,1,0,0,0,831,832,5,125,0,0,832,833,3,206,103,0,
+		833,834,3,206,103,0,834,836,1,0,0,0,835,821,1,0,0,0,835,826,1,0,0,0,835,
+		831,1,0,0,0,836,199,1,0,0,0,837,838,5,126,0,0,838,839,3,206,103,0,839,
+		840,5,79,0,0,840,841,3,206,103,0,841,842,3,206,103,0,842,850,1,0,0,0,843,
+		844,5,126,0,0,844,845,3,206,103,0,845,846,3,206,103,0,846,847,3,206,103,
+		0,847,848,3,206,103,0,848,850,1,0,0,0,849,837,1,0,0,0,849,843,1,0,0,0,
+		850,201,1,0,0,0,851,852,5,127,0,0,852,203,1,0,0,0,853,854,5,91,0,0,854,
+		205,1,0,0,0,855,856,7,2,0,0,856,207,1,0,0,0,71,211,214,230,240,248,253,
+		261,270,276,282,284,291,306,322,328,340,346,358,368,388,405,407,411,418,
+		420,424,431,436,440,444,453,455,460,462,466,474,478,482,487,493,498,504,
+		507,513,518,524,530,535,540,543,549,554,559,566,580,584,592,598,612,632,
+		648,653,655,722,761,767,802,816,819,835,849
 	};
 
 	public static readonly ATN _ATN =

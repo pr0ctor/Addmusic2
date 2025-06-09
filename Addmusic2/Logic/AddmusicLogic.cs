@@ -6,18 +6,27 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Addmusic2.Model;
 using Addmusic2.Model.Interfaces;
+using Addmusic2.Model.Localization;
+using Addmusic2.Services;
 using Addmusic2.Visitors;
 using Antlr4.Runtime;
+using Microsoft.Extensions.Logging;
 
 namespace Addmusic2.Logic
 {
     internal class AddmusicLogic : IAddmusicLogic
     {
+        private ILogger<IAddmusicLogic> _logger;
+        private MessageService _messageService;
+        private FileCachingService _fileService;
+
         public DateTime LastModification { get; set; }
 
-        public AddmusicLogic()
+        public AddmusicLogic(ILogger<IAddmusicLogic> logger, MessageService messageService, FileCachingService fileCachingService)
         {
-
+            _logger = logger;
+            _messageService = messageService;
+            _fileService = fileCachingService;
         }
 
         public void Run()
@@ -26,6 +35,8 @@ namespace Addmusic2.Logic
 
             var songData = PreProcessSong(fileData);
             ProcessSong(songData);
+
+            PostProcessSong();
         }
 
         public string PreProcessSong(string fileData)
@@ -58,7 +69,11 @@ namespace Addmusic2.Logic
 
             var rootNode = mmlVisitor.VisitSong(songContext);
 
-            var song = new Song(rootNode)
+            // potentially logic for changing parsers
+
+            var songParser = new SongParser(_logger, _messageService);
+
+            var song = new Song(songParser, rootNode)
             {
                 SongText = fileData,
             };

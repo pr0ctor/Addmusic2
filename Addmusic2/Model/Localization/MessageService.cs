@@ -357,6 +357,30 @@ namespace Addmusic2.Model.Localization
             return localizedString;
         }
 
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorHexCommandSuppliedValueOutOfRangeMessage(string hexValue, string hexCommand, int minValue, int maxValue)
+        {
+            LocalizedString localizedString = _localizer["ErrorHexCommandSuppliedValueOutOfRange", hexValue, hexCommand, minValue, maxValue];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorIntroDirectiveFoundInLoopMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorIntroDirectiveFoundInLoop"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorInstrumentValueOutOfRangeMessage(int minValue, int maxValue, int foundValue)
+        {
+            LocalizedString localizedString = _localizer["ErrorInstrumentValueOutOfRange", foundValue, minValue, maxValue];
+
+            return localizedString;
+        }
+
         #endregion
 
         #endregion

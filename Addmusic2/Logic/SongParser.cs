@@ -11,6 +11,8 @@ using Addmusic2.Validators;
 using Microsoft.Extensions.Logging;
 using Addmusic2.Model.Localization;
 using Addmusic2.Localization;
+using System.Xml.Linq;
+using System.Diagnostics.Metrics;
 
 namespace Addmusic2.Logic
 {
@@ -21,28 +23,33 @@ namespace Addmusic2.Logic
 
         public SongData SongData { get; set; } = new SongData();
 
-        private List<byte> CurrentChannelData = new List<byte>();
+        private List<ChannelInformation> Channels { get; set; } = new();
         private List<byte> CurrentLoopData = new List<byte>();
         private List<byte> CurrentSubLoopData = new List<byte>();
         private Dictionary<int, double> ChannelLength = new();
-        private Dictionary<string, LoopData> RemoteCodeDefinitions = new();
-        private Dictionary<string, LoopData> NamedLoopDefinitions = new();
+        private Dictionary<string, LoopInformation> RemoteCodeDefinitions = new();
+        private Dictionary<string, LoopInformation> NamedLoopDefinitions = new();
+
+        private ChannelInformation CurrentChannel { get; set; }
+        private LoopNode PreviousLoop { get; set; }
+        private AtomicNode PreviousNote { get; set; }
+        private int PreviousNoteLength { get; set; }
 
         private int DefaultNoteLength { get; set; } = MagicNumbers.DefaultValues.InitialDefaultNoteLength;
         private int CurrentOctave { get; set; } = MagicNumbers.DefaultValues.StartingOctave;
-        private int CurrentChannel { get; set; } = 0;
         private int TempoRatio { get; set; } = MagicNumbers.DefaultValues.InitialTempoRatio;
         private int HTranspose { get; set; } = 0;
         private bool UsingHTranspose { get; set; } = false;
         private bool TempoDefined { get; set; } = false;
         private bool InActiveLoop { get; set; } = false;
+        private LoopInformation ActiveLoopInformation { get; set; }
         private double ActiveLoopLength { get; set; } = 0;
         private bool InActiveSubLoop { get; set; } = false;
+        private LoopInformation ActiveSubLoopInformation { get; set; }
         private double ActiveSubLoopLength { get; set; } = 0;
         private bool InActiveSimpleLoop { get; set; } = false;
         private bool InActiveSuperLoop { get; set; } = false;
 
-        private LoopNode PreviousLoop { get; set; }
 
         public SongParser(ILogger<IAddmusicLogic> logger, MessageService messageService)
         {
@@ -96,6 +103,8 @@ namespace Addmusic2.Logic
                 ParseNode(node);
             }
 
+            SongData.ChannelData = Channels;
+
             return SongData;
         }
 
@@ -108,18 +117,22 @@ namespace Addmusic2.Logic
                 throw new Exception();
             }
 
-            CurrentChannel = channelPayload.ChannelNumber;
-
-            if (!SongData.ChannelData.ContainsKey(channelPayload.ChannelNumber))
+            CurrentChannel = new ChannelInformation
             {
-                SongData.ChannelData[channelPayload.ChannelNumber] = new();
+                ChannelNumber = channelPayload.ChannelNumber,
+            };
+
+            if (Channels.Exists(c => c.ChannelNumber == CurrentChannel.ChannelNumber))
+            {
+                // todo throw error for duplicate channel
             }
+
+            Channels.Add(CurrentChannel);
 
             foreach (SongNode node in channel.Children)
             {
                 ParseNode(node);
             }
-
         }
 
         public void ParseNode(SongNode node)
@@ -147,10 +160,12 @@ namespace Addmusic2.Logic
         {
             return songNode switch
             {
+                null => throw new ArgumentNullException(nameof(songNode)),
                 DirectiveNode => ValidateSpecialDirective(songNode as DirectiveNode),
                 AtomicNode => ValidateAtomicNode(songNode as AtomicNode),
                 CompositeNode => ValidateCompositeNode(songNode as CompositeNode),
                 LoopNode => ValidateLoopNode(songNode as LoopNode),
+                HexNode => ValidateHexNode(songNode as HexNode),
                 _ => new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Skip,
@@ -175,6 +190,9 @@ namespace Addmusic2.Logic
                     break;
                 case LoopNode:
                     EvaluateLoopNode(songNode as LoopNode);
+                    break;
+                case HexNode:
+                    EvaluateHexNode(songNode as HexNode);
                     break;
                 default:
                     throw new Exception();
@@ -205,7 +223,7 @@ namespace Addmusic2.Logic
                             {
                                 _messageService.GetErrorDuplicateLoopNameDefinedMessage(loopName);
                             }
-                            NamedLoopDefinitions.Add(loopName, new LoopData
+                            NamedLoopDefinitions.Add(loopName, new LoopInformation
                             {
                                 LoopId = loopPointer++,
                                 LoopNode = (LoopNode)node,
@@ -222,7 +240,7 @@ namespace Addmusic2.Logic
                         {
                             _messageService.GetErrorDuplicateRemoteCodeDefinitionNameDefinedMessage(definitionName);
                         }
-                        RemoteCodeDefinitions.Add(definitionName, new LoopData
+                        RemoteCodeDefinitions.Add(definitionName, new LoopInformation
                         {
                             LoopId = loopPointer++,
                             LoopNode = (LoopNode)node,
@@ -240,13 +258,18 @@ namespace Addmusic2.Logic
         {
             switch (atomic.NodeType)
             {
-                // Always Accepted
                 case SongNodeType.Note:
+                    EvaluateNoteNode(atomic);
+                    break;
                 case SongNodeType.Rest:
+                    EvaluateRestNode(atomic);
+                    break;
                 case SongNodeType.Tie:
+                    EvaluateTieNode(atomic);
+                    break;
                 case SongNodeType.NoLoopCommand:
                 case SongNodeType.QuestionMark:
-                    EvaluateQuestionMarkNode(atomic);
+                    EvaluateQuestionMarkOrNoLoopNode(atomic);
                     break;
                 case SongNodeType.LowerOctave:
                     EvaluateLowerOctaveNode(atomic);
@@ -261,7 +284,7 @@ namespace Addmusic2.Logic
                     EvaluateDefaultLengthNode(atomic);
                     break;
                 case SongNodeType.Instrument:
-                    (atomic);
+                    EvaluateInstrumntNode(atomic);
                     break;
                 case SongNodeType.Volume:
                     EvaluateVolumeNode(atomic);
@@ -273,7 +296,7 @@ namespace Addmusic2.Logic
                     EvaluatePanNode(atomic);
                     break;
                 case SongNodeType.Quantization:
-                    (atomic);
+                    EvaluateQuantizationNode(atomic);
                     break;
                 case SongNodeType.Tempo:
                     EvaluateTempoNode(atomic);
@@ -317,12 +340,194 @@ namespace Addmusic2.Logic
             };*/
         }
 
-        public void EvaluateRestNode(AtomicNode restNode)
+        public void EvaluateInstrumntNode(AtomicNode instrumentNode)
+        {
+            var instrumentPayload = instrumentNode.Payload as InstrumentPayload;
+
+            if (instrumentPayload == null)
+            {
+                throw new Exception();
+            }
+
+            var instrumentNumber = instrumentPayload.InstrumentNumber;
+
+            if (instrumentNumber <= 18 || instrumentNumber >= 30)
+            {
+                if (convert)
+                {
+                    if (instrumentNumber >= 0x13 && instrumentNumber < 30)
+                    {
+                        instrumentNumber = instrumentNumber - 0x13 + 30;
+                    }
+                }
+                if(optimizeSampleUsage)
+                {
+                    if(instrumentNumber < 30)
+                    {
+                        // approach 1
+                    }
+                    else if((instrumentNumber - 30) * 6 < value)
+                    {
+                        // approach 2
+                    }
+                    else
+                    {
+                        // todo write error
+                    }
+                }
+
+                if(false)
+                {
+                    CurrentChannel.IgnoreTuning = false;
+                }
+
+                AddDataToChannel(MagicNumbers.CommandValues.Instrument);
+                AddDataToChannel(Convert.ToByte(instrumentNumber));
+            }
+
+            if(instrumentNumber < 30)
+            {
+                if(optimizeSampleUsage)
+                {
+                    // todo do something
+                }
+            }
+            
+            CurrentChannel.CurrentInstrument = instrumentNumber;
+
+            if(instrumentNumber < 19)
+            {
+                HTranspose = 0;
+                UsingHTranspose = false;
+                // todo add transposemap logic
+            }
+        }
+
+        public void EvaluateNoteNode(AtomicNode noteNode, bool inTriplet = false, bool inPitchSlide = false, bool isNextForDDPitchSlide = false)
+        {
+            var notePayload = noteNode.Payload as NotePayload;
+
+            var tempLength = GetNoteLength(noteNode, notePayload.Duration, notePayload.DotCount, inTriplet, true);
+
+            var noteValueChar = (int)notePayload.NoteValue[0];
+            var note = GetPitchValue(noteValueChar, notePayload.Accidental);
+            var currentInstrument = GetCurrentInstrument();
+            if(UsingHTranspose)
+            {
+                note += HTranspose;
+            }
+            else
+            {
+                // todo add and check tuning[] logic
+            }
+
+            if(note < MagicNumbers.NoteLengthMaxBeforeSplit)
+            {
+                // todo add warning for too low note, but may not need
+                if(false)
+                {
+                    
+                }
+                else
+                {
+                    note = MagicNumbers.CommandValues.Rest;
+                }
+            }
+            else if(note >= MagicNumbers.CommandValues.Tie)
+            {
+                // todo add error for note pitch too high
+            }
+            else if(currentInstrument >= 21 && currentInstrument < 30 && note <  MagicNumbers.CommandValues.Tie)
+            {
+
+                note = 0xD0 + (currentInstrument - 21);
+
+                if (MagicNumbers.SfxChannels.Contains(CurrentChannel.ChannelNumber))
+                {
+                    SetCurrentInstrument(MagicNumbers.ByteHexMaximum);
+                }
+            }
+
+
+            if (inPitchSlide)
+            {
+                AddDataToChannel(Convert.ToByte(PreviousNoteLength));
+                AddDataToChannel(Convert.ToByte(note));
+            }
+
+            if (isNextForDDPitchSlide)
+            {
+                AddDataToChannel(Convert.ToByte(note));
+                return; // no more logic for this node
+            }
+
+            // todo optimize group of connected rests
+
+            foreach (var tie in notePayload.ConnectedTies)
+            {
+                var tiePayload = tie.Payload as TiePayload;
+                tempLength += GetNoteLength(tie, tiePayload.Duration, tiePayload.DotCount, inTriplet, true);
+            }
+
+            tempLength = DivideByTempoRatio(noteNode, tempLength, true);
+
+            AddNoteLength(tempLength);
+
+            ApplyTempoRateAdjustmentAndQuantization(noteNode, Convert.ToByte(note), tempLength);
+        }
+
+        public void EvaluateTieNode(AtomicNode tieNode, bool inTriplet = false, bool inPitchSlide = false, bool isNextForDDPitchSlide = false)
+        {
+            var tiePayload = tieNode.Payload as TiePayload;
+
+            var tempLength = GetNoteLength(tieNode, tiePayload.Duration, tiePayload.DotCount, inTriplet, true);
+
+            if (inPitchSlide)
+            {
+                AddDataToChannel(Convert.ToByte(PreviousNoteLength));
+                AddDataToChannel(MagicNumbers.CommandValues.Tie);
+            }
+
+            if (isNextForDDPitchSlide)
+            {
+                AddDataToChannel(MagicNumbers.CommandValues.Tie);
+                return; // no more logic for this node
+            }
+
+            ApplyTempoRateAdjustmentAndQuantization(tieNode, MagicNumbers.CommandValues.Tie, tempLength);
+        }
+
+        public void EvaluateRestNode(AtomicNode restNode, bool inTriplet = false, bool inPitchSlide = false, bool isNextForDDPitchSlide = false)
         {
             var restPayload = restNode.Payload as NotePayload;
 
-            var tempLength = GetNoteLength(restNode, restPayload.Duration, restPayload.DotCount);
+            var tempLength = GetNoteLength(restNode, restPayload.Duration, restPayload.DotCount, inTriplet, true);
 
+            if(inPitchSlide)
+            {
+                AddDataToChannel(Convert.ToByte(PreviousNoteLength));
+                AddDataToChannel(MagicNumbers.CommandValues.Rest);
+            }
+
+            if(isNextForDDPitchSlide)
+            {
+                AddDataToChannel(MagicNumbers.CommandValues.Rest);
+                return; // no more logic for this node
+            }
+
+            // todo optimize group of connected rests
+
+            foreach (var tie in restPayload.ConnectedTies)
+            {
+                var tiePayload = tie.Payload as TiePayload;
+                tempLength += GetNoteLength(tie, tiePayload.Duration, tiePayload.DotCount, inTriplet, true);
+            }
+
+            tempLength = DivideByTempoRatio(restNode, tempLength, true);
+
+            AddNoteLength(tempLength);
+
+            ApplyTempoRateAdjustmentAndQuantization(restNode, MagicNumbers.CommandValues.Rest, tempLength);
         }
 
         public void EvaluateDefaultLengthNode(AtomicNode defaultLengthNode)
@@ -454,7 +659,32 @@ namespace Addmusic2.Logic
 
         }
 
-        public void EvaluateQuestionMarkNode(AtomicNode questionMarkNode)
+        public void EvaluateQuantizationNode(AtomicNode quantizationNode)
+        {
+            var quantizationPayload = quantizationNode.Payload as QuantizationPayload;
+
+            // If there is a volume node then we need to only use the delay
+            // If there is no volume node then the quantization value is a HexNumber since the delay value is limited to 0->7
+            var quantizationValue = (quantizationPayload.VolumeNode == null)
+                ? Convert.ToByte($"{quantizationPayload.DelayValue}{quantizationPayload.VolumeValue}", 16)
+                : Convert.ToByte(quantizationPayload.DelayValue);
+
+            CurrentChannel.CurrentQuantization = quantizationValue;
+
+            if (InActiveLoop)
+            {
+                if (InActiveSubLoop)
+                {
+                    ActiveSubLoopInformation.CurrentQuantization = quantizationValue;
+                }
+                else
+                {
+                    ActiveLoopInformation.CurrentQuantization = quantizationValue;
+                }
+            }
+        }
+
+        public void EvaluateQuestionMarkOrNoLoopNode(AtomicNode questionMarkNode)
         {
             if (questionMarkNode.NodeType == SongNodeType.NoLoopCommand)
             {
@@ -475,11 +705,11 @@ namespace Addmusic2.Logic
             }
             else if (questionMarkPayload.MarkNumber == 1)
             {
-                SongData.NoMusic[CurrentChannel, 0] = true;
+                SongData.NoMusic[CurrentChannel.ChannelNumber, 0] = true;
             }
             else if (questionMarkPayload.MarkNumber == 2)
             {
-                SongData.NoMusic[CurrentChannel, 1] = true;
+                SongData.NoMusic[CurrentChannel.ChannelNumber, 1] = true;
             }
         }
 
@@ -580,6 +810,44 @@ namespace Addmusic2.Logic
         #endregion
 
         #region Composite Node Evaluators
+
+        public void EvaluateCompositeNode(CompositeNode compositeNode)
+        {
+            switch (compositeNode.NodeType)
+            {
+                case SongNodeType.Triplet:
+                    break;
+                case SongNodeType.PitchSlide:
+                    break;
+                case SongNodeType.SampleLoad:
+                    break;
+                case SongNodeType.Intro:
+                    EvaluateIntro(compositeNode);
+                    break;
+                case SongNodeType.HexCommand:
+                    EvaluateHexCommand(compositeNode);
+                    break;
+                default:
+                    throw new Exception();
+                    break;
+            }
+        }
+
+        public void EvaluateHexCommand(CompositeNode node)
+        {
+            var payload = node.Payload as HexNumberPayload;
+            var byteData = Convert.ToByte(payload.HexValue, 16);
+
+            AddDataToChannel(byteData);
+        }
+
+        public void EvaluateIntro(CompositeNode node)
+        {
+            CurrentChannel.HasIntro = true;
+            SongData.HasIntro = true;
+
+            // todo more here
+        }
 
         #endregion
 
@@ -783,7 +1051,20 @@ namespace Addmusic2.Logic
 
         public void EvaluateCallLoopDefinitionNode(LoopNode callLoopNode)
         {
+            var calledLoopData = (LoopNode)NamedLoopDefinitions[callLoopNode.LoopName].LoopNode.Clone();
 
+            // This loop invocation may have a different number of iterations than the original definition
+            //      Potentially none at all, if so then it only needs to be called once
+            if(callLoopNode.Iterations <= 1)
+            {
+                calledLoopData.Iterations = 1;
+            }
+            else
+            {
+                calledLoopData.Iterations = callLoopNode.Iterations;
+            }
+
+            EvaluateLoopNode(calledLoopData);
         }
 
         public void EvaluateRemoteCodeDefinitionNode(LoopNode remoteCodeDefinitionNode)
@@ -805,7 +1086,7 @@ namespace Addmusic2.Logic
                 case SongNodeType.Instruments:
                 case SongNodeType.Samples:
                 case SongNodeType.Path:
-                    // Skip these since they have already been processed
+                    // Skip these since they have already been processed by this point
                     break;
                 case SongNodeType.Pad:
                     EvaluatePadNode(specialDirective);
@@ -844,7 +1125,7 @@ namespace Addmusic2.Logic
         public void EvaluatePadNode(DirectiveNode padNode)
         {
             var padPayload = padNode.Payload as PadPayload;
-            var padAmount = int.Parse(padPayload.PadLength);
+            var padAmount = Convert.ToInt32(padPayload.PadLength, 16);
             SongData.MinSize = padAmount;
         }
 
@@ -856,6 +1137,55 @@ namespace Addmusic2.Logic
 
         #endregion
 
+        #region Hex Command Node Evaluators
+
+        public void EvaluateHexNode(HexNode hexNode)
+        {
+            switch (hexNode.CommandType)
+            {
+                case HexCommands.DDPitchBlend:
+                    EvaluateDDPitchBlend(hexNode);
+                    break;
+                case HexCommands.FAHotPatchPreset:
+                    break;
+                case HexCommands.FAHotPatchToggleBits:
+                    break;
+                case HexCommands.FCHexRemoteCommand:
+                    break;
+                case HexCommands.FCHexRemoteGain:
+                    break;
+                default:
+                    EvaluateGenericHexCommandNode(hexNode);
+                    break;
+            }
+        }
+
+        public void EvaluateGenericHexCommandNode(HexNode node)
+        {
+            AddDataToChannel(Convert.ToByte(node.HexCommand.Replace("$", ""), 16));
+
+            foreach(var commandValue in node.HexValues)
+            {
+                AddDataToChannel(Convert.ToByte(commandValue.Replace("$", ""), 16));
+            }
+        }
+
+        public void EvaluateDDPitchBlend(HexNode pitchBlendNode)
+        {
+            AddDataToChannel(Convert.ToByte(pitchBlendNode.HexCommand.Replace("$", ""), 16));
+
+            foreach (var commandValue in pitchBlendNode.HexValues)
+            {
+                AddDataToChannel(Convert.ToByte(commandValue.Replace("$", ""), 16));
+            }
+
+            foreach(var child in pitchBlendNode.Children)
+            {
+                EvaluateNode(child);
+            }
+        }
+
+        #endregion
 
         #endregion
 
@@ -1146,7 +1476,33 @@ namespace Addmusic2.Logic
 
         public IValidationResult ValidateInstrumentNode(AtomicNode instrument)
         {
+            var instrumentPayload = instrument.Payload as InstrumentPayload;
 
+            if (instrumentPayload == null)
+            {
+                throw new Exception();
+            }
+
+            var instrumentNumber = instrumentPayload.InstrumentNumber;
+
+            if(instrumentNumber < 0 || instrumentNumber > MagicNumbers.EightBitMaximum)
+            {
+                return new ValidationResult
+                {
+                    Type = ValidationResult.ResultType.Error,
+                    Message = new List<string>
+                    {
+                        _messageService.GetErrorInstrumentValueOutOfRangeMessage(0, MagicNumbers.EightBitMaximum, instrumentNumber),
+                    }
+                };
+            }
+
+            // todo logic for sample optimization
+
+            return new ValidationResult
+            {
+                Type = ValidationResult.ResultType.Success
+            };
         }
 
         public IValidationResult ValidateQuestionMarkNode(AtomicNode questionMark)
@@ -1185,10 +1541,7 @@ namespace Addmusic2.Logic
             return composite.NodeType switch
             {
                 // Always accepted
-                SongNodeType.Intro => new ValidationResult
-                {
-                    Type = ValidationResult.ResultType.Success
-                },
+                SongNodeType.Intro => ValidateIntroNode(composite),
                 // Requires validation
                 SongNodeType.Triplet => ValidateTripletNode(composite),
                 SongNodeType.PitchSlide => ValidatePitchSlideNode(composite),
@@ -1199,12 +1552,33 @@ namespace Addmusic2.Logic
             }; ;
         }
 
+        public IValidationResult ValidateIntroNode(CompositeNode introNode)
+        {
+            // This should never happen due to ANTLR grammer enforcement but just in case
+            if (InActiveLoop)
+            {
+                return new ValidationResult
+                {
+                    Type = ValidationResult.ResultType.Error,
+                    Message = new List<string>
+                    {
+                        _messageService.GetErrorIntroDirectiveFoundInLoopMessage(),
+                    }
+                };
+            }
+
+            return new ValidationResult
+            {
+                Type = ValidationResult.ResultType.Success
+            };
+        }
+
         public IValidationResult ValidateTripletNode(CompositeNode tripletNode)
         {
             var messages = new List<string>();
             foreach(SongNode child in tripletNode.Children)
             {
-                var validationResult = (ValidationResult)ValidateNote(child, true);
+                var validationResult = (ValidationResult)ValidateNode(child);
                 if(validationResult.Type != ValidationResult.ResultType.Success)
                 {
                     messages.AddRange(validationResult.Message);
@@ -1232,7 +1606,7 @@ namespace Addmusic2.Logic
                 {
                     continue;
                 }
-                var validationResult = (ValidationResult)ValidateNote(child, true);
+                var validationResult = (ValidationResult)ValidateNode(child);
                 if (validationResult.Type != ValidationResult.ResultType.Success)
                 {
                     messages.AddRange(validationResult.Message);
@@ -1273,7 +1647,7 @@ namespace Addmusic2.Logic
                 };
             }
 
-            if(hexByte < 0 || hexByte > MagicNumbers.HexCommandMaximum)
+            if(!IsHexInRange(hexByte))
             {
                 return new ValidationResult
                 {
@@ -1300,12 +1674,12 @@ namespace Addmusic2.Logic
                 throw new Exception();
             }
 
-            // check for sample name existence and is loaded
+            // todo check for sample name existence and is loaded
 
-            var tuningValue = byte.Parse(sampleloadPayload.TuningValue);
+            var tuningValue = Convert.ToByte(sampleloadPayload.TuningValue, 16);
 
 
-            if(tuningValue < 0 || tuningValue > MagicNumbers.EightBitMaximum)
+            if(!IsHexInRange(tuningValue))
             {
                 return new ValidationResult
                 {
@@ -1574,7 +1948,7 @@ namespace Addmusic2.Logic
 
             if(game.Length == 0)
             {
-                SongData.Game = Messages.DefaultSpcGameName;
+                SongData.Game = Model.Constants.Messages.DefaultSpcGameName;
             }
             if(length == "auto")
             {
@@ -1619,19 +1993,19 @@ namespace Addmusic2.Logic
             var messages = new List<string>();
             if(author.Length > MagicNumbers.SpcTextMaximumLength)
             {
-                messages.Add(_messageService.GetWarningSpcTextValueTooLongMessage(nameof(author), author[0..32]));
+                messages.Add(_messageService.GetWarningSpcTextValueTooLongMessage(nameof(author), author[0..MagicNumbers.SpcTextMaximumLength]));
             }
             if (game.Length > MagicNumbers.SpcTextMaximumLength)
             {
-                messages.Add(_messageService.GetWarningSpcTextValueTooLongMessage(nameof(game), game[0..32]));
+                messages.Add(_messageService.GetWarningSpcTextValueTooLongMessage(nameof(game), game[0..MagicNumbers.SpcTextMaximumLength]));
             }
             if (comment.Length > MagicNumbers.SpcTextMaximumLength)
             {
-                messages.Add(_messageService.GetWarningSpcTextValueTooLongMessage(nameof(comment), comment[0..32]));
+                messages.Add(_messageService.GetWarningSpcTextValueTooLongMessage(nameof(comment), comment[0..MagicNumbers.SpcTextMaximumLength]));
             }
             if (title.Length > MagicNumbers.SpcTextMaximumLength)
             {
-                messages.Add(_messageService.GetWarningSpcTextValueTooLongMessage(nameof(title), title[0..32]));
+                messages.Add(_messageService.GetWarningSpcTextValueTooLongMessage(nameof(title), title[0..MagicNumbers.SpcTextMaximumLength]));
             }
 
             return new ValidationResult
@@ -1678,7 +2052,7 @@ namespace Addmusic2.Logic
                 {
                     var hexValue = Convert.ToByte(setting);
 
-                    if(hexValue < 0 ||  hexValue > MagicNumbers.ByteHexMaximum)
+                    if(!IsHexInRange(hexValue))
                     {
                         messages.Add(_messageService.GetErrorInstrumentDefinitionHexValueOutOfRangeMessage(0, MagicNumbers.ByteHexMaximum, hexValue));
                         continue;
@@ -1719,12 +2093,94 @@ namespace Addmusic2.Logic
 
         #endregion
 
+        #region Hex Command Validators
+
+        public IValidationResult ValidateHexNode(HexNode hex)
+        {
+            return hex.CommandType switch
+            {
+                HexCommands.DDPitchBlend => ValidateDDPitchBlend(hex),
+                HexCommands.FAHotPatchPreset or
+                HexCommands.FAHotPatchToggleBits or
+                HexCommands.FCHexRemoteCommand or
+                HexCommands.FCHexRemoteGain => throw new Exception(),
+                _ => ValidateGenericHexCommand(hex)
+            };
+        }
+
+        public IValidationResult ValidateGenericHexCommand(HexNode hex)
+        {
+            var messages = new List<string>();
+
+            foreach(var hexNumber in hex.HexValues)
+            {
+                var byteValue = Convert.ToByte(hexNumber.Replace("$",""));
+                if(!IsHexInRange(byteValue))
+                {
+                    messages.Add(_messageService.GetErrorHexCommandSuppliedValueOutOfRangeMessage(hexNumber, hex.HexCommand, 0, MagicNumbers.HexCommandMaximum));
+                }
+            }
+
+            return (messages.Count > 0)
+                ? new ValidationResult
+                {
+                    Type = ValidationResult.ResultType.Error,
+                    Message = messages,
+                }
+                : new ValidationResult
+                {
+                    Type = ValidationResult.ResultType.Success,
+                };
+        }
+
+        public IValidationResult ValidateDDPitchBlend(HexNode pitchBlend)
+        {
+            var messages = new List<string>();
+
+            foreach( var hexNumber in pitchBlend.HexValues)
+            {
+                if(!IsHexInRange(Convert.ToByte(hexNumber.Replace("$",""), 16)))
+                {
+                    messages.Add(_messageService.GetErrorHexCommandSuppliedValueOutOfRangeMessage(hexNumber, pitchBlend.HexCommand, 0, MagicNumbers.ByteHexMaximum));
+                }
+            }
+
+            foreach(var node in pitchBlend.Children)
+            {
+                var validation = (ValidationResult)ValidateNode(node);
+                if(validation.Type == ValidationResult.ResultType.Error ||
+                    validation.Type == ValidationResult.ResultType.Warning)
+                {
+                    messages.AddRange(validation.Message);
+                }
+            }
+
+            return (messages.Count > 0)
+                ? new ValidationResult
+                {
+                    Type = ValidationResult.ResultType.Error,
+                    Message = messages,
+                }
+                : new ValidationResult
+                {
+                    Type = ValidationResult.ResultType.Success,
+                };
+        }
+
+        #endregion
+
         #endregion
 
         #region Helpers
 
+        private bool IsHexInRange(byte hexValue)
+        {
+            return (hexValue < 0 || hexValue > MagicNumbers.HexCommandMaximum) ? false : true;
+        }
+
         private void AddDataToChannel(byte dataToAdd)
         {
+            var currentChannel = Channels.Where(c => c.ChannelNumber == CurrentChannel.ChannelNumber).First();
             if(InActiveLoop)
             {
                 if(InActiveSubLoop)
@@ -1738,12 +2194,13 @@ namespace Addmusic2.Logic
             }
             else
             {
-                CurrentChannelData.Add(dataToAdd);
+                currentChannel.ChannelData.Add(dataToAdd);
             }
         }
 
         private void AddDataToChannel(List<byte> dataToAdd)
         {
+            var currentChannel = Channels.Where(c => c.ChannelNumber == CurrentChannel.ChannelNumber).First();
             if (InActiveLoop)
             {
                 if (InActiveSubLoop)
@@ -1757,7 +2214,7 @@ namespace Addmusic2.Logic
             }
             else
             {
-                CurrentChannelData.AddRange(dataToAdd);
+                currentChannel.ChannelData.AddRange(dataToAdd);
             }
         }
 
@@ -1765,15 +2222,18 @@ namespace Addmusic2.Logic
         {
             if (InActiveLoop)
             {
-                ActiveLoopLength += ticks;
-            }
-            else if(InActiveSubLoop)
-            {
-                ActiveSubLoopLength += ticks;
+                if (InActiveSubLoop)
+                {
+                    ActiveSubLoopLength += ticks;
+                }
+                else
+                {
+                    ActiveLoopLength += ticks;
+                }
             }
             else
             {
-                ChannelLength[CurrentChannel] = ChannelLength[CurrentChannel] + ticks;
+                CurrentChannel.ChannelLength = CurrentChannel.ChannelLength + ticks;
             }
         }
 
@@ -1882,6 +2342,170 @@ namespace Addmusic2.Logic
                 result = (int)Math.Floor(((double)result * 2.0 / 3.0) + 0.5);
             }
             return result;
+        }
+
+        private void ApplyTempoRateAdjustmentAndQuantization(SongNode node, byte noteType, int noteLength)
+        {
+            if(noteLength >= DivideByTempoRatio(node, MagicNumbers.NoteLengthMaxBeforeSplit, true))
+            {
+                AddDataToChannel(Convert.ToByte(DivideByTempoRatio(node, MagicNumbers.NoteLengthDecreaseFactor, true)));
+
+                if(InActiveLoop)
+                {
+                    if(InActiveSubLoop)
+                    {
+                        if(ActiveSubLoopInformation.UpdateQuantization)
+                        {
+                            AddDataToChannel(ActiveSubLoopInformation.CurrentQuantization);
+                            ActiveSubLoopInformation.UpdateQuantization = false;
+                            SongData.NoteParameterByteCount++;
+                        }
+                    }
+                    else
+                    {
+                        if(ActiveLoopInformation.UpdateQuantization)
+                        {
+                            AddDataToChannel(ActiveLoopInformation.CurrentQuantization);
+                            ActiveLoopInformation.UpdateQuantization = false;
+                            SongData.NoteParameterByteCount++;
+                        }
+                    }
+                }
+                else
+                {
+                    if(CurrentChannel.UpdateQuantization)
+                    {
+                        AddDataToChannel(CurrentChannel.CurrentQuantization);
+                        CurrentChannel.UpdateQuantization = false;
+                        SongData.NoteParameterByteCount++;
+                    }
+                }
+
+                AddDataToChannel(noteType);
+
+                noteLength -= DivideByTempoRatio(node, MagicNumbers.NoteLengthDecreaseFactor, true);
+
+                while(noteLength > DivideByTempoRatio(node, MagicNumbers.NoteLengthDecreaseFactor, true))
+                {
+                    AddDataToChannel(MagicNumbers.CommandValues.Tie);
+
+                    noteLength -= DivideByTempoRatio(node, MagicNumbers.NoteLengthDecreaseFactor, true);
+                }
+
+                if(noteLength > 0)
+                {
+                    if(noteLength != DivideByTempoRatio(node, MagicNumbers.NoteLengthDecreaseFactor, true))
+                    {
+                        AddDataToChannel(Convert.ToByte(noteLength));
+                    }
+
+                    AddDataToChannel(MagicNumbers.CommandValues.Tie);
+                }
+
+               PreviousNoteLength = noteLength;
+                return;
+            }
+            else if(noteLength > 0)
+            {
+                if (InActiveLoop)
+                {
+                    if (InActiveSubLoop)
+                    {
+                        if (ActiveSubLoopInformation.UpdateQuantization)
+                        {
+                            if(noteLength != PreviousNoteLength)
+                            {
+                                AddDataToChannel(Convert.ToByte(noteLength));
+                            }
+                            AddDataToChannel(ActiveSubLoopInformation.CurrentQuantization);
+                            ActiveSubLoopInformation.UpdateQuantization = false;
+                            SongData.NoteParameterByteCount++;
+                        }
+                    }
+                    else
+                    {
+                        if (ActiveLoopInformation.UpdateQuantization)
+                        {
+                            if (noteLength != PreviousNoteLength)
+                            {
+                                AddDataToChannel(Convert.ToByte(noteLength));
+                            }
+                            AddDataToChannel(ActiveLoopInformation.CurrentQuantization);
+                            ActiveLoopInformation.UpdateQuantization = false;
+                            SongData.NoteParameterByteCount++;
+                        }
+                    }
+                }
+                else
+                {
+                    if (CurrentChannel.UpdateQuantization)
+                    {
+                        if (noteLength != PreviousNoteLength)
+                        {
+                            AddDataToChannel(Convert.ToByte(noteLength));
+                        }
+                        AddDataToChannel(CurrentChannel.CurrentQuantization);
+                        CurrentChannel.UpdateQuantization = false;
+                        SongData.NoteParameterByteCount++;
+                    }
+                }
+
+                AddDataToChannel(noteType);
+            }
+        }
+
+        private int GetPitchValue(int value, NotePayload.Accidentals accidental)
+        {
+            value = MagicNumbers.ValidPitches[value - MagicNumbers.PitchOffset] + (CurrentOctave - 1) * 12 + 0x80;
+
+            if(accidental == NotePayload.Accidentals.Sharp)
+            {
+                value++;
+            }
+            else
+            {
+                value--;
+            }
+
+            return value;
+        }
+
+        private int GetCurrentInstrument()
+        {
+            if (InActiveLoop)
+            {
+                if (InActiveSubLoop)
+                {
+                    return ActiveSubLoopInformation.CurrentInstrument;
+                }
+                else
+                {
+                    return ActiveLoopInformation.CurrentInstrument;
+                }
+            }
+            else
+            {
+                return CurrentChannel.CurrentInstrument;
+            }
+        }
+
+        private void SetCurrentInstrument(int instrument)
+        {
+            if (InActiveLoop)
+            {
+                if (InActiveSubLoop)
+                {
+                    ActiveSubLoopInformation.CurrentInstrument = instrument;
+                }
+                else
+                {
+                    ActiveLoopInformation.CurrentInstrument = instrument;
+                }
+            }
+            else
+            {
+                CurrentChannel.CurrentInstrument = instrument;
+            }
         }
 
         #endregion

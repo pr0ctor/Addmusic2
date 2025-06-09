@@ -18,7 +18,7 @@ namespace Addmusic2.Model
         public string Name { get; set; }
         public string PathlessSongName { get; set; }
         //public byte[] Data { get; set; } = new byte[MagicNumbers.ChannelCount];
-        public Dictionary<int, List<byte>> ChannelData { get; set; } = new();
+        public List<ChannelInformation> ChannelData { get; set; } = new();
         public bool[,] NoMusic { get; set; } = new bool[8,2];
         public ushort[] LoopLocations { get; set; } = new ushort[MagicNumbers.ChannelCount];
         public bool PlayOnce { get; set; }

@@ -2,6 +2,7 @@
 using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
 using Addmusic2.Model.SongTree;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,15 +16,16 @@ namespace Addmusic2.Model
         public ISongNode RootNode { get; set; }
         public ISongParser Parser { get; set; }
         public string SongText { get; set; }
+        public SongData SongData { get; set; }
 
-        public Song()
+        public Song(SongParser parser)
         {
-            Parser = new SongParser();
+            Parser = parser;
         }
-        public Song(ISongNode rootNode)
+        public Song(SongParser parser, ISongNode rootNode)
         {
             RootNode = rootNode;
-            Parser = new SongParser();
+            Parser = parser;
         }
 
         public void ParseSong()
@@ -40,7 +42,7 @@ namespace Addmusic2.Model
                 throw new Exception();
             }
 
-            Parser.ParseSongNodes(rootNode.Children);
+            SongData = Parser.ParseSongNodes(rootNode.Children);
         }
     }
 }

@@ -448,29 +448,61 @@ public partial class MmlBaseListener : IMmlListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitNoiseNote([NotNull] MmlParser.NoiseNoteContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.volume"/>.
+	/// Enter a parse tree produced by the <c>Volume</c>
+	/// labeled alternative in <see cref="MmlParser.volumeCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void EnterVolume([NotNull] MmlParser.VolumeContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.volume"/>.
+	/// Exit a parse tree produced by the <c>Volume</c>
+	/// labeled alternative in <see cref="MmlParser.volumeCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitVolume([NotNull] MmlParser.VolumeContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.tune"/>.
+	/// Enter a parse tree produced by the <c>HexVolume</c>
+	/// labeled alternative in <see cref="MmlParser.volumeCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterHexVolume([NotNull] MmlParser.HexVolumeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>HexVolume</c>
+	/// labeled alternative in <see cref="MmlParser.volumeCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitHexVolume([NotNull] MmlParser.HexVolumeContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>Tune</c>
+	/// labeled alternative in <see cref="MmlParser.tuneCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void EnterTune([NotNull] MmlParser.TuneContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.tune"/>.
+	/// Exit a parse tree produced by the <c>Tune</c>
+	/// labeled alternative in <see cref="MmlParser.tuneCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitTune([NotNull] MmlParser.TuneContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>HexTune</c>
+	/// labeled alternative in <see cref="MmlParser.tuneCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterHexTune([NotNull] MmlParser.HexTuneContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>HexTune</c>
+	/// labeled alternative in <see cref="MmlParser.tuneCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitHexTune([NotNull] MmlParser.HexTuneContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.quantization"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -484,29 +516,61 @@ public partial class MmlBaseListener : IMmlListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitQuantization([NotNull] MmlParser.QuantizationContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.pan"/>.
+	/// Enter a parse tree produced by the <c>Pan</c>
+	/// labeled alternative in <see cref="MmlParser.panCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void EnterPan([NotNull] MmlParser.PanContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.pan"/>.
+	/// Exit a parse tree produced by the <c>Pan</c>
+	/// labeled alternative in <see cref="MmlParser.panCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitPan([NotNull] MmlParser.PanContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.vibrato"/>.
+	/// Enter a parse tree produced by the <c>HexPan</c>
+	/// labeled alternative in <see cref="MmlParser.panCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterHexPan([NotNull] MmlParser.HexPanContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>HexPan</c>
+	/// labeled alternative in <see cref="MmlParser.panCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitHexPan([NotNull] MmlParser.HexPanContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>Vibrato</c>
+	/// labeled alternative in <see cref="MmlParser.vibratoCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void EnterVibrato([NotNull] MmlParser.VibratoContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.vibrato"/>.
+	/// Exit a parse tree produced by the <c>Vibrato</c>
+	/// labeled alternative in <see cref="MmlParser.vibratoCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitVibrato([NotNull] MmlParser.VibratoContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>HexVibrato</c>
+	/// labeled alternative in <see cref="MmlParser.vibratoCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterHexVibrato([NotNull] MmlParser.HexVibratoContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>HexVibrato</c>
+	/// labeled alternative in <see cref="MmlParser.vibratoCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitHexVibrato([NotNull] MmlParser.HexVibratoContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.pitchslide"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -544,41 +608,89 @@ public partial class MmlBaseListener : IMmlListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitDefaultLength([NotNull] MmlParser.DefaultLengthContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.globalVolume"/>.
+	/// Enter a parse tree produced by the <c>GlobalVolume</c>
+	/// labeled alternative in <see cref="MmlParser.globalVolumeCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void EnterGlobalVolume([NotNull] MmlParser.GlobalVolumeContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.globalVolume"/>.
+	/// Exit a parse tree produced by the <c>GlobalVolume</c>
+	/// labeled alternative in <see cref="MmlParser.globalVolumeCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitGlobalVolume([NotNull] MmlParser.GlobalVolumeContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.tempo"/>.
+	/// Enter a parse tree produced by the <c>HexGlobalVolume</c>
+	/// labeled alternative in <see cref="MmlParser.globalVolumeCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterHexGlobalVolume([NotNull] MmlParser.HexGlobalVolumeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>HexGlobalVolume</c>
+	/// labeled alternative in <see cref="MmlParser.globalVolumeCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitHexGlobalVolume([NotNull] MmlParser.HexGlobalVolumeContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>Tempo</c>
+	/// labeled alternative in <see cref="MmlParser.tempoCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void EnterTempo([NotNull] MmlParser.TempoContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.tempo"/>.
+	/// Exit a parse tree produced by the <c>Tempo</c>
+	/// labeled alternative in <see cref="MmlParser.tempoCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitTempo([NotNull] MmlParser.TempoContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.instrument"/>.
+	/// Enter a parse tree produced by the <c>HexTempo</c>
+	/// labeled alternative in <see cref="MmlParser.tempoCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterHexTempo([NotNull] MmlParser.HexTempoContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>HexTempo</c>
+	/// labeled alternative in <see cref="MmlParser.tempoCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitHexTempo([NotNull] MmlParser.HexTempoContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>Instrument</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void EnterInstrument([NotNull] MmlParser.InstrumentContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.instrument"/>.
+	/// Exit a parse tree produced by the <c>Instrument</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitInstrument([NotNull] MmlParser.InstrumentContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>HexInstrument</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterHexInstrument([NotNull] MmlParser.HexInstrumentContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>HexInstrument</c>
+	/// labeled alternative in <see cref="MmlParser.instrumentCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitHexInstrument([NotNull] MmlParser.HexInstrumentContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.nakedTie"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -832,17 +944,33 @@ public partial class MmlBaseListener : IMmlListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitNoloopCommand([NotNull] MmlParser.NoloopCommandContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.sampleLoad"/>.
+	/// Enter a parse tree produced by the <c>SampleLoad</c>
+	/// labeled alternative in <see cref="MmlParser.sampleLoadCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void EnterSampleLoad([NotNull] MmlParser.SampleLoadContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.sampleLoad"/>.
+	/// Exit a parse tree produced by the <c>SampleLoad</c>
+	/// labeled alternative in <see cref="MmlParser.sampleLoadCommand"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitSampleLoad([NotNull] MmlParser.SampleLoadContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>HexSampleLoad</c>
+	/// labeled alternative in <see cref="MmlParser.sampleLoadCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterHexSampleLoad([NotNull] MmlParser.HexSampleLoadContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>HexSampleLoad</c>
+	/// labeled alternative in <see cref="MmlParser.sampleLoadCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitHexSampleLoad([NotNull] MmlParser.HexSampleLoadContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.replacements"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -855,6 +983,736 @@ public partial class MmlBaseListener : IMmlListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitReplacements([NotNull] MmlParser.ReplacementsContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.globalHexCommands"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterGlobalHexCommands([NotNull] MmlParser.GlobalHexCommandsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.globalHexCommands"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitGlobalHexCommands([NotNull] MmlParser.GlobalHexCommandsContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.channelHexCommands"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterChannelHexCommands([NotNull] MmlParser.ChannelHexCommandsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.channelHexCommands"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitChannelHexCommands([NotNull] MmlParser.ChannelHexCommandsContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.daInstrument"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDaInstrument([NotNull] MmlParser.DaInstrumentContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.daInstrument"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDaInstrument([NotNull] MmlParser.DaInstrumentContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.dbPan"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDbPan([NotNull] MmlParser.DbPanContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.dbPan"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDbPan([NotNull] MmlParser.DbPanContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.dcPanFade"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDcPanFade([NotNull] MmlParser.DcPanFadeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.dcPanFade"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDcPanFade([NotNull] MmlParser.DcPanFadeContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.ddPitchBlendCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDdPitchBlendCommand([NotNull] MmlParser.DdPitchBlendCommandContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.ddPitchBlendCommand"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDdPitchBlendCommand([NotNull] MmlParser.DdPitchBlendCommandContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.ddPitchBlendItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDdPitchBlendItems([NotNull] MmlParser.DdPitchBlendItemsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.ddPitchBlendItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDdPitchBlendItems([NotNull] MmlParser.DdPitchBlendItemsContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.deVibratoStart"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDeVibratoStart([NotNull] MmlParser.DeVibratoStartContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.deVibratoStart"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDeVibratoStart([NotNull] MmlParser.DeVibratoStartContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.eaVibratoFade"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterEaVibratoFade([NotNull] MmlParser.EaVibratoFadeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.eaVibratoFade"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitEaVibratoFade([NotNull] MmlParser.EaVibratoFadeContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.dfVibratoEnd"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDfVibratoEnd([NotNull] MmlParser.DfVibratoEndContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.dfVibratoEnd"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDfVibratoEnd([NotNull] MmlParser.DfVibratoEndContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.e0GlobalVolume"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterE0GlobalVolume([NotNull] MmlParser.E0GlobalVolumeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.e0GlobalVolume"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitE0GlobalVolume([NotNull] MmlParser.E0GlobalVolumeContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.e1GlobalVolumeFade"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterE1GlobalVolumeFade([NotNull] MmlParser.E1GlobalVolumeFadeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.e1GlobalVolumeFade"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitE1GlobalVolumeFade([NotNull] MmlParser.E1GlobalVolumeFadeContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.e2Tempo"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterE2Tempo([NotNull] MmlParser.E2TempoContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.e2Tempo"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitE2Tempo([NotNull] MmlParser.E2TempoContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.e3TempoFade"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterE3TempoFade([NotNull] MmlParser.E3TempoFadeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.e3TempoFade"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitE3TempoFade([NotNull] MmlParser.E3TempoFadeContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.e4GlobalTranspose"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterE4GlobalTranspose([NotNull] MmlParser.E4GlobalTransposeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.e4GlobalTranspose"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitE4GlobalTranspose([NotNull] MmlParser.E4GlobalTransposeContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.e5Tremolo"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterE5Tremolo([NotNull] MmlParser.E5TremoloContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.e5Tremolo"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitE5Tremolo([NotNull] MmlParser.E5TremoloContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.e6SubloopStart"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterE6SubloopStart([NotNull] MmlParser.E6SubloopStartContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.e6SubloopStart"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitE6SubloopStart([NotNull] MmlParser.E6SubloopStartContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.e6SubloopEnd"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterE6SubloopEnd([NotNull] MmlParser.E6SubloopEndContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.e6SubloopEnd"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitE6SubloopEnd([NotNull] MmlParser.E6SubloopEndContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.e7Volume"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterE7Volume([NotNull] MmlParser.E7VolumeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.e7Volume"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitE7Volume([NotNull] MmlParser.E7VolumeContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.e8VolumeFade"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterE8VolumeFade([NotNull] MmlParser.E8VolumeFadeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.e8VolumeFade"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitE8VolumeFade([NotNull] MmlParser.E8VolumeFadeContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.ebPitchEnvelopeRelease"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterEbPitchEnvelopeRelease([NotNull] MmlParser.EbPitchEnvelopeReleaseContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.ebPitchEnvelopeRelease"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitEbPitchEnvelopeRelease([NotNull] MmlParser.EbPitchEnvelopeReleaseContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.ecPitchEnvelopeAttack"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterEcPitchEnvelopeAttack([NotNull] MmlParser.EcPitchEnvelopeAttackContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.ecPitchEnvelopeAttack"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitEcPitchEnvelopeAttack([NotNull] MmlParser.EcPitchEnvelopeAttackContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>EDCustomGAIN</c>
+	/// labeled alternative in <see cref="MmlParser.edCustomADSROrGain"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterEDCustomGAIN([NotNull] MmlParser.EDCustomGAINContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>EDCustomGAIN</c>
+	/// labeled alternative in <see cref="MmlParser.edCustomADSROrGain"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitEDCustomGAIN([NotNull] MmlParser.EDCustomGAINContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>EDCustomASDR</c>
+	/// labeled alternative in <see cref="MmlParser.edCustomADSROrGain"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterEDCustomASDR([NotNull] MmlParser.EDCustomASDRContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>EDCustomASDR</c>
+	/// labeled alternative in <see cref="MmlParser.edCustomADSROrGain"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitEDCustomASDR([NotNull] MmlParser.EDCustomASDRContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.eeTuneChannel"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterEeTuneChannel([NotNull] MmlParser.EeTuneChannelContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.eeTuneChannel"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitEeTuneChannel([NotNull] MmlParser.EeTuneChannelContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.efEcho1"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterEfEcho1([NotNull] MmlParser.EfEcho1Context context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.efEcho1"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitEfEcho1([NotNull] MmlParser.EfEcho1Context context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.f0EchoOff"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF0EchoOff([NotNull] MmlParser.F0EchoOffContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.f0EchoOff"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF0EchoOff([NotNull] MmlParser.F0EchoOffContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.f1Echo2"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF1Echo2([NotNull] MmlParser.F1Echo2Context context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.f1Echo2"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF1Echo2([NotNull] MmlParser.F1Echo2Context context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.f2EchoFade"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF2EchoFade([NotNull] MmlParser.F2EchoFadeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.f2EchoFade"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF2EchoFade([NotNull] MmlParser.F2EchoFadeContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.f3SampleLoad"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF3SampleLoad([NotNull] MmlParser.F3SampleLoadContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.f3SampleLoad"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF3SampleLoad([NotNull] MmlParser.F3SampleLoadContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>F4EnableYoshiDrumsChannel5</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF4EnableYoshiDrumsChannel5([NotNull] MmlParser.F4EnableYoshiDrumsChannel5Context context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>F4EnableYoshiDrumsChannel5</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF4EnableYoshiDrumsChannel5([NotNull] MmlParser.F4EnableYoshiDrumsChannel5Context context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>F4ToggleLegato</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF4ToggleLegato([NotNull] MmlParser.F4ToggleLegatoContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>F4ToggleLegato</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF4ToggleLegato([NotNull] MmlParser.F4ToggleLegatoContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>F4LightStaccato</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF4LightStaccato([NotNull] MmlParser.F4LightStaccatoContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>F4LightStaccato</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF4LightStaccato([NotNull] MmlParser.F4LightStaccatoContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>F4SNESSync</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF4SNESSync([NotNull] MmlParser.F4SNESSyncContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>F4SNESSync</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF4SNESSync([NotNull] MmlParser.F4SNESSyncContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>F4EnableYoshiDrums</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF4EnableYoshiDrums([NotNull] MmlParser.F4EnableYoshiDrumsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>F4EnableYoshiDrums</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF4EnableYoshiDrums([NotNull] MmlParser.F4EnableYoshiDrumsContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>F4TempoHikeOff</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF4TempoHikeOff([NotNull] MmlParser.F4TempoHikeOffContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>F4TempoHikeOff</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF4TempoHikeOff([NotNull] MmlParser.F4TempoHikeOffContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>F4NSPCVelocityTable</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF4NSPCVelocityTable([NotNull] MmlParser.F4NSPCVelocityTableContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>F4NSPCVelocityTable</c>
+	/// labeled alternative in <see cref="MmlParser.f4GlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF4NSPCVelocityTable([NotNull] MmlParser.F4NSPCVelocityTableContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>F4EchoToggle</c>
+	/// labeled alternative in <see cref="MmlParser.f4ChannelItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF4EchoToggle([NotNull] MmlParser.F4EchoToggleContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>F4EchoToggle</c>
+	/// labeled alternative in <see cref="MmlParser.f4ChannelItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF4EchoToggle([NotNull] MmlParser.F4EchoToggleContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>F4RestoreInstrument</c>
+	/// labeled alternative in <see cref="MmlParser.f4ChannelItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF4RestoreInstrument([NotNull] MmlParser.F4RestoreInstrumentContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>F4RestoreInstrument</c>
+	/// labeled alternative in <see cref="MmlParser.f4ChannelItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF4RestoreInstrument([NotNull] MmlParser.F4RestoreInstrumentContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.f5FIRFilter"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF5FIRFilter([NotNull] MmlParser.F5FIRFilterContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.f5FIRFilter"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF5FIRFilter([NotNull] MmlParser.F5FIRFilterContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.f6DSPWrite"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF6DSPWrite([NotNull] MmlParser.F6DSPWriteContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.f6DSPWrite"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF6DSPWrite([NotNull] MmlParser.F6DSPWriteContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.f8EnableNoise"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF8EnableNoise([NotNull] MmlParser.F8EnableNoiseContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.f8EnableNoise"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF8EnableNoise([NotNull] MmlParser.F8EnableNoiseContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.f9DataSend"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterF9DataSend([NotNull] MmlParser.F9DataSendContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.f9DataSend"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitF9DataSend([NotNull] MmlParser.F9DataSendContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>FAPitchModulation</c>
+	/// labeled alternative in <see cref="MmlParser.faChannelItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFAPitchModulation([NotNull] MmlParser.FAPitchModulationContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>FAPitchModulation</c>
+	/// labeled alternative in <see cref="MmlParser.faChannelItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFAPitchModulation([NotNull] MmlParser.FAPitchModulationContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>FACurrentChannelGain</c>
+	/// labeled alternative in <see cref="MmlParser.faChannelItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFACurrentChannelGain([NotNull] MmlParser.FACurrentChannelGainContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>FACurrentChannelGain</c>
+	/// labeled alternative in <see cref="MmlParser.faChannelItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFACurrentChannelGain([NotNull] MmlParser.FACurrentChannelGainContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>FASemitoneTune</c>
+	/// labeled alternative in <see cref="MmlParser.faChannelItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFASemitoneTune([NotNull] MmlParser.FASemitoneTuneContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>FASemitoneTune</c>
+	/// labeled alternative in <see cref="MmlParser.faChannelItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFASemitoneTune([NotNull] MmlParser.FASemitoneTuneContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>FAAmplify</c>
+	/// labeled alternative in <see cref="MmlParser.faChannelItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFAAmplify([NotNull] MmlParser.FAAmplifyContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>FAAmplify</c>
+	/// labeled alternative in <see cref="MmlParser.faChannelItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFAAmplify([NotNull] MmlParser.FAAmplifyContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>FAEchoBufferReserve</c>
+	/// labeled alternative in <see cref="MmlParser.faGlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFAEchoBufferReserve([NotNull] MmlParser.FAEchoBufferReserveContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>FAEchoBufferReserve</c>
+	/// labeled alternative in <see cref="MmlParser.faGlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFAEchoBufferReserve([NotNull] MmlParser.FAEchoBufferReserveContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>FAHotPatchPreset</c>
+	/// labeled alternative in <see cref="MmlParser.faGlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFAHotPatchPreset([NotNull] MmlParser.FAHotPatchPresetContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>FAHotPatchPreset</c>
+	/// labeled alternative in <see cref="MmlParser.faGlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFAHotPatchPreset([NotNull] MmlParser.FAHotPatchPresetContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>FAHotPatchToggleBits</c>
+	/// labeled alternative in <see cref="MmlParser.faGlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFAHotPatchToggleBits([NotNull] MmlParser.FAHotPatchToggleBitsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>FAHotPatchToggleBits</c>
+	/// labeled alternative in <see cref="MmlParser.faGlobalItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFAHotPatchToggleBits([NotNull] MmlParser.FAHotPatchToggleBitsContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>FBTrill</c>
+	/// labeled alternative in <see cref="MmlParser.fbItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFBTrill([NotNull] MmlParser.FBTrillContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>FBTrill</c>
+	/// labeled alternative in <see cref="MmlParser.fbItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFBTrill([NotNull] MmlParser.FBTrillContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>FBGlissando</c>
+	/// labeled alternative in <see cref="MmlParser.fbItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFBGlissando([NotNull] MmlParser.FBGlissandoContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>FBGlissando</c>
+	/// labeled alternative in <see cref="MmlParser.fbItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFBGlissando([NotNull] MmlParser.FBGlissandoContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>FBEnableArgeggio</c>
+	/// labeled alternative in <see cref="MmlParser.fbItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFBEnableArgeggio([NotNull] MmlParser.FBEnableArgeggioContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>FBEnableArgeggio</c>
+	/// labeled alternative in <see cref="MmlParser.fbItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFBEnableArgeggio([NotNull] MmlParser.FBEnableArgeggioContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>FCHexRemoteGain</c>
+	/// labeled alternative in <see cref="MmlParser.fcItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFCHexRemoteGain([NotNull] MmlParser.FCHexRemoteGainContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>FCHexRemoteGain</c>
+	/// labeled alternative in <see cref="MmlParser.fcItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFCHexRemoteGain([NotNull] MmlParser.FCHexRemoteGainContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>FCHexRemoteCommand</c>
+	/// labeled alternative in <see cref="MmlParser.fcItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFCHexRemoteCommand([NotNull] MmlParser.FCHexRemoteCommandContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>FCHexRemoteCommand</c>
+	/// labeled alternative in <see cref="MmlParser.fcItems"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFCHexRemoteCommand([NotNull] MmlParser.FCHexRemoteCommandContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.fdTremoloOff"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFdTremoloOff([NotNull] MmlParser.FdTremoloOffContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.fdTremoloOff"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFdTremoloOff([NotNull] MmlParser.FdTremoloOffContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.fePitchEnvelopeOff"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFePitchEnvelopeOff([NotNull] MmlParser.FePitchEnvelopeOffContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.fePitchEnvelopeOff"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFePitchEnvelopeOff([NotNull] MmlParser.FePitchEnvelopeOffContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.hexNumber"/>.
 	/// <para>The default implementation does nothing.</para>
