@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Addmusic2.Validators
+namespace Addmusic2.Model
 {
     internal static class AtomicValidators
     {

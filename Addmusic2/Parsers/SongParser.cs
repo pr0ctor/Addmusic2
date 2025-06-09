@@ -7,14 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Addmusic2.Model.SongTree;
-using Addmusic2.Validators;
 using Microsoft.Extensions.Logging;
 using Addmusic2.Model.Localization;
 using Addmusic2.Localization;
 using System.Xml.Linq;
-using System.Diagnostics.Metrics;
 
-namespace Addmusic2.Logic
+namespace Addmusic2.Parsers
 {
     internal class SongParser : ISongParser
     {
@@ -206,7 +204,7 @@ namespace Addmusic2.Logic
             ushort loopPointer = 0x0000;
             foreach (SongNode node in nodes)
             {
-                if(loopPointer >= MagicNumbers.SixteenBitMaximum)
+                if (loopPointer >= MagicNumbers.SixteenBitMaximum)
                 {
                     _messageService.GetErrorMaximumAllowedNumberOfLoopsReachedMessage();
                 }
@@ -216,7 +214,7 @@ namespace Addmusic2.Logic
                     if (node.NodeType == SongNodeType.SimpleLoop)
                     {
                         var loopName = ((LoopNode)node).LoopName;
-                        var hasLoopName = (loopName.Length > 0) ? true : false;
+                        var hasLoopName = loopName.Length > 0 ? true : false;
                         if (hasLoopName)
                         {
                             if (NamedLoopDefinitions.ContainsKey(loopName))
@@ -360,13 +358,13 @@ namespace Addmusic2.Logic
                         instrumentNumber = instrumentNumber - 0x13 + 30;
                     }
                 }
-                if(optimizeSampleUsage)
+                if (optimizeSampleUsage)
                 {
-                    if(instrumentNumber < 30)
+                    if (instrumentNumber < 30)
                     {
                         // approach 1
                     }
-                    else if((instrumentNumber - 30) * 6 < value)
+                    else if ((instrumentNumber - 30) * 6 < value)
                     {
                         // approach 2
                     }
@@ -376,7 +374,7 @@ namespace Addmusic2.Logic
                     }
                 }
 
-                if(false)
+                if (false)
                 {
                     CurrentChannel.IgnoreTuning = false;
                 }
@@ -385,17 +383,17 @@ namespace Addmusic2.Logic
                 AddDataToChannel(Convert.ToByte(instrumentNumber));
             }
 
-            if(instrumentNumber < 30)
+            if (instrumentNumber < 30)
             {
-                if(optimizeSampleUsage)
+                if (optimizeSampleUsage)
                 {
                     // todo do something
                 }
             }
-            
+
             CurrentChannel.CurrentInstrument = instrumentNumber;
 
-            if(instrumentNumber < 19)
+            if (instrumentNumber < 19)
             {
                 HTranspose = 0;
                 UsingHTranspose = false;
@@ -412,7 +410,7 @@ namespace Addmusic2.Logic
             var noteValueChar = (int)notePayload.NoteValue[0];
             var note = GetPitchValue(noteValueChar, notePayload.Accidental);
             var currentInstrument = GetCurrentInstrument();
-            if(UsingHTranspose)
+            if (UsingHTranspose)
             {
                 note += HTranspose;
             }
@@ -421,23 +419,23 @@ namespace Addmusic2.Logic
                 // todo add and check tuning[] logic
             }
 
-            if(note < MagicNumbers.NoteLengthMaxBeforeSplit)
+            if (note < MagicNumbers.NoteLengthMaxBeforeSplit)
             {
                 // todo add warning for too low note, but may not need
-                if(false)
+                if (false)
                 {
-                    
+
                 }
                 else
                 {
                     note = MagicNumbers.CommandValues.Rest;
                 }
             }
-            else if(note >= MagicNumbers.CommandValues.Tie)
+            else if (note >= MagicNumbers.CommandValues.Tie)
             {
                 // todo add error for note pitch too high
             }
-            else if(currentInstrument >= 21 && currentInstrument < 30 && note <  MagicNumbers.CommandValues.Tie)
+            else if (currentInstrument >= 21 && currentInstrument < 30 && note < MagicNumbers.CommandValues.Tie)
             {
 
                 note = 0xD0 + (currentInstrument - 21);
@@ -503,13 +501,13 @@ namespace Addmusic2.Logic
 
             var tempLength = GetNoteLength(restNode, restPayload.Duration, restPayload.DotCount, inTriplet, true);
 
-            if(inPitchSlide)
+            if (inPitchSlide)
             {
                 AddDataToChannel(Convert.ToByte(PreviousNoteLength));
                 AddDataToChannel(MagicNumbers.CommandValues.Rest);
             }
 
-            if(isNextForDDPitchSlide)
+            if (isNextForDDPitchSlide)
             {
                 AddDataToChannel(MagicNumbers.CommandValues.Rest);
                 return; // no more logic for this node
@@ -646,12 +644,12 @@ namespace Addmusic2.Logic
 
             if (panLeft != -1)
             {
-                panValue |= (panLeft << 7);
+                panValue |= panLeft << 7;
             }
 
             if (panRight != -1)
             {
-                panValue |= (panRight << 6);
+                panValue |= panRight << 6;
             }
 
             AddDataToChannel(MagicNumbers.CommandValues.Pan);
@@ -665,7 +663,7 @@ namespace Addmusic2.Logic
 
             // If there is a volume node then we need to only use the delay
             // If there is no volume node then the quantization value is a HexNumber since the delay value is limited to 0->7
-            var quantizationValue = (quantizationPayload.VolumeNode == null)
+            var quantizationValue = quantizationPayload.VolumeNode == null
                 ? Convert.ToByte($"{quantizationPayload.DelayValue}{quantizationPayload.VolumeValue}", 16)
                 : Convert.ToByte(quantizationPayload.DelayValue);
 
@@ -994,7 +992,7 @@ namespace Addmusic2.Logic
             AddDataToChannel((byte)(loopLocation & MagicNumbers.HexCommandMaximum));
             AddDataToChannel((byte)(loopLocation >> 8));
             AddDataToChannel((byte)(simpleLoopNode.Iterations - 1));
-            
+
             // Clean up state and finish loop evaluation
             if (InActiveSubLoop == true)
             {
@@ -1013,7 +1011,7 @@ namespace Addmusic2.Logic
         public void EvaluateSuperLoopNode(LoopNode superLoopNode)
         {
             // Begin Super Loop
-            if(InActiveLoop == true)
+            if (InActiveLoop == true)
             {
                 InActiveSubLoop = true;
             }
@@ -1055,7 +1053,7 @@ namespace Addmusic2.Logic
 
             // This loop invocation may have a different number of iterations than the original definition
             //      Potentially none at all, if so then it only needs to be called once
-            if(callLoopNode.Iterations <= 1)
+            if (callLoopNode.Iterations <= 1)
             {
                 calledLoopData.Iterations = 1;
             }
@@ -1095,10 +1093,10 @@ namespace Addmusic2.Logic
                     EvaluateHalveTempoNode(specialDirective);
                     break;
                 case SongNodeType.Option:
-                    (specialDirective);
+                    specialDirective;
                     break;
                 case SongNodeType.OptionGroup:
-                    (specialDirective);
+                    specialDirective;
                     break;
                 default:
                     throw new Exception();
@@ -1164,7 +1162,7 @@ namespace Addmusic2.Logic
         {
             AddDataToChannel(Convert.ToByte(node.HexCommand.Replace("$", ""), 16));
 
-            foreach(var commandValue in node.HexValues)
+            foreach (var commandValue in node.HexValues)
             {
                 AddDataToChannel(Convert.ToByte(commandValue.Replace("$", ""), 16));
             }
@@ -1179,7 +1177,7 @@ namespace Addmusic2.Logic
                 AddDataToChannel(Convert.ToByte(commandValue.Replace("$", ""), 16));
             }
 
-            foreach(var child in pitchBlendNode.Children)
+            foreach (var child in pitchBlendNode.Children)
             {
                 EvaluateNode(child);
             }
@@ -1228,12 +1226,12 @@ namespace Addmusic2.Logic
         {
             var defaultLengthPayload = defaultLength.Payload as DefaultLengthPayload;
 
-            if(defaultLengthPayload == null)
+            if (defaultLengthPayload == null)
             {
                 throw new Exception();
             }
-            
-            if(defaultLengthPayload.Length < 1 || defaultLengthPayload.Length > MagicNumbers.NoteLengthMaximum)
+
+            if (defaultLengthPayload.Length < 1 || defaultLengthPayload.Length > MagicNumbers.NoteLengthMaximum)
             {
                 return new ValidationResult
                 {
@@ -1244,9 +1242,9 @@ namespace Addmusic2.Logic
                 };
             }
 
-            var isFractionalTick = (MagicNumbers.NoteLengthMaximum % defaultLengthPayload.Length) != 0;
+            var isFractionalTick = MagicNumbers.NoteLengthMaximum % defaultLengthPayload.Length != 0;
 
-            if(isFractionalTick)
+            if (isFractionalTick)
             {
                 return new ValidationResult
                 {
@@ -1269,7 +1267,7 @@ namespace Addmusic2.Logic
         {
             var volumePayload = volume.Payload as VolumePayload;
 
-            if(volumePayload == null)
+            if (volumePayload == null)
             {
                 throw new Exception();
             }
@@ -1277,9 +1275,9 @@ namespace Addmusic2.Logic
             var fadeValue = volumePayload.FadeValue;
             var volumeValue = volumePayload.Volume;
             var messages = new List<string>();
-            if(volumeValue < 0 || volumeValue > MagicNumbers.EightBitMaximum)
+            if (volumeValue < 0 || volumeValue > MagicNumbers.EightBitMaximum)
             {
-                if(volume.NodeType == SongNodeType.Volume)
+                if (volume.NodeType == SongNodeType.Volume)
                 {
                     messages.Add(_messageService.GetErrorVolumeVolumeValueOutOfRangeMessage(0, MagicNumbers.EightBitMaximum, volumeValue));
                 }
@@ -1288,9 +1286,9 @@ namespace Addmusic2.Logic
                     messages.Add(_messageService.GetErrorGlobalVolumeVolumeValueOutOfRangeMessage(0, MagicNumbers.EightBitMaximum, volumeValue));
                 }
             }
-            if(fadeValue != -1 && (fadeValue < 0 || fadeValue > MagicNumbers.EightBitMaximum))
+            if (fadeValue != -1 && (fadeValue < 0 || fadeValue > MagicNumbers.EightBitMaximum))
             {
-                if(volume.NodeType == SongNodeType.Volume)
+                if (volume.NodeType == SongNodeType.Volume)
                 {
                     messages.Add(_messageService.GetErrorVolumeFadeValueOutOfRangeMessage(0, MagicNumbers.EightBitMaximum, fadeValue));
                 }
@@ -1300,7 +1298,7 @@ namespace Addmusic2.Logic
                 }
             }
 
-            return (messages.Count > 0)
+            return messages.Count > 0
                 ? new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Error,
@@ -1321,7 +1319,7 @@ namespace Addmusic2.Logic
                 throw new Exception();
             }
 
-            if(panPayload.PanPosition < 0 || panPayload.PanPosition > MagicNumbers.PanDirectionMaximum)
+            if (panPayload.PanPosition < 0 || panPayload.PanPosition > MagicNumbers.PanDirectionMaximum)
             {
                 return new ValidationResult
                 {
@@ -1351,7 +1349,7 @@ namespace Addmusic2.Logic
             var rateValue = vibratoPayload.RateValue;
             var extentValue = vibratoPayload.ExtentValue;
             var messages = new List<string>();
-            if(delayValue != -1 && (delayValue < 0 || delayValue > MagicNumbers.EightBitMaximum))
+            if (delayValue != -1 && (delayValue < 0 || delayValue > MagicNumbers.EightBitMaximum))
             {
                 messages.Add(_messageService.GetErrorVibratoDelayOutOfRangeMessage(0, MagicNumbers.EightBitMaximum, delayValue));
             }
@@ -1366,13 +1364,13 @@ namespace Addmusic2.Logic
                 messages.Add(_messageService.GetErrorVibratoExtentOutOfRangeMessage(0, MagicNumbers.EightBitMaximum, extentValue));
             }
 
-            return (messages.Count > 0) 
+            return messages.Count > 0
                 ? new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Error,
                     Message = messages,
                 }
-                : new ValidationResult 
+                : new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Success
                 };
@@ -1401,7 +1399,7 @@ namespace Addmusic2.Logic
                 messages.Add(_messageService.GetErrorTempoFadeValueOutOfRangeMessage(0, MagicNumbers.EightBitMaximum, fadeValue));
             }
 
-            return (messages.Count > 0)
+            return messages.Count > 0
                 ? new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Error,
@@ -1452,10 +1450,10 @@ namespace Addmusic2.Logic
                 throw new Exception();
             }
 
-            if(quantizationPayload.VolumeNode != null)
+            if (quantizationPayload.VolumeNode != null)
             {
                 var volumeNodeValidation = (ValidationResult)ValidateVolumeNode(quantizationPayload.VolumeNode as AtomicNode);
-                if(volumeNodeValidation.Type != ValidationResult.ResultType.Success)
+                if (volumeNodeValidation.Type != ValidationResult.ResultType.Success)
                 {
                     var messages = new List<string>();
                     messages.Add(_messageService.GetErrorQuantizationVolumeValueOutOfRangeMessage());
@@ -1485,7 +1483,7 @@ namespace Addmusic2.Logic
 
             var instrumentNumber = instrumentPayload.InstrumentNumber;
 
-            if(instrumentNumber < 0 || instrumentNumber > MagicNumbers.EightBitMaximum)
+            if (instrumentNumber < 0 || instrumentNumber > MagicNumbers.EightBitMaximum)
             {
                 return new ValidationResult
                 {
@@ -1547,7 +1545,7 @@ namespace Addmusic2.Logic
                 SongNodeType.PitchSlide => ValidatePitchSlideNode(composite),
                 SongNodeType.HexCommand => ValidateHexCommand(composite),
                 SongNodeType.SampleLoad => ValidateSampleLoadNode(composite),
-                
+
                 _ => throw new Exception()
             }; ;
         }
@@ -1576,15 +1574,15 @@ namespace Addmusic2.Logic
         public IValidationResult ValidateTripletNode(CompositeNode tripletNode)
         {
             var messages = new List<string>();
-            foreach(SongNode child in tripletNode.Children)
+            foreach (SongNode child in tripletNode.Children)
             {
                 var validationResult = (ValidationResult)ValidateNode(child);
-                if(validationResult.Type != ValidationResult.ResultType.Success)
+                if (validationResult.Type != ValidationResult.ResultType.Success)
                 {
                     messages.AddRange(validationResult.Message);
                 }
             }
-            return (messages.Count > 0)
+            return messages.Count > 0
                 ? new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Error,
@@ -1602,7 +1600,7 @@ namespace Addmusic2.Logic
             foreach (SongNode child in pitchSlideNode.Children)
             {
                 // is this the "&" node? if so skip
-                if(child.NodeType == SongNodeType.Empty)
+                if (child.NodeType == SongNodeType.Empty)
                 {
                     continue;
                 }
@@ -1612,7 +1610,7 @@ namespace Addmusic2.Logic
                     messages.AddRange(validationResult.Message);
                 }
             }
-            return (messages.Count > 0)
+            return messages.Count > 0
                 ? new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Error,
@@ -1628,14 +1626,14 @@ namespace Addmusic2.Logic
         {
             var hexPayload = hexCommand.Payload as HexNumberPayload;
 
-            if(hexPayload == null)
+            if (hexPayload == null)
             {
                 throw new Exception();
             }
 
             var hexByte = byte.Parse(hexPayload.HexValue);
 
-            if(hexByte >= MagicNumbers.HexCommandMaximum)
+            if (hexByte >= MagicNumbers.HexCommandMaximum)
             {
                 return new ValidationResult
                 {
@@ -1647,7 +1645,7 @@ namespace Addmusic2.Logic
                 };
             }
 
-            if(!IsHexInRange(hexByte))
+            if (!IsHexInRange(hexByte))
             {
                 return new ValidationResult
                 {
@@ -1669,7 +1667,7 @@ namespace Addmusic2.Logic
         {
             var sampleloadPayload = sampleLoadNode.Payload as SampleLoadPayload;
 
-            if(sampleloadPayload == null)
+            if (sampleloadPayload == null)
             {
                 throw new Exception();
             }
@@ -1679,7 +1677,7 @@ namespace Addmusic2.Logic
             var tuningValue = Convert.ToByte(sampleloadPayload.TuningValue, 16);
 
 
-            if(!IsHexInRange(tuningValue))
+            if (!IsHexInRange(tuningValue))
             {
                 return new ValidationResult
                 {
@@ -1735,7 +1733,7 @@ namespace Addmusic2.Logic
             foreach (var node in loop.Children)
             {
                 var nodeValidation = (ValidationResult)ValidateNode(node);
-                if(nodeValidation.Type == ValidationResult.ResultType.Failure ||
+                if (nodeValidation.Type == ValidationResult.ResultType.Failure ||
                     nodeValidation.Type == ValidationResult.ResultType.Error ||
                     nodeValidation.Type == ValidationResult.ResultType.Warning)
                 {
@@ -1743,7 +1741,7 @@ namespace Addmusic2.Logic
                 }
             }
 
-            return (messages.Count > 0)
+            return messages.Count > 0
                 ? new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Warning,
@@ -1776,7 +1774,7 @@ namespace Addmusic2.Logic
                 }
             }
 
-            return (messages.Count > 0)
+            return messages.Count > 0
                 ? new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Warning,
@@ -1791,7 +1789,7 @@ namespace Addmusic2.Logic
         public IValidationResult ValidateCallLoopNode(LoopNode callLoopNode)
         {
             var messages = new List<string>();
-            if(!NamedLoopDefinitions.ContainsKey(callLoopNode.LoopName))
+            if (!NamedLoopDefinitions.ContainsKey(callLoopNode.LoopName))
             {
                 return new ValidationResult
                 {
@@ -1809,7 +1807,7 @@ namespace Addmusic2.Logic
                 messages.Add(_messageService.GetWarningLoopIterationOutOfRangeMessage());
             }
 
-            return (messages.Count > 0)
+            return messages.Count > 0
                 ? new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Warning,
@@ -1825,7 +1823,7 @@ namespace Addmusic2.Logic
         {
             var messages = new List<string>();
 
-            if(PreviousLoop == null)
+            if (PreviousLoop == null)
             {
                 return new ValidationResult
                 {
@@ -1838,7 +1836,7 @@ namespace Addmusic2.Logic
             }
 
             // This might be able to be considered an enhacement???
-            if(PreviousLoop.NodeType == SongNodeType.SuperLoop)
+            if (PreviousLoop.NodeType == SongNodeType.SuperLoop)
             {
                 return new ValidationResult
                 {
@@ -1851,12 +1849,12 @@ namespace Addmusic2.Logic
             }
 
             var validIterations = CheckLoopIterations(callPreviousLoopNode, 1, MagicNumbers.EightBitMaximum);
-            if(!validIterations)
+            if (!validIterations)
             {
                 messages.Add(_messageService.GetWarningLoopIterationOutOfRangeMessage());
             }
 
-            return (messages.Count > 0)
+            return messages.Count > 0
                 ? new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Warning,
@@ -1892,7 +1890,7 @@ namespace Addmusic2.Logic
 
             // do more processing for the various remote code types
 
-            return (messages.Count > 0)
+            return messages.Count > 0
                 ? new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Error,
@@ -1946,15 +1944,15 @@ namespace Addmusic2.Logic
             var comment = spcPayload.Comment;
             var length = spcPayload.Length;
 
-            if(game.Length == 0)
+            if (game.Length == 0)
             {
                 SongData.Game = Model.Constants.Messages.DefaultSpcGameName;
             }
-            if(length == "auto")
+            if (length == "auto")
             {
                 // todo stuff here
             }
-            else if(length.Length > 0)
+            else if (length.Length > 0)
             {
                 if (!length.Contains(":"))
                 {
@@ -1972,9 +1970,9 @@ namespace Addmusic2.Logic
                     var lengthTime = length.Split(":").ToList();
                     var mins = int.Parse(lengthTime[0]);
                     var secs = int.Parse(lengthTime[1]);
-                    var totalSeconds = (mins * 60) + secs;
+                    var totalSeconds = mins * 60 + secs;
 
-                    if(totalSeconds > 999)
+                    if (totalSeconds > 999)
                     {
                         return new ValidationResult
                         {
@@ -1991,7 +1989,7 @@ namespace Addmusic2.Logic
             }
 
             var messages = new List<string>();
-            if(author.Length > MagicNumbers.SpcTextMaximumLength)
+            if (author.Length > MagicNumbers.SpcTextMaximumLength)
             {
                 messages.Add(_messageService.GetWarningSpcTextValueTooLongMessage(nameof(author), author[0..MagicNumbers.SpcTextMaximumLength]));
             }
@@ -2010,7 +2008,7 @@ namespace Addmusic2.Logic
 
             return new ValidationResult
             {
-                Type = (messages.Count > 0)
+                Type = messages.Count > 0
                     ? ValidationResult.ResultType.Warning
                     : ValidationResult.ResultType.Success,
                 Message = messages,
@@ -2021,38 +2019,38 @@ namespace Addmusic2.Logic
         {
             var instrumentPayload = instruments.Payload as InstrumentsPayload;
 
-            if(instrumentPayload == null)
+            if (instrumentPayload == null)
             {
                 throw new Exception();
             }
             var messages = new List<string>();
 
-            foreach(var instrument in instrumentPayload.Instruments)
+            foreach (var instrument in instrumentPayload.Instruments)
             {
-                if(instrument.Type == InstrumentDefinition.InstrumentType.Noise)
+                if (instrument.Type == InstrumentDefinition.InstrumentType.Noise)
                 {
                     var noiseValidation = ValidateNoiseNode(instrument.NoiseData as AtomicNode);
                 }
-                else if(instrument.Type == InstrumentDefinition.InstrumentType.Number)
+                else if (instrument.Type == InstrumentDefinition.InstrumentType.Number)
                 {
                     var instrumentValidation = ValidateInstrumentNode(instrument.InstrumentNumber as AtomicNode);
                 }
-                else if(instrument.Type != InstrumentDefinition.InstrumentType.Sample)
+                else if (instrument.Type != InstrumentDefinition.InstrumentType.Sample)
                 {
                     // todo check sample name
                 }
 
-                if(instrument.HexSettings.Count != 5)
+                if (instrument.HexSettings.Count != 5)
                 {
                     messages.Add(_messageService.GetErrorInstrumentDefinitionMissingHexValuesMessage());
                     continue;
                 }
 
-                foreach(var setting in instrument.HexSettings)
+                foreach (var setting in instrument.HexSettings)
                 {
                     var hexValue = Convert.ToByte(setting);
 
-                    if(!IsHexInRange(hexValue))
+                    if (!IsHexInRange(hexValue))
                     {
                         messages.Add(_messageService.GetErrorInstrumentDefinitionHexValueOutOfRangeMessage(0, MagicNumbers.ByteHexMaximum, hexValue));
                         continue;
@@ -2063,7 +2061,7 @@ namespace Addmusic2.Logic
 
             return new ValidationResult
             {
-                Type = (messages.Count > 0)
+                Type = messages.Count > 0
                     ? ValidationResult.ResultType.Error
                     : ValidationResult.ResultType.Success,
                 Message = messages,
@@ -2074,17 +2072,17 @@ namespace Addmusic2.Logic
         {
             var samplesPayload = samples.Payload as SamplesPayload;
 
-            if(samplesPayload == null)
+            if (samplesPayload == null)
             {
                 throw new Exception();
             }
 
-            foreach(var sample in samplesPayload.Samples)
+            foreach (var sample in samplesPayload.Samples)
             {
 
             }
 
-            return new ValidationResult 
+            return new ValidationResult
             {
                 Type = ValidationResult.ResultType.Success,
             };
@@ -2112,16 +2110,16 @@ namespace Addmusic2.Logic
         {
             var messages = new List<string>();
 
-            foreach(var hexNumber in hex.HexValues)
+            foreach (var hexNumber in hex.HexValues)
             {
-                var byteValue = Convert.ToByte(hexNumber.Replace("$",""));
-                if(!IsHexInRange(byteValue))
+                var byteValue = Convert.ToByte(hexNumber.Replace("$", ""));
+                if (!IsHexInRange(byteValue))
                 {
                     messages.Add(_messageService.GetErrorHexCommandSuppliedValueOutOfRangeMessage(hexNumber, hex.HexCommand, 0, MagicNumbers.HexCommandMaximum));
                 }
             }
 
-            return (messages.Count > 0)
+            return messages.Count > 0
                 ? new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Error,
@@ -2137,25 +2135,25 @@ namespace Addmusic2.Logic
         {
             var messages = new List<string>();
 
-            foreach( var hexNumber in pitchBlend.HexValues)
+            foreach (var hexNumber in pitchBlend.HexValues)
             {
-                if(!IsHexInRange(Convert.ToByte(hexNumber.Replace("$",""), 16)))
+                if (!IsHexInRange(Convert.ToByte(hexNumber.Replace("$", ""), 16)))
                 {
                     messages.Add(_messageService.GetErrorHexCommandSuppliedValueOutOfRangeMessage(hexNumber, pitchBlend.HexCommand, 0, MagicNumbers.ByteHexMaximum));
                 }
             }
 
-            foreach(var node in pitchBlend.Children)
+            foreach (var node in pitchBlend.Children)
             {
                 var validation = (ValidationResult)ValidateNode(node);
-                if(validation.Type == ValidationResult.ResultType.Error ||
+                if (validation.Type == ValidationResult.ResultType.Error ||
                     validation.Type == ValidationResult.ResultType.Warning)
                 {
                     messages.AddRange(validation.Message);
                 }
             }
 
-            return (messages.Count > 0)
+            return messages.Count > 0
                 ? new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Error,
@@ -2175,15 +2173,15 @@ namespace Addmusic2.Logic
 
         private bool IsHexInRange(byte hexValue)
         {
-            return (hexValue < 0 || hexValue > MagicNumbers.HexCommandMaximum) ? false : true;
+            return hexValue < 0 || hexValue > MagicNumbers.HexCommandMaximum ? false : true;
         }
 
         private void AddDataToChannel(byte dataToAdd)
         {
             var currentChannel = Channels.Where(c => c.ChannelNumber == CurrentChannel.ChannelNumber).First();
-            if(InActiveLoop)
+            if (InActiveLoop)
             {
-                if(InActiveSubLoop)
+                if (InActiveSubLoop)
                 {
                     CurrentSubLoopData.Add(dataToAdd);
                 }
@@ -2239,14 +2237,14 @@ namespace Addmusic2.Logic
 
         private int DivideByTempoRatio(SongNode node, int value, bool isFractionalError)
         {
-            if(TempoRatio == MagicNumbers.DefaultValues.InitialTempoRatio)
+            if (TempoRatio == MagicNumbers.DefaultValues.InitialTempoRatio)
             {
                 return value;
             }
 
-            if(value % TempoRatio != 0)
+            if (value % TempoRatio != 0)
             {
-                if(isFractionalError)
+                if (isFractionalError)
                 {
                     _messageService.GetErrorFractionalTempoRatioMessage(SongData.Name, node.LineNumber, node.ColumnNumber);
                 }
@@ -2262,7 +2260,7 @@ namespace Addmusic2.Logic
         private int MultiplyByTempoRatio(SongNode node, int value)
         {
             var result = value * TempoRatio;
-            if(TempoRatio >= MagicNumbers.EightBitMaximum)
+            if (TempoRatio >= MagicNumbers.EightBitMaximum)
             {
                 _messageService.GetErrorTempoRatioValueOverflowMessage(SongData.Name, node.LineNumber, node.ColumnNumber);
             }
@@ -2294,13 +2292,13 @@ namespace Addmusic2.Logic
             {
                 return noteLength;
             }
-            else if(noteLength < 1 || noteLength > MagicNumbers.NoteLengthMaximum)
+            else if (noteLength < 1 || noteLength > MagicNumbers.NoteLengthMaximum)
             {
                 length = DefaultNoteLength;
             }
             else
             {
-                if(MagicNumbers.NoteLengthMaximum % noteLength == 0)
+                if (MagicNumbers.NoteLengthMaximum % noteLength == 0)
                 {
                     _messageService.GetWarningNoteLengthFractionalTickValueMessage(MagicNumbers.NoteLengthMaximum, SongData.Name, node.LineNumber, node.ColumnNumber);
                 }
@@ -2315,11 +2313,11 @@ namespace Addmusic2.Logic
             int result = noteLength;
             int fraction = noteLength;
 
-            for(int i = 0; i < dotCount; i++)
+            for (int i = 0; i < dotCount; i++)
             {
                 if (fraction % 2 != 0)
                 {
-                    if(i != 0)
+                    if (i != 0)
                     {
                         _messageService.GetWarningFractionalTickValueFromDotsMessage(i + 1, SongData.Name, node.LineNumber, node.ColumnNumber);
                     }
@@ -2333,28 +2331,28 @@ namespace Addmusic2.Logic
                 result += fraction;
             }
 
-            if(inTriplet && allowTriplet == true)
+            if (inTriplet && allowTriplet == true)
             {
-                if(fraction % 3 != 0)
+                if (fraction % 3 != 0)
                 {
                     _messageService.GetWarningTripletFractionalTickValueFromDotsMessage(SongData.Name, node.LineNumber, node.ColumnNumber);
                 }
-                result = (int)Math.Floor(((double)result * 2.0 / 3.0) + 0.5);
+                result = (int)Math.Floor(result * 2.0 / 3.0 + 0.5);
             }
             return result;
         }
 
         private void ApplyTempoRateAdjustmentAndQuantization(SongNode node, byte noteType, int noteLength)
         {
-            if(noteLength >= DivideByTempoRatio(node, MagicNumbers.NoteLengthMaxBeforeSplit, true))
+            if (noteLength >= DivideByTempoRatio(node, MagicNumbers.NoteLengthMaxBeforeSplit, true))
             {
                 AddDataToChannel(Convert.ToByte(DivideByTempoRatio(node, MagicNumbers.NoteLengthDecreaseFactor, true)));
 
-                if(InActiveLoop)
+                if (InActiveLoop)
                 {
-                    if(InActiveSubLoop)
+                    if (InActiveSubLoop)
                     {
-                        if(ActiveSubLoopInformation.UpdateQuantization)
+                        if (ActiveSubLoopInformation.UpdateQuantization)
                         {
                             AddDataToChannel(ActiveSubLoopInformation.CurrentQuantization);
                             ActiveSubLoopInformation.UpdateQuantization = false;
@@ -2363,7 +2361,7 @@ namespace Addmusic2.Logic
                     }
                     else
                     {
-                        if(ActiveLoopInformation.UpdateQuantization)
+                        if (ActiveLoopInformation.UpdateQuantization)
                         {
                             AddDataToChannel(ActiveLoopInformation.CurrentQuantization);
                             ActiveLoopInformation.UpdateQuantization = false;
@@ -2373,7 +2371,7 @@ namespace Addmusic2.Logic
                 }
                 else
                 {
-                    if(CurrentChannel.UpdateQuantization)
+                    if (CurrentChannel.UpdateQuantization)
                     {
                         AddDataToChannel(CurrentChannel.CurrentQuantization);
                         CurrentChannel.UpdateQuantization = false;
@@ -2385,16 +2383,16 @@ namespace Addmusic2.Logic
 
                 noteLength -= DivideByTempoRatio(node, MagicNumbers.NoteLengthDecreaseFactor, true);
 
-                while(noteLength > DivideByTempoRatio(node, MagicNumbers.NoteLengthDecreaseFactor, true))
+                while (noteLength > DivideByTempoRatio(node, MagicNumbers.NoteLengthDecreaseFactor, true))
                 {
                     AddDataToChannel(MagicNumbers.CommandValues.Tie);
 
                     noteLength -= DivideByTempoRatio(node, MagicNumbers.NoteLengthDecreaseFactor, true);
                 }
 
-                if(noteLength > 0)
+                if (noteLength > 0)
                 {
-                    if(noteLength != DivideByTempoRatio(node, MagicNumbers.NoteLengthDecreaseFactor, true))
+                    if (noteLength != DivideByTempoRatio(node, MagicNumbers.NoteLengthDecreaseFactor, true))
                     {
                         AddDataToChannel(Convert.ToByte(noteLength));
                     }
@@ -2402,10 +2400,10 @@ namespace Addmusic2.Logic
                     AddDataToChannel(MagicNumbers.CommandValues.Tie);
                 }
 
-               PreviousNoteLength = noteLength;
+                PreviousNoteLength = noteLength;
                 return;
             }
-            else if(noteLength > 0)
+            else if (noteLength > 0)
             {
                 if (InActiveLoop)
                 {
@@ -2413,7 +2411,7 @@ namespace Addmusic2.Logic
                     {
                         if (ActiveSubLoopInformation.UpdateQuantization)
                         {
-                            if(noteLength != PreviousNoteLength)
+                            if (noteLength != PreviousNoteLength)
                             {
                                 AddDataToChannel(Convert.ToByte(noteLength));
                             }
@@ -2458,7 +2456,7 @@ namespace Addmusic2.Logic
         {
             value = MagicNumbers.ValidPitches[value - MagicNumbers.PitchOffset] + (CurrentOctave - 1) * 12 + 0x80;
 
-            if(accidental == NotePayload.Accidentals.Sharp)
+            if (accidental == NotePayload.Accidentals.Sharp)
             {
                 value++;
             }

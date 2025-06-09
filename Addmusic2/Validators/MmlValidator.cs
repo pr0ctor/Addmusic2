@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Addmusic2.Validators
+namespace Addmusic2.Model
 {
     internal static class MmlValidator
     {
