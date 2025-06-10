@@ -3,7 +3,6 @@ using Addmusic2.Helpers;
 using Addmusic2.Model;
 using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
-using Addmusic2.Model.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,6 +12,7 @@ using System.Text.RegularExpressions;
 using Addmusic2.Visitors;
 using Addmusic2.Logic;
 using Addmusic2.Model.Localization;
+using Addmusic2.Services;
 
 //[assembly: RootNamespace("Addmusic2")]
 
@@ -44,8 +44,19 @@ var songContext = parser.song();
 var songNodeTree = newParser.VisitSong(songContext);
 
 var x = 1;*/
+// bad and dirty way to get early localization
+var tempService = new ServiceCollection();
+tempService.AddLocalization(options =>
+{
+    options.ResourcesPath = "Localization";
+});
+tempService.AddTransient<MessageService>();
 
-var clArgs = new CLArgs();
+var tempSericeProvider = tempService.BuildServiceProvider();
+
+var tempMessageService = tempSericeProvider.GetRequiredService<MessageService>();
+
+var clArgs = new CLArgs(tempMessageService);
 
 // clargs or load rom file
 if (File.Exists("Addmusic_options.txt"))
@@ -66,7 +77,8 @@ else
 
     clArgs.ParseArguments(config, args);
 }
-
+// get rid of the temp service provider
+tempSericeProvider.Dispose();
 
 var globalSettings = new GlobalSettings();
 
@@ -102,18 +114,17 @@ services.AddScoped<IRomOperations, RomOperations>();
 
 // services.AddSingleton<IAsarInterface>();
 services.AddSingleton<ICLArgs>(clArgs);
+services.AddSingleton<IFileCachingService, FileCachingService>();
 services.AddSingleton<IAddmusicLogic, AddmusicLogic>();
-
-// Load Necessary file data into Cache
-var cachingServie = new FileCachingService();
-cachingServie.InitializeCache();
-
-services.AddSingleton<IFileCachingService>(cachingServie);
 
 var serviceProvider = services.BuildServiceProvider();
 
 var addmusicLogic = serviceProvider.GetRequiredService<IAddmusicLogic>();
 var messageService = serviceProvider.GetRequiredService<MessageService>();
+var fileService = serviceProvider.GetRequiredService<IFileCachingService>();
+
+// Load Necessary file data into Cache
+fileService.InitializeCache();
 
 logger.LogInformation(messageService.GetIntroAddmusicVersionMessage());
 logger.LogInformation(messageService.GetIntroParserVersionMessage());

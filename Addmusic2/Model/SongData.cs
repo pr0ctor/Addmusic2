@@ -9,6 +9,7 @@ namespace Addmusic2.Model
 {
     internal class SongData
     {
+        public Guid SongId { get; set; }
         public double IntroSeconds { get; set; }
         public double MainSeconds { get; set; }
         public int NoteParameterByteCount { get; set; }
@@ -80,7 +81,7 @@ namespace Addmusic2.Model
 
         public SongData()
         {
-
+            SongId = Guid.NewGuid();
         }
     }
 }

@@ -12,6 +12,7 @@ namespace Addmusic2.Model.Constants
         public static class DefaultValues
         {
             public static readonly int DefaultBankStart = 0x200000;
+            public static readonly int DefaultBankStartFromCLArgs = 0x080000;
             public static readonly int InitialDefaultNoteLength = NoteLengthMaximum / 8;
             public static readonly int StartingOctave = 4;
             public static readonly int InitialTempoRatio = 1;

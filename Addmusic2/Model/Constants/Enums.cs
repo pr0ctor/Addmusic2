@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,5 +51,23 @@ namespace Addmusic2.Model.Constants
         FCHexRemoteGain,
         FDTremoloOff,
         FEPitchEnvelopeOff,
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum SongListItemType
+    {
+        NA,
+        Original,
+        Custom,
+        UserDefined,
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum SfxListItemType
+    {
+        NA,
+        Sfx1DF9,
+        Sfx1DFC,
+        UserDefined,
     }
 }

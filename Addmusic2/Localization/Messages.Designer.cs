@@ -61,6 +61,312 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Make free space finding more aggressive..
+        /// </summary>
+        internal static string CLArgAggressiveFreeSpaceDescription {
+            get {
+                return ResourceManager.GetString("CLArgAggressiveFreeSpaceDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aggresive Free Space.
+        /// </summary>
+        internal static string CLArgAggressiveFreeSpaceName {
+            get {
+                return ResourceManager.GetString("CLArgAggressiveFreeSpaceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Turn off allowing SA1 enabled features..
+        /// </summary>
+        internal static string CLArgAllowSA1Description {
+            get {
+                return ResourceManager.GetString("CLArgAllowSA1Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow SA1.
+        /// </summary>
+        internal static string CLArgAllowSA1Name {
+            get {
+                return ResourceManager.GetString("CLArgAllowSA1Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not attempt to save music data in bank 0x40 and above..
+        /// </summary>
+        internal static string CLArgBankStartDescription {
+            get {
+                return ResourceManager.GetString("CLArgBankStartDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bank Start.
+        /// </summary>
+        internal static string CLArgBankStartName {
+            get {
+                return ResourceManager.GetString("CLArgBankStartName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Turn off echo buffer checking..
+        /// </summary>
+        internal static string CLArgCheckEchoDescription {
+            get {
+                return ResourceManager.GetString("CLArgCheckEchoDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Check Echo.
+        /// </summary>
+        internal static string CLArgCheckEchoName {
+            get {
+                return ResourceManager.GetString("CLArgCheckEchoName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Force off conversion from Addmusic 4.05 and AddmusicM.
+        /// </summary>
+        internal static string CLArgConvertOldAddmusicDescription {
+            get {
+                return ResourceManager.GetString("CLArgConvertOldAddmusicDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Convert.
+        /// </summary>
+        internal static string CLArgConvertOldAddmusicName {
+            get {
+                return ResourceManager.GetString("CLArgConvertOldAddmusicName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create a patch, but do not patch it to the ROM..
+        /// </summary>
+        internal static string CLArgCreatePatchDescription {
+            get {
+                return ResourceManager.GetString("CLArgCreatePatchDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create Patch.
+        /// </summary>
+        internal static string CLArgCreatePatchName {
+            get {
+                return ResourceManager.GetString("CLArgCreatePatchName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dump sound effects.
+        /// </summary>
+        internal static string CLArgDumpSoundEffectsDescription {
+            get {
+                return ResourceManager.GetString("CLArgDumpSoundEffectsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dump Sound Effects.
+        /// </summary>
+        internal static string CLArgDumpSoundEffectsName {
+            get {
+                return ResourceManager.GetString("CLArgDumpSoundEffectsName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Turn off duplicate sample checking..
+        /// </summary>
+        internal static string CLArgDuplicateCheckingDescription {
+            get {
+                return ResourceManager.GetString("CLArgDuplicateCheckingDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate Checking.
+        /// </summary>
+        internal static string CLArgDuplicateCheckingName {
+            get {
+                return ResourceManager.GetString("CLArgDuplicateCheckingName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only generate SPC files, no ROM required..
+        /// </summary>
+        internal static string CLArgGenerateSPCDescription {
+            get {
+                return ResourceManager.GetString("CLArgGenerateSPCDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate SPC.
+        /// </summary>
+        internal static string CLArgGenerateSPCName {
+            get {
+                return ResourceManager.GetString("CLArgGenerateSPCName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists and shows help information for the various commands..
+        /// </summary>
+        internal static string CLArgHelpDescription {
+            get {
+                return ResourceManager.GetString("CLArgHelpDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help.
+        /// </summary>
+        internal static string CLArgHelpName {
+            get {
+                return ResourceManager.GetString("CLArgHelpName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Turn off hex command validation..
+        /// </summary>
+        internal static string CLArgHexValidationDescription {
+            get {
+                return ResourceManager.GetString("CLArgHexValidationDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hex Validation.
+        /// </summary>
+        internal static string CLArgHexValidationName {
+            get {
+                return ResourceManager.GetString("CLArgHexValidationName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Turn off Optimize Sample Usage..
+        /// </summary>
+        internal static string CLArgOptimizeSampleUsageDescription {
+            get {
+                return ResourceManager.GetString("CLArgOptimizeSampleUsageDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Optimize Sample Usage.
+        /// </summary>
+        internal static string CLArgOptimizeSampleUsageName {
+            get {
+                return ResourceManager.GetString("CLArgOptimizeSampleUsageName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removes the first use notification..
+        /// </summary>
+        internal static string CLArgRemoveFirstUseDescription {
+            get {
+                return ResourceManager.GetString("CLArgRemoveFirstUseDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove First Use Notification.
+        /// </summary>
+        internal static string CLArgRemoveFirstUseName {
+            get {
+                return ResourceManager.GetString("CLArgRemoveFirstUseName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Name of the ROM to modify..
+        /// </summary>
+        internal static string CLArgRomNameDescription {
+            get {
+                return ResourceManager.GetString("CLArgRomNameDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ROM Name.
+        /// </summary>
+        internal static string CLArgRomNameName {
+            get {
+                return ResourceManager.GetString("CLArgRomNameName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        internal static string CLArgStreamDirectDescription {
+            get {
+                return ResourceManager.GetString("CLArgStreamDirectDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string CLArgStreamDirectName {
+            get {
+                return ResourceManager.GetString("CLArgStreamDirectName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Turn verbosity on.  More information will be displayed while using this..
+        /// </summary>
+        internal static string CLArgVerboseLoggingDescription {
+            get {
+                return ResourceManager.GetString("CLArgVerboseLoggingDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verbose Logging.
+        /// </summary>
+        internal static string CLArgVerboseLoggingName {
+            get {
+                return ResourceManager.GetString("CLArgVerboseLoggingName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generates a visualization of the SPC..
+        /// </summary>
+        internal static string CLArgVisualizeSPCDescription {
+            get {
+                return ResourceManager.GetString("CLArgVisualizeSPCDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Visualize.
+        /// </summary>
+        internal static string CLArgVisualizeSPCName {
+            get {
+                return ResourceManager.GetString("CLArgVisualizeSPCName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Attempted to use a tempo ratio on a value that was already going to output a fractional value. Song - {0) , Line - {1:D} , Column - {2:D}.
         /// </summary>
         internal static string ErrorAlreadyFractionalTempoRatio {

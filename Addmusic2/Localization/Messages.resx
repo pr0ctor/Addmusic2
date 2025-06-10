@@ -117,6 +117,142 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CLArgAggressiveFreeSpaceDescription" xml:space="preserve">
+    <value>Make free space finding more aggressive.</value>
+    <comment>Description for the --a command line argument</comment>
+  </data>
+  <data name="CLArgAggressiveFreeSpaceName" xml:space="preserve">
+    <value>Aggresive Free Space</value>
+    <comment>Name for the --a command line argument</comment>
+  </data>
+  <data name="CLArgAllowSA1Description" xml:space="preserve">
+    <value>Turn off allowing SA1 enabled features.</value>
+    <comment>Description for the --s command line argument</comment>
+  </data>
+  <data name="CLArgAllowSA1Name" xml:space="preserve">
+    <value>Allow SA1</value>
+    <comment>Name for the --s command line argument</comment>
+  </data>
+  <data name="CLArgBankStartDescription" xml:space="preserve">
+    <value>Do not attempt to save music data in bank 0x40 and above.</value>
+    <comment>Description for the --b command line argument</comment>
+  </data>
+  <data name="CLArgBankStartName" xml:space="preserve">
+    <value>Bank Start</value>
+    <comment>Name for the --b command line argument</comment>
+  </data>
+  <data name="CLArgCheckEchoDescription" xml:space="preserve">
+    <value>Turn off echo buffer checking.</value>
+    <comment>Description for the --e command line argument</comment>
+  </data>
+  <data name="CLArgCheckEchoName" xml:space="preserve">
+    <value>Check Echo</value>
+    <comment>Name for the --e command line argument</comment>
+  </data>
+  <data name="CLArgConvertOldAddmusicDescription" xml:space="preserve">
+    <value>Force off conversion from Addmusic 4.05 and AddmusicM</value>
+    <comment>Description for the --c command line argument</comment>
+  </data>
+  <data name="CLArgConvertOldAddmusicName" xml:space="preserve">
+    <value>Convert</value>
+    <comment>Name for the --c command linbe argument</comment>
+  </data>
+  <data name="CLArgCreatePatchDescription" xml:space="preserve">
+    <value>Create a patch, but do not patch it to the ROM.</value>
+    <comment>Description for the --p command line argument</comment>
+  </data>
+  <data name="CLArgCreatePatchName" xml:space="preserve">
+    <value>Create Patch</value>
+    <comment>Name for the --p command line argument</comment>
+  </data>
+  <data name="CLArgDumpSoundEffectsDescription" xml:space="preserve">
+    <value>Dump sound effects</value>
+    <comment>Description for the --dumpsfx/--sfxdump command line argument</comment>
+  </data>
+  <data name="CLArgDumpSoundEffectsName" xml:space="preserve">
+    <value>Dump Sound Effects</value>
+    <comment>Name for the --dumpsfx/--sfxdump command line argument</comment>
+  </data>
+  <data name="CLArgDuplicateCheckingDescription" xml:space="preserve">
+    <value>Turn off duplicate sample checking.</value>
+    <comment>Description for the --d command line argument</comment>
+  </data>
+  <data name="CLArgDuplicateCheckingName" xml:space="preserve">
+    <value>Duplicate Checking</value>
+    <comment>Name for the --d command line argument</comment>
+  </data>
+  <data name="CLArgGenerateSPCDescription" xml:space="preserve">
+    <value>Only generate SPC files, no ROM required.</value>
+    <comment>Description for the --norom command line argument</comment>
+  </data>
+  <data name="CLArgGenerateSPCName" xml:space="preserve">
+    <value>Generate SPC</value>
+    <comment>Name for the --norom command line argument</comment>
+  </data>
+  <data name="CLArgHelpDescription" xml:space="preserve">
+    <value>Lists and shows help information for the various commands.</value>
+    <comment>Description for the --?/--help command line argument</comment>
+  </data>
+  <data name="CLArgHelpName" xml:space="preserve">
+    <value>Help</value>
+    <comment>Name for the --?/--help command line argument</comment>
+  </data>
+  <data name="CLArgHexValidationDescription" xml:space="preserve">
+    <value>Turn off hex command validation.</value>
+    <comment>Description for the --h command line argument</comment>
+  </data>
+  <data name="CLArgHexValidationName" xml:space="preserve">
+    <value>Hex Validation</value>
+    <comment>Name for the --h command line argument</comment>
+  </data>
+  <data name="CLArgOptimizeSampleUsageDescription" xml:space="preserve">
+    <value>Turn off Optimize Sample Usage.</value>
+    <comment>Description for the --u command line argument</comment>
+  </data>
+  <data name="CLArgOptimizeSampleUsageName" xml:space="preserve">
+    <value>Optimize Sample Usage</value>
+    <comment>Name for the --u command line argument</comment>
+  </data>
+  <data name="CLArgRemoveFirstUseDescription" xml:space="preserve">
+    <value>Removes the first use notification.</value>
+    <comment>Description for the --noblock command line argument</comment>
+  </data>
+  <data name="CLArgRemoveFirstUseName" xml:space="preserve">
+    <value>Remove First Use Notification</value>
+    <comment>Name for the --noblock command line argument</comment>
+  </data>
+  <data name="CLArgRomNameDescription" xml:space="preserve">
+    <value>The Name of the ROM to modify.</value>
+    <comment>Description for the --r/--rom command line argument</comment>
+  </data>
+  <data name="CLArgRomNameName" xml:space="preserve">
+    <value>ROM Name</value>
+    <comment>Name for the --r/--rom command line argument</comment>
+  </data>
+  <data name="CLArgStreamDirectDescription" xml:space="preserve">
+    <value>Description</value>
+    <comment>Description for the --srd/--streamredirect command line argument</comment>
+  </data>
+  <data name="CLArgStreamDirectName" xml:space="preserve">
+    <value>Name</value>
+    <comment>Name for the --srd/--streamredirect command line argument</comment>
+  </data>
+  <data name="CLArgVerboseLoggingDescription" xml:space="preserve">
+    <value>Turn verbosity on.  More information will be displayed while using this.</value>
+    <comment>Description for the --v/--verbose command line argument</comment>
+  </data>
+  <data name="CLArgVerboseLoggingName" xml:space="preserve">
+    <value>Verbose Logging</value>
+    <comment>Name for the --v/--verbose command line argument</comment>
+  </data>
+  <data name="CLArgVisualizeSPCDescription" xml:space="preserve">
+    <value>Generates a visualization of the SPC.</value>
+    <comment>Description for the --visualize command line argument</comment>
+  </data>
+  <data name="CLArgVisualizeSPCName" xml:space="preserve">
+    <value>Visualize</value>
+    <comment>Name for the --visualize command line argument</comment>
+  </data>
   <data name="ErrorAlreadyFractionalTempoRatio" xml:space="preserve">
     <value>Attempted to use a tempo ratio on a value that was already going to output a fractional value. Song - {0) , Line - {1:D} , Column - {2:D}</value>
     <comment>Notice for when using a tempo ratio for an already fractional value</comment>

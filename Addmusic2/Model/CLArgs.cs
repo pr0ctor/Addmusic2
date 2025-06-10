@@ -1,5 +1,6 @@
 ﻿using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
+using Addmusic2.Model.Localization;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -11,12 +12,13 @@ namespace Addmusic2.Model
 {
     internal class CLArgs : ICLArgs
     {
+        private MessageService _messageService { get; set; }
         private List<Argument> ValidArgs { get; }
 
-        public string RomName { get; set; }
+        public string RomName { get; set; } = string.Empty;
         public bool Convert { get; set; } = true;
         public bool CheckEcho { get; set; } = true;
-        public int BankStart { get; set; } = MagicNumbers.DefaultBankStart;
+        public int BankStart { get; set; } = MagicNumbers.DefaultValues.DefaultBankStart;
         public bool Verbose { get; set; } = false;
         public bool Aggressive { get; set; } = false;
         public bool DuplicateCheck { get; set; } = true;
@@ -30,27 +32,45 @@ namespace Addmusic2.Model
         public bool RedirectStandardStreams { get; set; } = false;
         public bool GenerateSPC { get; set; } = false;
 
-        public CLArgs()
+        public CLArgs(MessageService messageService)
         {
+            _messageService = messageService;
             ValidArgs = new List<Argument>
             {
-                new Argument("ROM Name", 50, false, "The Name of the ROM to modify.", ["--r","--rom"]),
-                new Argument("Convert", 100, false, "Force off conversion from Addmusic 4.05 and AddmusicM", ["--c"]),
-                new Argument("Check Echo", 200, false, "Turn off echo buffer checking.", ["--e"]),
-                new Argument("Bank Start", 300, false, "Do not attempt to save music data in bank 0x40 and above.", ["--b"]),
-                new Argument("Verbose Logging", 400, false, "Turn verbosity on.  More information will be displayed while using this.", ["--v","--verbose"]),
-                new Argument("Aggresive Free Space", 500, false, "Make free space finding more aggressive.", ["--a"]),
-                new Argument("Duplicate Checking", 600, false, "Turn off duplicate sample checking.", ["--d"]),
-                new Argument("Hex Validation", 700, false, "Turn off hex command validation.", ["--h"]),
-                new Argument("Create Patch", 800, false, "Create a patch, but do not patch it to the ROM.", ["--p"]),
-                new Argument("Optimize Sample Usage", 900, false, "Turn off Optimize Sample Usage.", ["--u"]),
-                new Argument("Allow SA1", 1000, false, "Turn off allowing SA1 enabled features.", ["--s"]),
-                new Argument("Dump Sound Effects", 1100, false, "Dump sound effects", ["--dumpsfx","--sfxdump"]),
-                new Argument("Visualize", 1200, false, "Generates a visualization of the SPC.", ["--visualize"]),
-                new Argument("Remove First Use Notification", 1300, false, "Removes the first use notification.", ["--noblock"], false),
-                new Argument("Name", 1400, false, "desc", ["--srd","--streamredirect"]),
-                new Argument("Generate SPC", 1500, false, "Only generate SPC files, no ROM required.", ["--norom"]),
-                new Argument("Help", 1600, false, "Lists and shows help information for the various commands.", ["--?","--help"]),
+                // Rom Name
+                new Argument(_messageService.GetCLArgRomNameNameMessage(), 50, false, _messageService.GetCLArgRomNameDescriptionMessage(), ["--r","--rom"]),
+                // Convert
+                new Argument(_messageService.GetCLArgConvertOldAddmusicNameMessage(), 100, false, _messageService.GetCLArgConvertOldAddmusicDescriptionMessage(), ["--c"]),
+                // Check Echo
+                new Argument(_messageService.GetCLArgCheckEchoNameMessage(), 200, false, _messageService.GetCLArgCheckEchoDescriptionMessage(), ["--e"]),
+                // Bank Start
+                new Argument(_messageService.GetCLArgBankStartNameMessage(), 300, false, _messageService.GetCLArgBankStartDescriptionMessage(), ["--b"]),
+                // Verbose Logging
+                new Argument(_messageService.GetCLArgVerboseLoggingNameMessage(), 400, false, _messageService.GetCLArgVerboseLoggingDescriptionMessage(), ["--v","--verbose"]),
+                // Aggressive Freespace
+                new Argument(_messageService.GetCLArgAggressiveFreeSpaceNameMessage(), 500, false, _messageService.GetCLArgAggressiveFreeSpaceDescriptionMessage(), ["--a"]),
+                // Duplicate Checking
+                new Argument(_messageService.GetCLArgDuplicateCheckingNameMessage(), 600, false, _messageService.GetCLArgDuplicateCheckingDescriptionMessage(), ["--d"]),
+                // Hex Validation
+                new Argument(_messageService.GetCLArgHexValidationNameMessage(), 700, false, _messageService.GetCLArgHexValidationDescriptionMessage(), ["--h"]),
+                // Create Patch
+                new Argument(_messageService.GetCLArgCreatePatchNameMessage(), 800, false, _messageService.GetCLArgCreatePatchDescriptionMessage(), ["--p"]),
+                // Optimize Sample Usage
+                new Argument(_messageService.GetCLArgOptimizeSampleUsageNameMessage(), 900, false, _messageService.GetCLArgOptimizeSampleUsageDescriptionMessage(), ["--u"]),
+                // Allow SA1
+                new Argument(_messageService.GetCLArgAllowSA1NameMessage(), 1000, false, _messageService.GetCLArgAllowSA1DescriptionMessage(), ["--s"]),
+                // Dump Sound Effects
+                new Argument(_messageService.GetCLArgDumpSoundEffectsNameMessage(), 1100, false, _messageService.GetCLArgDumpSoundEffectsDescriptionMessage(), ["--dumpsfx","--sfxdump"]),
+                // Visualize
+                new Argument(_messageService.GetCLArgVisualizeSPCNameMessage(), 1200, false, _messageService.GetCLArgVisualizeSPCDescriptionMessage(), ["--visualize"]),
+                // Remove First Use Notification
+                new Argument(_messageService.GetCLArgRemoveFirstUseNameMessage(), 1300, false, _messageService.GetCLArgRemoveFirstUseDescriptionMessage(), ["--noblock"], false),
+                // Name
+                new Argument(_messageService.GetCLArgStreamDirectNameMessage(), 1400, false, _messageService.GetCLArgStreamDirectDescriptionMessage(), ["--srd","--streamredirect"]),
+                // Generate SPC
+                new Argument(_messageService.GetCLArgGenerateSPCNameMessage(), 1500, false, _messageService.GetCLArgGenerateSPCDescriptionMessage(), ["--norom"]),
+                // Help
+                new Argument(_messageService.GetCLArgHelpNameMessage(), 1600, false, _messageService.GetCLArgHelpDescriptionMessage(), ["--?","--help"]),
             };
         }
 
@@ -73,7 +93,7 @@ namespace Addmusic2.Model
                         RomName = value ?? "";
                         break;
                     case "--b":
-                        BankStart = 0x080000;
+                        BankStart = MagicNumbers.DefaultValues.DefaultBankStartFromCLArgs;
                         break;
                     case "--c":
                         Convert = false;
@@ -124,6 +144,7 @@ namespace Addmusic2.Model
                     case "--help":
                         break;
                     default:
+                        // todo fix and localize this exception
                         throw new InvalidOperationException("Undefined Command Line Argument. Add definitions.");
                 }
             }
@@ -132,7 +153,7 @@ namespace Addmusic2.Model
         public string GenerateHelp()
         {
             var builder = new StringBuilder();
-
+            // todo localize this message
             builder.AppendLine("Options:");
 
             foreach(var argument in ValidArgs.Where(a => a.DisplayInHelp == true).OrderBy(a => a.Order))

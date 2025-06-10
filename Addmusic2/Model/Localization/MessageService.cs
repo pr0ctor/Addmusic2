@@ -39,6 +39,282 @@ namespace Addmusic2.Model.Localization
 
         #endregion
 
+        #region CLArgs Messages, Names, and Descriptions
+        
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgRomNameNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgRomNameName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgRomNameDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgRomNameDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgConvertOldAddmusicNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgConvertOldAddmusicName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgConvertOldAddmusicDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgConvertOldAddmusicDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgCheckEchoNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgCheckEchoName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgCheckEchoDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgCheckEchoDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgBankStartNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgBankStartName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgBankStartDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgBankStartDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgVerboseLoggingNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgVerboseLoggingName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgVerboseLoggingDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgVerboseLoggingDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgAggressiveFreeSpaceNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgAggressiveFreeSpaceName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgAggressiveFreeSpaceDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgAggressiveFreeSpaceDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgDuplicateCheckingNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgDuplicateCheckingName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgDuplicateCheckingDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgDuplicateCheckingDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgHexValidationNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgHexValidationName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgHexValidationDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgHexValidationDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgCreatePatchNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgCreatePatchName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgCreatePatchDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgCreatePatchDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgOptimizeSampleUsageNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgOptimizeSampleUsageName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgOptimizeSampleUsageDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgOptimizeSampleUsageDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgAllowSA1NameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgAllowSA1Name"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgAllowSA1DescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgAllowSA1Description"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgDumpSoundEffectsNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgDumpSoundEffectsName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgDumpSoundEffectsDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgDumpSoundEffectsDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgVisualizeSPCNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgVisualizeSPCName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgVisualizeSPCDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgVisualizeSPCDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgRemoveFirstUseNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgRemoveFirstUseName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgRemoveFirstUseDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgRemoveFirstUseDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgStreamDirectNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgStreamDirectName"];
+
+            return localizedString;
+        }
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgStreamDirectDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgStreamDirectDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgGenerateSPCNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgGenerateSPCName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgGenerateSPCDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgGenerateSPCDescription"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgHelpNameMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgHelpName"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetCLArgHelpDescriptionMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgHelpDescription"];
+
+            return localizedString;
+        }
+
+
+        #endregion
+
         #region Warning Messages
 
         #region Validation Warning Messages

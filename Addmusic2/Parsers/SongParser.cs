@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 using Addmusic2.Model.SongTree;
 using Microsoft.Extensions.Logging;
 using Addmusic2.Model.Localization;
-using Addmusic2.Localization;
-using System.Xml.Linq;
 
 namespace Addmusic2.Parsers
 {
@@ -18,7 +16,8 @@ namespace Addmusic2.Parsers
     {
         private readonly ILogger<IAddmusicLogic> _logger;
         private readonly MessageService _messageService;
-
+        private readonly SongListItem _songListItem;
+        private readonly GlobalSettings _globalSettings;
         public SongData SongData { get; set; } = new SongData();
 
         private List<ChannelInformation> Channels { get; set; } = new();
@@ -49,10 +48,11 @@ namespace Addmusic2.Parsers
         private bool InActiveSuperLoop { get; set; } = false;
 
 
-        public SongParser(ILogger<IAddmusicLogic> logger, MessageService messageService)
+        public SongParser(ILogger<IAddmusicLogic> logger, MessageService messageService, SongListItem songItem)
         {
             _logger = logger;
             _messageService = messageService;
+            _songListItem = songItem;
         }
 
         public SongData ParseSongNodes(List<ISongNode> nodes)
@@ -96,9 +96,9 @@ namespace Addmusic2.Parsers
 
             // Parse the Channel data 
 
-            foreach (SongNode node in channels)
+            foreach (DirectiveNode node in channels)
             {
-                ParseNode(node);
+                ParseChannel(node);
             }
 
             SongData.ChannelData = Channels;
