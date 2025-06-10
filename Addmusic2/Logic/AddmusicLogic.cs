@@ -40,6 +40,11 @@ namespace Addmusic2.Logic
             PostProcessSong();
         }
 
+        public void RunSingleSong(string fileData)
+        {
+
+        }
+
         public string PreProcessSong(string fileData)
         {
             var replacementsRegex = new Regex(@$"""([^\s=""]+)\s*=\s*([^""]+)""");
