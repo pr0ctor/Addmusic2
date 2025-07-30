@@ -10,6 +10,7 @@ using Addmusic2.Model.Localization;
 using Addmusic2.Parsers;
 using Addmusic2.Services;
 using Addmusic2.Visitors;
+using Addmusic2.Model.Constants;
 using Antlr4.Runtime;
 using Microsoft.Extensions.Logging;
 
@@ -20,18 +21,25 @@ namespace Addmusic2.Logic
         private ILogger<IAddmusicLogic> _logger;
         private MessageService _messageService;
         private FileCachingService _fileService;
+        private GlobalSettings _globalSettings;
 
         public DateTime LastModification { get; set; }
 
-        public AddmusicLogic(ILogger<IAddmusicLogic> logger, MessageService messageService, FileCachingService fileCachingService)
+        public AddmusicLogic(ILogger<IAddmusicLogic> logger, MessageService messageService, FileCachingService fileCachingService, GlobalSettings globalSettings)
         {
             _logger = logger;
             _messageService = messageService;
             _fileService = fileCachingService;
+            _globalSettings = globalSettings;
         }
 
         public void Run()
         {
+
+            LoadRequiredSampleGroups();
+
+
+
             var fileData = File.ReadAllText(@"Samples/Seenpoint Intro.txt");
 
             var songData = PreProcessSong(fileData);
@@ -92,5 +100,34 @@ namespace Addmusic2.Logic
 
         }
 
+
+        private void LoadRequiredSampleGroups()
+        {
+            var sampleGroups = _globalSettings.ResourceList.SampleGroups;
+
+            var defaultGroup = sampleGroups.FindAll(g => g.Name.Equals(FileNames.FolderNames.SamplesDefault, StringComparison.InvariantCultureIgnoreCase));
+            var optimizedGroup = sampleGroups.FindAll(g => g.Name.Equals(FileNames.FolderNames.SamplesOptimized, StringComparison.InvariantCultureIgnoreCase));
+
+            if(defaultGroup.Count > 1)
+            {
+                // handle more than one "default" group
+            }
+            else if(defaultGroup.Count == 0)
+            {
+                // handle missing "default" group
+            }
+
+            if (optimizedGroup.Count > 1)
+            {
+                // handle more than one "optimized" group
+            }
+            else if(optimizedGroup.Count == 0)
+            {
+                // handle missing "optimized" group
+            }
+
+            Helpers.Helpers.LoadSampleGroupToCache(_fileService, defaultGroup.First());
+            Helpers.Helpers.LoadSampleGroupToCache(_fileService, optimizedGroup.First());
+        }
     }
 }

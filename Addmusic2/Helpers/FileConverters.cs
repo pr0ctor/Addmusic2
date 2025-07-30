@@ -1,5 +1,7 @@
 ﻿using Addmusic2.Model;
 using Addmusic2.Model.Constants;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,24 @@ namespace Addmusic2.Helpers
 {
     internal static class FileConverters
     {
+
+        public static void WriteResourceFile(AddmusicSongSfxResources resourceFile, string fileName)
+        {
+            var serializedString = JsonConvert.SerializeObject(resourceFile, Formatting.Indented);
+            File.WriteAllText(fileName, serializedString);
+        }
+
+        public static void WriteOptionsFile(AddmusicOptions options, string fileName)
+        {
+            var serializedString = JsonConvert.SerializeObject(options, Formatting.Indented);
+            File.WriteAllText(fileName, serializedString);
+        }
+
+        //public static AddmusicOptions ConvertTxtOptionsToJsonOptions(string fileData)
+        //{
+        //    return new();
+        //}
+
 
         // Converts the "Addmusic_list.txt" to the new json format
         public static AddmusicSongList ConvertToAddmusicSongList(string fileData)

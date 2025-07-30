@@ -87,17 +87,18 @@ namespace Addmusic2.Model.SongTree
 
     internal class SamplesPayload : ISongNodePayload
     {
-        public string SampleGroupPath { get; set; }
+        public List<string> SampleGroupPaths { get; set; }
         public List<string> Samples { get; set; }
 
         public SamplesPayload()
         {
             Samples = new List<string>();
+            SampleGroupPaths = new List<string>();
         }
 
-        public SamplesPayload(string sampleGroupPath, List<string> samples)
+        public SamplesPayload(List<string> sampleGroupPath, List<string> samples)
         {
-            SampleGroupPath = sampleGroupPath;
+            SampleGroupPaths = sampleGroupPath;
             Samples = samples;
         }
 
@@ -105,9 +106,9 @@ namespace Addmusic2.Model.SongTree
         {
             var builder = new StringBuilder();
 
-            if(SampleGroupPath.Length > 0)
+            foreach (var sampleGroup in SampleGroupPaths)
             {
-                builder.AppendLine(SampleGroupPath);
+                builder.AppendLine(sampleGroup);
             }
 
             foreach (var sample in Samples)

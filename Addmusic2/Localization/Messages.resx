@@ -422,7 +422,7 @@
     <comment>Warning for when the octave is raised too high during parsing</comment>
   </data>
   <data name="WarningSpcTextValueTooLong" xml:space="preserve">
-    <value>"{0}" field was too long. Truncating to "{1}".</value>
+    <value>"{0}" field was longer than the maximum length ({1}). Truncating to "{2}".</value>
     <comment>Warning for when the various SPC directive elements are longer than the supported maximum</comment>
   </data>
   <data name="WarningTripletFractionalTickValueFromDots" xml:space="preserve">

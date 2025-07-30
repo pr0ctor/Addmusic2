@@ -50,7 +50,7 @@ specialDirective: amk
 //         "sample3.brr"
 // }
 samples : Samples LBRACE samplesList RBRACE ;
-samplesList : SampleOptimization? StringLiteral* ;
+samplesList : SampleOptimization* StringLiteral* ;
 
 // #instruments
 // {

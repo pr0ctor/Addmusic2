@@ -14,23 +14,38 @@ namespace Addmusic2.Model
     {
         private MessageService _messageService { get; set; }
         private List<Argument> ValidArgs { get; }
-
-        public string RomName { get; set; } = string.Empty;
-        public bool Convert { get; set; } = true;
-        public bool CheckEcho { get; set; } = true;
-        public int BankStart { get; set; } = MagicNumbers.DefaultValues.DefaultBankStart;
-        public bool Verbose { get; set; } = false;
-        public bool Aggressive { get; set; } = false;
-        public bool DuplicateCheck { get; set; } = true;
-        public bool ValidateHex { get; set; } = true;
-        public bool DoNotPatch { get; set; } = false;
-        public bool OptimizeSampleUsage { get; set; } = true;
-        public bool AllowSA1 { get; set; } = true;
-        public bool SFXDump { get; set; } = false;
-        public bool VisualizeSongs { get; set; } = false;
-        public bool ForceNoContinuePopup { get; set; } = false;
-        public bool RedirectStandardStreams { get; set; } = false;
-        public bool GenerateSPC { get; set; } = false;
+        public string? RomName { get; set; } = null;
+        public bool? Convert { get; set; } = null;
+        public bool? CheckEcho { get; set; } = null;
+        public int? BankStart { get; set; } = null;
+        public bool? Verbose { get; set; } = null;
+        public bool? Aggressive { get; set; } = null;
+        public bool? DuplicateCheck { get; set; } = null;
+        public bool? ValidateHex { get; set; } = null;
+        public bool? DoNotPatch { get; set; } = null;
+        public bool? OptimizeSampleUsage { get; set; } = null;
+        public bool? AllowSA1 { get; set; } = null;
+        public bool? SFXDump { get; set; } = null;
+        public bool? VisualizeSongs { get; set; } = null;
+        public bool? ForceNoContinuePopup { get; set; } = null;
+        public bool? RedirectStandardStreams { get; set; } = null;
+        public bool? GenerateSPC { get; set; } = null;
+        //public string RomName { get; set; } = string.Empty;
+        //public bool Convert { get; set; } = true;
+        //public bool CheckEcho { get; set; } = true;
+        //public int BankStart { get; set; } = MagicNumbers.DefaultValues.DefaultBankStart;
+        //public bool Verbose { get; set; } = false;
+        //public bool Aggressive { get; set; } = false;
+        //public bool DuplicateCheck { get; set; } = true;
+        //public bool ValidateHex { get; set; } = true;
+        //public bool DoNotPatch { get; set; } = false;
+        //public bool OptimizeSampleUsage { get; set; } = true;
+        //public bool AllowSA1 { get; set; } = true;
+        //public bool SFXDump { get; set; } = false;
+        //public bool VisualizeSongs { get; set; } = false;
+        //public bool ForceNoContinuePopup { get; set; } = false;
+        //public bool RedirectStandardStreams { get; set; } = false;
+        //public bool GenerateSPC { get; set; } = false;
 
         public CLArgs(MessageService messageService)
         {
@@ -78,7 +93,15 @@ namespace Addmusic2.Model
         {
             if (args.Length == 0)
             {
-                throw new ArgumentException(Messages.GenericErrorMessages.MissingRequiredArguments(ValidArgs.Where(a => a.IsRequired).Select(a => a.Aliases.First()).ToList()));
+                var requiredValidArgs = ValidArgs.Where(a => a.IsRequired).ToList();
+                if (requiredValidArgs.Count > 0)
+                {
+                    throw new ArgumentException(Messages.GenericErrorMessages.MissingRequiredArguments(requiredValidArgs.Select(a => a.Aliases.First()).ToList()));
+                }
+                else
+                {
+                    return;
+                }
             }
 
             var allCommands = new List<string>();

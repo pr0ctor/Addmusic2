@@ -375,10 +375,12 @@ namespace Addmusic2.Visitors
             var samplesPayload = new SamplesPayload();
 
             var sampleListContext = context.samplesList();
-            var sampleOptimization = sampleListContext.SampleOptimization();
+            var sampleOptimizations = sampleListContext.SampleOptimization().ToList();
             var listOfSamples = sampleListContext.StringLiteral().Select(s => s.GetText()).ToList();
 
-            samplesPayload.SampleGroupPath = (sampleOptimization != null) ? sampleOptimization.GetText() : "";
+            samplesPayload.SampleGroupPaths = (sampleOptimizations.Count > 0) 
+                ? sampleOptimizations.Select(s => s.GetText().Replace("#","")).ToList() 
+                : new();
             samplesPayload.Samples = listOfSamples;
 
             var samplesNode = new DirectiveNode
@@ -1020,7 +1022,7 @@ namespace Addmusic2.Visitors
             return tuneNode;
         }
 
-        public ISongNode VisitHexTune([NotNull] MmlParser.HexTuneContext context)
+        public override ISongNode VisitHexTune([NotNull] MmlParser.HexTuneContext context)
         {
             var hexTuneText = context.GetText();
             var tuneValueText = context.eeTuneChannel().hexNumber().GetText();

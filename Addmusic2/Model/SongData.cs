@@ -10,6 +10,7 @@ namespace Addmusic2.Model
     internal class SongData
     {
         public Guid SongId { get; set; }
+        public string SongPath { get; set; }
         public double IntroSeconds { get; set; }
         public double MainSeconds { get; set; }
         public int NoteParameterByteCount { get; set; }

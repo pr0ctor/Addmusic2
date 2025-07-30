@@ -14,10 +14,12 @@ namespace Addmusic2.Model.Constants
             public static readonly string SongList = "Addmusic_list.txt";
             public static readonly string SampleGroups = "Addmusic_sample groups.txt";
             public static readonly string SoundEffects = "Addmusic_sound effects.txt";
+            public static readonly string AddmusicOptionsTxt = "Addmusic_options.txt";
 
             // New Files
-            public static readonly string AddmusicSongList = "AddmusicSongSfxList.txt";
-            public static readonly string AddmusicSampleGroups = "AddmusicSampleGroups.txt";
+            public static readonly string AddmusicOptionsJson = "AddmusicOptions.json";
+            public static readonly string AddmusicSongList = "AddmusicSongSfxList.json";
+            public static readonly string AddmusicSampleGroups = "AddmusicSampleGroups.json";
         }
 
         public static class StaticFiles
@@ -74,7 +76,7 @@ namespace Addmusic2.Model.Constants
         {
             public static readonly string SampleBrr = ".brr";
             public static readonly string SampleBank = ".bnk";
-            public static readonly List<string> SampleExtensions = new List<string>()
+            public static readonly List<string> ValidSampleExtensions = new List<string>()
             {
                 SampleBrr,
                 SampleBank,

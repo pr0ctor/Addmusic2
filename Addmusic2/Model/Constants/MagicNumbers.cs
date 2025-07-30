@@ -23,6 +23,7 @@ namespace Addmusic2.Model.Constants
         public static readonly byte NoteLengthDecreaseFactor = 0x60;
         public static readonly int EightBitMaximum = 255;
         public static readonly ushort SixteenBitMaximum = 0xFFFF;
+        public static readonly int ThirtytwoBitMaximum = 0xFFFFFF;
         public static readonly byte HexCommandMaximum = 0xFF;
         public static readonly int PanDirectionMaximum = 20;
         public static readonly byte NoiseMaximum = 0x1F;
@@ -30,6 +31,10 @@ namespace Addmusic2.Model.Constants
         public static readonly byte ByteHexMaximum = 0xFF;
         public static readonly int OctaveMinimum = -1;
         public static readonly int OctaveMaximum = 7;
+        public static readonly int StartingCustomInstrumentNumber = 30;
+
+        // public static readonly int SampleBankRequiredSize = 0x8000;
+
 
 
         public static readonly int ChannelCount = 9;

@@ -13,6 +13,7 @@ using Addmusic2.Visitors;
 using Addmusic2.Logic;
 using Addmusic2.Model.Localization;
 using Addmusic2.Services;
+using Newtonsoft.Json;
 
 //[assembly: RootNamespace("Addmusic2")]
 
@@ -58,29 +59,48 @@ var tempMessageService = tempSericeProvider.GetRequiredService<MessageService>()
 
 var clArgs = new CLArgs(tempMessageService);
 
+// Always check and parse command line arguments
+IConfiguration config = new ConfigurationBuilder()
+    .AddCommandLine(args)
+    .Build();
+
+// If user is using the help command in any section of the args, show help and quit
+//      Don't process anything
+if (config["--?"] != null || config["--help"] != null)
+{
+    clArgs.GenerateHelp();
+    return;
+}
+
 // clargs or load rom file
-if (File.Exists("Addmusic_options.txt"))
+
+var addmusicSettings = new AddmusicOptions();
+
+if(File.Exists(FileNames.ConfigurationFiles.AddmusicOptionsJson))
 {
-
+    var optionsFileData = File.ReadAllText(FileNames.ConfigurationFiles.AddmusicOptionsJson);
+    addmusicSettings = JsonConvert.DeserializeObject<AddmusicOptions>(optionsFileData);
 }
-else
+//else if(File.Exists(FileNames.ConfigurationFiles.AddmusicOptionsTxt))
+//{
+//    // do new file conversion process
+//    var optionsFileData = File.ReadAllText(FileNames.ConfigurationFiles.AddmusicOptionsTxt);
+//    addmusicSettings = FileConverters.ConvertTxtOptionsToJsonOptions(optionsFileData);
+//}
+else // dont support converting the old format over
 {
-    IConfiguration config = new ConfigurationBuilder()
-        .AddCommandLine(args)
-        .Build();
-
-    if (config["--?"] != null || config["--help"] != null)
-    {
-        clArgs.GenerateHelp();
-        return;
-    }
-
-    clArgs.ParseArguments(config, args);
+    // no configs found
+    //      throw error or create new file or something with defaults
 }
+
+clArgs.ParseArguments(config, args);
+
 // get rid of the temp service provider
 tempSericeProvider.Dispose();
 
 var globalSettings = new GlobalSettings();
+
+globalSettings.ReconcileFileSettingsAndCLArgs(addmusicSettings, clArgs);
 
 var startTime = DateTime.Now;
 
@@ -92,7 +112,7 @@ using var logFactory = LoggerFactory.Create(builder =>
     builder
         .AddFilter("Microsoft", LogLevel.Warning)
         .AddFilter("System", LogLevel.Warning)
-        .AddFilter("Addmusic2.Program", (clArgs.Verbose) ? LogLevel.Debug : LogLevel.Information)
+        .AddFilter("Addmusic2.Program", (globalSettings.Verbose) ? LogLevel.Debug : LogLevel.Information)
         .AddConsole();
 });
 
@@ -113,7 +133,7 @@ services.AddLogging(builder => builder.AddConsole());
 services.AddScoped<IRomOperations, RomOperations>();
 
 // services.AddSingleton<IAsarInterface>();
-services.AddSingleton<ICLArgs>(clArgs);
+services.AddSingleton<IGlobalSettings>(globalSettings);
 services.AddSingleton<IFileCachingService, FileCachingService>();
 services.AddSingleton<IAddmusicLogic, AddmusicLogic>();
 

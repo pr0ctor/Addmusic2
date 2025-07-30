@@ -328,9 +328,9 @@ namespace Addmusic2.Model.Localization
         }
 
         [return: NotNullIfNotNull(nameof(_localizer))]
-        public string? GetWarningSpcTextValueTooLongMessage(string elementName, string truncatedValue)
+        public string? GetWarningSpcTextValueTooLongMessage(string elementName, string maxLength, string truncatedValue)
         {
-            LocalizedString localizedString = _localizer["WarningSpcTextValueTooLong", elementName, truncatedValue];
+            LocalizedString localizedString = _localizer["WarningSpcTextValueTooLong", elementName, maxLength, truncatedValue];
 
             return localizedString;
         }

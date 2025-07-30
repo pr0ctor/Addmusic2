@@ -745,7 +745,7 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &quot;{0}&quot; field was too long. Truncating to &quot;{1}&quot;..
+        ///   Looks up a localized string similar to &quot;{0}&quot; field was longer than the maximum length ({1}). Truncating to &quot;{2}&quot;..
         /// </summary>
         internal static string WarningSpcTextValueTooLong {
             get {
