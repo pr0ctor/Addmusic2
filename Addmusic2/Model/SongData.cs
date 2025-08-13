@@ -11,8 +11,12 @@ namespace Addmusic2.Model
     {
         public Guid SongId { get; set; }
         public string SongPath { get; set; }
-        public double IntroSeconds { get; set; }
-        public double MainSeconds { get; set; }
+        public SongScope SongScope { get; set; }
+        public SampleInstrumentManager SampleInstrumentManager { get; set; } = new();
+        public List<(double ChannelTick, int TempoChange)> TempoChanges { get; set; } = new();
+        public int Seconds { get; set; }
+        public int IntroSeconds { get; set; }
+        public int MainSeconds { get; set; }
         public int NoteParameterByteCount { get; set; }
         public int TempoRatio { get; set; }
         public bool NextHexIsArpeggioNoteLength { get; set; }
@@ -31,6 +35,7 @@ namespace Addmusic2.Model
         public string Text { get; set; }
         public int TotalSize { get; set; }
         public int SpaceForPointersAndIntegers { get; set; }
+        public int SpaceUsedBySamples { get; set; }
 
         public List<byte[]> AllPointersAndIntegers { get; set; } = new List<byte[]>();
         public List<byte[]> InstrumentData { get; set; } = new List<byte[]>();
@@ -38,9 +43,9 @@ namespace Addmusic2.Model
 
         public SpaceInfo SpaceInfo { get; set; }
 
-        public uint IntroLength { get; set; }
-        public uint MainLength { get; set; }
-        public uint Seconds { get; set; }
+        public int IntroLength { get; set; }
+        public int MainLength { get; set; }
+        
 
         public bool HasYoshiDrums { get; set; }
         public bool KnowsLength { get; set; }
@@ -48,10 +53,10 @@ namespace Addmusic2.Model
 
         public List<ushort> Samples { get; set; } = new List<ushort>();
         public int EchoBufferSize { get; set; }
-        public bool HasEchoBufferCommend { get; set; }
+        public bool HasEchoBufferCommand { get; set; }
         public bool EchoBufferAlloVCMDIsSet { get; set; }
         public ushort EchoBufferAllocVCMDILocation { get; set; }
-        public int EchoBufferAllocVCMDIChanner { get; set; }
+        public int EchoBufferAllocVCMDIChannel { get; set; }
 
         public string StatString { get; set; }
         public string Title { get; set; }

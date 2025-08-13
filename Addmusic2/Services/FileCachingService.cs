@@ -62,12 +62,12 @@ namespace Addmusic2.Services
 
         }
 
-        public void AddToCache(string fileName, string filePath)
+        public int AddToCache(string fileName, string filePath)
         {
             if(Path.Exists(filePath))
             {
                 using var filedata = File.OpenRead(filePath);
-                AddToCache(fileName, filedata);
+                return AddToCache(fileName, filedata);
             }
             else
             {
@@ -75,41 +75,45 @@ namespace Addmusic2.Services
             }
         }
 
-        public void AddToCache(string fileName, Stream fileData)
+        public int AddToCache(string fileName, Stream fileData)
         {
 
             var fileHash = ComputeMD5HashOfFile(fileData);
 
             if(_fileHashes.ContainsKey(fileHash))
             {
+                var duplicateStream = new MemoryStream();
                 if (_duplicateAliases.ContainsKey(fileName))
                 {
-                    return;
-                }
-
-                var originalFileName = _fileHashes[fileHash];
-                if(_duplicateAliases.ContainsKey(originalFileName))
-                {
-                    _duplicateAliases[originalFileName].Add(fileName);
-                    _duplicateAliases.Add(fileName, new List<string>
-                    {
-                        originalFileName
-                    });
+                    duplicateStream = GetFromCache(fileName);
                 }
                 else
                 {
-                    _duplicateAliases[originalFileName] = new List<string>
+                    var originalFileName = _fileHashes[fileHash];
+                    if (_duplicateAliases.ContainsKey(originalFileName))
+                    {
+                        _duplicateAliases[originalFileName].Add(fileName);
+                        _duplicateAliases.Add(fileName, new List<string>
+                    {
+                        originalFileName
+                    });
+                    }
+                    else
+                    {
+                        _duplicateAliases[originalFileName] = new List<string>
                     {
                         originalFileName,
                         fileName,
                     };
-                    _duplicateAliases[fileName] = new List<string>
+                        _duplicateAliases[fileName] = new List<string>
                     {
                         originalFileName,
                     };
+                    }
+                    duplicateStream = GetFromCache(originalFileName);
                 }
 
-                return;
+                return (int)duplicateStream!.Length;
             }
             else
             {
@@ -119,6 +123,7 @@ namespace Addmusic2.Services
                 fileData.Seek(0, SeekOrigin.Begin);
                 fileData.CopyTo(newStream);
                 _cache.Add(fileName, newStream);
+                return (int)fileData.Length;
             }
         }
 

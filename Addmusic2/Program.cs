@@ -81,7 +81,7 @@ if(File.Exists(FileNames.ConfigurationFiles.AddmusicOptionsJson))
     var optionsFileData = File.ReadAllText(FileNames.ConfigurationFiles.AddmusicOptionsJson);
     addmusicSettings = JsonConvert.DeserializeObject<AddmusicOptions>(optionsFileData);
 }
-//else if(File.Exists(FileNames.ConfigurationFiles.AddmusicOptionsTxt))
+//else if (File.Exists(FileNames.ConfigurationFiles.AddmusicOptionsTxt))
 //{
 //    // do new file conversion process
 //    var optionsFileData = File.ReadAllText(FileNames.ConfigurationFiles.AddmusicOptionsTxt);

@@ -16,6 +16,8 @@ namespace Addmusic2.Model.Constants
             public static readonly int InitialDefaultNoteLength = NoteLengthMaximum / 8;
             public static readonly int StartingOctave = 4;
             public static readonly int InitialTempoRatio = 1;
+            public static readonly int IntialSpaceForPointersAndStrumentsValue = 20;
+            public static readonly int InitialTempoValue = 0x36;
         }
 
         public static readonly int NoteLengthMaximum = 192;
@@ -32,12 +34,13 @@ namespace Addmusic2.Model.Constants
         public static readonly int OctaveMinimum = -1;
         public static readonly int OctaveMaximum = 7;
         public static readonly int StartingCustomInstrumentNumber = 30;
+        public static readonly int SampleSCRNTableSize = 4;
 
         // public static readonly int SampleBankRequiredSize = 0x8000;
 
 
 
-        public static readonly int ChannelCount = 9;
+        public static readonly int ChannelCount = 8;
         public static readonly int MaxSamplesCount = 256;
         public static readonly int[] ValidPitches = { 9, 11, 0, 2, 4, 5, 7 };
         public static readonly byte PitchOffset = 0x61;
@@ -59,12 +62,30 @@ namespace Addmusic2.Model.Constants
             7,
         };
 
+        public static List<byte> ChannelAdjustmentBytes = new()
+        {
+            0xFA,
+            0x06,
+            0x01,
+        };
+
+        public static Func<byte,List<byte>> EchoBufferAdjustmentBytes = (byte bufferSize) =>
+        {
+            return new List<byte>
+            {
+                0xFA,
+                0x04,
+                bufferSize,
+            };
+        };
+
         public static class CommandValues
         {
             public static readonly byte Tie = 0xC6;
             public static readonly byte Rest = 0xC7;
             public static readonly byte Instrument = 0xDA;
             public static readonly byte Pan = 0xDB;
+            public static readonly byte PitchSlide = 0xDD;
             public static readonly byte Vibrato = 0xDE;
             public static readonly byte GlobalVolume = 0xE0;
             public static readonly byte GlobalVolumeWithFade = 0xE1;

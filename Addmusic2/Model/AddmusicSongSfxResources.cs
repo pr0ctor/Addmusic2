@@ -126,40 +126,51 @@ namespace Addmusic2.Model
     internal class AddmusicSample
     {
         [JsonProperty("name")]
-        public string Name { 
-            get
+        public string Name {
+            get => NameValue;
+            set
             {
-                if(NameValue.Length > 0)
-                {
-                    return NameValue;
-                }
-                else
-                {
-                    var lastDirectorySeparator = (Path.Contains(@"\"))
-                        ? Path.LastIndexOf(@"\")
-                        : (Path.Contains(@"/"))
-                            ? Path.LastIndexOf(@"/")
+                var lastDirectorySeparator = (value.Contains(@"\"))
+                        ? value.LastIndexOf(@"\")
+                        : (value.Contains(@"/"))
+                            ? value.LastIndexOf(@"/")
                             : 0;
-                    var lastPeriod = Path.LastIndexOf('.');
-                    var fileName = (lastPeriod == -1) 
-                        ? Path[lastDirectorySeparator..]
-                        : Path[lastDirectorySeparator..lastPeriod];
-                    //NameValue = fileName;
-                    return fileName;
-                }
+                var lastPeriod = value.LastIndexOf('.');
+                var fileName = (lastPeriod == -1)
+                    ? value[lastDirectorySeparator..]
+                    : value[lastDirectorySeparator..lastPeriod];
+                NameValue = fileName;
             }
-            set;
         }
         [JsonIgnore]
         private string NameValue { get; set; }
         [JsonProperty("path", Required = Required.Always)]
-        public string Path { get; set; }
+        public string Path
+        {
+            get => Path;
+            set
+            {
+                var lastDirectorySeparator = (value.Contains(@"\"))
+                        ? value.LastIndexOf(@"\")
+                        : (value.Contains(@"/"))
+                            ? value.LastIndexOf(@"/")
+                            : 0;
+                var lastPeriod = value.LastIndexOf('.');
+                var fileName = (lastPeriod == -1)
+                    ? value[lastDirectorySeparator..]
+                    : value[lastDirectorySeparator..lastPeriod];
+                NameValue = fileName;
+                Path = value;
+            }
+        }
         [JsonProperty("important", Required = Required.Default)]
         public bool IsImportant { get; set; } = false;
         [JsonProperty("loop", Required = Required.Default)]
         public bool IsLooping { get; set; } = false;
         [JsonIgnore]
         public ushort LoopPoint { get; set; }
+        [JsonIgnore]
+        public int SampleDataSize { get; set; }
     }
 
 }

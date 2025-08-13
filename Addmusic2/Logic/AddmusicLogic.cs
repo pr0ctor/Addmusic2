@@ -38,14 +38,25 @@ namespace Addmusic2.Logic
 
             LoadRequiredSampleGroups();
 
+            // load global songs
+            foreach(var globalSong in _globalSettings.ResourceList.Songs.GlobalSongs)
+            {
+                var fileData = File.ReadAllText(globalSong.Path);
+
+                var songData = PreProcessSong(fileData);
+
+                ProcessSong(fileData, SongScope.Global);
+
+                PostProcessSong();
+            }
 
 
-            var fileData = File.ReadAllText(@"Samples/Seenpoint Intro.txt");
+            //var fileData = File.ReadAllText(@"Samples/Seenpoint Intro.txt");
 
-            var songData = PreProcessSong(fileData);
-            ProcessSong(songData);
+            //var songData = PreProcessSong(fileData);
+            //ProcessSong(songData);
 
-            PostProcessSong();
+            //PostProcessSong();
         }
 
         public void RunSingleSong(string fileData)
@@ -70,7 +81,7 @@ namespace Addmusic2.Logic
             return fileData;
         }
 
-        public void ProcessSong(string fileData)
+        public void ProcessSong(string fileData, SongScope songScope)
         {
             var stream = CharStreams.fromString(fileData);
 
@@ -85,7 +96,13 @@ namespace Addmusic2.Logic
 
             // potentially logic for changing parsers
 
-            var songParser = new SongParser(_logger, _messageService);
+            var songParser = new SongParser(
+                _logger,
+                _messageService,
+                _globalSettings,
+                _fileService,
+                songScope
+            );
 
             var song = new Song(songParser, rootNode)
             {
@@ -110,20 +127,20 @@ namespace Addmusic2.Logic
 
             if(defaultGroup.Count > 1)
             {
-                // handle more than one "default" group
+                // todo handle more than one "default" group
             }
             else if(defaultGroup.Count == 0)
             {
-                // handle missing "default" group
+                // todo handle missing "default" group
             }
 
             if (optimizedGroup.Count > 1)
             {
-                // handle more than one "optimized" group
+                // todo handle more than one "optimized" group
             }
             else if(optimizedGroup.Count == 0)
             {
-                // handle missing "optimized" group
+                // todo handle missing "optimized" group
             }
 
             Helpers.Helpers.LoadSampleGroupToCache(_fileService, defaultGroup.First());

@@ -70,4 +70,9 @@ namespace Addmusic2.Model.Constants
         Sfx1DFC,
         UserDefined,
     }
+    public enum SongScope
+    {
+        Global,
+        Local,
+    }
 }

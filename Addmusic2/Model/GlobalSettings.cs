@@ -12,6 +12,8 @@ namespace Addmusic2.Model
     {
         public AddmusicSongSfxResources ResourceList { get; set; } = new();
 
+        #region Runtime Arguments
+
         public string RomName { get; set; } = string.Empty;
         public bool EnableConversion { get; set; } = true;
         public bool EnableEchoCheck { get; set; } = true;
@@ -30,6 +32,10 @@ namespace Addmusic2.Model
         public bool ForceNoContinuePopup { get; set; } = false;
         public bool RedirectStandardStreams { get; set; } = false;
         public bool GenerateSPC { get; set; } = false;
+
+        #endregion
+
+        public int GlobalSongMaxIndex { get; set; }
 
         public GlobalSettings() { }
 

@@ -21,12 +21,10 @@ namespace Addmusic2.Parsers
         private readonly SongListItem _songListItem;
         private readonly GlobalSettings _globalSettings;
         private readonly FileCachingService _fileCachingService;
+        private readonly SongScope _songScope;
         public SongData SongData { get; set; } = new SongData();
 
-        private List<string> SampleNames { get; set; } = new();
-        private List<AddmusicSample> Samples { get; set; } = new();
-        private List<AddmusicSample> UsedSamples { get; set; } = new();
-        private List<InstrumentInformation> Instruments { get; set; } = new();
+        private SampleInstrumentManager SampleInstrumentManager { get; set; } = new();
 
         private List<ChannelInformation> Channels { get; set; } = new();
         private List<byte> CurrentLoopData = new List<byte>();
@@ -34,6 +32,7 @@ namespace Addmusic2.Parsers
         private Dictionary<int, double> ChannelLength = new();
         private Dictionary<string, LoopInformation> RemoteCodeDefinitions = new();
         private Dictionary<string, LoopInformation> NamedLoopDefinitions = new();
+        private List<(double ChannelTick, int TempoChange)> TempoChanges = new();
 
         private ChannelInformation CurrentChannel { get; set; }
         private LoopNode PreviousLoop { get; set; }
@@ -42,6 +41,7 @@ namespace Addmusic2.Parsers
 
         private int DefaultNoteLength { get; set; } = MagicNumbers.DefaultValues.InitialDefaultNoteLength;
         private int CurrentOctave { get; set; } = MagicNumbers.DefaultValues.StartingOctave;
+        private int Tempo { get; set; } = MagicNumbers.DefaultValues.InitialTempoValue;
         private int TempoRatio { get; set; } = MagicNumbers.DefaultValues.InitialTempoRatio;
         private int HTranspose { get; set; } = 0;
         private bool UsingHTranspose { get; set; } = false;
@@ -56,17 +56,26 @@ namespace Addmusic2.Parsers
         private bool InActiveSuperLoop { get; set; } = false;
 
 
-        public SongParser(ILogger<IAddmusicLogic> logger, MessageService messageService, SongListItem songItem, GlobalSettings globalSettings, FileCachingService fileCachingService)
+        public SongParser(
+            ILogger<IAddmusicLogic> logger,
+            MessageService messageService,
+            GlobalSettings globalSettings,
+            FileCachingService fileCachingService,
+            //SongListItem songItem,
+            SongScope songScope
+        )
         {
             _logger = logger;
             _messageService = messageService;
-            _songListItem = songItem;
+            //_songListItem = songItem;
             _globalSettings = globalSettings;
             _fileCachingService = fileCachingService;
+            _songScope = songScope;
         }
 
         public SongData ParseSongNodes(List<ISongNode> nodes)
         {
+            SongData.SongScope = _songScope;
             CatalogueUserDefinedInformation(nodes);
 
             var channels = nodes
@@ -111,7 +120,15 @@ namespace Addmusic2.Parsers
                 ParseChannel(node);
             }
 
+            // Finish by transferring required information to the songdata object
+
             SongData.ChannelData = Channels;
+            SongData.SampleInstrumentManager = SampleInstrumentManager;
+            SongData.TempoChanges = TempoChanges;
+
+            // Calculate the first pass pointers
+
+            CalculateFirstPassPointers(SongData);
 
             return SongData;
         }
@@ -136,6 +153,9 @@ namespace Addmusic2.Parsers
             }
 
             Channels.Add(CurrentChannel);
+            // Reset Octave as previous versions of Addmusic would carry over the octave
+            //      from the previous channel
+            CurrentOctave = MagicNumbers.DefaultValues.StartingOctave;
 
             foreach (SongNode node in channel.Children)
             {
@@ -244,7 +264,7 @@ namespace Addmusic2.Parsers
                     else if (node.NodeType == SongNodeType.RemoteCode)
                     {
                         var payload = node.Payload as RemoteCodeDefinitionPayload;
-                        var definitionName = payload.DefinitionName;
+                        var definitionName = payload!.DefinitionName;
                         if (NamedLoopDefinitions.ContainsKey(definitionName))
                         {
                             _messageService.GetErrorDuplicateRemoteCodeDefinitionNameDefinedMessage(definitionName);
@@ -256,6 +276,264 @@ namespace Addmusic2.Parsers
                         });
                     }
                 }
+            }
+        }
+
+        public void CalculateFirstPassPointers(SongData songData)
+        {
+            var channels = songData.ChannelData;
+            var firstChannel = songData.ChannelData.First();
+            var channelsWithNoData = channels.FindAll(c => c.ChannelData.Count == 0);
+            if(channelsWithNoData.Count == channels.Count)
+            {
+                // todo error out due to there being no data to insert
+            }
+
+            var loopAdjustmentAmount = 0;
+            if(songData.SongScope == SongScope.Local)
+            {
+
+                firstChannel.ChannelData = MagicNumbers.ChannelAdjustmentBytes.Concat(firstChannel.ChannelData).ToList();
+                loopAdjustmentAmount = MagicNumbers.ChannelAdjustmentBytes.Count;
+
+                if(songData.EchoBufferSize > 0 || !songData.EchoBufferAlloVCMDIsSet || songData.HasEchoBufferCommand)
+                {
+                    //Just put the VCMD in its default place: no need to move it around.
+                    //In particular, the $F1 command means that echo writes have been enabled, meaning the special case is irrelevant.
+                    firstChannel.ChannelData = MagicNumbers.EchoBufferAdjustmentBytes(Convert.ToByte(songData.EchoBufferSize)).Concat(firstChannel.ChannelData).ToList();
+                    loopAdjustmentAmount += MagicNumbers.EchoBufferAdjustmentBytes(Convert.ToByte(songData.EchoBufferSize)).Count;
+                }
+                else
+                {
+                    var echoBufferChannel = songData.ChannelData.Find(c => c.ChannelNumber == songData.EchoBufferAllocVCMDIChannel);
+                    var echoAdjustmentBytes = MagicNumbers.EchoBufferAdjustmentBytes(Convert.ToByte(songData.EchoBufferSize));
+                    echoBufferChannel.ChannelData.InsertRange(
+                        songData.EchoBufferAllocVCMDILocation + echoAdjustmentBytes.Count,
+                        echoAdjustmentBytes
+                    );
+
+                    echoBufferChannel.LoopLocations.ForEach(ll => ll += (byte)echoAdjustmentBytes.Count);
+                    echoBufferChannel.PhraseLocation += (byte)echoAdjustmentBytes.Count;
+                    echoBufferChannel.IntroLocation += (byte)echoAdjustmentBytes.Count;
+
+                }
+
+                firstChannel.LoopLocations.ForEach(ll => ll += (byte)loopAdjustmentAmount);
+
+                foreach( var channel in songData.ChannelData)
+                {
+                    channel.PhraseLocation += (byte)loopAdjustmentAmount;
+                    channel.IntroLocation += (byte)loopAdjustmentAmount;
+                }
+            }
+
+            // Add 0 to end of each channel's data
+            songData.ChannelData.ForEach(c => c.ChannelData.Add(0));
+
+            // optimize samples stuff? not sure if needed yet
+            if(_globalSettings.EnableSampleOpimizations)
+            {
+
+            }
+
+            // Calculate channel start phrase locations and adjust intros
+            var channelNumbers = songData.ChannelData.Select(c => c.ChannelNumber);
+            var combinedDataPositions = 0;
+            for(int i = 0; i < MagicNumbers.ChannelCount; i++)
+            {
+                var size = 0;
+                if(channelNumbers.Contains(i))
+                {
+                    var channel = songData.ChannelData.Find(c => c.ChannelNumber == i);
+                    channel.PhraseLocation = (byte)combinedDataPositions;
+                    channel.IntroLocation += channel.PhraseLocation;
+                    size = channel.ChannelData.Count;
+                }
+                combinedDataPositions += size;
+            }
+
+            var spaceForPointersAndIntegers = MagicNumbers.DefaultValues.IntialSpaceForPointersAndStrumentsValue;
+
+            if(songData.HasIntro)
+            {
+                spaceForPointersAndIntegers += 18;
+            }
+            if(!songData.DoesntLoop)
+            {
+                spaceForPointersAndIntegers += 2;
+            }
+
+            // the size of an instrument is its numerical value and the hex components
+            //      usually (1) + (5) for a space of 6 per instrument but dynamically calculate just in case
+            var instrumentSpace = songData.SampleInstrumentManager.Instruments.Select(i => 1 + i.HexComponents.Count).Sum();
+
+            spaceForPointersAndIntegers += instrumentSpace;
+
+            // handle an offset for proper indexing of data
+            var offset = (songData.HasIntro ? 2 : 0) + (songData.DoesntLoop ? 0 : 2) + 4;
+
+            var combinedData = new List<byte>();
+
+            // handle first <8 indices of data
+
+            combinedData[0] = (byte)((offset + instrumentSpace) & MagicNumbers.ByteHexMaximum);
+            combinedData[1] = (byte)(((offset + instrumentSpace) >> 8) & MagicNumbers.ByteHexMaximum);
+
+            if(songData.DoesntLoop)
+            {
+                combinedData[offset - 2] = MagicNumbers.ByteHexMaximum;
+                combinedData[offset - 1] = MagicNumbers.ByteHexMaximum;
+            }
+            else
+            {
+                combinedData[offset - 4] = MagicNumbers.ByteHexMaximum;
+                combinedData[offset - 3] = MagicNumbers.ByteHexMaximum;
+                combinedData[offset - 2] = (byte)((songData.HasIntro) ? 0xFD : 0xFC);
+                combinedData[offset - 1] = MagicNumbers.ByteHexMaximum;
+            }
+
+            if (songData.HasIntro)
+            {
+                combinedData[2] = (byte)((offset + instrumentSpace + 16) & MagicNumbers.ByteHexMaximum);
+                combinedData[3] = (byte)((offset + instrumentSpace + 16) >> 8);
+            }
+
+            // add in the instrument data after setting those early indexed values
+            foreach (var instrument in songData.SampleInstrumentManager.Instruments)
+            {
+                combinedData.Add((byte)instrument.InstrumentData);
+                combinedData.AddRange(instrument.HexComponents.Select(hc => (byte)hc));
+            }
+
+            // add in the phrase locations for each channel after the instruments
+            //      empty channels still get data
+            //      channels with data set values wrt the amount of data
+            var phraseData = new List<byte>();
+            var introData = new List<byte>();
+            for(var i = 0; i < MagicNumbers.ChannelCount; i++)
+            {
+                if(!channelNumbers.Contains(i))
+                {
+                    phraseData.Add(0xFB);
+                    phraseData.Add(MagicNumbers.ByteHexMaximum);
+                    if(songData.HasIntro)
+                    {
+                        introData.Add(0xFB);
+                        introData.Add(MagicNumbers.ByteHexMaximum);
+                    }
+                    continue;
+                }
+                var channel = songData.ChannelData.Find(c => c.ChannelNumber == i);
+                var phraseValue = (byte)(channel!.PhraseLocation + spaceForPointersAndIntegers);
+                phraseData.Add((byte)(phraseValue & MagicNumbers.ByteHexMaximum));
+                phraseData.Add((byte)(phraseValue >> 8));
+                if(songData.HasIntro)
+                {
+                    var introValue = (byte)(channel.IntroLocation + spaceForPointersAndIntegers);
+                    introData.Add((byte)(introValue & MagicNumbers.ByteHexMaximum));
+                    introData.Add((byte)(introValue >> 8));
+                }
+            }
+
+            // add the phrase and intro data into the combined dataset
+
+            combinedData.AddRange(phraseData);
+            if(songData.HasIntro)
+            {
+                combinedData.AddRange(introData);
+            }
+
+            // calculate the total size of the song
+            songData.SpaceForPointersAndIntegers = spaceForPointersAndIntegers;
+            songData.TotalSize = songData.ChannelData.Sum(c => c.ChannelData.Count) + spaceForPointersAndIntegers;
+
+            CalculateTotalSongLength(songData);
+
+            // Sum all used samples' datasize and add in the SCRN Table size for each sample
+            songData.SpaceUsedBySamples = songData.SampleInstrumentManager.UsedSamples
+                .Select(s => ( MagicNumbers.SampleSCRNTableSize + s.SampleDataSize ))
+                .Sum();
+            
+            // Generate statistics file
+
+        }
+
+        public void CalculateTotalSongLength(SongData songData)
+        {
+            var totalLength = 0;
+
+            var minChannelTickLength = (int)(songData.ChannelData.Min(c => c.ChannelLength));
+            totalLength = (minChannelTickLength > -1) ? -1 : minChannelTickLength;
+            songData.MainLength = totalLength;
+
+            if (songData.HasIntro)
+            {
+                songData.MainLength -= songData.IntroLength;
+            }
+
+            // estimate the true length of the song
+
+            if (songData.GuessLength)
+            {
+
+                var sortedTempoChanges = songData.TempoChanges
+                    .OrderBy(tc => tc.ChannelTick)
+                    .ThenBy(tc => tc.TempoChange)
+                    .ToList();
+
+                var firstTempoChange = sortedTempoChanges.First();
+                if (sortedTempoChanges.Count == 0)
+                {
+                    sortedTempoChanges.Add((0, MagicNumbers.DefaultValues.InitialTempoValue));
+                }
+                else if (firstTempoChange.ChannelTick != 0)
+                {
+                    sortedTempoChanges.Add((0, MagicNumbers.DefaultValues.InitialTempoValue));
+                }
+
+                sortedTempoChanges.Add((totalLength, 0));
+
+                // If there exists some intro segment
+                //      store the info in the intro tracker until the end of the intro is reached
+                //      otherwise store the info in the main tracker as the entire data will be in there
+                var foundIntroEnd = (songData.HasIntro) ? false : true;
+                var introTracker = 0.0;
+                var mainTracker = 0.0;
+                for (int i = 0; i < sortedTempoChanges.Count; i++)
+                {
+                    if (sortedTempoChanges[i].ChannelTick > totalLength)
+                    {
+                        // todo add warning about change after length of song
+                        break;
+                    }
+
+                    if (sortedTempoChanges[i].TempoChange < 0)
+                    {
+                        foundIntroEnd = true;
+                    }
+
+                    var difference = sortedTempoChanges[i + 1].ChannelTick - sortedTempoChanges[i].ChannelTick;
+                    if (foundIntroEnd)
+                    {
+                        introTracker += difference / (2 * Math.Abs(sortedTempoChanges[i].TempoChange));
+                    }
+                    else
+                    {
+                        mainTracker += difference / (2 * Math.Abs(sortedTempoChanges[i].TempoChange));
+                    }
+                }
+
+                songData.Seconds = (int)(Math.Floor(introTracker + (mainTracker * 2) + 0.5));
+                songData.MainSeconds = (int)mainTracker;
+                songData.IntroSeconds = (int)introTracker;
+
+                songData.KnowsLength = true;
+
+            }
+            // Just in case
+            else
+            {
+                songData.KnowsLength = false;
             }
         }
 
@@ -360,63 +638,92 @@ namespace Addmusic2.Parsers
 
             var instrumentNumber = instrumentPayload.InstrumentNumber;
 
-            if (instrumentNumber <= 18 || instrumentNumber >= 30)
+            if (instrumentNumber <= 18 || instrumentNumber >= MagicNumbers.StartingCustomInstrumentNumber)
             {
-                if (convert)
+                if (_globalSettings.EnableConversion)
                 {
-                    if (instrumentNumber >= 0x13 && instrumentNumber < 30)
+                    if (instrumentNumber >= 0x13 && instrumentNumber < MagicNumbers.StartingCustomInstrumentNumber)
                     {
                         instrumentNumber = instrumentNumber - 0x13 + 30;
                     }
                 }
-                if (optimizeSampleUsage)
+                // Always optimize Samples
+                //if (_globalSettings.EnableSampleOpimizations)
+                //{
+
+                var instrumentDefined = SampleInstrumentManager.ContainsInstrument(instrumentNumber);
+
+                if(!instrumentDefined)
                 {
-                    if (instrumentNumber < 30)
-                    {
-                        // approach 1
-                    }
-                    else if ((instrumentNumber - 30) * 6 < value)
-                    {
-                        // approach 2
-                    }
-                    else
-                    {
-                        // todo write error
-                    }
+                    // todo handle undefined instrument error
                 }
 
-                if (false)
+                if (instrumentNumber < MagicNumbers.StartingCustomInstrumentNumber)
                 {
-                    CurrentChannel.IgnoreTuning = false;
+                    var instrumentInfo = new InstrumentInformation 
+                    {
+                        InstrumentNumber = instrumentNumber,
+                        InstrumentData = MagicNumbers.InstrumentsToSample[instrumentNumber]
+                    };
+
+                    var useInstrument = SampleInstrumentManager.UseInstrument(instrumentNumber, instrumentInfo);
+
+                    if(!useInstrument)
+                    {
+                        // todo handle error
+                    }
+
+                    //if(!UsedInstruments.Any(i => i.Value.InstrumentNumber == instrumentInfo.InstrumentNumber))
+                    //{
+                    //    UsedInstruments.Add(instrumentNumber, instrumentInfo);
+                    //}
                 }
+                else if (instrumentNumber >= MagicNumbers.StartingCustomInstrumentNumber)
+                {
+                    var useInstrument = SampleInstrumentManager.UseInstrument(instrumentNumber);
+
+                    if (!useInstrument)
+                    {
+                        // todo handle error
+                    }
+                }
+                //}
+
+                // Addmusic parser version 1 compatiblity
+                //if (false)
+                //{
+                //    CurrentChannel.IgnoreTuning = false;
+                //}
 
                 AddDataToChannel(MagicNumbers.CommandValues.Instrument);
                 AddDataToChannel(Convert.ToByte(instrumentNumber));
             }
 
-            if (instrumentNumber < 30)
+            /*if (instrumentNumber < MagicNumbers.StartingCustomInstrumentNumber)
             {
-                if (optimizeSampleUsage)
+                if (_globalSettings.EnableSampleOpimizations)
                 {
                     // todo do something
                 }
-            }
+            }*/
 
-            CurrentChannel.CurrentInstrument = instrumentNumber;
+            SetCurrentInstrument(instrumentNumber);
 
-            if (instrumentNumber < 19)
-            {
-                HTranspose = 0;
-                UsingHTranspose = false;
-                // todo add transposemap logic
-            }
+            // ignore transpose map for now
+            //if (instrumentNumber < 19)
+            //{
+            //    HTranspose = 0;
+            //    UsingHTranspose = false;
+            //    // todo add transposemap logic
+            //}
         }
 
         public void EvaluateNoteNode(AtomicNode noteNode, bool inTriplet = false, bool inPitchSlide = false, bool isNextForDDPitchSlide = false)
         {
+            CurrentChannel.HasNoteData = true;
             var notePayload = noteNode.Payload as NotePayload;
-
-            var tempLength = GetNoteLength(noteNode, notePayload.Duration, notePayload.DotCount, inTriplet, true);
+            
+            var tempLength = GetNoteLength(noteNode, notePayload!.Duration, notePayload.DotCount, inTriplet, true);
 
             var noteValueChar = (int)notePayload.NoteValue[0];
             var note = GetPitchValue(noteValueChar, notePayload.Accidental);
@@ -446,7 +753,7 @@ namespace Addmusic2.Parsers
             {
                 // todo add error for note pitch too high
             }
-            else if (currentInstrument >= 21 && currentInstrument < 30 && note < MagicNumbers.CommandValues.Tie)
+            else if (currentInstrument >= 21 && currentInstrument < MagicNumbers.StartingCustomInstrumentNumber && note < MagicNumbers.CommandValues.Tie)
             {
 
                 note = 0xD0 + (currentInstrument - 21);
@@ -487,6 +794,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluateTieNode(AtomicNode tieNode, bool inTriplet = false, bool inPitchSlide = false, bool isNextForDDPitchSlide = false)
         {
+            CurrentChannel.HasNoteData = true;
             var tiePayload = tieNode.Payload as TiePayload;
 
             var tempLength = GetNoteLength(tieNode, tiePayload.Duration, tiePayload.DotCount, inTriplet, true);
@@ -508,6 +816,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluateRestNode(AtomicNode restNode, bool inTriplet = false, bool inPitchSlide = false, bool isNextForDDPitchSlide = false)
         {
+            CurrentChannel.HasNoteData = true;
             var restPayload = restNode.Payload as NotePayload;
 
             var tempLength = GetNoteLength(restNode, restPayload.Duration, restPayload.DotCount, inTriplet, true);
@@ -752,6 +1061,9 @@ namespace Addmusic2.Parsers
                 tempo = tempoValue;
             }
 
+            // Set global Tempo value to the current tempo
+            Tempo = tempo;
+
             if (tempoDuration == -1)
             {
                 TempoDefined = true;
@@ -763,6 +1075,7 @@ namespace Addmusic2.Parsers
                 else
                 {
                     // calculate tempo change
+                    TempoChanges.Add((CurrentChannel.ChannelLength, tempo));
                 }
 
                 AddDataToChannel(MagicNumbers.CommandValues.Tempo);
@@ -825,10 +1138,13 @@ namespace Addmusic2.Parsers
             switch (compositeNode.NodeType)
             {
                 case SongNodeType.Triplet:
+                    EvaluateTriplet(compositeNode);
                     break;
                 case SongNodeType.PitchSlide:
+                    EvaluatePitchSlideNode(compositeNode);
                     break;
                 case SongNodeType.SampleLoad:
+                    EvaluateSampleLoad(compositeNode);
                     break;
                 case SongNodeType.Intro:
                     EvaluateIntro(compositeNode);
@@ -852,10 +1168,135 @@ namespace Addmusic2.Parsers
 
         public void EvaluateIntro(CompositeNode node)
         {
-            CurrentChannel.HasIntro = true;
-            SongData.HasIntro = true;
 
-            // todo more here
+            if(SongData.HasIntro == false)
+            {
+                TempoChanges.Add((CurrentChannel.ChannelLength, -(Tempo)));
+            }
+            else
+            {
+                var introTempo = TempoChanges.Find(tc => tc.TempoChange < 0);
+                introTempo.TempoChange = -(Tempo);
+            }
+
+            SongData.HasIntro = true;
+            SongData.IntroLength = (int)CurrentChannel.ChannelLength;
+
+            CurrentChannel.HasIntro = true;
+            CurrentChannel.IntroLocation = (byte)CurrentChannel.ChannelData.Count;
+            CurrentChannel.IntroLength = (int)CurrentChannel.ChannelLength;
+        }
+
+        public void EvaluatePitchSlideNode(CompositeNode node)
+        {
+            var payload = node.Payload as PitchSlidePayload;
+
+            foreach(SongNode songNode in payload!.Nodes)
+            {
+                if(songNode.NodeType == SongNodeType.Empty)
+                {
+                    AddDataToChannel(MagicNumbers.CommandValues.PitchSlide);
+                    AddDataToChannel(0x00);
+                    AddDataToChannel(Convert.ToByte(PreviousNoteLength));
+                }
+                else if(songNode.NodeType == SongNodeType.Note)
+                {
+                    EvaluateNoteNode((AtomicNode)songNode, default, true);
+                }
+                else if (songNode.NodeType == SongNodeType.Rest)
+                {
+                    EvaluateRestNode((AtomicNode)songNode, default, true);
+                }
+                else if (songNode.NodeType == SongNodeType.Tie)
+                {
+                    EvaluateTieNode((AtomicNode)songNode, default, true);
+                }
+                else
+                {
+                    EvaluateNode(songNode);
+                }
+            }
+        }
+
+        public void EvaluateSampleLoad(CompositeNode node)
+        {
+            var sampleloadPayload = node.Payload as SampleLoadPayload;
+
+            if (sampleloadPayload == null)
+            {
+                throw new Exception();
+            }
+
+            byte finalSampleIndex = 0x00;
+
+            // The Sample Load command was passed a named sample
+            if (sampleloadPayload.SampleNumber == -1)
+            {
+                var standardizedPath = Helpers.Helpers.StandardizeFileDirectoryDelimiters(sampleloadPayload.SampleName);
+                var lastDirectorySeparator = (standardizedPath.Contains(@"\"))
+                    ? standardizedPath.LastIndexOf(@"\")
+                    : (standardizedPath.Contains(@"/"))
+                        ? standardizedPath.LastIndexOf(@"/")
+                        : 0;
+                var sampleName = standardizedPath[lastDirectorySeparator..];
+                var samplePath = Path.Combine(SongData.SongPath, sampleName);
+
+                SampleInstrumentManager.AddNewSampleName(sampleName);
+                var sampleData = new AddmusicSample
+                {
+                    Name = sampleName,
+                    Path = samplePath,
+                    IsImportant = false,
+                    IsLooping = false,
+                };
+                SampleInstrumentManager.AddNewSample(sampleData);
+                SampleInstrumentManager.UseSample(sampleData);
+                Helpers.Helpers.LoadSampleToCache(_fileCachingService, sampleData);
+
+                var sampleIndex = SampleInstrumentManager.Samples.FindIndex(s => s.Name == sampleName);
+
+                if (sampleIndex == -1)
+                {
+                    // todo throw error // this should never get caught because other errors should happen first
+                    throw new Exception();
+                }
+
+                finalSampleIndex = Convert.ToByte(sampleIndex);
+            }
+            // the Sample Load command was passed an instrument
+            else
+            {
+                finalSampleIndex = Convert.ToByte(MagicNumbers.InstrumentsToSample[sampleloadPayload.SampleNumber]);
+            }
+                
+            var tuningValue = Convert.ToByte(sampleloadPayload.TuningValue, 16);
+
+            AddDataToChannel(MagicNumbers.CommandValues.SampleLoad);
+            AddDataToChannel(finalSampleIndex);
+            AddDataToChannel(tuningValue);
+        }
+
+        public void EvaluateTriplet(CompositeNode node)
+        {
+            foreach(SongNode songNode in node.Children)
+            {
+                if(songNode.NodeType == SongNodeType.Note)
+                {
+                    EvaluateNoteNode((AtomicNode)songNode, true);
+                }
+                else if(songNode.NodeType == SongNodeType.Rest)
+                {
+                    EvaluateRestNode((AtomicNode)songNode, true);
+                }
+                else if (songNode.NodeType == SongNodeType.Tie)
+                {
+                    EvaluateTieNode((AtomicNode)songNode, true);
+                }
+                else
+                {
+                    EvaluateNode(songNode);
+                }
+            }
         }
 
         #endregion
@@ -962,7 +1403,7 @@ namespace Addmusic2.Parsers
 
             var remoteCodeLocation = RemoteCodeDefinitions[definitionName].LoopId;
             AddDataToChannel(MagicNumbers.CommandValues.RemoteCode);
-            // todo update loop locations
+            CurrentChannel.LoopLocations.Add(Convert.ToByte(CurrentChannel.ChannelData.Count));
             AddDataToChannel((byte)(remoteCodeLocation & MagicNumbers.HexCommandMaximum));
             AddDataToChannel((byte)(remoteCodeLocation >> 8));
             AddDataToChannel(Convert.ToByte(eventNumber));
@@ -999,7 +1440,7 @@ namespace Addmusic2.Parsers
             // Finish loop
             var loopLocation = NamedLoopDefinitions[loopName].LoopId;
             AddDataToChannel(MagicNumbers.CommandValues.Loop);
-            // todo update loop locations
+            CurrentChannel.LoopLocations.Add(Convert.ToByte(CurrentChannel.ChannelData.Count));
             AddDataToChannel((byte)(loopLocation & MagicNumbers.HexCommandMaximum));
             AddDataToChannel((byte)(loopLocation >> 8));
             AddDataToChannel((byte)(simpleLoopNode.Iterations - 1));
@@ -1104,10 +1545,12 @@ namespace Addmusic2.Parsers
                     EvaluateHalveTempoNode(specialDirective);
                     break;
                 case SongNodeType.Option:
-                    specialDirective;
+                    // todo implement
+                    //specialDirective;
                     break;
                 case SongNodeType.OptionGroup:
-                    specialDirective;
+                    // todo implement
+                    //specialDirective;
                     break;
                 default:
                     throw new Exception();
@@ -1159,6 +1602,9 @@ namespace Addmusic2.Parsers
                     break;
                 case HexCommands.FAHotPatchToggleBits:
                     break;
+                case HexCommands.FAEchoBufferReserve:
+                    EvaluateFAEchoBufferReserveNode(hexNode);
+                    break;
                 case HexCommands.FCHexRemoteCommand:
                     break;
                 case HexCommands.FCHexRemoteGain:
@@ -1192,6 +1638,11 @@ namespace Addmusic2.Parsers
             {
                 EvaluateNode(child);
             }
+        }
+
+        public void EvaluateFAEchoBufferReserveNode(HexNode faEchoBufferReserve)
+        {
+            MarkEchoBufferAllocVCMD();
         }
 
         #endregion
@@ -1685,6 +2136,62 @@ namespace Addmusic2.Parsers
 
             // todo check for sample name existence and is loaded
 
+            if(sampleloadPayload.SampleNumber == -1)
+            {
+                if(sampleloadPayload.SampleName.Length == 0)
+                {
+                    // todo handle error for missing sample name
+                }
+
+                // get file extension
+                if (sampleloadPayload.SampleName.LastIndexOf(".") == -1)
+                {
+                    // todo handle missing file extension
+                }
+
+                var fileExtensionStartPosition = sampleloadPayload.SampleName.LastIndexOf(".");
+                var fileExtension = sampleloadPayload.SampleName[fileExtensionStartPosition..];
+
+                if (!FileNames.FileExtensions.ValidSampleExtensions.Contains(fileExtension))
+                {
+                    // todo handle invalid file extensions
+                }
+
+                if (fileExtension == FileNames.FileExtensions.SampleBank)
+                {
+                    // todo handle deprecated filetype
+                    //continue;
+                }
+
+                if (fileExtension == FileNames.FileExtensions.SampleBrr)
+                {
+
+                    var standardizedPath = Helpers.Helpers.StandardizeFileDirectoryDelimiters(sampleloadPayload.SampleName);
+                    var lastDirectorySeparator = (standardizedPath.Contains(@"\"))
+                        ? standardizedPath.LastIndexOf(@"\")
+                        : (standardizedPath.Contains(@"/"))
+                            ? standardizedPath.LastIndexOf(@"/")
+                            : 0;
+                    var sampleName = standardizedPath[lastDirectorySeparator..];
+                    var samplePath = Path.Combine(SongData.SongPath, sampleName);
+
+                    //if(SampleNames.Contains(sampleName))
+                    if (SampleInstrumentManager.ContainsSampleName(sampleName))
+                    {
+                        // todo notify duplicate sample
+                        //continue;
+                    }
+
+                }
+            }
+            else
+            {
+                if(sampleloadPayload.SampleNumber > MagicNumbers.StartingCustomInstrumentNumber)
+                {
+                    // todo add warning to just use other stuff
+                }
+            }
+
             var tuningValue = Convert.ToByte(sampleloadPayload.TuningValue, 16);
 
 
@@ -2024,7 +2531,7 @@ namespace Addmusic2.Parsers
                         };
                     }
 
-                    SongData.Seconds = (uint)(totalSeconds & MagicNumbers.ThirtytwoBitMaximum);
+                    SongData.Seconds = (int)(totalSeconds & MagicNumbers.ThirtytwoBitMaximum);
                 }
             }
 
@@ -2032,27 +2539,47 @@ namespace Addmusic2.Parsers
             if (author.Length > MagicNumbers.SpcTextMaximumLength)
             {
                 messages.Add(_messageService.GetWarningSpcTextValueTooLongMessage(nameof(author), MagicNumbers.SpcTextMaximumLength.ToString(), author[0..MagicNumbers.SpcTextMaximumLength]));
+                SongData.Author = author[0..MagicNumbers.SpcTextMaximumLength];
+            }
+            else
+            {
+                SongData.Author = author;
             }
             if (game.Length > MagicNumbers.SpcTextMaximumLength)
             {
                 messages.Add(_messageService.GetWarningSpcTextValueTooLongMessage(nameof(game), MagicNumbers.SpcTextMaximumLength.ToString(), game[0..MagicNumbers.SpcTextMaximumLength]));
+                SongData.Game = game[0..MagicNumbers.SpcTextMaximumLength];
+            }
+            else
+            {
+                SongData.Game = game;
             }
             if (comment.Length > MagicNumbers.SpcTextMaximumLength)
             {
                 messages.Add(_messageService.GetWarningSpcTextValueTooLongMessage(nameof(comment), MagicNumbers.SpcTextMaximumLength.ToString(), comment[0..MagicNumbers.SpcTextMaximumLength]));
+                SongData.Comment = comment[0..MagicNumbers.SpcTextMaximumLength];
+            }
+            else
+            {
+                SongData.Comment = comment;
             }
             if (title.Length > MagicNumbers.SpcTextMaximumLength)
             {
                 messages.Add(_messageService.GetWarningSpcTextValueTooLongMessage(nameof(title), MagicNumbers.SpcTextMaximumLength.ToString(), title[0..MagicNumbers.SpcTextMaximumLength]));
+                SongData.Title = title[0..MagicNumbers.SpcTextMaximumLength];
+            }
+            else
+            {
+                SongData.Title = title;
             }
 
-            return new ValidationResult
-            {
-                Type = messages.Count > 0
-                    ? ValidationResult.ResultType.Warning
-                    : ValidationResult.ResultType.Success,
-                Message = messages,
-            };
+                return new ValidationResult
+                {
+                    Type = messages.Count > 0
+                        ? ValidationResult.ResultType.Warning
+                        : ValidationResult.ResultType.Success,
+                    Message = messages,
+                };
         }
 
         public IValidationResult ValidateAndProcessInstrumentDirectiveNode(DirectiveNode instruments)
@@ -2086,6 +2613,8 @@ namespace Addmusic2.Parsers
                     var noiseValue = Convert.ToByte(((NoisePayload)((AtomicNode)instrument.NoiseData).Payload).NoiseValue);
                     var finalInstrumentValue = noiseValue | 0x80;
 
+                    instrumentInformation.InstrumentNumber = customInstrumentCount;
+                    instrumentInformation.InstrumentData = finalInstrumentValue;
                 }
                 else if (instrument.Type == InstrumentDefinition.InstrumentType.Number)
                 {
@@ -2110,7 +2639,9 @@ namespace Addmusic2.Parsers
                     }
 
                     var instrumentToSample = MagicNumbers.InstrumentsToSample[instrumentNumber];
+
                     instrumentInformation.InstrumentNumber = instrumentNumber;
+                    instrumentInformation.InstrumentData = instrumentToSample;
 
                 }
                 else if (instrument.Type == InstrumentDefinition.InstrumentType.Sample)
@@ -2119,23 +2650,23 @@ namespace Addmusic2.Parsers
                     if(sampleName == null || sampleName.Length == 0)
                     {
                         // todo message about missing name
+                        continue;
                     }
-                    if(!SampleNames.Contains(sampleName))
+                    //if(!SampleNames.Contains(sampleName))
+                    if(!SampleInstrumentManager.ContainsSampleName(sampleName ?? ""))
                     {
                         // todo message about not have this sample previously defined
                     }
 
-                    if(UsedSamples.FindAll(s => s.Name == sampleName).Count == 0)
+                    var useSample = SampleInstrumentManager.UseSampleName(sampleName ?? "");
+
+                    if(!useSample)
                     {
-                        var sampleData = Samples.Find(s => s.Name == sampleName || s.Path.Contains(sampleName, StringComparison.InvariantCultureIgnoreCase));
-                        if(sampleData == null)
-                        {
-                            // todo handle null
-                            throw new Exception();
-                        }
-                        UsedSamples.Add(sampleData);
+                        // todo handle error
                     }
 
+                    instrumentInformation.InstrumentNumber = customInstrumentCount;
+                    instrumentInformation.InstrumentSample = sampleName;
 
                 }
 
@@ -2160,7 +2691,8 @@ namespace Addmusic2.Parsers
 
                 instrumentInformation.HexComponents.AddRange(intHexes);
 
-                Instruments.Add(instrumentInformation);
+                SampleInstrumentManager.AddInstrument(instrumentInformation);
+                //Instruments.Add(instrumentInformation);
                 customInstrumentCount++;
             }
 
@@ -2182,6 +2714,11 @@ namespace Addmusic2.Parsers
                 throw new Exception();
             }
 
+            if(samplesPayload.SampleGroupPaths.Count == 0)
+            {
+                samplesPayload.SampleGroupPaths.Add("#default");
+            }
+
             foreach(var sampleGroup in samplesPayload.SampleGroupPaths)
             {
                 var group = _globalSettings.ResourceList.SampleGroups.FindAll(g => g.Name.Equals(sampleGroup, StringComparison.InvariantCultureIgnoreCase)).ToList();
@@ -2195,7 +2732,7 @@ namespace Addmusic2.Parsers
                     // todo throw error due to multiple of the same name and cannot resolve duplicates
                 }
 
-                Samples.AddRange(group.First().Samples);
+                SampleInstrumentManager.Samples.AddRange(group.First().Samples);
 
                 foreach(var sample in group.First().Samples)
                 {
@@ -2207,17 +2744,20 @@ namespace Addmusic2.Parsers
                             : 0;
                     var sampleName = standardizedPath[lastDirectorySeparator..];
 
-                    if (SampleNames.Contains(sampleName))
+                    //if (SampleNames.Contains(sampleName))
+                    if (SampleInstrumentManager.ContainsSampleName(sampleName))
                     {
                         // todo notify duplicate sample name
                         continue;
                     }
                     else
                     {
-                        SampleNames.Add(sampleName);
+                        SampleInstrumentManager.AddNewSampleName(sampleName);
+                        //SampleNames.Add(sampleName);
                     }
 
-                    Samples.Add(sample);
+                    SampleInstrumentManager.AddNewSample(sample);
+                    //Samples.Add(sample);
                     Helpers.Helpers.LoadSampleToCache(_fileCachingService, sample);
 
                 }
@@ -2256,13 +2796,15 @@ namespace Addmusic2.Parsers
                     var sampleName = standardizedPath[lastDirectorySeparator..];
                     var samplePath = Path.Combine(SongData.SongPath, sampleName);
 
-                    if(SampleNames.Contains(sampleName))
+                    //if(SampleNames.Contains(sampleName))
+                    if(SampleInstrumentManager.ContainsSampleName(sampleName))
                     {
                         // todo notify duplicate sample
                         continue;
                     }
 
-                    SampleNames.Add(sampleName);
+                    SampleInstrumentManager.AddNewSampleName(sampleName);
+                    //SampleNames.Add(sampleName);
                     var sampleData = new AddmusicSample
                     {
                         Name = sampleName,
@@ -2270,7 +2812,8 @@ namespace Addmusic2.Parsers
                         IsImportant = false,
                         IsLooping = false,
                     };
-                    Samples.Add(sampleData);
+                    SampleInstrumentManager.AddNewSample(sampleData);
+                    //Samples.Add(sampleData);
                     Helpers.Helpers.LoadSampleToCache(_fileCachingService, sampleData);
                 }
             }
@@ -2697,6 +3240,22 @@ namespace Addmusic2.Parsers
             {
                 CurrentChannel.CurrentInstrument = instrument;
             }
+        }
+
+        private void MarkEchoBufferAllocVCMD()
+        {
+            if(SongData.EchoBufferAlloVCMDIsSet
+                || SongData.HasEchoBufferCommand
+                || CurrentChannel.HasIntro
+                || CurrentChannel.HasNoteData)
+            {
+                // todo handle warning for this case
+                return;
+            }
+
+            SongData.EchoBufferAlloVCMDIsSet = true;
+            SongData.EchoBufferAllocVCMDILocation = (ushort)(CurrentChannel.ChannelData.Count + 1);
+            SongData.EchoBufferAllocVCMDIChannel = CurrentChannel.ChannelNumber;
         }
 
         #endregion
