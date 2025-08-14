@@ -46,7 +46,7 @@ var songNodeTree = newParser.VisitSong(songContext);
 
 var x = 1;*/
 
-using var logFactory = LoggerFactory.Create(builder =>
+var logFactory = LoggerFactory.Create(builder =>
 {
     builder
         .AddFilter("Microsoft", LogLevel.Warning)
@@ -124,6 +124,18 @@ var startTime = DateTime.Now;
 
 var services = new ServiceCollection();
 
+// recreate logfactory
+logFactory = LoggerFactory.Create(builder =>
+{
+    builder
+        .AddFilter("Microsoft", LogLevel.Warning)
+        .AddFilter("System", LogLevel.Warning)
+        .AddFilter("Addmusic2.Program", (globalSettings.Verbose) ? LogLevel.Debug : LogLevel.Information)
+        .AddConsole();
+});
+
+logger = logFactory.CreateLogger<IAddmusicLogic>();
+
 services.AddLocalization(options =>
 {
     options.ResourcesPath = "Localization";
@@ -136,8 +148,8 @@ services.AddScoped<IRomOperations, RomOperations>();
 
 // services.AddSingleton<IAsarInterface>();
 services.AddSingleton<IGlobalSettings>(globalSettings);
-services.AddSingleton<IFileCachingService, FileCachingService>();
 services.AddSingleton<IAddmusicLogic, AddmusicLogic>();
+services.AddSingleton<IFileCachingService, FileCachingService>();
 
 var serviceProvider = services.BuildServiceProvider();
 

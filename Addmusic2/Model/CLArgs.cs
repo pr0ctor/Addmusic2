@@ -109,62 +109,62 @@ namespace Addmusic2.Model
 
             foreach(var (arg, value) in config.AsEnumerable())
             {
-                switch (arg)
+                switch (arg.ToLower())
                 {
-                    case "--r":
-                    case "--rom":
+                    case "r":
+                    case "rom":
                         RomName = value ?? "";
                         break;
-                    case "--b":
+                    case "b":
                         BankStart = MagicNumbers.DefaultValues.DefaultBankStartFromCLArgs;
                         break;
-                    case "--c":
+                    case "c":
                         Convert = false;
                         break;
-                    case "--e":
+                    case "e":
                         CheckEcho = false;
                         break;
-                    case "--d":
+                    case "d":
                         DuplicateCheck = false;
                         break;
-                    case "--h":
+                    case "h":
                         ValidateHex = false;
                         break;
-                    case "--u":
+                    case "u":
                         OptimizeSampleUsage = false;
                         break;
-                    case "--s":
+                    case "s":
                         AllowSA1 = false;
                         break;
-                    case "--v":
-                    case "--verbose":
+                    case "v":
+                    case "verbose":
                         Verbose = true;
                         break;
-                    case "--a":
+                    case "a":
                         Aggressive = true;
                         break;
-                    case "--p":
+                    case "p":
                         DoNotPatch = true;
                         break;
-                    case "--dumpsfx":
-                    case "--sfxdump":
+                    case "dumpsfx":
+                    case "sfxdump":
                         SFXDump = true;
                         break;
-                    case "--visualize":
+                    case "visualize":
                         VisualizeSongs = true;
                         break;
-                    case "--noblock":
+                    case "noblock":
                         ForceNoContinuePopup = true;
                         break;
-                    case "--srd":
-                    case "--streamredirect":
+                    case "srd":
+                    case "streamredirect":
                         RedirectStandardStreams = true;
                         break;
-                    case "--norom":
+                    case "norom":
                         GenerateSPC = true;
                         break;
-                    case "--?":
-                    case "--help":
+                    case "?":
+                    case "help":
                         break;
                     default:
                         // todo fix and localize this exception

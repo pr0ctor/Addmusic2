@@ -25,12 +25,12 @@ namespace Addmusic2.Logic
 
         public DateTime LastModification { get; set; }
 
-        public AddmusicLogic(ILogger<IAddmusicLogic> logger, MessageService messageService, FileCachingService fileCachingService, GlobalSettings globalSettings)
+        public AddmusicLogic(ILogger<IAddmusicLogic> logger, MessageService messageService, IFileCachingService fileCachingService, IGlobalSettings globalSettings)
         {
             _logger = logger;
             _messageService = messageService;
-            _fileService = fileCachingService;
-            _globalSettings = globalSettings;
+            _fileService = (FileCachingService)fileCachingService;
+            _globalSettings = (GlobalSettings)globalSettings;
         }
 
         public void Run()
@@ -109,7 +109,7 @@ namespace Addmusic2.Logic
             // potentially logic for changing parsers
 
             var songParser = new SongParser(
-                _logger,
+                null,
                 _messageService,
                 _globalSettings,
                 _fileService,

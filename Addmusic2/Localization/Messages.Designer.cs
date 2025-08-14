@@ -655,7 +655,7 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Addmusic Version.
         /// </summary>
         internal static string IntroAddmusicVersion {
             get {
@@ -664,7 +664,7 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Parser Version.
         /// </summary>
         internal static string IntroParserVersion {
             get {

@@ -382,11 +382,11 @@
     <comment>Error for invalid value for the Volume Command's volume value</comment>
   </data>
   <data name="IntroAddmusicVersion" xml:space="preserve">
-    <value />
+    <value>Addmusic Version</value>
     <comment>Message displaying the current version of the program</comment>
   </data>
   <data name="IntroParserVersion" xml:space="preserve">
-    <value />
+    <value>Parser Version</value>
     <comment>Message displaying the current version of the parser</comment>
   </data>
   <data name="IntroReadTheReadMe" xml:space="preserve">
