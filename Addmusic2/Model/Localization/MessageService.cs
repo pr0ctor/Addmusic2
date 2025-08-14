@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using Addmusic2.Localization;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Addmusic2.Model.Localization
 {
-    public sealed class MessageService(IStringLocalizer<MessageService> _localizer)
+    internal sealed class MessageService(IStringLocalizer<Messages> _localizer)
     {
 
         #region Intro Messages

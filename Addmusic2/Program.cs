@@ -45,12 +45,26 @@ var songContext = parser.song();
 var songNodeTree = newParser.VisitSong(songContext);
 
 var x = 1;*/
+
+using var logFactory = LoggerFactory.Create(builder =>
+{
+    builder
+        .AddFilter("Microsoft", LogLevel.Warning)
+        .AddFilter("System", LogLevel.Warning)
+        .AddFilter("Addmusic2.Program", LogLevel.Debug) //(globalSettings.Verbose) ? LogLevel.Debug : LogLevel.Information)
+        .AddConsole();
+});
+
+var logger = logFactory.CreateLogger<IAddmusicLogic>();
+
 // bad and dirty way to get early localization
 var tempService = new ServiceCollection();
-tempService.AddLocalization(options =>
-{
-    options.ResourcesPath = "Localization";
-});
+tempService.AddLogging(builder => builder.AddConsole());
+tempService.AddLocalization();
+//tempService.AddLocalization(options =>
+//{
+//    options.ResourcesPath = "Localization";
+//});
 tempService.AddTransient<MessageService>();
 
 var tempSericeProvider = tempService.BuildServiceProvider();
@@ -60,15 +74,15 @@ var tempMessageService = tempSericeProvider.GetRequiredService<MessageService>()
 var clArgs = new CLArgs(tempMessageService);
 
 // Always check and parse command line arguments
-IConfiguration config = new ConfigurationBuilder()
+var config = new ConfigurationBuilder()
     .AddCommandLine(args)
     .Build();
 
 // If user is using the help command in any section of the args, show help and quit
 //      Don't process anything
-if (config["--?"] != null || config["--help"] != null)
+if (config["?"] != null || config["help"] != null)
 {
-    clArgs.GenerateHelp();
+    Console.WriteLine(clArgs.GenerateHelp());
     return;
 }
 
@@ -105,18 +119,6 @@ globalSettings.ReconcileFileSettingsAndCLArgs(addmusicSettings, clArgs);
 var startTime = DateTime.Now;
 
 // load Asar here
-
-
-using var logFactory = LoggerFactory.Create(builder =>
-{
-    builder
-        .AddFilter("Microsoft", LogLevel.Warning)
-        .AddFilter("System", LogLevel.Warning)
-        .AddFilter("Addmusic2.Program", (globalSettings.Verbose) ? LogLevel.Debug : LogLevel.Information)
-        .AddConsole();
-});
-
-var logger = logFactory.CreateLogger<IAddmusicLogic>();
 
 // Set up Dependency Injection
 

@@ -12,7 +12,8 @@ namespace Addmusic2.Model.Interfaces
         public void Run();
         public void RunSingleSong(string fileData);
         public string PreProcessSong(string fileData);
-        public void ProcessSong(string fileData, SongScope songScope);
+        //public void ProcessSong(string fileData, SongScope songScope);
+        public Song ProcessSong(string fileData, SongScope songScope);
         public void PostProcessSong();
     }
 }

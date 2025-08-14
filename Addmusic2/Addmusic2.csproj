@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Remove="Localization\Messages.resx" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Samples\Seenpoint Intro.txt" />
   </ItemGroup>
 
@@ -37,19 +33,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Localization\Messages.resx">
+    <EmbeddedResource Update="Localization\Messages.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Messages.Designer.cs</LastGenOutput>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Localization\Messages.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Messages.resx</DependentUpon>
-    </Compile>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

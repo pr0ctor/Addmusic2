@@ -41,11 +41,23 @@ namespace Addmusic2.Logic
             // load global songs
             foreach(var globalSong in _globalSettings.ResourceList.Songs.GlobalSongs)
             {
-                var fileData = File.ReadAllText(globalSong.Path);
+                var fileData = File.ReadAllText(Path.Combine(FileNames.FolderNames.MusicBase, globalSong.Path));
 
-                var songData = PreProcessSong(fileData);
+                var preprocessedFileData = PreProcessSong(fileData);
 
-                ProcessSong(fileData, SongScope.Global);
+                var songData = ProcessSong(preprocessedFileData, SongScope.Global);
+
+                PostProcessSong();
+            }
+
+            // load local songs
+            foreach (var localSong in _globalSettings.ResourceList.Songs.LocalSongs)
+            {
+                var fileData = File.ReadAllText(Path.Combine(FileNames.FolderNames.MusicBase, localSong.Path));
+
+                var preprocessedFileData = PreProcessSong(fileData);
+
+                var songData = ProcessSong(preprocessedFileData, SongScope.Local);
 
                 PostProcessSong();
             }
@@ -81,7 +93,7 @@ namespace Addmusic2.Logic
             return fileData;
         }
 
-        public void ProcessSong(string fileData, SongScope songScope)
+        public Song ProcessSong(string fileData, SongScope songScope)
         {
             var stream = CharStreams.fromString(fileData);
 
@@ -110,6 +122,8 @@ namespace Addmusic2.Logic
             };
 
             song.ParseSong();
+
+            return song;
         }
 
         public void PostProcessSong()
