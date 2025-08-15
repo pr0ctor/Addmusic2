@@ -867,7 +867,7 @@ namespace Addmusic2.Visitors
         {
             var qmarkText = context.GetText();
             var qmarkPayload = new QuestionMarkPayload();
-            var qmarkNumber = int.Parse(qmarkText[1..1]);
+            var qmarkNumber = int.Parse(qmarkText[1..2]);
             qmarkPayload.MarkNumber = qmarkNumber;
             var qmarkNode = new AtomicNode
             {
