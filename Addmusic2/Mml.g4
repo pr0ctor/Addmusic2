@@ -154,6 +154,7 @@ atomics: pitchslide
     | introEnd
     | nakedTie
     | qmark
+    | pipe
     ;
 
 // note : BasicNote ( SHARP | FLAT )? NOTEDURATIONS? DOT* ( TIE NUMBERS )*
@@ -229,6 +230,8 @@ instrumentCommand : Instrument # Instrument
 nakedTie : Tie ;
 
 qmark : Question ;
+
+pipe : Pipe ;
 
 // End Channels
 
@@ -566,6 +569,7 @@ FSLASH : '/' ;
 QMARK : '?' ;
 EQUAL : '=' ;
 SEMICOLON : ';' ;
+PIPE : '|' ;
 
 fragment QMARKVALUES : [0-2] ;
 fragment CHANNELS : [0-7] ;
@@ -633,6 +637,7 @@ Tie : TIE EQUAL? NUMBERS DOT* ;
 Question : QMARK QMARKVALUES ;
 // Pitchslide : ( Note | Rest ) ( AMPER ( Note | Rest ) )+ ;
 Instrument : COMMAT NUMBERS ;
+Pipe : PIPE ;
 
 LoopName : LPAREN ( NUMBERS | StringLiteral ) RPAREN ;
 RemoteCodeName : LPAREN BANG ( NUMBERS | StringLiteral ) RPAREN ;
@@ -896,7 +901,7 @@ NUMBERS : NUMBER+ ;
 UNUMBERS : [\-]?NUMBER+ ;
 
 fragment HexDigit : [0-9a-f] ;
-HexDigits : HexDigit+ ;
+fragment HexDigits : HexDigit+ ;
 // HexDigits : HexDigit HexDigit+ ;
 // fragment HexNumber : DOLLAR HexDigits ;
 HexNumber : DOLLAR HexDigits ;
