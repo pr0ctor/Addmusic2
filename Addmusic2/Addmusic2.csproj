@@ -30,6 +30,7 @@
   <ItemGroup>
     <Folder Include="Model\AntlrSchema\" />
     <Folder Include="Model\Exceptions\" />
+    <Folder Include="Validators\" />
   </ItemGroup>
 
   <ItemGroup>

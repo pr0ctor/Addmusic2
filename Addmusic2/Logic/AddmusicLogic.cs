@@ -121,7 +121,7 @@ namespace Addmusic2.Logic
                 SongText = fileData,
             };
 
-            song.ParseSong();
+            //song.ParseSong();
 
             return song;
         }
