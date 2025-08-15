@@ -26,7 +26,7 @@ namespace Addmusic2.Helpers
                 return -1;
             }
 
-            if(Settings.UsingSA1 && address >= 0x808000)
+            if(Settings.EnableSA1Addressing && address >= 0x808000)
             {
                 address -= 0x400000;
             }
@@ -45,12 +45,12 @@ namespace Addmusic2.Helpers
 
             address = ((address << 1) & 0x7F0000) | (address & 0x7FFF) | 0x8000;
 
-            if(!Settings.UsingSA1 && (address & 0xF00000) == 0x700000)
+            if(!Settings.EnableSA1Addressing && (address & 0xF00000) == 0x700000)
             {
                 address |= 0x800000;
             }
 
-            if(Settings.UsingSA1 && address >= 0x400000)
+            if(Settings.EnableSA1Addressing && address >= 0x400000)
             {
                 address += 0x400000;
             }

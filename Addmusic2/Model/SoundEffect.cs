@@ -104,7 +104,7 @@ namespace Addmusic2.Model
 
         public int GetNoteLength(int note)
         {
-
+            return 0;
         }
 
         public void Compile()
@@ -151,7 +151,10 @@ namespace Addmusic2.Model
         {
             pos += 6;
             if (inDefineBlock == false)
-                error2("#endif was found without a matching #ifdef or #ifndef");
+            {
+                var x = 1;
+            }
+            //error2("#endif was found without a matching #ifdef or #ifndef");
             else
                 inDefineBlock = false;
         }

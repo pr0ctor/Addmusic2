@@ -1,5 +1,6 @@
 ﻿using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
+using Addmusic2.Model.Localization;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -11,54 +12,96 @@ namespace Addmusic2.Model
 {
     internal class CLArgs : ICLArgs
     {
-        private List<Argument> ValidArgs { get; } = new List<Argument>
+        private MessageService _messageService { get; set; }
+        private List<Argument> ValidArgs { get; }
+        public string? RomName { get; set; } = null;
+        public bool? Convert { get; set; } = null;
+        public bool? CheckEcho { get; set; } = null;
+        public int? BankStart { get; set; } = null;
+        public bool? Verbose { get; set; } = null;
+        public bool? Aggressive { get; set; } = null;
+        public bool? DuplicateCheck { get; set; } = null;
+        public bool? ValidateHex { get; set; } = null;
+        public bool? DoNotPatch { get; set; } = null;
+        public bool? OptimizeSampleUsage { get; set; } = null;
+        public bool? AllowSA1 { get; set; } = null;
+        public bool? SFXDump { get; set; } = null;
+        public bool? VisualizeSongs { get; set; } = null;
+        public bool? ForceNoContinuePopup { get; set; } = null;
+        public bool? RedirectStandardStreams { get; set; } = null;
+        public bool? GenerateSPC { get; set; } = null;
+        //public string RomName { get; set; } = string.Empty;
+        //public bool Convert { get; set; } = true;
+        //public bool CheckEcho { get; set; } = true;
+        //public int BankStart { get; set; } = MagicNumbers.DefaultValues.DefaultBankStart;
+        //public bool Verbose { get; set; } = false;
+        //public bool Aggressive { get; set; } = false;
+        //public bool DuplicateCheck { get; set; } = true;
+        //public bool ValidateHex { get; set; } = true;
+        //public bool DoNotPatch { get; set; } = false;
+        //public bool OptimizeSampleUsage { get; set; } = true;
+        //public bool AllowSA1 { get; set; } = true;
+        //public bool SFXDump { get; set; } = false;
+        //public bool VisualizeSongs { get; set; } = false;
+        //public bool ForceNoContinuePopup { get; set; } = false;
+        //public bool RedirectStandardStreams { get; set; } = false;
+        //public bool GenerateSPC { get; set; } = false;
+
+        public CLArgs(MessageService messageService)
         {
-            new Argument("ROM Name", 50, false, "The Name of the ROM to modify.", ["--r","--rom"]),
-            new Argument("Convert", 100, false, "Force off conversion from Addmusic 4.05 and AddmusicM", ["--c"]),
-            new Argument("Check Echo", 200, false, "Turn off echo buffer checking.", ["--e"]),
-            new Argument("Bank Start", 300, false, "Do not attempt to save music data in bank 0x40 and above.", ["--b"]),
-            new Argument("Verbose Logging", 400, false, "Turn verbosity on.  More information will be displayed while using this.", ["--v","--verbose"]),
-            new Argument("Aggresive Free Space", 500, false, "Make free space finding more aggressive.", ["--a"]),
-            new Argument("Duplicate Checking", 600, false, "Turn off duplicate sample checking.", ["--d"]),
-            new Argument("Hex Validation", 700, false, "Turn off hex command validation.", ["--h"]),
-            new Argument("Create Patch", 800, false, "Create a patch, but do not patch it to the ROM.", ["--p"]),
-            new Argument("Optimize Sample Usage", 900, false, "Turn off Optimize Sample Usage.", ["--u"]),
-            new Argument("Allow SA1", 1000, false, "Turn off allowing SA1 enabled features.", ["--s"]),
-            new Argument("Dump Sound Effects", 1100, false, "Dump sound effects", ["--dumpsfx","--sfxdump"]),
-            new Argument("Visualize", 1200, false, "Generates a visualization of the SPC.", ["--visualize"]),
-            new Argument("Remove First Use Notification", 1300, false, "Removes the first use notification.", ["--noblock"], false),
-            new Argument("Name", 1400, false, "desc", ["--srd","--streamredirect"]),
-            new Argument("Generate SPC", 1500, false, "Only generate SPC files, no ROM required.", ["--norom"]),
-            new Argument("Help", 1600, false, "Lists and shows help information for the various commands.", ["--?","--help"]),
-        };
-
-        public string RomName { get; set; }
-        public bool Convert { get; set; } = true;
-        public bool CheckEcho { get; set; } = true;
-        public int BankStart { get; set; } = 0x200000;
-        public bool Verbose { get; set; } = false;
-        public bool Aggressive { get; set; } = false;
-        public bool DuplicateCheck { get; set; } = true;
-        public bool ValidateHex { get; set; } = true;
-        public bool DoNotPatch { get; set; } = false;
-        public bool OptimizeSampleUsage { get; set; } = true;
-        public bool AllowSA1 { get; set; } = true;
-        public bool SFXDump { get; set; } = false;
-        public bool VisualizeSongs { get; set; } = false;
-        public bool ForceNoContinuePopup { get; set; } = false;
-        public bool RedirectStandardStreams { get; set; } = false;
-        public bool GenerateSPC { get; set; } = false;
-
-        public CLArgs()
-        {
-
+            _messageService = messageService;
+            ValidArgs = new List<Argument>
+            {
+                // Rom Name
+                new Argument(_messageService.GetCLArgRomNameNameMessage(), 50, false, _messageService.GetCLArgRomNameDescriptionMessage(), ["--r","--rom"]),
+                // Convert
+                new Argument(_messageService.GetCLArgConvertOldAddmusicNameMessage(), 100, false, _messageService.GetCLArgConvertOldAddmusicDescriptionMessage(), ["--c"]),
+                // Check Echo
+                new Argument(_messageService.GetCLArgCheckEchoNameMessage(), 200, false, _messageService.GetCLArgCheckEchoDescriptionMessage(), ["--e"]),
+                // Bank Start
+                new Argument(_messageService.GetCLArgBankStartNameMessage(), 300, false, _messageService.GetCLArgBankStartDescriptionMessage(), ["--b"]),
+                // Verbose Logging
+                new Argument(_messageService.GetCLArgVerboseLoggingNameMessage(), 400, false, _messageService.GetCLArgVerboseLoggingDescriptionMessage(), ["--v","--verbose"]),
+                // Aggressive Freespace
+                new Argument(_messageService.GetCLArgAggressiveFreeSpaceNameMessage(), 500, false, _messageService.GetCLArgAggressiveFreeSpaceDescriptionMessage(), ["--a"]),
+                // Duplicate Checking
+                new Argument(_messageService.GetCLArgDuplicateCheckingNameMessage(), 600, false, _messageService.GetCLArgDuplicateCheckingDescriptionMessage(), ["--d"]),
+                // Hex Validation
+                new Argument(_messageService.GetCLArgHexValidationNameMessage(), 700, false, _messageService.GetCLArgHexValidationDescriptionMessage(), ["--h"]),
+                // Create Patch
+                new Argument(_messageService.GetCLArgCreatePatchNameMessage(), 800, false, _messageService.GetCLArgCreatePatchDescriptionMessage(), ["--p"]),
+                // Optimize Sample Usage
+                new Argument(_messageService.GetCLArgOptimizeSampleUsageNameMessage(), 900, false, _messageService.GetCLArgOptimizeSampleUsageDescriptionMessage(), ["--u"]),
+                // Allow SA1
+                new Argument(_messageService.GetCLArgAllowSA1NameMessage(), 1000, false, _messageService.GetCLArgAllowSA1DescriptionMessage(), ["--s"]),
+                // Dump Sound Effects
+                new Argument(_messageService.GetCLArgDumpSoundEffectsNameMessage(), 1100, false, _messageService.GetCLArgDumpSoundEffectsDescriptionMessage(), ["--dumpsfx","--sfxdump"]),
+                // Visualize
+                new Argument(_messageService.GetCLArgVisualizeSPCNameMessage(), 1200, false, _messageService.GetCLArgVisualizeSPCDescriptionMessage(), ["--visualize"]),
+                // Remove First Use Notification
+                new Argument(_messageService.GetCLArgRemoveFirstUseNameMessage(), 1300, false, _messageService.GetCLArgRemoveFirstUseDescriptionMessage(), ["--noblock"], false),
+                // Name
+                new Argument(_messageService.GetCLArgStreamDirectNameMessage(), 1400, false, _messageService.GetCLArgStreamDirectDescriptionMessage(), ["--srd","--streamredirect"]),
+                // Generate SPC
+                new Argument(_messageService.GetCLArgGenerateSPCNameMessage(), 1500, false, _messageService.GetCLArgGenerateSPCDescriptionMessage(), ["--norom"]),
+                // Help
+                new Argument(_messageService.GetCLArgHelpNameMessage(), 1600, false, _messageService.GetCLArgHelpDescriptionMessage(), ["--?","--help"]),
+            };
         }
 
         public void ParseArguments(IConfiguration config, string[] args)
         {
             if (args.Length == 0)
             {
-                throw new ArgumentException(Messages.GenericErrorMessages.MissingRequiredArguments(ValidArgs.Where(a => a.IsRequired).Select(a => a.Aliases.First()).ToList()));
+                var requiredValidArgs = ValidArgs.Where(a => a.IsRequired).ToList();
+                if (requiredValidArgs.Count > 0)
+                {
+                    throw new ArgumentException(Messages.GenericErrorMessages.MissingRequiredArguments(requiredValidArgs.Select(a => a.Aliases.First()).ToList()));
+                }
+                else
+                {
+                    return;
+                }
             }
 
             var allCommands = new List<string>();
@@ -66,64 +109,65 @@ namespace Addmusic2.Model
 
             foreach(var (arg, value) in config.AsEnumerable())
             {
-                switch (arg)
+                switch (arg.ToLower())
                 {
-                    case "--r":
-                    case "--rom":
+                    case "r":
+                    case "rom":
                         RomName = value ?? "";
                         break;
-                    case "--b":
-                        BankStart = 0x080000;
+                    case "b":
+                        BankStart = MagicNumbers.DefaultValues.DefaultBankStartFromCLArgs;
                         break;
-                    case "--c":
+                    case "c":
                         Convert = false;
                         break;
-                    case "--e":
+                    case "e":
                         CheckEcho = false;
                         break;
-                    case "--d":
+                    case "d":
                         DuplicateCheck = false;
                         break;
-                    case "--h":
+                    case "h":
                         ValidateHex = false;
                         break;
-                    case "--u":
+                    case "u":
                         OptimizeSampleUsage = false;
                         break;
-                    case "--s":
+                    case "s":
                         AllowSA1 = false;
                         break;
-                    case "--v":
-                    case "--verbose":
+                    case "v":
+                    case "verbose":
                         Verbose = true;
                         break;
-                    case "--a":
+                    case "a":
                         Aggressive = true;
                         break;
-                    case "--p":
+                    case "p":
                         DoNotPatch = true;
                         break;
-                    case "--dumpsfx":
-                    case "--sfxdump":
+                    case "dumpsfx":
+                    case "sfxdump":
                         SFXDump = true;
                         break;
-                    case "--visualize":
+                    case "visualize":
                         VisualizeSongs = true;
                         break;
-                    case "--noblock":
+                    case "noblock":
                         ForceNoContinuePopup = true;
                         break;
-                    case "--srd":
-                    case "--streamredirect":
+                    case "srd":
+                    case "streamredirect":
                         RedirectStandardStreams = true;
                         break;
-                    case "--norom":
+                    case "norom":
                         GenerateSPC = true;
                         break;
-                    case "--?":
-                    case "--help":
+                    case "?":
+                    case "help":
                         break;
                     default:
+                        // todo fix and localize this exception
                         throw new InvalidOperationException("Undefined Command Line Argument. Add definitions.");
                 }
             }
@@ -132,7 +176,7 @@ namespace Addmusic2.Model
         public string GenerateHelp()
         {
             var builder = new StringBuilder();
-
+            // todo localize this message
             builder.AppendLine("Options:");
 
             foreach(var argument in ValidArgs.Where(a => a.DisplayInHelp == true).OrderBy(a => a.Order))

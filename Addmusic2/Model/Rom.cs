@@ -23,7 +23,7 @@ namespace Addmusic2.Model
         {
             if(!fileName.Contains(".smc") && !fileName.Contains(".sfc"))
             {
-                if()
+                //if()
             }
 
             if(!File.Exists(path))

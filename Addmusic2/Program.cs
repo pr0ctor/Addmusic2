@@ -3,73 +3,170 @@ using Addmusic2.Helpers;
 using Addmusic2.Model;
 using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
-using Addmusic2.Model.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Localization;
+using Antlr4.Runtime;
+using System.Text.RegularExpressions;
+using Addmusic2.Visitors;
+using Addmusic2.Logic;
+using Addmusic2.Model.Localization;
+using Addmusic2.Services;
+using Newtonsoft.Json;
+
+//[assembly: RootNamespace("Addmusic2")]
 
 Console.WriteLine("Hello, World!");
 
-var clArgs = new CLArgs();
+/*var fileData = File.ReadAllText(@"Samples/Seenpoint Intro.txt");
 
-// clargs or load rom file
-if (File.Exists("Addmusic_options.txt"))
+var replacementsRegex = new Regex(@$"""([^\s=""]+)\s*=\s*([^""]+)""");
+
+var matches = replacementsRegex.Matches(fileData);
+
+foreach (Match match in matches)
 {
+    var searchValue = match.Groups[1].Value;
+    var replaceValue = match.Groups[2].Value;
 
-}
-else
-{
-    IConfiguration config = new ConfigurationBuilder()
-        .AddCommandLine(args)
-        .Build();
-
-    if (config["--?"] != null || config["--help"] != null)
-    {
-        clArgs.GenerateHelp();
-        return;
-    }
-
-    clArgs.ParseArguments(config, args);
+    fileData = fileData.Replace(searchValue, replaceValue);
 }
 
+var stream = CharStreams.fromString(fileData);
 
-var globalSettings = new GlobalSettings();
+var lexer = new MmlLexer(stream);
+var tokenStream = new CommonTokenStream(lexer);
+var parser = new MmlParser(tokenStream);
+var newParser = new AdvMmlVisitor();
 
-var startTime = DateTime.Now;
+var songContext = parser.song();
 
-Console.WriteLine(Messages.IntroMessages.AddmusicVersion);
-Console.WriteLine(Messages.IntroMessages.ParserVersion);
-Console.WriteLine(Messages.IntroMessages.ReadTheReadMe);
+var songNodeTree = newParser.VisitSong(songContext);
 
-// load Asar here
+var x = 1;*/
 
-
-/*using var logFactory = LoggerFactory.Create(builder =>
+var logFactory = LoggerFactory.Create(builder =>
 {
     builder
         .AddFilter("Microsoft", LogLevel.Warning)
         .AddFilter("System", LogLevel.Warning)
-        .AddFilter("Addmusic2.Program", (clArgs.Verbose) ? LogLevel.Debug : LogLevel.Information)
+        .AddFilter("Addmusic2.Program", LogLevel.Debug) //(globalSettings.Verbose) ? LogLevel.Debug : LogLevel.Information)
         .AddConsole();
 });
 
-var logger = logFactory.CreateLogger<IAddmusicLogic>();*/
+var logger = logFactory.CreateLogger<IAddmusicLogic>();
+
+// bad and dirty way to get early localization
+var tempService = new ServiceCollection();
+tempService.AddLogging(builder => builder.AddConsole());
+tempService.AddLocalization();
+//tempService.AddLocalization(options =>
+//{
+//    options.ResourcesPath = "Localization";
+//});
+tempService.AddTransient<MessageService>();
+
+var tempSericeProvider = tempService.BuildServiceProvider();
+
+var tempMessageService = tempSericeProvider.GetRequiredService<MessageService>();
+
+var clArgs = new CLArgs(tempMessageService);
+
+// Always check and parse command line arguments
+var config = new ConfigurationBuilder()
+    .AddCommandLine(args)
+    .Build();
+
+// If user is using the help command in any section of the args, show help and quit
+//      Don't process anything
+if (config["?"] != null || config["help"] != null)
+{
+    Console.WriteLine(clArgs.GenerateHelp());
+    return;
+}
+
+// clargs or load rom file
+
+var addmusicSettings = new AddmusicOptions();
+
+if(File.Exists(FileNames.ConfigurationFiles.AddmusicOptionsJson))
+{
+    var optionsFileData = File.ReadAllText(FileNames.ConfigurationFiles.AddmusicOptionsJson);
+    addmusicSettings = JsonConvert.DeserializeObject<AddmusicOptions>(optionsFileData);
+}
+//else if (File.Exists(FileNames.ConfigurationFiles.AddmusicOptionsTxt))
+//{
+//    // do new file conversion process
+//    var optionsFileData = File.ReadAllText(FileNames.ConfigurationFiles.AddmusicOptionsTxt);
+//    addmusicSettings = FileConverters.ConvertTxtOptionsToJsonOptions(optionsFileData);
+//}
+else // dont support converting the old format over
+{
+    // no configs found
+    //      throw error or create new file or something with defaults
+}
+
+clArgs.ParseArguments(config, args);
+
+// get rid of the temp service provider
+tempSericeProvider.Dispose();
+
+var globalSettings = new GlobalSettings();
+
+globalSettings.ReconcileFileSettingsAndCLArgs(addmusicSettings, clArgs);
+globalSettings.LoadAddusicSongSfxResourceLists();
+
+var startTime = DateTime.Now;
+
+// load Asar here
 
 // Set up Dependency Injection
 
 var services = new ServiceCollection();
 
+// recreate logfactory
+logFactory = LoggerFactory.Create(builder =>
+{
+    builder
+        .AddFilter("Microsoft", LogLevel.Warning)
+        .AddFilter("System", LogLevel.Warning)
+        .AddFilter("Addmusic2.Program", (globalSettings.Verbose) ? LogLevel.Debug : LogLevel.Information)
+        .AddConsole();
+});
+
+logger = logFactory.CreateLogger<IAddmusicLogic>();
+
+services.AddLocalization(options =>
+{
+    options.ResourcesPath = "Localization";
+});
+services.AddTransient<MessageService>();
+
 services.AddLogging(builder => builder.AddConsole());
 
 services.AddScoped<IRomOperations, RomOperations>();
 
-services.AddSingleton<IAsarInterface>();
-services.AddSingleton<ICLArgs>(clArgs);
+// services.AddSingleton<IAsarInterface>();
+services.AddSingleton<IGlobalSettings>(globalSettings);
+services.AddSingleton<IAddmusicLogic, AddmusicLogic>();
+services.AddSingleton<IFileCachingService, FileCachingService>();
+
+var serviceProvider = services.BuildServiceProvider();
+
+var addmusicLogic = serviceProvider.GetRequiredService<IAddmusicLogic>();
+var messageService = serviceProvider.GetRequiredService<MessageService>();
+var fileService = serviceProvider.GetRequiredService<IFileCachingService>();
 
 // Load Necessary file data into Cache
-var cachingServie = new FileCachingService();
-cachingServie.InitializeCache();
+fileService.InitializeCache();
 
-services.AddSingleton<IFileCachingService>(cachingServie);
+logger.LogInformation(messageService.GetIntroAddmusicVersionMessage());
+logger.LogInformation(messageService.GetIntroParserVersionMessage());
+logger.LogInformation(messageService.GetIntroReadTheReadMeMessage());
 
-var addmusic = services.BuildServiceProvider();
+/*Console.WriteLine(Messages.IntroMessages.AddmusicVersion);
+Console.WriteLine(Messages.IntroMessages.ParserVersion);
+Console.WriteLine(Messages.IntroMessages.ReadTheReadMe);*/
+
+addmusicLogic.Run();

@@ -7,17 +7,25 @@ using Addmusic2.Model.Constants;
 
 namespace Addmusic2.Model
 {
-    internal class Music
+    internal class SongData
     {
-        public double IntroSeconds { get; set; }
-        public double MainSeconds { get; set; }
+        public Guid SongId { get; set; }
+        public string SongPath { get; set; }
+        public SongScope SongScope { get; set; }
+        public SampleInstrumentManager SampleInstrumentManager { get; set; } = new();
+        public List<(double ChannelTick, int TempoChange)> TempoChanges { get; set; } = new();
+        public int Seconds { get; set; }
+        public int IntroSeconds { get; set; }
+        public int MainSeconds { get; set; }
         public int NoteParameterByteCount { get; set; }
         public int TempoRatio { get; set; }
         public bool NextHexIsArpeggioNoteLength { get; set; }
 
         public string Name { get; set; }
         public string PathlessSongName { get; set; }
-        public byte[] Data { get; set; } = new byte[MagicNumbers.ChannelCount];
+        //public byte[] Data { get; set; } = new byte[MagicNumbers.ChannelCount];
+        public List<ChannelInformation> ChannelData { get; set; } = new();
+        public bool[,] NoMusic { get; set; } = new bool[8,2];
         public ushort[] LoopLocations { get; set; } = new ushort[MagicNumbers.ChannelCount];
         public bool PlayOnce { get; set; }
         public bool HasIntro { get; set; }
@@ -27,6 +35,7 @@ namespace Addmusic2.Model
         public string Text { get; set; }
         public int TotalSize { get; set; }
         public int SpaceForPointersAndIntegers { get; set; }
+        public int SpaceUsedBySamples { get; set; }
 
         public List<byte[]> AllPointersAndIntegers { get; set; } = new List<byte[]>();
         public List<byte[]> InstrumentData { get; set; } = new List<byte[]>();
@@ -34,9 +43,9 @@ namespace Addmusic2.Model
 
         public SpaceInfo SpaceInfo { get; set; }
 
-        public uint IntroLength { get; set; }
-        public uint MainLength { get; set; }
-        public uint Seconds { get; set; }
+        public int IntroLength { get; set; }
+        public int MainLength { get; set; }
+        
 
         public bool HasYoshiDrums { get; set; }
         public bool KnowsLength { get; set; }
@@ -44,10 +53,10 @@ namespace Addmusic2.Model
 
         public List<ushort> Samples { get; set; } = new List<ushort>();
         public int EchoBufferSize { get; set; }
-        public bool HasEchoBufferCommend { get; set; }
+        public bool HasEchoBufferCommand { get; set; }
         public bool EchoBufferAlloVCMDIsSet { get; set; }
         public ushort EchoBufferAllocVCMDILocation { get; set; }
-        public int EchoBufferAllocVCMDIChanner { get; set; }
+        public int EchoBufferAllocVCMDIChannel { get; set; }
 
         public string StatString { get; set; }
         public string Title { get; set; }
@@ -60,36 +69,25 @@ namespace Addmusic2.Model
         public int MinSize { get; set; }
         public bool Exists { get; set; }
         public int PositionInARAM { get; set; }
-        public int RemoteDefinitionType { get; set; }
-        public bool InRemoteDefinition { get; set; }
+        //public int RemoteDefinitionType { get; set; }
+        //public bool InRemoteDefinition { get; set; }
         //public int RemoteDefinitionArg { get; set; }
 
-        public Dictionary<string, string> Replacements { get; set; } = new Dictionary<string, string>();
+        //public Dictionary<string, string> Replacements { get; set; } = new Dictionary<string, string>();
 
-        private bool guessLength;
+        public bool GuessLength { get; set; }
+        public bool DoesntLoop { get; set; }
+
         private int resizedChannel;
         private double[] channelLengths { get; set; } = new double[8];               // How many ticks are in each channel.
         private double[] loopLengths { get; set; } = new double[0x10000];                // How many ticks are in each loop.
         private double normalLoopLength;                // How many ticks were in the most previously declared normal loop.
         private double superLoopLength;                 // How many ticks were in the most previously declared super loop.
         //private std::vector<std::pair<double, int>> tempoChanges;   // Where any changes in tempo occur. A negative tempo marks the beginning of the main loop, if an intro exists.
-        private bool baseLoopIsNormal;
-        private bool baseLoopIsSuper;
-        private bool extraLoopIsNormal;
-        private bool extraLoopIsSuper;
 
-        public Music()
+        public SongData()
         {
-
-        }
-
-        public void Init()
-        {
-
-        }
-        public bool DoReplacement()
-        {
-
+            SongId = Guid.NewGuid();
         }
     }
 }
