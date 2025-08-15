@@ -18,8 +18,9 @@ namespace Addmusic2.Model.Constants
 
             // New Files
             public static readonly string AddmusicOptionsJson = "AddmusicOptions.json";
-            public static readonly string AddmusicSongList = "AddmusicSongSfxList.json";
-            public static readonly string AddmusicSampleGroups = "AddmusicSampleGroups.json";
+            public static readonly string AddmusicSongListJson = "AddmusicSongSfxList.json";
+            public static readonly string AddmusicSampleGroupsJson = "AddmusicSampleGroups.json";
+            public static readonly string AddmusicSoundEffectsJson = "AddmusicSoundEffects.json";
         }
 
         public static class StaticFiles

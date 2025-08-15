@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Addmusic2.Helpers
 {
@@ -54,7 +55,8 @@ namespace Addmusic2.Helpers
                     continue;
                 }
                 // split once to get the number and then process the rest of the line
-                var songLineItems = line.Split(" ", 1).ToList();
+                var l = Regex.Replace(line, @"\s+", " ");
+                var songLineItems = l.Split(" ", 2).ToList();
                 var songNumber = songLineItems[0];
 
                 if(songNumberSet.Contains(songNumber))
@@ -69,7 +71,7 @@ namespace Addmusic2.Helpers
 
                 var songPath = songLineItems[1];
                 var songNameStartIndex = (songPath.LastIndexOf("/") != -1 ) 
-                    ? songPath.LastIndexOf("/")
+                    ? songPath.LastIndexOf("/") + 1
                     : 0;
                 var fileExtensionLength = (songPath.LastIndexOf(".") != -1)
                     ? songPath.Length - songPath.LastIndexOf(".")
@@ -108,7 +110,9 @@ namespace Addmusic2.Helpers
 
             var sfxLineRegex = new Regex(@"([a-fA-f0-9]{1,2})\s*([\*\?]{0,2})\s*(.*)");
             var inSFX1DF9 = true;
-            var sfxNumberSet = new HashSet<string>();
+            // slightly more robust but can likely be condensed
+            var sfx1DF9NumberSet = new HashSet<string>();
+            var sfx1DFCNumberSet = new HashSet<string>();
             var addmusicSfxList = new AddmusicSfxList();
             foreach (var line in oldsfxList)
             {
@@ -123,41 +127,50 @@ namespace Addmusic2.Helpers
                     continue;
                 }
 
-                var matches = sfxLineRegex.Match(line);
+                var l = Regex.Replace(line, @"\s+", " ");
+                var matches = sfxLineRegex.Match(l);
                 if(matches.Success)
                 {
                     var sfxListItem = new SfxListItem();
-                    var matchGroup = matches.Groups[1];
+                    var numberGroup = matches.Groups[1];
+                    var toggleSymbolGroup = matches.Groups[2];
+                    var sfxNameGroup = matches.Groups[3];
 
-                    var sfxNumber = matchGroup.Captures[0].Value;
+                    var sfxNumber = numberGroup.Value;
 
-                    if (sfxNumberSet.Contains(sfxNumber))
+                    if(inSFX1DF9 == true && sfx1DF9NumberSet.Contains(sfxNumber)
+                        || inSFX1DF9 == false && sfx1DFCNumberSet.Contains(sfxNumber))
                     {
                         // todo write exception error for this case as there is a duplicate entry
                         throw new Exception();
                     }
-                    else
+
+                    if(inSFX1DF9 == true)
                     {
-                        sfxNumberSet.Add(sfxNumber);
+                        sfx1DF9NumberSet.Add(sfxNumber);
+                    }
+                    else if(inSFX1DF9 == false)
+                    {
+                        sfx1DFCNumberSet.Add(sfxNumber);
                     }
 
-                    var sfxName = matchGroup.Captures[2].Value;
+                    var sfxName = sfxNameGroup.Value;
                     var sfxPath = (inSFX1DF9)
-                        ? FileNames.FolderNames.Sfx1DF9 + "/" + matchGroup.Captures[2].Value
-                        : FileNames.FolderNames.Sfx1DFC + "/" + matchGroup.Captures[2].Value;
+                        ? FileNames.FolderNames.Sfx1DF9 + "/" + sfxNameGroup.Value
+                        : FileNames.FolderNames.Sfx1DFC + "/" + sfxNameGroup.Value;
                     var sfxType = (inSFX1DF9)
                         ? SfxListItemType.Sfx1DF9
                         : SfxListItemType.Sfx1DFC;
 
-                    if (matchGroup.Captures[1].Value.Length > 0)
+                    if (toggleSymbolGroup != null && toggleSymbolGroup.Value.Length > 0)
                     {
                         var settings = new SfxSettings();
 
-                        settings.Loop = (matchGroup.Captures[1].Value.IndexOf("?") != -1)
+                        settings.Loop = (toggleSymbolGroup.Value.IndexOf("?") != -1)
                             ? true
                             : false;
 
-                        settings.Pointer = (matchGroup.Captures[1].Value.IndexOf("*") != -1)
+                        settings.Pointer = (toggleSymbolGroup.Value.IndexOf("*") != -1)
                             ? true
                             : false;
 
@@ -182,6 +195,63 @@ namespace Addmusic2.Helpers
             }
 
             return addmusicSfxList;
+        }
+
+        // Converts the "Addmusic_saqmple groups.txt" to the new json format
+        public static List<AddmusicSampleGroup> ConverToAddmusicSampleGroups(string fileData)
+        {
+            var sampleGroups = new List<AddmusicSampleGroup>();
+
+            var oldSampleGroupList = fileData.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+                .ToList();
+
+            var groupName = "";
+            var sampleGroup = new AddmusicSampleGroup();
+            var sampleList = new List<AddmusicSample>();
+            foreach( var line in oldSampleGroupList )
+            {
+                var l = line.Trim();
+
+                // indicates both the start of a sample group and the sample group's name
+                if(l.StartsWith("#"))
+                {
+                    groupName = l[1..];
+                    sampleGroup = new AddmusicSampleGroup()
+                    {
+                        Name = groupName,
+                    };
+                    sampleList = new();
+                    continue;
+                }
+
+                // skip this line
+                if(l == "{")
+                {
+                    continue;
+                }
+                // marks the end of a sample group
+                else if(l == "}")
+                {
+                    sampleGroup.Samples = sampleList;
+                    sampleGroups.Add(sampleGroup);
+                    continue;
+                }
+
+                // remove quotes as they are redundant
+                l = l.Replace("\"", "");
+                // capture if theres an "!"s
+                var important = (l.Contains("!")) ? true : false;
+                // then remove it
+                l = l.Replace("!", "");
+                sampleList.Add(new AddmusicSample()
+                {
+                    Name = l,
+                    Path = l,
+                    IsImportant = important,
+                });
+            }
+
+            return sampleGroups;
         }
 
     }

@@ -115,6 +115,7 @@ tempSericeProvider.Dispose();
 var globalSettings = new GlobalSettings();
 
 globalSettings.ReconcileFileSettingsAndCLArgs(addmusicSettings, clArgs);
+globalSettings.LoadAddusicSongSfxResourceLists();
 
 var startTime = DateTime.Now;
 

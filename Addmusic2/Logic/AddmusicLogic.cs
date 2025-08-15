@@ -109,7 +109,7 @@ namespace Addmusic2.Logic
             // potentially logic for changing parsers
 
             var songParser = new SongParser(
-                null,
+                _logger,
                 _messageService,
                 _globalSettings,
                 _fileService,

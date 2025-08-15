@@ -147,22 +147,24 @@ namespace Addmusic2.Model
         [JsonProperty("path", Required = Required.Always)]
         public string Path
         {
-            get => Path;
+            get => PathValue;
             set
             {
                 var lastDirectorySeparator = (value.Contains(@"\"))
-                        ? value.LastIndexOf(@"\")
+                        ? value.LastIndexOf(@"\") +1
                         : (value.Contains(@"/"))
-                            ? value.LastIndexOf(@"/")
+                            ? value.LastIndexOf(@"/") +1
                             : 0;
                 var lastPeriod = value.LastIndexOf('.');
                 var fileName = (lastPeriod == -1)
                     ? value[lastDirectorySeparator..]
                     : value[lastDirectorySeparator..lastPeriod];
                 NameValue = fileName;
-                Path = value;
+                PathValue = value;
             }
         }
+        [JsonIgnore] 
+        private string PathValue { get; set; }
         [JsonProperty("important", Required = Required.Default)]
         public bool IsImportant { get; set; } = false;
         [JsonProperty("loop", Required = Required.Default)]

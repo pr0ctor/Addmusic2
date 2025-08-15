@@ -1,5 +1,6 @@
 ﻿using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +43,69 @@ namespace Addmusic2.Model
         public GlobalSettings(AddmusicOptions fileOptions, CLArgs clArgs)
         {
             ReconcileFileSettingsAndCLArgs(fileOptions, clArgs);
+        }
+
+        public void LoadAddusicSongSfxResourceLists()
+        {
+            var initialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            // OG file
+            var songFileLocation = Path.Combine(initialDirectory, FileNames.ConfigurationFiles.SongList);
+            var sampleGroupFileLocation = Path.Combine(initialDirectory, FileNames.ConfigurationFiles.SampleGroups);
+            var sfxFileLocation = Path.Combine(initialDirectory, FileNames.ConfigurationFiles.SoundEffects);
+            // New Json Files
+            var songJsonFileLocation = Path.Combine(initialDirectory, FileNames.ConfigurationFiles.AddmusicSongListJson);
+            var sampleGroupJsonFileLocation = Path.Combine(initialDirectory, FileNames.ConfigurationFiles.AddmusicSampleGroupsJson);
+            var sfxJsonFileLocation = Path.Combine(initialDirectory, FileNames.ConfigurationFiles.AddmusicSoundEffectsJson);
+
+            if(File.Exists(songJsonFileLocation))
+            {
+                var songJsonFile = File.ReadAllText(songJsonFileLocation);
+                var songJson = JsonConvert.DeserializeObject<AddmusicSongList>(songJsonFile);
+                ResourceList.Songs = songJson;
+            }
+            else
+            {
+                var ogSongFile = File.ReadAllText(songFileLocation);
+                var parsedData = Helpers.FileConverters.ConvertToAddmusicSongList(ogSongFile);
+
+                // todo add logic to write out the new json file before leaving this codeblock
+
+                ResourceList.Songs = parsedData;
+            }
+
+            if (File.Exists(sampleGroupJsonFileLocation))
+            {
+                var sampleGroupJsonFile = File.ReadAllText(sampleGroupJsonFileLocation);
+                var sampleGroupJson = JsonConvert.DeserializeObject<List<AddmusicSampleGroup>>(sampleGroupJsonFile);
+                ResourceList.SampleGroups = sampleGroupJson;
+            }
+            else
+            {
+                var ogSampleGroupFile = File.ReadAllText(sampleGroupFileLocation);
+                var parsedData = Helpers.FileConverters.ConverToAddmusicSampleGroups(ogSampleGroupFile);
+
+                // todo add logic to write out the new json file before leaving this codeblock
+
+                ResourceList.SampleGroups = parsedData;
+            }
+
+            if(File.Exists(sfxJsonFileLocation))
+            {
+                var sfxJsonFile = File.ReadAllText(sfxJsonFileLocation);
+                var parsedData = JsonConvert.DeserializeObject<AddmusicSfxList>(sfxJsonFile);
+
+                // todo add logic to write out the new json file before leaving this codeblock
+
+                ResourceList.SoundEffects = parsedData;
+            }
+            else
+            {
+                var ogSFXFile = File.ReadAllText(sfxFileLocation);
+                var parsedData = Helpers.FileConverters.ConvertToAddmusicSfxList(ogSFXFile);
+
+                ResourceList.SoundEffects = parsedData;
+            }
+
         }
 
         // Determine which settings to use

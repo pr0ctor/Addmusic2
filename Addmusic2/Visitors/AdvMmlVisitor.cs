@@ -27,7 +27,7 @@ namespace Addmusic2.Visitors
         public List<ISongNode> VisitChildren(ParserRuleContext context)
         {
             var nodes = new List<ISongNode>();
-            for (int i = 0; i < context.ChildCount; i++)
+            for (int i = 1; i < context.ChildCount; i++)
             {
                 var child = context.GetChild(i);
                 var childNode = Visit(child);
@@ -684,9 +684,10 @@ namespace Addmusic2.Visitors
             var noteRegex = new Regex(@"([a-gA-G])(\+|\-)?\=?([0-9]*)(\.*)(\^[0-9]+\.*)*");
             var matches = noteRegex.Match(noteText);
 
-            var groups = matches.Groups.Values.ToList();
+            // skip the first group since its the full match value
+            var groups = matches.Groups.Values.ToList().Skip(1);
             notePayload.NoteValue = groups.First().Value;
-            foreach (var group in groups.Take(1))
+            foreach (var group in groups.Skip(1))
             {
                 var groupValue = group.Value;
                 if (groupValue.Length == 0)
@@ -725,7 +726,8 @@ namespace Addmusic2.Visitors
                 }
                 else
                 {
-                    notePayload.Duration = int.Parse(groupValue);
+                    var durationValue = groupValue.Replace("=", "");
+                    notePayload.Duration = int.Parse(durationValue);
                 }
             }
 
@@ -896,9 +898,10 @@ namespace Addmusic2.Visitors
             var restRegex = new Regex(@"([rR])\=?([0-9]*)(\.*)(\^[0-9]+\.*)*");
             var matches = restRegex.Match(restText);
 
-            var groups = matches.Groups.Values.ToList();
+            // skip the first group since its the full match value
+            var groups = matches.Groups.Values.ToList().Skip(1);
             restPayload.NoteValue = groups.First().Value;
-            foreach (var group in groups.Take(1))
+            foreach (var group in groups.Skip(1))
             {
                 var groupValue = group.Value;
                 if(groupValue.Length == 0)
@@ -934,7 +937,8 @@ namespace Addmusic2.Visitors
                 }
                 else
                 {
-                    restPayload.Duration = int.Parse(groupValue);
+                    var durationValue = groupValue.Replace("=", "");
+                    restPayload.Duration = int.Parse(durationValue);
                 }
             }
 

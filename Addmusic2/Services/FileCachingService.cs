@@ -50,8 +50,25 @@ namespace Addmusic2.Services
 
                 foreach(var file in files)
                 {
+                    var fileName = "";
+
+                    // handle special case for samples as there are by default a number of duplicates and
+                    //      the specific samples' files need to be captured
+                    if (directory.Contains(Path.Combine(FileNames.FolderNames.SamplesBase, FileNames.FolderNames.SamplesDefault)))
+                    {
+                        fileName = Path.Combine(FileNames.FolderNames.SamplesDefault, file.Name);
+                    }
+                    else if(directory.Contains(Path.Combine(FileNames.FolderNames.SamplesBase, FileNames.FolderNames.SamplesOptimized)))
+                    {
+                        fileName = Path.Combine(FileNames.FolderNames.SamplesOptimized, file.Name);
+                    }
+                    else
+                    {
+                        fileName = file.Name;
+                    }
+
                     using var data = File.OpenRead(file.FullName);
-                    AddToCache(file.Name, data);
+                    AddToCache(fileName, data);
                 }
             }
 
