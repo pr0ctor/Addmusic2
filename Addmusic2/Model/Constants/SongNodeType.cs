@@ -35,6 +35,7 @@ namespace Addmusic2.Model.Constants
         Noise,
         NoLoopCommand,
         QuestionMark,
+        Pipe,
         // Composite
         Triplet,
         PitchSlide,

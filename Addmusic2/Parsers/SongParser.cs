@@ -597,6 +597,9 @@ namespace Addmusic2.Parsers
                 case SongNodeType.Tune:
                     EvaluateTuneNode(atomic);
                     break;
+                case SongNodeType.Pipe:
+                    // currently not implemented
+                    return;
                 default:
                     throw new Exception();
             }
@@ -1665,7 +1668,8 @@ namespace Addmusic2.Parsers
                 SongNodeType.LowerOctave or
                 SongNodeType.RaiseOctave or
                 SongNodeType.Octave or
-                SongNodeType.Tune => new ValidationResult
+                SongNodeType.Tune or
+                SongNodeType.Pipe => new ValidationResult
                 {
                     Type = ValidationResult.ResultType.Success
                 },
