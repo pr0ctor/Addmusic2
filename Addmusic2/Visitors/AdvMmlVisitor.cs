@@ -1544,6 +1544,17 @@ namespace Addmusic2.Visitors
             return pitchslideNode;
         }
 
+        public override ISongNode VisitPipe([NotNull] MmlParser.PipeContext context)
+        {
+            return new AtomicNode
+            {
+                NodeType = SongNodeType.Pipe,
+                NodeSource = context.GetText(),
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+            };
+        }
+
         public override ISongNode VisitSampleLoad([NotNull] MmlParser.SampleLoadContext context)
         {
             var sampleLoadText = context.GetText();
