@@ -569,7 +569,7 @@ FSLASH : '/' ;
 QMARK : '?' ;
 EQUAL : '=' ;
 SEMICOLON : ';' ;
-PIPE : '|' ;
+fragment PIPE : '|' ;
 
 fragment QMARKVALUES : [0-2] ;
 fragment CHANNELS : [0-7] ;
