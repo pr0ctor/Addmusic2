@@ -716,6 +716,18 @@ public partial class MmlBaseListener : IMmlListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitQmark([NotNull] MmlParser.QmarkContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.pipe"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPipe([NotNull] MmlParser.PipeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.pipe"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPipe([NotNull] MmlParser.PipeContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.loopers"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

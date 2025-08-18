@@ -372,6 +372,12 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitQmark([NotNull] MmlParser.QmarkContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.pipe"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPipe([NotNull] MmlParser.PipeContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.loopers"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
