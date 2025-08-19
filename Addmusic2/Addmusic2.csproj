@@ -5,20 +5,27 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Samples\Seenpoint Intro.txt" />
+    <None Remove="ILRepack.targets" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Samples\Seenpoint Intro.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="ILRepack.targets" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
+    <PackageReference Include="ILRepack" Version="2.0.44">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.43">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="9.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.4" />
@@ -29,7 +36,7 @@
 
   <ItemGroup>
     <Folder Include="Model\AntlrSchema\" />
-    <Folder Include="Validators\" />
+    <Folder Include="datafiles\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,5 +54,46 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
+
+<!-- Copy \datafiles\ contents to the output directory without the parent folder -->
+  <Target Name="CopySrcFilesToOutput" AfterTargets="Build">
+    <ItemGroup>
+      <!-- Because this ItemGroup is inside the target, this will enumerate
+      all files just before calling Copy. If the ItemGroup were outside
+      the target , it would enumerate the files during evaluation, before
+      the build starts, which may miss files created during the build. -->
+      <SourceDataFiles Include="$(MSBuildProjectDirectory)\datafiles\**\*.*" />
+    </ItemGroup>
+	  
+	<Copy SourceFiles="@(SourceDataFiles)" DestinationFolder="$(OutputPath)\%(RecursiveDir)" />
+  </Target>
+	
+<!-- Copy \datafiles\ contents to the merged output directory without the parent folder -->
+  <Target Name="CopySrcFilesToMerged" AfterTargets="CopySrcFilesToOutput">
+    <ItemGroup>
+      <!-- Because this ItemGroup is inside the target, this will enumerate
+      all files just before calling Copy. If the ItemGroup were outside
+      the target , it would enumerate the files during evaluation, before
+      the build starts, which may miss files created during the build. -->
+		<Copy SourceFiles="@(SourceDataFiles)" DestinationFolder="$(OutputPath)\%(RecursiveDir)" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(SourceDataFiles)" DestinationFolder="$(OutputPath)\merged\%(RecursiveDir)" />
+  </Target>
+	
+<!-- Copy the Localization files to the merged directory -->
+  <Target Name="CopyLocalizationFilesToMerged" AfterTargets="CopySrcFilesToOutput">
+    <ItemGroup>
+      <!-- Because this ItemGroup is inside the target, this will enumerate
+      all files just before calling Copy. If the ItemGroup were outside
+      the target , it would enumerate the files during evaluation, before
+      the build starts, which may miss files created during the build. -->
+		<SourceLocalizationFiles Include="$(OutputPath)\Localization\**\*.*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(SourceLocalizationFiles)" DestinationFolder="$(OutputPath)\merged\Localization\%(RecursiveDir)" />
+  </Target>
+	
+	
 
 </Project>
