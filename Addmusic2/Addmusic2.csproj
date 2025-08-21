@@ -5,17 +5,19 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NuGetAuditLevel>low</NuGetAuditLevel>
+	<PublishSingleFile>true</PublishSingleFile>
+	<DebugType>embedded</DebugType>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Samples\Seenpoint Intro.txt" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="Samples\Seenpoint Intro.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
@@ -29,7 +31,8 @@
 
   <ItemGroup>
     <Folder Include="Model\AntlrSchema\" />
-    <Folder Include="Validators\" />
+    <Folder Include="datafiles\" />
+    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,5 +50,37 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
+
+<!-- Copy all Datafiles and Asar dlls to the output directory in order to get them included with the build -->
+<!-- Asar dlls CAN NOT be merged into the assembly as they are unmanaged dlls and not supported and must be brought over separately-->
+  <Target Name="CopyAsarDLLAndSourceFilesToOutput" AfterTargets="Build">
+	<ItemGroup>
+		<!-- Because this ItemGroup is inside the target, this will enumerate
+      all files just before calling Copy. If the ItemGroup were outside
+      the target , it would enumerate the files during evaluation, before
+      the build starts, which may miss files created during the build. -->
+		<AsarDLLFiles Include="$(MSBuildProjectDirectory)\Asar\*.dll" />
+		<SourceDataFiles Include="$(MSBuildProjectDirectory)\datafiles\**\*.*" />
+	</ItemGroup>
+
+	<Copy SourceFiles="@(AsarDLLFiles)" DestinationFolder="$(OutputPath)\" SkipUnchangedFiles="true"  />
+	<Copy SourceFiles="@(SourceDataFiles)" DestinationFolder="$(OutputPath)\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+<!-- Copy all Datafiles and Asar dlls to the publish directory in order to get them included with the build -->
+<!-- Asar dlls CAN NOT be merged into the assembly as they are unmanaged dlls and not supported and must be brought over separately-->
+	<Target Name="CopyFileToPublishOutput" AfterTargets="Publish">
+		<ItemGroup>
+			<!-- Because this ItemGroup is inside the target, this will enumerate
+      all files just before calling Copy. If the ItemGroup were outside
+      the target , it would enumerate the files during evaluation, before
+      the build starts, which may miss files created during the build. -->
+			<AsarDLLFiles Include="$(MSBuildProjectDirectory)\Asar\*.dll" />
+			<SourceDataFiles Include="$(MSBuildProjectDirectory)\datafiles\**\*.*" />
+		</ItemGroup>
+
+		<Copy SourceFiles="@(AsarDLLFiles)" DestinationFolder="$(PublishDir)\" SkipUnchangedFiles="true" Condition="'$(IsPublishable)' == 'true'" />
+		<Copy SourceFiles="@(SourceDataFiles)" DestinationFolder="$(PublishDir)\%(RecursiveDir)" SkipUnchangedFiles="true" Condition="'$(IsPublishable)' == 'true'" />
+	</Target>
 
 </Project>

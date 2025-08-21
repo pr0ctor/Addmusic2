@@ -14,6 +14,7 @@ using Addmusic2.Logic;
 using Addmusic2.Model.Localization;
 using Addmusic2.Services;
 using Newtonsoft.Json;
+using AsarCLR.Asar191;
 
 //[assembly: RootNamespace("Addmusic2")]
 
@@ -61,15 +62,11 @@ var logger = logFactory.CreateLogger<IAddmusicLogic>();
 var tempService = new ServiceCollection();
 tempService.AddLogging(builder => builder.AddConsole());
 tempService.AddLocalization();
-//tempService.AddLocalization(options =>
-//{
-//    options.ResourcesPath = "Localization";
-//});
 tempService.AddTransient<MessageService>();
 
-var tempSericeProvider = tempService.BuildServiceProvider();
+var tempServiceProvider = tempService.BuildServiceProvider();
 
-var tempMessageService = tempSericeProvider.GetRequiredService<MessageService>();
+var tempMessageService = tempServiceProvider.GetRequiredService<MessageService>();
 
 var clArgs = new CLArgs(tempMessageService);
 
@@ -80,7 +77,7 @@ var config = new ConfigurationBuilder()
 
 // If user is using the help command in any section of the args, show help and quit
 //      Don't process anything
-if (config["?"] != null || config["help"] != null)
+if (args.Any(a => a == "--?" || a == "-?" || a == "--help" || a == "-help"))
 {
     Console.WriteLine(clArgs.GenerateHelp());
     return;
@@ -110,7 +107,7 @@ else // dont support converting the old format over
 clArgs.ParseArguments(config, args);
 
 // get rid of the temp service provider
-tempSericeProvider.Dispose();
+tempServiceProvider.Dispose();
 
 var globalSettings = new GlobalSettings();
 
@@ -120,6 +117,7 @@ globalSettings.LoadAddusicSongSfxResourceLists();
 var startTime = DateTime.Now;
 
 // load Asar here
+var asarLoaded = Asar.init();
 
 // Set up Dependency Injection
 
@@ -137,10 +135,7 @@ logFactory = LoggerFactory.Create(builder =>
 
 logger = logFactory.CreateLogger<IAddmusicLogic>();
 
-services.AddLocalization(options =>
-{
-    options.ResourcesPath = "Localization";
-});
+services.AddLocalization();
 services.AddTransient<MessageService>();
 
 services.AddLogging(builder => builder.AddConsole());
@@ -164,9 +159,13 @@ fileService.InitializeCache();
 logger.LogInformation(messageService.GetIntroAddmusicVersionMessage());
 logger.LogInformation(messageService.GetIntroParserVersionMessage());
 logger.LogInformation(messageService.GetIntroReadTheReadMeMessage());
+logger.LogInformation("Asar Version: " + Asar.version());
 
 /*Console.WriteLine(Messages.IntroMessages.AddmusicVersion);
 Console.WriteLine(Messages.IntroMessages.ParserVersion);
 Console.WriteLine(Messages.IntroMessages.ReadTheReadMe);*/
 
 addmusicLogic.Run();
+
+// unload Asar here; might have to do some Disposable stuff due to unmanged memory stuff
+Asar.close();
