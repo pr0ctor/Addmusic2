@@ -165,9 +165,7 @@ logger.LogInformation("Asar Version: " + Asar.version());
 Console.WriteLine(Messages.IntroMessages.ParserVersion);
 Console.WriteLine(Messages.IntroMessages.ReadTheReadMe);*/
 
-Asar.close();
-
 addmusicLogic.Run();
 
 // unload Asar here; might have to do some Disposable stuff due to unmanged memory stuff
-//Asar.close();
+Asar.close();
