@@ -7,12 +7,8 @@ using AsarCLR;
 
 namespace Addmusic2.Model.Interfaces
 {
-    internal interface IAsarInterface : IDisposable
+    internal interface IAsarInterface
     {
-        public Asar191 Asar { get; set; }
-        public bool InitializeAsar();
-        public bool CloseAsar();
-        public string GetAsarVersion();
-        public string GetAsarApiVersion();
+
     }
 }

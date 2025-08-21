@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Linq;
 
-namespace AsarCLR
+namespace AsarCLR.Asar191
 {
     /// <summary>
     /// Contains various functions to apply patches.
     /// </summary>
-    public static unsafe class Asar191
+    public static unsafe class Asar
     {
         const int expectedapiversion = 303;
 

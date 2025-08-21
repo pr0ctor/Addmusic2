@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <!-- ILRepack -->
-    <Target Name="ILRepacker" AfterTargets="Build">
+    <!-- <Target Name="ILRepacker" AfterTargets="Build"> -->
+    <Target Name="ILRepacker" AfterTargets="CopyAsarDLLFilesToOutputsss">
 
 <!-- The ANTLR and Newtonsoft assemblies must be included before the other assemblies as an error will be thrown
 https://github.com/ravibpatel/ILRepack.Lib.MSBuild.Task/issues/34
@@ -9,24 +10,27 @@ https://github.com/ravibpatel/ILRepack.Lib.MSBuild.Task/issues/34
         <ItemGroup>
             <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'Antlr4.Runtime.Standard'" />
             <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'Newtonsoft.Json'" />
-            <InputAssemblies Include="$(TargetPath)" />
-            <InputAssemblies Include="@(ReferencePath)" Condition="'%(filename)' == 'dotnetstandard-bip32'" />
+            <!-- <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'asar191'" /> -->
+            <AllDlls Include="$(OutputPath)\*.dll" Exclude="$(OutputPath)\Antlr4.Runtime.Standard.dll;$(OutputPath)\Newtonsoft.Json.dll;$(OutputPath)\asar191x64.dll" />
+            <!-- <InputAssemblies Include="@(ReferencePath)" Condition="'%(filename)' == 'dotnetstandard-bip32'" />
             <InputAssemblies Include="@(ReferencePath)" Condition="'%(filename)' == 'dotnetstandard-bip39'" />
-            <InputAssemblies Include="@(ReferencePath)" Condition="'%(filename)' == 'System.ComponentModel.Annotations'" />
+            <InputAssemblies Include="@(ReferencePath)" Condition="'%(filename)' == 'System.ComponentModel.Annotations'" />-->
         </ItemGroup>
     
-        <!-- <ItemGroup>
-             Must be a fully qualified name 
-             <DoNotInternalizeAssemblies Include="ExampleAssemblyToMerge3" />
-        </ItemGroup> -->
+        <ItemGroup>
+			<!-- Must be a fully qualified name -->
+             <DoNotInternalizeAssemblies Include="asar191x64.dll" />
+        </ItemGroup>
     
             <!--InternalizeExclude="@(DoNotInternalizeAssemblies)"-->
 
         <ILRepack
             Parallel="true"
             Internalize="true"
-            InputAssemblies="@(InputAssemblies)"
-            TargetKind="EXE"
+			Verbose="true"
+			InternalizeExclude="@(DoNotInternalizeAssemblies)"
+            InputAssemblies="@(InputAssemblies);@(AllDlls)"
+            TargetKind="Exe"
             OutputFile="$(OutputPath)\merged\$(AssemblyName).exe"
         />
     </Target>

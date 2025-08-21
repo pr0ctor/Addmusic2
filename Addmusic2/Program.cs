@@ -14,6 +14,7 @@ using Addmusic2.Logic;
 using Addmusic2.Model.Localization;
 using Addmusic2.Services;
 using Newtonsoft.Json;
+using AsarCLR.Asar191;
 
 //[assembly: RootNamespace("Addmusic2")]
 
@@ -120,6 +121,7 @@ globalSettings.LoadAddusicSongSfxResourceLists();
 var startTime = DateTime.Now;
 
 // load Asar here
+var asarLoaded = Asar.init();
 
 // Set up Dependency Injection
 
@@ -164,9 +166,15 @@ fileService.InitializeCache();
 logger.LogInformation(messageService.GetIntroAddmusicVersionMessage());
 logger.LogInformation(messageService.GetIntroParserVersionMessage());
 logger.LogInformation(messageService.GetIntroReadTheReadMeMessage());
+logger.LogInformation("Asar Version:" + Asar.version());
 
 /*Console.WriteLine(Messages.IntroMessages.AddmusicVersion);
 Console.WriteLine(Messages.IntroMessages.ParserVersion);
 Console.WriteLine(Messages.IntroMessages.ReadTheReadMe);*/
 
+Asar.close();
+
 addmusicLogic.Run();
+
+// unload Asar here; might have to do some Disposable stuff due to unmanged memory stuff
+//Asar.close();
