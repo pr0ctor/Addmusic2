@@ -62,15 +62,11 @@ var logger = logFactory.CreateLogger<IAddmusicLogic>();
 var tempService = new ServiceCollection();
 tempService.AddLogging(builder => builder.AddConsole());
 tempService.AddLocalization();
-//tempService.AddLocalization(options =>
-//{
-//    options.ResourcesPath = "Localization";
-//});
 tempService.AddTransient<MessageService>();
 
-var tempSericeProvider = tempService.BuildServiceProvider();
+var tempServiceProvider = tempService.BuildServiceProvider();
 
-var tempMessageService = tempSericeProvider.GetRequiredService<MessageService>();
+var tempMessageService = tempServiceProvider.GetRequiredService<MessageService>();
 
 var clArgs = new CLArgs(tempMessageService);
 
@@ -111,7 +107,7 @@ else // dont support converting the old format over
 clArgs.ParseArguments(config, args);
 
 // get rid of the temp service provider
-tempSericeProvider.Dispose();
+tempServiceProvider.Dispose();
 
 var globalSettings = new GlobalSettings();
 
@@ -139,10 +135,7 @@ logFactory = LoggerFactory.Create(builder =>
 
 logger = logFactory.CreateLogger<IAddmusicLogic>();
 
-services.AddLocalization(options =>
-{
-    options.ResourcesPath = "Localization";
-});
+services.AddLocalization();
 services.AddTransient<MessageService>();
 
 services.AddLogging(builder => builder.AddConsole());
@@ -166,7 +159,7 @@ fileService.InitializeCache();
 logger.LogInformation(messageService.GetIntroAddmusicVersionMessage());
 logger.LogInformation(messageService.GetIntroParserVersionMessage());
 logger.LogInformation(messageService.GetIntroReadTheReadMeMessage());
-logger.LogInformation("Asar Version:" + Asar.version());
+logger.LogInformation("Asar Version: " + Asar.version());
 
 /*Console.WriteLine(Messages.IntroMessages.AddmusicVersion);
 Console.WriteLine(Messages.IntroMessages.ParserVersion);
