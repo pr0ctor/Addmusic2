@@ -81,7 +81,7 @@ var config = new ConfigurationBuilder()
 
 // If user is using the help command in any section of the args, show help and quit
 //      Don't process anything
-if (config["?"] != null || config["help"] != null)
+if (args.Any(a => a == "--?" || a == "-?" || a == "--help" || a == "-help"))
 {
     Console.WriteLine(clArgs.GenerateHelp());
     return;
