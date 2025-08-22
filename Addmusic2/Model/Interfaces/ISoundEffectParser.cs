@@ -1,5 +1,4 @@
-﻿using Addmusic2.Model.Constants;
-using Addmusic2.Model.SongTree;
+﻿using Addmusic2.Model.SongTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Addmusic2.Model.Interfaces
 {
-    internal interface ISongParser
+    internal interface ISoundEffectParser
     {
-        public SongData SongData { get; set; }
-        public SongData ParseSongNodes(List<ISongNode> nodes);
+        public SoundEffectData SoundEffectData { get; set; }
+        public SoundEffectData ParseSoundEffectNodes(List<ISongNode> nodes);
         public void ParseNode(SongNode node);
         public IValidationResult ValidateNode(ISongNode node);
         public void EvaluateNode(ISongNode node);

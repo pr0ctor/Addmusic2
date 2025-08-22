@@ -51,6 +51,8 @@ namespace Addmusic2.Model.Constants
         FCHexRemoteGain,
         FDTremoloOff,
         FEPitchEnvelopeOff,
+        // Sound Effect Specific
+        E0SfxPriority,
     }
 
     [JsonConverter(typeof(StringEnumConverter))]

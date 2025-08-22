@@ -63,5 +63,10 @@ namespace Addmusic2.Model.Constants
         StopRemoteCode,
         // Other
         Replacement,
+        // Sound Effects Specific Values
+        SfxInstrument,
+        SfxVolume,
+        Asm,
+        Jsr,
     }
 }

@@ -72,6 +72,8 @@ namespace Addmusic2.Logic
             //PostProcessSong();
         }
 
+        #region Song Processing
+
         public void RunSingleSong(string fileData)
         {
 
@@ -131,6 +133,38 @@ namespace Addmusic2.Logic
         {
 
         }
+
+        #endregion
+
+
+        #region Sound Effect Processing
+
+        public string PreprocessSoundEffect(string fileData)
+        {
+            return fileData;
+        }
+
+        public void ProcessSoundEffect(string fileData)
+        {
+            var stream = CharStreams.fromString(fileData);
+
+            var lexer = new SfxLexer(stream);
+            var tokenStream = new CommonTokenStream(lexer);
+            var parser = new SfxParser(tokenStream);
+            var sfxVisitor = new AdvSfxVisitor();
+
+            var soundEffectContext = parser.soundEffect();
+
+            var rootNode = sfxVisitor.VisitSoundEffect(soundEffectContext);
+        }
+
+        public void PostProcessSoundEffect()
+        {
+
+        }
+
+
+        #endregion
 
 
         private void LoadRequiredSampleGroups()

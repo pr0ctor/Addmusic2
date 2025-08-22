@@ -35,6 +35,7 @@ namespace Addmusic2.Model.Constants
         public static readonly int OctaveMaximum = 7;
         public static readonly int StartingCustomInstrumentNumber = 30;
         public static readonly int SampleSCRNTableSize = 4;
+        public static readonly int SfxVolumeMaximum = 127;
 
         // public static readonly int SampleBankRequiredSize = 0x8000;
 
