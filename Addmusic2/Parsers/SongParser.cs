@@ -5,6 +5,7 @@ using Addmusic2.Model.Interfaces;
 using Addmusic2.Model.Localization;
 using Addmusic2.Model.SongTree;
 using Addmusic2.Services;
+using Addmusic2.Helpers;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -2111,7 +2112,7 @@ namespace Addmusic2.Parsers
                 };
             }
 
-            if (!IsHexInRange(hexByte))
+            if (!Helpers.Helpers.IsHexInRange(hexByte))
             {
                 return new ValidationResult
                 {
@@ -2199,7 +2200,7 @@ namespace Addmusic2.Parsers
             var tuningValue = Convert.ToByte(sampleloadPayload.TuningValue, 16);
 
 
-            if (!IsHexInRange(tuningValue))
+            if (!Helpers.Helpers.IsHexInRange(tuningValue))
             {
                 return new ValidationResult
                 {
@@ -2685,7 +2686,7 @@ namespace Addmusic2.Parsers
                 {
                     var hexValue = Convert.ToByte(setting);
 
-                    if (!IsHexInRange(hexValue))
+                    if (!Helpers.Helpers.IsHexInRange(hexValue))
                     {
                         messages.Add(_messageService.GetErrorInstrumentDefinitionHexValueOutOfRangeMessage(0, MagicNumbers.ByteHexMaximum, hexValue));
                         continue;
@@ -2853,7 +2854,7 @@ namespace Addmusic2.Parsers
             foreach (var hexNumber in hex.HexValues)
             {
                 var byteValue = Convert.ToByte(hexNumber.Replace("$", ""));
-                if (!IsHexInRange(byteValue))
+                if (!Helpers.Helpers.IsHexInRange(byteValue))
                 {
                     messages.Add(_messageService.GetErrorHexCommandSuppliedValueOutOfRangeMessage(hexNumber, hex.HexCommand, 0, MagicNumbers.HexCommandMaximum));
                 }
@@ -2877,7 +2878,7 @@ namespace Addmusic2.Parsers
 
             foreach (var hexNumber in pitchBlend.HexValues)
             {
-                if (!IsHexInRange(Convert.ToByte(hexNumber.Replace("$", ""), 16)))
+                if (!Helpers.Helpers.IsHexInRange(Convert.ToByte(hexNumber.Replace("$", ""), 16)))
                 {
                     messages.Add(_messageService.GetErrorHexCommandSuppliedValueOutOfRangeMessage(hexNumber, pitchBlend.HexCommand, 0, MagicNumbers.ByteHexMaximum));
                 }
@@ -2910,11 +2911,6 @@ namespace Addmusic2.Parsers
         #endregion
 
         #region Helpers
-
-        private bool IsHexInRange(byte hexValue)
-        {
-            return hexValue < 0 || hexValue > MagicNumbers.HexCommandMaximum ? false : true;
-        }
 
         private void AddDataToChannel(byte dataToAdd)
         {

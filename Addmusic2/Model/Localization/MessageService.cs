@@ -682,6 +682,22 @@ namespace Addmusic2.Model.Localization
             return localizedString;
         }
 
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorSfxInstrumentValueOutOfRangeMessage(int minValue, int maxValue, int foundValue)
+        {
+            LocalizedString localizedString = _localizer["ErrorSfxInstrumentValueOutOfRange", foundValue, minValue, maxValue];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorSfxInstrumentNoiseHexValueOutOfRangeMessage(int minValue, int maxValue, int foundValue)
+        {
+            LocalizedString localizedString = _localizer["ErrorSfxInstrumentNoiseHexValueOutOfRange", foundValue, minValue, maxValue];
+
+            return localizedString;
+        }
+
         #endregion
 
         #endregion

@@ -15,6 +15,11 @@ namespace Addmusic2.Helpers
     internal static class Helpers
     {
 
+        public static bool IsHexInRange(byte hexValue)
+        {
+            return hexValue < 0 || hexValue > MagicNumbers.HexCommandMaximum ? false : true;
+        }
+
         public static string StandardizeFileDirectoryDelimiters(string path)
         {
             var pathPieces = path.Split([@"\", @"/"], StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);

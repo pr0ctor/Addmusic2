@@ -75,6 +75,8 @@ namespace Addmusic2.Model.Constants
 
         public static class FileExtensions
         {
+            public static readonly string Asm = ".asm";
+            public static readonly string BinPatchData = ".bin";
             public static readonly string SampleBrr = ".brr";
             public static readonly string SampleBank = ".bnk";
             public static readonly List<string> ValidSampleExtensions = new List<string>()

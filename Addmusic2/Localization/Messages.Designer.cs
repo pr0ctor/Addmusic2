@@ -538,6 +538,24 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Illegal Sfx Instrument Command (&quot;@&quot;) instrument noise hex value ({0:D}) found. Value must be between {1:D} and 0x{2:D} ..
+        /// </summary>
+        internal static string ErrorSfxInstrumentNoiseHexValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorSfxInstrumentNoiseHexValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Sfx Instrument Command (&quot;@&quot;) instrument number value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorSfxInstrumentValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorSfxInstrumentValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Illegal Sfx Volume Command (&quot;v&quot;) fade value ({0:D}) found. Value must be between {1:D} and {2:D} ..
         /// </summary>
         internal static string ErrorSfxVolumeLeftVolumeValueOutOfRange {
