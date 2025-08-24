@@ -66,7 +66,7 @@ namespace Addmusic2.Logic
             // load 1DF9 sound effects
             foreach(var sfx1DF9 in _globalSettings.ResourceList.SoundEffects.Sfx1DF9)
             {
-                var filedata = File.ReadAllText(Path.Combine(FileNames.FolderNames.Sfx1DF9, sfx1DF9.Path));
+                var filedata = File.ReadAllText(sfx1DF9.Path);
 
                 var preprocessedSfxFileData = PreprocessSoundEffect(filedata);
 
@@ -78,7 +78,7 @@ namespace Addmusic2.Logic
             // load 1DFC sound effects
             foreach (var sfx1DFC in _globalSettings.ResourceList.SoundEffects.Sfx1DFC)
             {
-                var filedata = File.ReadAllText(Path.Combine(FileNames.FolderNames.Sfx1DFC, sfx1DFC.Path));
+                var filedata = File.ReadAllText(sfx1DFC.Path);
 
                 var preprocessedSfxFileData = PreprocessSoundEffect(filedata);
 
