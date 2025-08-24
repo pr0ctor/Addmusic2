@@ -400,6 +400,7 @@ namespace Addmusic2.Visitors
 
         #endregion
 
+
         #region Composites
 
         public override ISongNode VisitPitchslide([NotNull] SfxParser.PitchslideContext context)
@@ -431,6 +432,24 @@ namespace Addmusic2.Visitors
                 ColumnNumber = context.Start.Column,
             };
             return pitchslideNode;
+        }
+
+        public override ISongNode VisitTriplet([NotNull] SfxParser.TripletContext context)
+        {
+            var tripletText = context.GetText();
+            var rangeLowerBound = 1;
+            var rangeUpperBound = context.ChildCount - 2;
+            var childRange = new Range(rangeLowerBound, rangeUpperBound);
+            var childNodes = VisitChildren(context, childRange);
+            var tripletNode = new CompositeNode
+            {
+                NodeType = SongNodeType.Triplet,
+                NodeSource = tripletText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                Children = childNodes,
+            };
+            return tripletNode;
         }
 
         #endregion

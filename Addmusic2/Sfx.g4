@@ -35,6 +35,7 @@ atomics: pitchslide
     | defaultLength
     | instrumentCommand
     | nakedTie
+    | triplet
     ;
 
 note : Note ;
@@ -50,6 +51,9 @@ defaultLength : Length ;
 // instruments are different from the song mml instruments
 instrumentCommand : Instrument # Instrument
     //| daInstrument # HexInstrument
+    ;
+
+triplet : LBRACE (note | rest) (note | rest) (note | rest) RBRACE
     ;
 
 nakedTie : Tie ;

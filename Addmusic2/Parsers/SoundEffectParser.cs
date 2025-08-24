@@ -28,7 +28,7 @@ namespace Addmusic2.Parsers
         public SoundEffectData SoundEffectData { get; set; } = new();
 
         private List<byte> DataChannel = new();
-        private Dictionary<string, int> JsrNamesAndPositions = new();
+        private Dictionary<int, string> JsrPositionsAndNames = new();
         private Dictionary<string, string> NamedAsmBlocks = new();
 
         private int DefaultNoteLength { get; set; } = MagicNumbers.DefaultValues.InitialSfxNoteLength;
@@ -69,7 +69,7 @@ namespace Addmusic2.Parsers
 
 
             SoundEffectData.ChannelData = DataChannel;
-            SoundEffectData.JsrNamesAndPositions = JsrNamesAndPositions;
+            SoundEffectData.JsrPositionsAndNames = JsrPositionsAndNames;
             SoundEffectData.NamedAsmBlocks = NamedAsmBlocks;
 
 
@@ -78,20 +78,58 @@ namespace Addmusic2.Parsers
 
         public void CompileAsmElements(SoundEffectData soundEffectData)
         {
+            var tempAsmPath = Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempAsmFile);
+            var tempBinPath = Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempBinFile);
+            using var tempAsmWriter = new StreamWriter(tempAsmPath, false);
 
-            foreach(var block in soundEffectData.NamedAsmBlocks)
+            // Compile the asm blocks
+
+            foreach (var block in soundEffectData.NamedAsmBlocks)
             {
                 var channelDataSize = soundEffectData.ChannelData.Count;
 
-                var sfxPatchString = PatchBuilders.BuildSoundEffectAsmPatch(soundEffectData.AramPosition.ToString(), block.Value);
+                var aramPosition = soundEffectData.AramPosition + soundEffectData.CompiledAsmCodeBlocks.Count + soundEffectData.ChannelData.Count;
+                var sfxPatchString = PatchBuilders.BuildSoundEffectAsmPatch(aramPosition, block.Value);
 
+                tempAsmWriter.Write(sfxPatchString.ToCharArray());
+                var isCompileSuccessful = RomOperations.CompileAsmToBin(FileNames.StaticFiles.TempAsmFile, FileNames.StaticFiles.TempBinFile);
 
-                // todo rom operations
-                
-
+                if(!isCompileSuccessful)
+                {
+                    // todo fix exception
+                    throw new Exception();
+                }
+                using var tempBinFile = File.Open(tempBinPath, FileMode.OpenOrCreate);
+                var data = new byte[tempBinFile.Length - MagicNumbers.SfxCompiledBinCodeLocation];
+                tempBinFile.Read(data, MagicNumbers.SfxCompiledBinCodeLocation, data.Length);
+                var jsrInformation = new JsrInformation
+                {
+                    JsrName = block.Key,
+                    JsrData = data,
+                    SequencePosition = soundEffectData.CompiledAsmCodeBlocks.Count,
+                };
+                soundEffectData.JsrInformation.Add(jsrInformation);
+                soundEffectData.CompiledAsmCodeBlocks.Add(block.Key, data);
 
             }
 
+            // Match Jumps with their respective asm block code
+
+            foreach ( var jsr in soundEffectData.JsrPositionsAndNames)
+            {
+                var jsrInformation = soundEffectData.JsrInformation.Find(j => j.JsrName == jsr.Value);
+
+                if (jsrInformation == null)
+                {
+                    // todo fix exception
+                    throw new Exception();
+                }
+
+                var jsrDataPosition = jsr.Key;
+                var adjustmentValue = (byte)(soundEffectData.AramPosition + soundEffectData.ChannelData.Count + jsrInformation.SequencePosition);
+                soundEffectData.ChannelData[jsrDataPosition] = (byte)( adjustmentValue & MagicNumbers.ByteHexMaximum );
+                soundEffectData.ChannelData[jsrDataPosition + 1] = (byte)( adjustmentValue >> 8 );
+            }
 
         }
 
@@ -528,7 +566,7 @@ namespace Addmusic2.Parsers
             switch (compositeNode.NodeType)
             {
                 case SongNodeType.Triplet:
-                    //EvaluateTriplet(compositeNode);
+                    EvaluateTriplet(compositeNode);
                     break;
                 case SongNodeType.PitchSlide:
                     EvaluatePitchSlideNode(compositeNode);
@@ -579,6 +617,29 @@ namespace Addmusic2.Parsers
             }
         }
 
+        public void EvaluateTriplet(CompositeNode node)
+        {
+            foreach (SongNode songNode in node.Children)
+            {
+                if (songNode.NodeType == SongNodeType.Note)
+                {
+                    EvaluateNoteNode((AtomicNode)songNode, true);
+                }
+                else if (songNode.NodeType == SongNodeType.Rest)
+                {
+                    EvaluateRestNode((AtomicNode)songNode, true);
+                }
+                else if (songNode.NodeType == SongNodeType.Tie)
+                {
+                    EvaluateTieNode((AtomicNode)songNode, true);
+                }
+                else
+                {
+                    EvaluateNode(songNode);
+                }
+            }
+        }
+
 
         #endregion
 
@@ -605,7 +666,7 @@ namespace Addmusic2.Parsers
 
             var sfxAsmPayload = asmNode.Payload as SfxAsmPayload;
 
-            NamedAsmBlocks.Add(sfxAsmPayload.JsrLabelName, sfxAsmPayload.AsmContentText);4
+            NamedAsmBlocks.Add(sfxAsmPayload.JsrLabelName, sfxAsmPayload.AsmContentText);
 
         }
 
@@ -616,7 +677,7 @@ namespace Addmusic2.Parsers
             var sfxJsrPayload = jsrNode.Payload as SfxJsrPayload;
 
             AddDataToChannel(MagicNumbers.CommandValues.SfxJsrCommand);
-            JsrNamesAndPositions.Add(sfxJsrPayload.JsrLabelName, DataChannel.Count);
+            JsrPositionsAndNames.Add(DataChannel.Count, sfxJsrPayload.JsrLabelName);
             AddDataToChannel(0x00);
             AddDataToChannel(0x00);
         }
@@ -825,6 +886,7 @@ namespace Addmusic2.Parsers
         {
             return composite.NodeType switch
             {
+                SongNodeType.Triplet => ValidateTripletNode(composite),
                 SongNodeType.PitchSlide => ValidatePitchSlideNode(composite),
                 SongNodeType.HexCommand => ValidateHexCommand(composite),
                 _ => throw new Exception()
@@ -899,6 +961,30 @@ namespace Addmusic2.Parsers
                 Type = ValidationResult.ResultType.Success,
             };
         }
+
+        public IValidationResult ValidateTripletNode(CompositeNode tripletNode)
+        {
+            var messages = new List<string>();
+            foreach (SongNode child in tripletNode.Children)
+            {
+                var validationResult = (ValidationResult)ValidateNode(child);
+                if (validationResult.Type != ValidationResult.ResultType.Success)
+                {
+                    messages.AddRange(validationResult.Message);
+                }
+            }
+            return messages.Count > 0
+                ? new ValidationResult
+                {
+                    Type = ValidationResult.ResultType.Error,
+                    Message = messages,
+                }
+                : new ValidationResult
+                {
+                    Type = ValidationResult.ResultType.Success
+                };
+        }
+
 
         #endregion
 

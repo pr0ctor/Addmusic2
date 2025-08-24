@@ -220,6 +220,18 @@ public partial class SfxBaseListener : ISfxListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitInstrument([NotNull] SfxParser.InstrumentContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SfxParser.triplet"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterTriplet([NotNull] SfxParser.TripletContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SfxParser.triplet"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitTriplet([NotNull] SfxParser.TripletContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SfxParser.nakedTie"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

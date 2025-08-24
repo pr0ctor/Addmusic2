@@ -185,6 +185,16 @@ public interface ISfxListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitInstrument([NotNull] SfxParser.InstrumentContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SfxParser.triplet"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterTriplet([NotNull] SfxParser.TripletContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SfxParser.triplet"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitTriplet([NotNull] SfxParser.TripletContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SfxParser.nakedTie"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

@@ -9,6 +9,11 @@ namespace Addmusic2.Model.Constants
     internal static class MagicNumbers
     {
 
+        public static class AsarWarnings
+        {
+            public static (string WarningName, bool WarningToggle) RelativePathWarning = ("Wrelative_path_used",false);
+        }
+
         public static class DefaultValues
         {
             public static readonly int DefaultBankStart = 0x200000;
@@ -42,7 +47,8 @@ namespace Addmusic2.Model.Constants
         public static readonly int SfxInstrumentMaximum = 0x7F;
 
         // public static readonly int SampleBankRequiredSize = 0x8000;
-
+        public static readonly int SfxCompiledBinCodeLocation = 0x08000;
+        public static readonly int AsmToBinBufferLength = 0x10000;
 
 
         public static readonly int ChannelCount = 8;

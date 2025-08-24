@@ -1,14 +1,55 @@
-﻿using System;
+﻿using Addmusic2.Model.Constants;
+using Addmusic2.Model.Interfaces;
+using Addmusic2.Model.SongTree;
+using Addmusic2.Parsers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Addmusic2.Model.Constants;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Addmusic2.Model
 {
     internal class SoundEffect
+    {
+        public ISongNode RootNode { get; set; }
+        public ISoundEffectParser Parser { get; set; }
+        public string SoundEffectText { get; set; } = string.Empty;
+
+        public SoundEffectData SoundEffectData { get; set; } = new();
+
+        public SoundEffect(SoundEffectParser parser)
+        {
+            Parser = parser;
+        }
+
+        public SoundEffect(SoundEffectParser parser, ISongNode rootNode)
+        {
+            Parser = parser;
+            RootNode = rootNode;
+        }
+
+        public void ParseSoundEffect()
+        {
+            if (RootNode == null)
+            {
+                throw new Exception();
+            }
+
+            var rootNode = RootNode as SongNode;
+
+            if (rootNode == null || rootNode.NodeType != SongNodeType.Root)
+            {
+                throw new Exception();
+            }
+
+            SoundEffectData = Parser.ParseSoundEffectNodes(rootNode.Children);
+        }
+    }
+
+
+
+/*    internal class SoundEffect
     {
         public string Name { get; set; }
         public string Text { get; set; }
@@ -158,5 +199,5 @@ namespace Addmusic2.Model
             else
                 inDefineBlock = false;
         }
-    }
+    }*/
 }

@@ -124,6 +124,12 @@ public interface ISfxVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitInstrument([NotNull] SfxParser.InstrumentContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="SfxParser.triplet"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTriplet([NotNull] SfxParser.TripletContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="SfxParser.nakedTie"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

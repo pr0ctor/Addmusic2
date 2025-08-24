@@ -63,6 +63,30 @@ namespace Addmusic2.Logic
                 PostProcessSong();
             }
 
+            // load 1DF9 sound effects
+            foreach(var sfx1DF9 in _globalSettings.ResourceList.SoundEffects.Sfx1DF9)
+            {
+                var filedata = File.ReadAllText(Path.Combine(FileNames.FolderNames.Sfx1DF9, sfx1DF9.Path));
+
+                var preprocessedSfxFileData = PreprocessSoundEffect(filedata);
+
+                var soundEffectData = ProcessSoundEffect(preprocessedSfxFileData);
+
+                PostProcessSoundEffect();
+            }
+
+            // load 1DFC sound effects
+            foreach (var sfx1DFC in _globalSettings.ResourceList.SoundEffects.Sfx1DFC)
+            {
+                var filedata = File.ReadAllText(Path.Combine(FileNames.FolderNames.Sfx1DFC, sfx1DFC.Path));
+
+                var preprocessedSfxFileData = PreprocessSoundEffect(filedata);
+
+                var soundEffectData = ProcessSoundEffect(preprocessedSfxFileData);
+
+                PostProcessSoundEffect();
+            }
+
 
             //var fileData = File.ReadAllText(@"Samples/Seenpoint Intro.txt");
 
@@ -144,7 +168,7 @@ namespace Addmusic2.Logic
             return fileData;
         }
 
-        public void ProcessSoundEffect(string fileData)
+        public SoundEffect ProcessSoundEffect(string fileData)
         {
             var stream = CharStreams.fromString(fileData);
 
@@ -156,6 +180,22 @@ namespace Addmusic2.Logic
             var soundEffectContext = parser.soundEffect();
 
             var rootNode = sfxVisitor.VisitSoundEffect(soundEffectContext);
+
+            var soundEffectParser = new SoundEffectParser(
+                _logger,
+                _messageService,
+                _globalSettings,
+                _fileService
+            );
+
+            var soundEffect = new SoundEffect(soundEffectParser, rootNode)
+            {
+                SoundEffectText = fileData,
+            };
+
+            // soundEffect.ParseSoundEffect();
+
+            return soundEffect;
         }
 
         public void PostProcessSoundEffect()
