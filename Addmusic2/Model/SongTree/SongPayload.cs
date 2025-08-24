@@ -569,4 +569,79 @@ namespace Addmusic2.Model.SongTree
 
     #endregion
 
+    #region Sfx Payloads
+
+    internal class SfxJsrPayload : ISongNodePayload
+    {
+        public string JsrLabelName{ get; set; }
+        public SfxJsrPayload() { }
+
+        public override string ToString()
+        {
+            return "#jsr " + JsrLabelName;
+        }
+    }
+
+    internal class SfxAsmPayload : ISongNodePayload
+    {
+        public string JsrLabelName { get; set; }
+        public string AsmContentText { get; set; }
+        public SfxAsmPayload() { }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("#asm " + JsrLabelName);
+            builder.AppendLine("{");
+            builder.AppendLine(AsmContentText);
+            builder.AppendLine("}");
+
+            return builder.ToString();
+        }
+    }
+
+    internal class SfxInstrumentPayload : ISongNodePayload
+    {
+        public int InstrumentNumber { get; set; }
+        public string NoiseHexValue { get; set; }
+        public SfxInstrumentPayload() { }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            builder.Append("@" + InstrumentNumber);
+            if(NoiseHexValue.Length > 0)
+            {
+                builder.Append("," +  NoiseHexValue);
+            }
+
+            return builder.ToString();
+        }
+    }
+
+    internal class SfxVolumePayload : ISongNodePayload
+    {
+        public int Volume { get; set; } = -1;
+
+        public int LeftVolumeValue { get; set; }
+        public int RightVolumeValue { get; set; }
+        public SfxVolumePayload() { }
+
+        public override string ToString()
+        {
+            if(Volume == -1)
+            {
+                return $"v{LeftVolumeValue},{RightVolumeValue}";
+            }
+            else
+            {
+                return $"{Volume}";
+            }
+        }
+
+    }
+
+    #endregion
+
+
 }

@@ -289,16 +289,20 @@
     <value>Illegal Hex Command value (${0}) found. Value must be between {1:D} and {2:D} .</value>
     <comment>Error for invalid values for a hex command</comment>
   </data>
-  <data name="ErrorInstrumentDefinitionHexValueOutOfRange" xml:space="preserve">
-    <value>Error parsing instrument definition. Hex value found (0x{0}) must be between 0x{1} and 0x{2} .</value>
-    <comment>Error for when an instrument definition contains a hex value that is out of range</comment>
-  </data>
   <data name="ErrorInstrumentDefinitionMissingHexValues" xml:space="preserve">
     <value>Error parsing instrument definition; there were too few bytes following the sample (there must be 6).</value>
     <comment>Error for when an instrument definition is missing one or more hex numbers</comment>
   </data>
   <data name="ErrorInstrumentValueOutOfRange" xml:space="preserve">
     <value>Illegal Instrument Command ("@") instrument number value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Instrument Command</comment>
+  </data>
+  <data name="ErrorSfxInstrumentNoiseHexValueOutOfRange" xml:space="preserve">
+    <value>Illegal Sfx Instrument Command ("@") instrument noise hex value ({0:D}) found. Value must be between {1:D} and 0x{2:D} .</value>
+    <comment>Error for invalid value for the Instrument Command</comment>
+  </data>
+  <data name="ErrorSfxInstrumentValueOutOfRange" xml:space="preserve">
+    <value>Illegal Sfx Instrument Command ("@") instrument number value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
     <comment>Error for invalid value for the Instrument Command</comment>
   </data>
   <data name="ErrorIntroDirectiveFoundInLoop" xml:space="preserve">
@@ -393,6 +397,18 @@
     <value>Protip: Be sure to read the readme! If there's an error or something doesn't\nseem right, it may have your answer!\n\n</value>
     <comment>Message prompting the user to read the readme</comment>
   </data>
+  <data name="ErrorSfxVolumeVolumeValueOutOfRange" xml:space="preserve">
+    <value>Illegal Sfx Volume Command ("v") fade value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Sfx Volume Command's right volume value</comment>
+  </data>
+  <data name="ErrorSfxVolumeRightVolumeValueOutOfRange" xml:space="preserve">
+    <value>Illegal Sfx Volume Command ("v") fade value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Sfx Volume Command's left volume value</comment>
+  </data>
+  <data name="ErrorSfxVolumeLeftVolumeValueOutOfRange" xml:space="preserve">
+    <value>Illegal Sfx Volume Command ("v") fade value ({0:D}) found. Value must be between {1:D} and {2:D} .</value>
+    <comment>Error for invalid value for the Sfx Volume Command's volume value</comment>
+  </data>
   <data name="WarningDefaultLengthValidation" xml:space="preserve">
     <value>WARNING: A default note length was used that is not divisible by 192 ticks, and thus results in a fractional tick value.</value>
     <comment>Warning for note lengths that yield a fractional tick value</comment>
@@ -428,5 +444,9 @@
   <data name="WarningTripletFractionalTickValueFromDots" xml:space="preserve">
     <value>WARNING: Adding this note to a triplet results in a fractional tick value. Song - {1) , Line - {2:D} , Column - {3:D}</value>
     <comment>Error for fractional tick amounts when adding this note to a triplet</comment>
+  </data>
+  <data name="ErrorInstrumentDefinitionHexValueOutOfRange" xml:space="preserve">
+    <value>Error parsing instrument definition. Hex value found (0x{0}) must be between 0x{1} and 0x{2} .</value>
+    <comment>Error for when an instrument definition contains a hex value that is out of range</comment>
   </data>
 </root>

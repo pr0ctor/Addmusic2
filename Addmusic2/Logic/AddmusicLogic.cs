@@ -63,6 +63,30 @@ namespace Addmusic2.Logic
                 PostProcessSong();
             }
 
+            // load 1DF9 sound effects
+            foreach(var sfx1DF9 in _globalSettings.ResourceList.SoundEffects.Sfx1DF9)
+            {
+                var filedata = File.ReadAllText(sfx1DF9.Path);
+
+                var preprocessedSfxFileData = PreprocessSoundEffect(filedata);
+
+                var soundEffectData = ProcessSoundEffect(preprocessedSfxFileData);
+
+                PostProcessSoundEffect();
+            }
+
+            // load 1DFC sound effects
+            foreach (var sfx1DFC in _globalSettings.ResourceList.SoundEffects.Sfx1DFC)
+            {
+                var filedata = File.ReadAllText(sfx1DFC.Path);
+
+                var preprocessedSfxFileData = PreprocessSoundEffect(filedata);
+
+                var soundEffectData = ProcessSoundEffect(preprocessedSfxFileData);
+
+                PostProcessSoundEffect();
+            }
+
 
             //var fileData = File.ReadAllText(@"Samples/Seenpoint Intro.txt");
 
@@ -71,6 +95,8 @@ namespace Addmusic2.Logic
 
             //PostProcessSong();
         }
+
+        #region Song Processing
 
         public void RunSingleSong(string fileData)
         {
@@ -131,6 +157,54 @@ namespace Addmusic2.Logic
         {
 
         }
+
+        #endregion
+
+
+        #region Sound Effect Processing
+
+        public string PreprocessSoundEffect(string fileData)
+        {
+            return fileData;
+        }
+
+        public SoundEffect ProcessSoundEffect(string fileData)
+        {
+            var stream = CharStreams.fromString(fileData);
+
+            var lexer = new SfxLexer(stream);
+            var tokenStream = new CommonTokenStream(lexer);
+            var parser = new SfxParser(tokenStream);
+            var sfxVisitor = new AdvSfxVisitor();
+
+            var soundEffectContext = parser.soundEffect();
+
+            var rootNode = sfxVisitor.VisitSoundEffect(soundEffectContext);
+
+            var soundEffectParser = new SoundEffectParser(
+                _logger,
+                _messageService,
+                _globalSettings,
+                _fileService
+            );
+
+            var soundEffect = new SoundEffect(soundEffectParser, rootNode)
+            {
+                SoundEffectText = fileData,
+            };
+
+            // soundEffect.ParseSoundEffect();
+
+            return soundEffect;
+        }
+
+        public void PostProcessSoundEffect()
+        {
+
+        }
+
+
+        #endregion
 
 
         private void LoadRequiredSampleGroups()

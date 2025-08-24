@@ -126,6 +126,7 @@ namespace Addmusic2.Helpers
                     continue;
                 }
 
+                // todo fix this as it might cause issues with filenames that have a sequence of multiple space characters
                 var l = Regex.Replace(line, @"\s+", " ");
                 var matches = sfxLineRegex.Match(l);
                 if(matches.Success)
@@ -155,8 +156,8 @@ namespace Addmusic2.Helpers
 
                     var sfxName = sfxNameGroup.Value;
                     var sfxPath = (inSFX1DF9)
-                        ? FileNames.FolderNames.Sfx1DF9 + "/" + sfxNameGroup.Value
-                        : FileNames.FolderNames.Sfx1DFC + "/" + sfxNameGroup.Value;
+                        ? Path.Combine(FileNames.FolderNames.Sfx1DF9, sfxNameGroup.Value)
+                        : Path.Combine(FileNames.FolderNames.Sfx1DFC, sfxNameGroup.Value);
                     var sfxType = (inSFX1DF9)
                         ? SfxListItemType.Sfx1DF9
                         : SfxListItemType.Sfx1DFC;
@@ -175,6 +176,11 @@ namespace Addmusic2.Helpers
 
                         sfxListItem.Settings = settings;
                     }
+
+                    sfxListItem.Number = sfxNumber;
+                    sfxListItem.Name = sfxName;
+                    sfxListItem.Path = sfxPath;
+                    sfxListItem.Type = sfxType;
 
                     if(inSFX1DF9)
                     {

@@ -9,6 +9,11 @@ namespace Addmusic2.Model.Constants
     internal static class MagicNumbers
     {
 
+        public static class AsarWarnings
+        {
+            public static (string WarningName, bool WarningToggle) RelativePathWarning = ("Wrelative_path_used",false);
+        }
+
         public static class DefaultValues
         {
             public static readonly int DefaultBankStart = 0x200000;
@@ -18,6 +23,9 @@ namespace Addmusic2.Model.Constants
             public static readonly int InitialTempoRatio = 1;
             public static readonly int IntialSpaceForPointersAndStrumentsValue = 20;
             public static readonly int InitialTempoValue = 0x36;
+            public static readonly int InitialSfxLeftVolume = 0x7F;
+            public static readonly int InitialSfxRightVolume = 0x7F;
+            public static readonly int InitialSfxNoteLength = 8;
         }
 
         public static readonly int NoteLengthMaximum = 192;
@@ -35,9 +43,12 @@ namespace Addmusic2.Model.Constants
         public static readonly int OctaveMaximum = 7;
         public static readonly int StartingCustomInstrumentNumber = 30;
         public static readonly int SampleSCRNTableSize = 4;
+        public static readonly int SfxVolumeMaximum = 127;
+        public static readonly int SfxInstrumentMaximum = 0x7F;
 
         // public static readonly int SampleBankRequiredSize = 0x8000;
-
+        public static readonly int SfxCompiledBinCodeLocation = 0x08000;
+        public static readonly int AsmToBinBufferLength = 0x10000;
 
 
         public static readonly int ChannelCount = 8;
@@ -95,9 +106,11 @@ namespace Addmusic2.Model.Constants
             public static readonly byte Volume = 0xE7;
             public static readonly byte VolumeWithFade = 0xE8;
             public static readonly byte Loop = 0xE9;
+            public static readonly byte SfxPitchSlide = 0xEB;
             public static readonly byte SampleLoad = 0xF3;
             public static readonly byte Noise = 0xF8;
             public static readonly byte RemoteCode = 0xFC;
+            public static readonly byte SfxJsrCommand = 0xFD;
         }
     }
     

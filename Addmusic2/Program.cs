@@ -140,7 +140,7 @@ services.AddTransient<MessageService>();
 
 services.AddLogging(builder => builder.AddConsole());
 
-services.AddScoped<IRomOperations, RomOperations>();
+// services.AddScoped<IRomOperations, RomOperations>();
 
 // services.AddSingleton<IAsarInterface>();
 services.AddSingleton<IGlobalSettings>(globalSettings);

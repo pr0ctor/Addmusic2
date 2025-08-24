@@ -538,6 +538,51 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Illegal Sfx Instrument Command (&quot;@&quot;) instrument noise hex value ({0:D}) found. Value must be between {1:D} and 0x{2:D} ..
+        /// </summary>
+        internal static string ErrorSfxInstrumentNoiseHexValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorSfxInstrumentNoiseHexValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Sfx Instrument Command (&quot;@&quot;) instrument number value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorSfxInstrumentValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorSfxInstrumentValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Sfx Volume Command (&quot;v&quot;) fade value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorSfxVolumeLeftVolumeValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorSfxVolumeLeftVolumeValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Sfx Volume Command (&quot;v&quot;) fade value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorSfxVolumeRightVolumeValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorSfxVolumeRightVolumeValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illegal Sfx Volume Command (&quot;v&quot;) fade value ({0:D}) found. Value must be between {1:D} and {2:D} ..
+        /// </summary>
+        internal static string ErrorSfxVolumeVolumeValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorSfxVolumeVolumeValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error parsing SPC length field.  Format must be m:ss or &apos;auto&apos;..
         /// </summary>
         internal static string ErrorSpcLengthInvalidValue {

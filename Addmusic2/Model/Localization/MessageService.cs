@@ -442,6 +442,30 @@ namespace Addmusic2.Model.Localization
         }
 
         [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorSfxVolumeLeftVolumeValueOutOfRangeMessage(int minValue, int maxValue, int foundValue)
+        {
+            LocalizedString localizedString = _localizer["ErrorSfxVolumeLeftVolumeValueOutOfRange", foundValue, minValue, maxValue];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorSfxVolumeRightVolumeValueOutOfRangeMessage(int minValue, int maxValue, int foundValue)
+        {
+            LocalizedString localizedString = _localizer["ErrorSfxVolumeRightVolumeValueOutOfRange", foundValue, minValue, maxValue];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorSfxVolumeVolumeValueOutOfRangeMessage(int minValue, int maxValue, int foundValue)
+        {
+            LocalizedString localizedString = _localizer["ErrorSfxVolumeVolumeValueOutOfRange", foundValue, minValue, maxValue];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
         public string? GetErrorPanDirectionOutOfRangeMessage(int minValue, int maxValue, int foundValue)
         {
             LocalizedString localizedString = _localizer["ErrorPanDirectionOutOfRange", foundValue, minValue, maxValue];
@@ -654,6 +678,22 @@ namespace Addmusic2.Model.Localization
         public string? GetErrorInstrumentValueOutOfRangeMessage(int minValue, int maxValue, int foundValue)
         {
             LocalizedString localizedString = _localizer["ErrorInstrumentValueOutOfRange", foundValue, minValue, maxValue];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorSfxInstrumentValueOutOfRangeMessage(int minValue, int maxValue, int foundValue)
+        {
+            LocalizedString localizedString = _localizer["ErrorSfxInstrumentValueOutOfRange", foundValue, minValue, maxValue];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorSfxInstrumentNoiseHexValueOutOfRangeMessage(int minValue, int maxValue, int foundValue)
+        {
+            LocalizedString localizedString = _localizer["ErrorSfxInstrumentNoiseHexValueOutOfRange", foundValue, minValue, maxValue];
 
             return localizedString;
         }

@@ -8,6 +8,12 @@ namespace Addmusic2.Model.Constants
 {
     public static class FileNames
     {
+        public static class ExecutionLocations
+        {
+            public static readonly string InstallLocation = AppDomain.CurrentDomain.BaseDirectory;
+            public static readonly string ExecutionLocation = Environment.CurrentDirectory;
+        }
+
         public static class ConfigurationFiles
         {
             // Original Files
@@ -25,10 +31,14 @@ namespace Addmusic2.Model.Constants
 
         public static class StaticFiles
         {
-            public static readonly string EmptyBrr = "EMPTY.brr";
+            public static readonly string TempTextFile = "temp" + FileExtensions.TextFile;
+            public static readonly string TempLogFile = "temp" + FileExtensions.LogFile;
+            public static readonly string TempAsmFile = "temp" + FileExtensions.Asm;
+            public static readonly string TempBinFile = "temp" + FileExtensions.BinPatchData;
+            public static readonly string EmptyBrr = "EMPTY" + FileExtensions.SampleBrr;
             public static string GetEmptyBrrLocation()
             {
-                var initialLocation = AppDomain.CurrentDomain.BaseDirectory;
+                var initialLocation = ExecutionLocations.InstallLocation;
                 return Path.Combine(initialLocation, FolderNames.SamplesBase, EmptyBrr);
             }
         }
@@ -47,9 +57,11 @@ namespace Addmusic2.Model.Constants
             public static readonly string SamplesDefault = "default";
             public static readonly string SamplesOptimized = "optimized";
 
+            public static readonly string LogFolder = "logs";
+
             public static List<string> GetInitialDirectories()
             {
-                var initialLocation = AppDomain.CurrentDomain.BaseDirectory;
+                var initialLocation = ExecutionLocations.InstallLocation;
 
                 var initialOriginalMusicData = Path.Combine(initialLocation, FileNames.FolderNames.MusicBase, FileNames.FolderNames.MusicOriginal);
                 var initial1DF9Data = Path.Combine(initialLocation, FileNames.FolderNames.Sfx1DF9);
@@ -75,6 +87,10 @@ namespace Addmusic2.Model.Constants
 
         public static class FileExtensions
         {
+            public static readonly string Asm = ".asm";
+            public static readonly string BinPatchData = ".bin";
+            public static readonly string TextFile = ".txt";
+            public static readonly string LogFile = ".log";
             public static readonly string SampleBrr = ".brr";
             public static readonly string SampleBank = ".bnk";
             public static readonly List<string> ValidSampleExtensions = new List<string>()

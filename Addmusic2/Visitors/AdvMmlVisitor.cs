@@ -495,7 +495,7 @@ namespace Addmusic2.Visitors
         public override ISongNode VisitDefaultLength([NotNull] MmlParser.DefaultLengthContext context)
         {
             var defaultLengthText = context.GetText();
-            var lengthValue = int.Parse(defaultLengthText.Substring(1));
+            var lengthValue = int.Parse(defaultLengthText[1..]);
             var defaultLengthPayload = new DefaultLengthPayload(lengthValue);
             var defaultLengthNode = new AtomicNode
             {
@@ -513,7 +513,7 @@ namespace Addmusic2.Visitors
         {
             var globalVolumeText = context.GetText();
             var globalVolumePayload = new VolumePayload();
-            var values = globalVolumeText.Substring(1).Split(',').ToList();
+            var values = globalVolumeText[1..].Split(',').ToList();
             globalVolumePayload.Volume = int.Parse(values.First());
             if(values.Count > 1)
             {
@@ -570,7 +570,7 @@ namespace Addmusic2.Visitors
         public override ISongNode VisitInstrument([NotNull] MmlParser.InstrumentContext context)
         {
             var instrumentText = context.GetText();
-            var instrumentNumber = int.Parse(instrumentText.Substring(1));
+            var instrumentNumber = int.Parse(instrumentText[1..]);
             var instrumentPayload = new InstrumentPayload(instrumentNumber);
             var instrumentNode = new AtomicNode
             {
@@ -745,7 +745,7 @@ namespace Addmusic2.Visitors
         public override ISongNode VisitOctave([NotNull] MmlParser.OctaveContext context)
         {
             var octaveText = context.GetText();
-            var octaveNumber = int.Parse(octaveText.Substring(1));
+            var octaveNumber = int.Parse(octaveText[1..]);
             var octavePayload = new OctavePayload(octaveNumber);
             var octaveNode = new AtomicNode
             {
@@ -762,7 +762,7 @@ namespace Addmusic2.Visitors
         {
             var panText = context.GetText();
             var panPayload = new PanPayload();
-            var panValues = panText.Substring(1).Split(',');
+            var panValues = panText[1..].Split(',');
             if(panValues.Length > 0)
             {
                 panPayload.PanPosition = int.Parse(panValues[0]);
@@ -1093,7 +1093,7 @@ namespace Addmusic2.Visitors
         {
             var volumeText = context.GetText();
             var volumePayload = new VolumePayload();
-            var volumeValues = volumeText.Substring(1).Split(',').ToList();
+            var volumeValues = volumeText[1..].Split(',').ToList();
             volumePayload.Volume = int.Parse(volumeValues.First());
             if (volumeValues.Count > 1)
             {

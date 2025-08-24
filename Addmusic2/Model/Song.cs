@@ -15,8 +15,8 @@ namespace Addmusic2.Model
     {
         public ISongNode RootNode { get; set; }
         public ISongParser Parser { get; set; }
-        public string SongText { get; set; }
-        public SongData SongData { get; set; }
+        public string SongText { get; set; } = string.Empty;
+        public SongData SongData { get; set; } = new();
 
         public Song(SongParser parser)
         {
@@ -37,7 +37,7 @@ namespace Addmusic2.Model
 
             var rootNode = RootNode as SongNode;
 
-            if(rootNode.NodeType != SongNodeType.Root)
+            if(rootNode == null || rootNode.NodeType != SongNodeType.Root)
             {
                 throw new Exception();
             }
