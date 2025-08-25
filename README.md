@@ -8,11 +8,12 @@ Addmusic2 (tenative title) is a C#.net rewrite of KungFuFurby's [AddmusicKFF for
 
 There are several goals:
 - Improve upon the existing c++ implementation
-- Create an updated parser that allows for easier ehancements and support for additional grammars, variations, and features
+- Create an updated parser that allows for easier enhancements and support for additional grammars, variations, and features
 - Add support for Localiztions other than English for international users
 - Create a new GUI to replace the existing one
     - Support management of settings and without having to edit them by hand
 - PATH support for Windows and similar cmd execution support for OSX and Linux
+- Feature parity with the current version of AddmusicKFF
 
 ## Enhancements
 
