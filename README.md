@@ -24,6 +24,7 @@ There are several enhancements to the current Addmusic:
 ## Commandline Parameters
 
 | Name | Command | Description |
+| --- | --- | --- |
 | ROM Name | [--r, --rom] | The Name of the ROM to modify. |
 | Convert | [--c] | Force off conversion from Addmusic 4.05 and AddmusicM |
 | Check Echo | [--e] | Turn off echo buffer checking. |
