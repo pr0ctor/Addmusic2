@@ -24,6 +24,7 @@ namespace Addmusic2.Parsers
         //private readonly SongListItem _songListItem;
         private readonly GlobalSettings _globalSettings;
         private readonly FileCachingService _fileCachingService;
+        private readonly RomOperations _romOperations;
         //private readonly SongScope _songScope;
         public SoundEffectData SoundEffectData { get; set; } = new();
 
@@ -47,7 +48,8 @@ namespace Addmusic2.Parsers
             ILogger<IAddmusicLogic> logger,
             MessageService messageService,
             GlobalSettings globalSettings,
-            FileCachingService fileCachingService
+            FileCachingService fileCachingService,
+            RomOperations romOperations
             //SongListItem songItem,
             //SongScope songScope
         )
@@ -76,6 +78,7 @@ namespace Addmusic2.Parsers
             return SoundEffectData;
         }
 
+        // done at a different point in execution because there isn't a value AramPosition during normal parsing
         public void CompileAsmElements(SoundEffectData soundEffectData)
         {
             var tempAsmPath = Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempAsmFile);
@@ -92,7 +95,7 @@ namespace Addmusic2.Parsers
                 var sfxPatchString = PatchBuilders.BuildSoundEffectAsmPatch(aramPosition, block.Value);
 
                 tempAsmWriter.Write(sfxPatchString.ToCharArray());
-                var isCompileSuccessful = RomOperations.CompileAsmToBin(FileNames.StaticFiles.TempAsmFile, FileNames.StaticFiles.TempBinFile);
+                var isCompileSuccessful = _romOperations.CompileAsmToBin(FileNames.StaticFiles.TempAsmFile, FileNames.StaticFiles.TempBinFile);
 
                 if(!isCompileSuccessful)
                 {

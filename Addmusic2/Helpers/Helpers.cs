@@ -1,19 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Addmusic2.Model;
+﻿using Addmusic2.Model;
 using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
 using Addmusic2.Services;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using static Addmusic2.Model.SongTree.NotePayload;
 
 namespace Addmusic2.Helpers
 {
     internal static class Helpers
     {
+
+        public static Regex GetHexValueAfterText(string textBeforeHexValue)
+        {
+            var regexString = $@"{textBeforeHexValue}\$([a-zA-Z0-9]{{1,5}})";
+            return new(regexString);
+        }
 
         public static bool IsHexInRange(byte hexValue)
         {

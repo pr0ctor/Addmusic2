@@ -569,6 +569,7 @@ namespace Addmusic2.Model.SongTree
 
     #endregion
 
+
     #region Sfx Payloads
 
     internal class SfxJsrPayload : ISongNodePayload

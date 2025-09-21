@@ -14,6 +14,7 @@ using Addmusic2.Model.Constants;
 using Antlr4.Runtime;
 using Microsoft.Extensions.Logging;
 using AsarCLR.Asar191;
+using Addmusic2.Helpers;
 
 namespace Addmusic2.Logic
 {
@@ -23,15 +24,26 @@ namespace Addmusic2.Logic
         private MessageService _messageService;
         private FileCachingService _fileService;
         private GlobalSettings _globalSettings;
+        private RomOperations _romOperations;
+
+        private List<Song> Songs = new();
+        private List<SoundEffect> SoundEffects = new();
 
         public DateTime LastModification { get; set; }
 
-        public AddmusicLogic(ILogger<IAddmusicLogic> logger, MessageService messageService, IFileCachingService fileCachingService, IGlobalSettings globalSettings)
+        public AddmusicLogic(
+            ILogger<IAddmusicLogic> logger,
+            MessageService messageService,
+            IFileCachingService fileCachingService,
+            IGlobalSettings globalSettings,
+            RomOperations romOperations
+        )
         {
             _logger = logger;
             _messageService = messageService;
             _fileService = (FileCachingService)fileCachingService;
             _globalSettings = (GlobalSettings)globalSettings;
+            _romOperations = romOperations;
         }
 
         public void Run()
@@ -39,16 +51,31 @@ namespace Addmusic2.Logic
 
             LoadRequiredSampleGroups();
 
+            ProcessAllSongs();
+
+            ProcessAllSoundEffects();
+
+            
+
+        }
+
+        #region Song Processing
+
+        public void ProcessAllSongs()
+        {
             // load global songs
-            foreach(var globalSong in _globalSettings.ResourceList.Songs.GlobalSongs)
+            foreach (var globalSong in _globalSettings.ResourceList.Songs.GlobalSongs)
             {
                 var fileData = File.ReadAllText(Path.Combine(FileNames.FolderNames.MusicBase, globalSong.Path));
 
                 var preprocessedFileData = PreProcessSong(fileData);
 
                 var songData = ProcessSong(preprocessedFileData, SongScope.Global);
+                songData.Configuration = globalSong;
 
                 PostProcessSong();
+
+                Songs.Add(songData);
             }
 
             // load local songs
@@ -59,44 +86,14 @@ namespace Addmusic2.Logic
                 var preprocessedFileData = PreProcessSong(fileData);
 
                 var songData = ProcessSong(preprocessedFileData, SongScope.Local);
+                songData.Configuration = localSong;
 
                 PostProcessSong();
+
+                Songs.Add(songData);
             }
-
-            // load 1DF9 sound effects
-            foreach(var sfx1DF9 in _globalSettings.ResourceList.SoundEffects.Sfx1DF9)
-            {
-                var filedata = File.ReadAllText(sfx1DF9.Path);
-
-                var preprocessedSfxFileData = PreprocessSoundEffect(filedata);
-
-                var soundEffectData = ProcessSoundEffect(preprocessedSfxFileData);
-
-                PostProcessSoundEffect();
-            }
-
-            // load 1DFC sound effects
-            foreach (var sfx1DFC in _globalSettings.ResourceList.SoundEffects.Sfx1DFC)
-            {
-                var filedata = File.ReadAllText(sfx1DFC.Path);
-
-                var preprocessedSfxFileData = PreprocessSoundEffect(filedata);
-
-                var soundEffectData = ProcessSoundEffect(preprocessedSfxFileData);
-
-                PostProcessSoundEffect();
-            }
-
-
-            //var fileData = File.ReadAllText(@"Samples/Seenpoint Intro.txt");
-
-            //var songData = PreProcessSong(fileData);
-            //ProcessSong(songData);
-
-            //PostProcessSong();
         }
 
-        #region Song Processing
 
         public void RunSingleSong(string fileData)
         {
@@ -163,6 +160,60 @@ namespace Addmusic2.Logic
 
         #region Sound Effect Processing
 
+        public void ProcessAllSoundEffects()
+        {
+            // load 1DF9 sound effects
+            foreach (var sfx1DF9 in _globalSettings.ResourceList.SoundEffects.Sfx1DF9)
+            {
+                // dont do anything if this is a sound effect that points to another
+                if (sfx1DF9.Settings.Pointer == true)
+                {
+                    SoundEffects.Add(new SoundEffect
+                    {
+                        Configuration = sfx1DF9
+                    });
+                    continue;
+                }
+
+                var filedata = File.ReadAllText(Path.Combine(FileNames.FolderNames.Sfx1DF9, sfx1DF9.Path));
+
+                var preprocessedSfxFileData = PreprocessSoundEffect(filedata);
+
+                var soundEffectData = ProcessSoundEffect(preprocessedSfxFileData);
+                soundEffectData.Configuration = sfx1DF9;
+
+                PostProcessSoundEffect();
+
+                SoundEffects.Add(soundEffectData);
+            }
+
+            // load 1DFC sound effects
+            foreach (var sfx1DFC in _globalSettings.ResourceList.SoundEffects.Sfx1DFC)
+            {
+                // dont do anything if this is a sound effect that points to another
+                if (sfx1DFC.Settings.Pointer == true)
+                {
+                    SoundEffects.Add(new SoundEffect
+                    {
+                        Configuration = sfx1DFC
+                    });
+                    continue;
+                }
+
+                var filedata = File.ReadAllText(Path.Combine(FileNames.FolderNames.Sfx1DFC, sfx1DFC.Path));
+
+                var preprocessedSfxFileData = PreprocessSoundEffect(filedata);
+
+                var soundEffectData = ProcessSoundEffect(preprocessedSfxFileData);
+                soundEffectData.Configuration = sfx1DFC;
+
+                PostProcessSoundEffect();
+
+                SoundEffects.Add(soundEffectData);
+            }
+        }
+
+
         public string PreprocessSoundEffect(string fileData)
         {
             return fileData;
@@ -185,7 +236,8 @@ namespace Addmusic2.Logic
                 _logger,
                 _messageService,
                 _globalSettings,
-                _fileService
+                _fileService,
+                _romOperations
             );
 
             var soundEffect = new SoundEffect(soundEffectParser, rootNode)

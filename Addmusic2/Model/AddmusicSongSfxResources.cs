@@ -73,6 +73,14 @@ namespace Addmusic2.Model
     {
         [JsonProperty("number", Required = Required.Always)]
         public string Number { get; set; }
+        [JsonIgnore]
+        public int IntNumber 
+        { 
+            get
+            {
+                return Convert.ToInt32(Number, 16);
+            }
+        }
         [JsonProperty("name")]
         public string Name { get; set; }
         [JsonProperty("path", Required = Required.Always)]
@@ -112,6 +120,8 @@ namespace Addmusic2.Model
         public bool Loop { get; set; }
         [JsonProperty("pointer", Required = Required.DisallowNull)]
         public bool Pointer { get; set; }
+        [JsonProperty("copyOf")]
+        public string CopyOf { get; set; }
     }
 
     internal class AddmusicSampleGroup

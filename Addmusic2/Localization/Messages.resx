@@ -449,4 +449,8 @@
     <value>Error parsing instrument definition. Hex value found (0x{0}) must be between 0x{1} and 0x{2} .</value>
     <comment>Error for when an instrument definition contains a hex value that is out of range</comment>
   </data>
+  <data name="WarningNoSfxEnabledAndDumpSfx" xml:space="preserve">
+    <value>The sound driver build does not support sound effects due to the !noSFX flag being enabled in asm/UserDefines.asm, yet you requested to dump SFX. There will be no new SPC dumps of the sound effects since the data is not included by default, nor is the playback code for the sound effects.</value>
+    <comment>Warning for when the user uses the  DumpSfx commandline argument and the !noSFX flag is enabled in the user defines</comment>
+  </data>
 </root>

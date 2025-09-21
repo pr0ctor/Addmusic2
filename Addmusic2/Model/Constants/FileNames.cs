@@ -14,6 +14,17 @@ namespace Addmusic2.Model.Constants
             public static readonly string ExecutionLocation = Environment.CurrentDirectory;
         }
 
+        public static class AsmFiles
+        {
+            public static readonly string PatchAsm = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "patch" + FileExtensions.Asm);
+            public static readonly string MainAsm = Path.Combine(FolderNames.AsmBase, "main" + FileExtensions.Asm);
+        }
+
+        public static class BinFiles
+        {
+            public static readonly string MainBin = Path.Combine(FolderNames.AsmBase, "main" + FileExtensions.BinPatchData);
+        }
+
         public static class ConfigurationFiles
         {
             // Original Files
@@ -91,6 +102,9 @@ namespace Addmusic2.Model.Constants
             public static readonly string BinPatchData = ".bin";
             public static readonly string TextFile = ".txt";
             public static readonly string LogFile = ".log";
+            public static readonly string MscFile = ".msc";
+            public static readonly string RomSmc = ".smc";
+            public static readonly string RomSfc = ".sfc";
             public static readonly string SampleBrr = ".brr";
             public static readonly string SampleBank = ".bnk";
             public static readonly List<string> ValidSampleExtensions = new List<string>()

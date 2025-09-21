@@ -763,6 +763,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The sound driver build does not support sound effects due to the !noSFX flag being enabled in asm/UserDefines.asm, yet you requested to dump SFX. There will be no new SPC dumps of the sound effects since the data is not included by default, nor is the playback code for the sound effects..
+        /// </summary>
+        internal static string WarningNoSfxEnabledAndDumpSfx {
+            get {
+                return ResourceManager.GetString("WarningNoSfxEnabledAndDumpSfx", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to WARNING: A note length was used that is not divisible by {0:D} ticks, and thus results in a fractional tick value. Song - {1) , Line - {2:D} , Column - {3:D}.
         /// </summary>
         internal static string WarningNoteLengthFractionalTickValue {

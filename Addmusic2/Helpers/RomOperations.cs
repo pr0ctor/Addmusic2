@@ -1,19 +1,54 @@
 ﻿using Addmusic2.Model;
 using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
+using Addmusic2.Model.Localization;
+using Addmusic2.Services;
 using AsarCLR.Asar191;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Addmusic2.Helpers
 {
-    internal static class RomOperations
+    internal class RomOperations : IRomOperations
     {
+        private ILogger<IAddmusicLogic> _logger;
+        private GlobalSettings _globalSettings;
+        private MessageService _messageService;
+        private FileCachingService _fileCachingService;
 
-        public static bool CompileAsmToBin(string sourceFileName, string binToWrite)
+        public RomOperations(IGlobalSettings settings, ILogger<IAddmusicLogic> logger, MessageService messageService, IFileCachingService fileCachingService)
+        {
+            _globalSettings = (GlobalSettings)settings;
+            _messageService = messageService;
+            _logger = logger;
+            _fileCachingService = (FileCachingService)fileCachingService;
+        }
+
+        public int SNESToPC(int address)
+        {
+            if (address < 0 || address > 0xFFFFFF ||     // not 24bit
+                (address & 0xFE0000) == 0x7E0000 ||     // wram
+                (address & 0x408000) == 0x000000)     // hardward registers
+            {
+                return -1;
+            }
+
+            if (_globalSettings.EnableSA1Addressing && address >= 0x808000)
+            {
+                address -= 0x400000;
+            }
+
+            address = ((address & 0x7F0000) >> 1 | (address & 0x7FFF));
+
+            return address;
+        }
+
+        public bool CompileAsmToBin(string sourceFileName, string binToWrite)
         {
 
             using var tempTextFileWriter = new StreamWriter(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempTextFile), true);
@@ -75,6 +110,220 @@ namespace Addmusic2.Helpers
             return true;
         }
 
+        public void GetProgramUploadPosition()
+        {
+            var patchAsm = _fileCachingService.GetFromCache(FileNames.AsmFiles.PatchAsm);
+            var patchAsmStream = Encoding.Unicode.GetString(patchAsm.ToArray());
+            var programUploadPositionRegex = Helpers.GetHexValueAfterText(ExtractedAsmDataNames.PatchAsmLocationNames.ProgramUploadPositionText);
+            var matches = programUploadPositionRegex.Matches(patchAsmStream);
+            if(matches.Count == 0 )
+            {
+                // todo catch exception when the data is missing from the file
+                throw new Exception();
+            }
+
+            // get the base16 value for the position
+            var value = matches.First().Groups[1].Value;
+
+            var intValue = Convert.ToInt32(value, 16);
+            _globalSettings.ProgramUploadPosition = intValue;
+        }
+
+        public void AssembleSPCDriver()
+        {
+            using var tempLogFileWriter = new StreamWriter(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempLogFile), true);
+
+            if (File.Exists(FileNames.BinFiles.MainBin))
+            {
+                File.Delete(FileNames.BinFiles.MainBin);
+            }
+
+            var mainAsm = _fileCachingService.GetFromCache(FileNames.AsmFiles.MainAsm);
+
+            var mainAsmText = Encoding.Unicode.GetString(mainAsm.ToArray());
+            var programPostion = Helpers.GetHexValueAfterText(ExtractedAsmDataNames.PatchAsmLocationNames.ProgramBasePositionText);
+
+            var complied = CompileAsmToBin(FileNames.AsmFiles.MainAsm, FileNames.BinFiles.MainBin);
+
+            if(!complied)
+            {
+                // todo handle error
+                throw new Exception();
+            }
+
+            var tempTextFile = File.ReadAllText(FileNames.StaticFiles.TempTextFile);
+
+            var mainLoopPositionRegex = Helpers.GetHexValueAfterText(ExtractedAsmDataNames.PatchAsmLocationNames.MainLoopPositionText);
+            var reuploadPositionRegex = Helpers.GetHexValueAfterText(ExtractedAsmDataNames.PatchAsmLocationNames.ReuploadPositionText);
+
+            var mainLoopMatches = mainLoopPositionRegex.Matches(tempTextFile);
+            var reuploadMatches = reuploadPositionRegex.Matches(tempTextFile);
+
+            if(mainLoopMatches.Count == 0)
+            {
+                // todo handle error
+                throw new Exception();
+            }
+            if(reuploadMatches.Count == 0)
+            {
+                // todo handle error
+                throw new Exception();
+            }
+
+            var noSFXIsFound = tempTextFile.IndexOf(ExtractedAsmDataNames.AdditionalValues.NoSFXIsEnabled) != -1;
+
+            if(_globalSettings.ExportSfx == true && noSFXIsFound == false)
+            {
+                // todo fix logging
+                _messageService.GetWarningNoSfxEnabledAndDumpSfxMessage();
+                _globalSettings.ExportSfx = false;
+            }
+
+            var fileInfo = new FileInfo(FileNames.BinFiles.MainBin).Length;
+            _globalSettings.ProgramSize = (int)fileInfo;
+
+        }
+
+        public void CompileAllSoundEffects(List<SoundEffect> soundEffects)
+        {
+            var sfx1DF9 = soundEffects.FindAll(s => s.Configuration.Type == SfxListItemType.Sfx1DF9);
+            var sfx1DFC = soundEffects.FindAll(s => s.Configuration.Type == SfxListItemType.Sfx1DFC);
+
+            var sfx1DF9Max = sfx1DF9.MaxBy(s => s.Configuration.IntNumber).Configuration.IntNumber;
+            var missing1DF9 = Enumerable.Range(0, sfx1DF9Max).Except(sfx1DF9.Select(s => s.Configuration.IntNumber));
+
+            var sfx1DFCMax = sfx1DFC.MaxBy(s => s.Configuration.IntNumber).Configuration.IntNumber;
+            var missing1DFC = Enumerable.Range(0, sfx1DF9Max).Except(sfx1DFC.Select(s => s.Configuration.IntNumber));
+
+            var df9Pointers = new List<ushort>();
+            var df9DataTotal = 0;
+            var dfcPointers = new List<ushort>();
+            var dfcDataTotal = 0;
+
+            var index = 1;
+            foreach (var sfx in sfx1DF9)
+            {
+                // fill in blanks between items
+                while (missing1DF9.Contains(index))
+                {
+                    df9Pointers.Add(0xFFFF);
+                    index++;
+                }
+
+                if (sfx.Configuration.Settings.Pointer == true)
+                {
+                    // get the first occurance of sound effect that the current one is pointing to
+                    var copyOf = sfx1DF9
+                        .FindAll(s => s.Configuration.Name == sfx.Configuration.Settings.CopyOf && s.Configuration.Settings.Pointer == false)
+                        .MinBy(s => s.Configuration.IntNumber);
+                    if (copyOf == null)
+                    {
+                        // todo fix error when theres no match
+                        throw new Exception();
+                    }
+                    else if(copyOf.Configuration.IntNumber > sfx.Configuration.IntNumber)
+                    {
+                        // todo handle error when the pointer points to a sound effect that hasnt been compiled yet
+                        throw new Exception();
+                    }
+
+                    // readd the pointer for this sound effect
+                    df9Pointers.Add(df9Pointers[copyOf.Configuration.IntNumber]);
+
+                }
+                else
+                {
+                    // Calculate AramPosition because that was not done during the Parsing of the Sound Effect
+                    sfx.SoundEffectData.AramPosition = sfx1DF9Max * 2
+                        + sfx1DFCMax * 2
+                        + _globalSettings.ProgramUploadPosition
+                        + _globalSettings.ProgramSize
+                        + df9DataTotal;
+                    // Compile the Asm Elements now that there is a defined AramPosition
+                    // todo handle errors
+                    sfx.Parser.CompileAsmElements(sfx.SoundEffectData);
+
+                    var pointer = dfcDataTotal
+                        + df9DataTotal
+                        + (sfx1DF9Max + sfx1DFCMax) * 2
+                        + _globalSettings.ProgramUploadPosition
+                        + _globalSettings.ProgramSize;
+
+                    df9Pointers.Add((ushort)pointer);
+                    df9DataTotal += sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Count;
+                }
+
+                index++;
+            }
+
+            index = 1;
+            foreach (var sfx in sfx1DFC)
+            {
+                // fill in blanks between items
+                while (missing1DFC.Contains(index))
+                {
+                    dfcPointers.Add(0xFFFF);
+                    index++;
+                }
+
+                if (sfx.Configuration.Settings.Pointer == true)
+                {
+                    // get the first occurance of sound effect that the current one is pointing to
+                    var copyOf = sfx1DFC
+                        .FindAll(s => s.Configuration.Name == sfx.Configuration.Settings.CopyOf && s.Configuration.Settings.Pointer == false)
+                        .MinBy(s => s.Configuration.IntNumber);
+                    if (copyOf == null)
+                    {
+                        // todo fix error when theres no match
+                        throw new Exception();
+                    }
+                    else if (copyOf.Configuration.IntNumber > sfx.Configuration.IntNumber)
+                    {
+                        // todo handle error when the pointer points to a sound effect that hasnt been compiled yet
+                        throw new Exception();
+                    }
+
+                    // readd the pointer for this sound effect
+                    dfcPointers.Add(dfcPointers[copyOf.Configuration.IntNumber]);
+
+                }
+                else
+                {
+                    // Calculate AramPosition because that was not done during the Parsing of the Sound Effect
+                    sfx.SoundEffectData.AramPosition = sfx1DF9Max * 2
+                        + sfx1DFCMax * 2
+                        + _globalSettings.ProgramUploadPosition
+                        + _globalSettings.ProgramSize
+                        + dfcDataTotal;
+                    // Compile the Asm Elements now that there is a defined AramPosition
+                    // todo handle errors
+                    sfx.Parser.CompileAsmElements(sfx.SoundEffectData);
+
+                    var pointer = dfcDataTotal
+                        + df9DataTotal
+                        + (sfx1DF9Max + sfx1DFCMax) * 2
+                        + _globalSettings.ProgramUploadPosition
+                        + _globalSettings.ProgramSize;
+
+                    dfcPointers.Add((ushort)pointer);
+                    dfcDataTotal += sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Count;
+                }
+
+                index++;
+            }
+
+
+        }
+
+        public void AssembleSNESDriver()
+        {
+
+        }
+
+        public void GenerateMSC(string romName, List<string> songNames)
+        {
+
+        }
 
 
     }

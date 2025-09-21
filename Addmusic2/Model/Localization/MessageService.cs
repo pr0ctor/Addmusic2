@@ -395,6 +395,21 @@ namespace Addmusic2.Model.Localization
 
         #endregion
 
+
+        #region Addmusic Logic Warning Messages
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetWarningNoSfxEnabledAndDumpSfxMessage()
+        {
+            LocalizedString localizedString = _localizer["WarningNoSfxEnabledAndDumpSfx"];
+
+            return localizedString;
+        }
+
+
+        #endregion
+
+
         #endregion
 
         #region Error Messages
