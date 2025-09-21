@@ -200,6 +200,8 @@ namespace Addmusic2.Helpers
             var dfcPointers = new List<ushort>();
             var dfcDataTotal = 0;
 
+            var allSfxData = new List<byte>();
+
             var index = 1;
             foreach (var sfx in sfx1DF9)
             {
@@ -251,6 +253,12 @@ namespace Addmusic2.Helpers
 
                     df9Pointers.Add((ushort)pointer);
                     df9DataTotal += sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Count;
+
+                    allSfxData.AddRange(sfx.SoundEffectData.ChannelData);
+                    foreach (var item in sfx.SoundEffectData.CompiledAsmCodeBlocks.Values)
+                    {
+                        allSfxData.AddRange(item);
+                    }
                 }
 
                 index++;
@@ -307,11 +315,66 @@ namespace Addmusic2.Helpers
 
                     dfcPointers.Add((ushort)pointer);
                     dfcDataTotal += sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Count;
+
+                    allSfxData.AddRange(sfx.SoundEffectData.ChannelData);
+                    foreach (var item in sfx.SoundEffectData.CompiledAsmCodeBlocks.Values)
+                    {
+                        allSfxData.AddRange(item);
+                    }
                 }
 
                 index++;
             }
 
+            var df9Size = (df9DataTotal + (sfx1DF9Max * 2));
+            var dfcSize = (dfcDataTotal + (sfx1DFCMax * 2));
+            var allSize = df9Size + dfcSize;
+            _messageService.GetInfoTotalSpaceUsedBy1DF9SfxMessage($"0x{PatchBuilders.HexWidthFormat(df9DataTotal.ToString(), 4)}");
+            _messageService.GetInfoTotalSpaceUsedBy1DFCSfxMessage($"0x{PatchBuilders.HexWidthFormat(df9DataTotal.ToString(), 4)}");
+            _messageService.GetInfoTotalSpaceUsedByAllSoundEffectsMessage($"0x{PatchBuilders.HexWidthFormat(allSize.ToString(), 4)}");
+
+
+
+            File.WriteAllBytes(FileNames.BinFiles.SfxDataBin, allSfxData.ToArray());
+
+            var mainAsm = _fileCachingService.GetFromCache(FileNames.AsmFiles.MainAsm);
+            mainAsm.Seek(index, SeekOrigin.Begin);
+
+            var mainAsmText = Encoding.UTF8.GetString(mainAsm.ToArray());
+            var sfxTable0Position = mainAsmText.IndexOf(ExtractedAsmDataNames.PatchAsmLocationNames.SFXTable0Text);
+            mainAsmText.Insert(
+                sfxTable0Position + ExtractedAsmDataNames.PatchAsmLocationNames.SFXTable0Text.Length,
+                PatchBuilders.SfxTable0Contents
+            );
+
+            var sfxTable1Position = mainAsmText.IndexOf(ExtractedAsmDataNames.PatchAsmLocationNames.SFXTable1Text);
+            mainAsmText.Insert(
+                sfxTable0Position + ExtractedAsmDataNames.PatchAsmLocationNames.SFXTable1Text.Length,
+                PatchBuilders.SfxTable1Contents
+            );
+
+            File.WriteAllText(FileNames.AsmFiles.TempMainAsm, mainAsmText);
+
+            File.Delete(FileNames.BinFiles.MainBin);
+
+            var isCompiled = CompileAsmToBin(FileNames.AsmFiles.TempMainAsm, FileNames.BinFiles.MainBin);
+
+            // todo handle when it fails to compile
+
+
+            var newProgramSize = (int)(new FileInfo(FileNames.BinFiles.MainBin).Length);
+
+            if(_globalSettings.ExportSfx == true)
+            {
+                _messageService.GetInfoSoundEffectsNotIncludedMessage();
+                _messageService.GetInfoTotalSizeOfProgramMessage($"0x{PatchBuilders.HexWidthFormat(newProgramSize.ToString(), 4)}");
+            }
+            else
+            {
+                _messageService.GetInfoTotalSizeOfProgramWithSfxMessage($"0x{PatchBuilders.HexWidthFormat(newProgramSize.ToString(), 4)}");
+            }
+
+            _globalSettings.ProgramSize = newProgramSize;
 
         }
 

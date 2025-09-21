@@ -700,6 +700,60 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to !noSFX is enabled in asm/UserDefines.asm, sound effects are not included.
+        /// </summary>
+        internal static string InfoSoundEffectsNotIncluded {
+            get {
+                return ResourceManager.GetString("InfoSoundEffectsNotIncluded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total size of main program: {0}.
+        /// </summary>
+        internal static string InfoTotalSizeOfProgram {
+            get {
+                return ResourceManager.GetString("InfoTotalSizeOfProgram", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total size of main program and all sound effects: {0}.
+        /// </summary>
+        internal static string InfoTotalSizeOfProgramWithSfx {
+            get {
+                return ResourceManager.GetString("InfoTotalSizeOfProgramWithSfx", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total space used by 1DF9 sound effects: {0}.
+        /// </summary>
+        internal static string InfoTotalSpaceUsedBy1DF9Sfx {
+            get {
+                return ResourceManager.GetString("InfoTotalSpaceUsedBy1DF9Sfx", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total space used by 1DFC sound effects: {0}.
+        /// </summary>
+        internal static string InfoTotalSpaceUsedBy1DFCSfx {
+            get {
+                return ResourceManager.GetString("InfoTotalSpaceUsedBy1DFCSfx", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total space used by all sound effects: {0}.
+        /// </summary>
+        internal static string InfoTotalSpaceUsedByAllSoundEffects {
+            get {
+                return ResourceManager.GetString("InfoTotalSpaceUsedByAllSoundEffects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Addmusic Version.
         /// </summary>
         internal static string IntroAddmusicVersion {
@@ -783,9 +837,9 @@ namespace Addmusic2.Localization {
         /// <summary>
         ///   Looks up a localized string similar to The octave has been dropped too low..
         /// </summary>
-        internal static string WarningOctaveDroppedTooLow {
+        internal static string WarningOctaveDroppedTooLow1 {
             get {
-                return ResourceManager.GetString("WarningOctaveDroppedTooLow", resourceCulture);
+                return ResourceManager.GetString("WarningOctaveDroppedTooLow1", resourceCulture);
             }
         }
         

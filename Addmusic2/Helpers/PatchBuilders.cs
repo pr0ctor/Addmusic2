@@ -23,7 +23,8 @@ org $008000
 {asmData}
 
 ";
-
+        public static string SfxTable0Contents = "\r\nincbin \"SFX1DF9Table.bin\"\r\n";
+        public static string SfxTable1Contents = "\r\nincbin \"SFX1DFCTable.bin\"\r\nincbin \"SFXData.bin\"\r\n";
 
     }
 }
