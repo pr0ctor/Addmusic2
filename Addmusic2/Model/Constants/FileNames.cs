@@ -19,6 +19,7 @@ namespace Addmusic2.Model.Constants
             public static readonly string PatchAsm = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "patch" + FileExtensions.Asm);
             public static readonly string MainAsm = Path.Combine(FolderNames.AsmBase, "main" + FileExtensions.Asm);
             public static readonly string TempMainAsm = Path.Combine(FolderNames.AsmBase, "tempmain" + FileExtensions.Asm);
+            public static readonly string SongSampleListAsm = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "SongSampleList" + FileExtensions.Asm);
         }
 
         public static class BinFiles

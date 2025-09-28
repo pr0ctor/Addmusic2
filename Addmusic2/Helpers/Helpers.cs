@@ -82,6 +82,36 @@ namespace Addmusic2.Helpers
             fileCache.AddToCache(sample.Path, fullPath);
         }
 
+        public static byte[] GetSampleDataFromCache(IFileCachingService fileCache, AddmusicSample sample)
+        {
+            var cacheContains = fileCache.CheckCacheContains(sample.Path);
+            if(cacheContains.IsFound == true)
+            {
+                var dataStream = fileCache.GetFromCache(cacheContains.Filename);
+                return dataStream!.ToArray();
+            }
+            else
+            {
+                // todo update exception
+                throw new Exception();
+            }
+        }
+
+        public static int GetSampleDataLengthFromCache(IFileCachingService fileCache, AddmusicSample sample)
+        {
+            var cacheContains = fileCache.CheckCacheContains(sample.Path);
+            if (cacheContains.IsFound == true)
+            {
+                var dataStream = fileCache.GetFromCache(cacheContains.Filename);
+                return dataStream!.ToArray().Length;
+            }
+            else
+            {
+                // todo update exception
+                throw new Exception();
+            }
+        }
+
         public static string ParseAccidentalToString(Accidentals accidental) => accidental switch
         {
             Accidentals.None => "",

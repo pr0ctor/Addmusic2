@@ -55,7 +55,9 @@ namespace Addmusic2.Logic
 
             ProcessAllSoundEffects();
 
-            
+            _romOperations.GetProgramUploadPosition();
+            _romOperations.AssembleSNESDriver();
+            _romOperations.CompileAllSoundEffects(SoundEffects);
 
         }
 

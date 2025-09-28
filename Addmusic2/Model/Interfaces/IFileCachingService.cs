@@ -20,5 +20,7 @@ namespace Addmusic2.Model.Interfaces
         public int AddToCache(string fileName, Stream fileData);
 
         public MemoryStream? GetFromCache(string fileName);
+
+        public (bool IsFound, string Filename) CheckCacheContains(string fileName);
     }
 }

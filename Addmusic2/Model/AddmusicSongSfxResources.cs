@@ -30,6 +30,14 @@ namespace Addmusic2.Model
     {
         [JsonProperty("number", Required = Required.Always)]
         public string Number { get; set; }
+        [JsonIgnore]
+        public int IntNumber
+        {
+            get
+            {
+                return Convert.ToInt32(Number, 16);
+            }
+        }
         [JsonProperty("name", Required = Required.Always)]
         public string Name { get; set; }
         [JsonProperty("path", Required = Required.Always)]

@@ -129,7 +129,7 @@ namespace Addmusic2.Parsers
 
             // Calculate the first pass pointers
 
-            CalculateFirstPassPointers(SongData);
+            // CalculateFirstPassPointers(SongData);
 
             return SongData;
         }

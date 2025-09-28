@@ -15,5 +15,6 @@ namespace Addmusic2.Model.Interfaces
         public void ParseNode(SongNode node);
         public IValidationResult ValidateNode(ISongNode node);
         public void EvaluateNode(ISongNode node);
+        public void CalculateFirstPassPointers(SongData songData);
     }
 }

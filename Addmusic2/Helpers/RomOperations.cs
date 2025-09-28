@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,6 +30,111 @@ namespace Addmusic2.Helpers
             _fileCachingService = (FileCachingService)fileCachingService;
         }
 
+        public int FindFreeSpaceInROM(int size, int start, string romPath)
+        {
+            if(size == 0)
+            {
+                // todo handle case where size cannot be 0
+                throw new ArgumentException();
+            }
+
+            if(size > MagicNumbers.FourKiBRomSize)
+            {
+                // todo handle case where size cannot be larger than 4KiB
+                throw new ArgumentException();
+            }
+
+            var fileData = File.ReadAllBytes(romPath);
+
+            var position = 0;
+            var space = 0;
+            size += 8;
+            var index = start;
+            for(index = index; index < fileData.Length; index++)
+            {
+                if(space == size)
+                {
+                    position = index;
+                    break;
+                }
+
+                if(index % 0x8000 == 0)
+                {
+                    space = 0;
+                }
+
+                // Check for the start of a RATS tag
+                var ratsCheckSpan = new ReadOnlySpan<byte>(fileData[index..(index+4)]);
+                if(index < fileData.Length - 4 && ratsCheckSpan.SequenceEqual(MagicNumbers.StarTag))
+                {
+                    var ratsSize = fileData[index + 4] | fileData[index + 5] << 8;
+                    var sizeInv = (fileData[index + 6] | fileData[index + 7] << 8) ^ 0xFFFF;
+
+                    // If theres a size mismatch or if theres technically a sequence match but its not a RATS tag
+                    //      continue;
+                    // Otherwise
+                    //      skip from the current position to the end of the protected RATS section
+                    if(ratsSize != sizeInv)
+                    {
+                        space++;
+                        continue;
+                    }
+
+                    index = index + ratsSize + 8;
+                    space = 0;
+                }
+                else if (fileData[index] == 0 || _globalSettings.EnableAggressiveFreespace == true)
+                {
+                    space++;
+                }
+                else
+                {
+                    space = 0;
+                }
+            }
+
+            if(space == size)
+            {
+                position = index;
+            }
+
+            if(position == 0)
+            {
+                if(start == 0x080000)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return FindFreeSpaceInROM(size, 0x080000, romPath);
+                }
+            }
+
+            var insertPosition = position - size;
+
+            var bytesToInsert = new List<byte>();
+            bytesToInsert.AddRange(MagicNumbers.StarTag);
+            bytesToInsert.AddRange(GenerateRatsSizeValue(size - 9));
+
+            var finalFileData = fileData.ToList();
+            finalFileData.InsertRange(insertPosition, bytesToInsert);
+
+            // todo double check to see if data needs to be written back to the file
+
+            return position;
+        }
+
+        public byte[] GenerateRatsSizeValue(int size)
+        {
+            var sizeOffset = size ^ 0xFFFF;
+            return [
+                (byte)(size & 0xFF),
+                (byte)(size >> 8),
+                (byte)(sizeOffset & 0xFF),
+                (byte)(sizeOffset >> 8),
+            ]; 
+        }
+
         public int SNESToPC(int address)
         {
             if (address < 0 || address > 0xFFFFFF ||     // not 24bit
@@ -44,6 +150,28 @@ namespace Addmusic2.Helpers
             }
 
             address = ((address & 0x7F0000) >> 1 | (address & 0x7FFF));
+
+            return address;
+        }
+
+        public int PCToSNES(int address)
+        {
+            if (address < 0 || address >= 0x400000)
+            {
+                return -1;
+            }
+
+            address = ((address << 1) & 0x7F0000) | (address & 0x7FFF) | 0x8000;
+
+            if (!_globalSettings.EnableSA1Addressing && (address & 0xF00000) == 0x700000)
+            {
+                address |= 0x800000;
+            }
+
+            if (_globalSettings.EnableSA1Addressing && address >= 0x400000)
+            {
+                address += 0x400000;
+            }
 
             return address;
         }
@@ -189,11 +317,11 @@ namespace Addmusic2.Helpers
             var sfx1DF9 = soundEffects.FindAll(s => s.Configuration.Type == SfxListItemType.Sfx1DF9);
             var sfx1DFC = soundEffects.FindAll(s => s.Configuration.Type == SfxListItemType.Sfx1DFC);
 
-            var sfx1DF9Max = sfx1DF9.MaxBy(s => s.Configuration.IntNumber).Configuration.IntNumber;
+            var sfx1DF9Max = sfx1DF9.Max(s => s.Configuration.IntNumber);
             var missing1DF9 = Enumerable.Range(0, sfx1DF9Max).Except(sfx1DF9.Select(s => s.Configuration.IntNumber));
 
-            var sfx1DFCMax = sfx1DFC.MaxBy(s => s.Configuration.IntNumber).Configuration.IntNumber;
-            var missing1DFC = Enumerable.Range(0, sfx1DF9Max).Except(sfx1DFC.Select(s => s.Configuration.IntNumber));
+            var sfx1DFCMax = sfx1DFC.Max(s => s.Configuration.IntNumber);
+            var missing1DFC = Enumerable.Range(0, sfx1DFCMax).Except(sfx1DFC.Select(s => s.Configuration.IntNumber));
 
             var df9Pointers = new List<ushort>();
             var df9DataTotal = 0;
@@ -377,6 +505,112 @@ namespace Addmusic2.Helpers
             _globalSettings.ProgramSize = newProgramSize;
 
         }
+
+        public void CompileSongs(List<Song> songs)
+        {
+            var highestGlobalSongNumber = _globalSettings.ResourceList.Songs.GlobalSongs.Max(s => s.IntNumber);
+            var totalSampleCount = 0;
+            var maxGlobalEchoBufferSize = 0;
+
+            var songsNumberMax = songs.Max(s => s.Configuration.IntNumber);
+            var missingSongs = Enumerable.Range(0, songsNumberMax).Except(songs.Select(s => s.Configuration.IntNumber));
+
+            foreach (var song in songs)
+            {
+
+                if(song.Configuration.IntNumber > highestGlobalSongNumber)
+                {
+                    song.SongData.EchoBufferSize = Math.Max(song.SongData.EchoBufferSize, maxGlobalEchoBufferSize);
+                }
+
+                song.Parser.CalculateFirstPassPointers(song.SongData);
+                
+                if(song.Configuration.IntNumber <= highestGlobalSongNumber)
+                {
+                    maxGlobalEchoBufferSize = Math.Max(song.SongData.EchoBufferSize, maxGlobalEchoBufferSize);
+                }
+
+                totalSampleCount += song.SongData.SampleInstrumentManager.UsedSamples.Count;
+            }
+
+            var songPointerListBuilder = new StringBuilder();
+            var samplePointerListBuilder = new StringBuilder();
+
+            songPointerListBuilder.Append(PatchBuilders.SongSampleListXkasOverride);
+            songPointerListBuilder.Append(PatchBuilders.SongSampleGroupPointerLabel);
+
+            var songSampleListSize = MagicNumbers.DefaultValues.InitialSongSampleListLength;
+
+
+            // todo refactor this:
+            //      batch 16 songs in "dw SGPointer00, SGPointer01" format
+            //      when a song is missing use $0000 instead of the associated SGPointer##
+
+            //var songIndices = songs.Select(s => new (s.Configuration.Number,  s.Configuration.IntNumber, s.Configuration.));
+
+            for(int i = 0; i < songsNumberMax; i++)
+            {
+                var missingCurrentIndex = missingSongs.Contains(i);
+                var song = (missingCurrentIndex) ? null : songs.First(s => s.Configuration.IntNumber == i);
+                if(i % 16 == 0)
+                {
+                    songPointerListBuilder.Append("\ndw ");
+                }
+                if (missingCurrentIndex)
+                {
+                    songPointerListBuilder.Append("$0000");
+                }
+                else
+                {
+                    songPointerListBuilder.Append(PatchBuilders.SongListPointerName(i.ToString("X2")));
+                }
+
+                songSampleListSize += 2;
+
+                if(i < songsNumberMax && (i % 15 == 0))
+                {
+                    songPointerListBuilder.Append(", ");
+                }
+
+                // skip samples if the current song is missing
+                if (missingCurrentIndex)
+                {
+                    continue;
+                }
+
+                songSampleListSize++;
+
+                samplePointerListBuilder.Append($"\n{ PatchBuilders.SongListPointerName(i.ToString("X2")) }:\n");
+
+                if(i > highestGlobalSongNumber)
+                {
+                    continue;
+                }
+                var numberOfSamples = song.SongData.SampleInstrumentManager.UsedSamples.Count;
+                songSampleListSize += numberOfSamples * 2;
+                samplePointerListBuilder.Append($"db ${numberOfSamples}\n");
+
+                var sampleLengths = song.SongData.SampleInstrumentManager.UsedSamples.Select(s =>
+                {
+                    return $"${Helpers.GetSampleDataLengthFromCache(_fileCachingService, s):X4}";
+                });
+
+                samplePointerListBuilder.Append($"{string.Join(",", sampleLengths)}\n");
+
+            }
+            var songSampleListAsmBuilder = new StringBuilder();
+            var freespaceLocation = FindFreeSpaceInROM(songSampleListSize, _globalSettings.BankStart, _globalSettings.RomName);
+            var freespaceSNESValue = PCToSNES(freespaceLocation);
+            songSampleListAsmBuilder.Append($"org ${freespaceSNESValue:X6}\n\n");
+            songSampleListAsmBuilder.Append(songPointerListBuilder.ToString());
+            songSampleListAsmBuilder.Append("\n\n");
+            songSampleListAsmBuilder.Append(samplePointerListBuilder.ToString());
+            songSampleListAsmBuilder.Append($"\n{PatchBuilders.SongSampleListEndLabel}");
+
+            File.WriteAllText(FileNames.AsmFiles.SongSampleListAsm, songSampleListAsmBuilder.ToString());
+        }
+
+
 
         public void AssembleSNESDriver()
         {
