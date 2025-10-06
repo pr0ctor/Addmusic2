@@ -610,6 +610,257 @@ namespace Addmusic2.Helpers
             File.WriteAllText(FileNames.AsmFiles.SongSampleListAsm, songSampleListAsmBuilder.ToString());
         }
 
+        public void FixMusicPointers(List<Song> songs)
+        {
+
+            var pointerPosition = _globalSettings.ProgramSize + 0x400;
+            var highestGlobalSong = songs.Max(s => s.Configuration.IntNumber);
+            var songDataAramPosition = _globalSettings.ProgramSize + _globalSettings.ProgramUploadPosition + (highestGlobalSong * 2) + 2;
+
+            var globalPointersBuilder = new StringBuilder();
+            var localPointersBuilder = new StringBuilder();
+            var incbinsBuilder = new StringBuilder();
+
+            var atLocalSongs = false;
+
+            foreach(Song song in songs.OrderBy(s => s.Configuration.IntNumber))
+            {
+                var songData = song.SongData;
+
+                songData.PositionInARAM = songDataAramPosition;
+
+                var untilJump = -1;
+
+                if(songData.SongScope == SongScope.Global)
+                {
+                    globalPointersBuilder.Append($"\ndw song{song.Configuration.IntNumber:X2}");
+                    incbinsBuilder.Append($"song{song.Configuration.IntNumber:X2}: incbin \"{FileNames.FolderNames.AsmSNES}/{FileNames.FolderNames.AsmSNESBin}/music{song.Configuration.IntNumber:X2}{FileNames.FileExtensions.BinPatchData}");
+                }
+                if(atLocalSongs == false && songData.SongScope == SongScope.Local)
+                {
+                    localPointersBuilder.Append("\ndw localSong");
+                    incbinsBuilder.Append("localSong: ");
+                    atLocalSongs = true;
+                }
+
+                for(int i = 0; i < songData.SpaceForPointersAndInstruments; i += 2)
+                {
+
+                    if(untilJump == 0)
+                    {
+                        i += songData.SampleInstrumentManager.GetTotalInstrumentSpace();
+                        untilJump = -1;
+                    }
+
+                    var temp = songData.AllPointersAndInstruments[i] | songData.AllPointersAndInstruments[i + 1] << 8;
+
+                    if(temp == 0xFFFF) // 0xFFFF = swap with 0x0000.
+                    {
+                        songData.AllPointersAndInstruments[i] = 0;
+                        songData.AllPointersAndInstruments[i + 1] = 0;
+                        untilJump = 1;
+                    }
+                    else if(temp == 0xFFFE) // 0xFFFE = swap with 0x00FF.
+                    {
+                        songData.AllPointersAndInstruments[i] = 0xFF;
+                        songData.AllPointersAndInstruments[i + 1] = 0;
+                        untilJump = 2;
+                    }
+                    else if(temp == 0xFFFD) // 0xFFFD = swap with the song's position (its first track pointer).
+                    {
+                        songData.AllPointersAndInstruments[i] = (byte)((songData.PositionInARAM + 2) & 0xFF);
+                        songData.AllPointersAndInstruments[i + 1] = (byte)((songData.PositionInARAM + 2) >> 8);
+                    }
+                    else if (temp == 0xFFFC) // 0xFFFC = swap with the song's position + 2 (its second track pointer).
+                    {
+                        songData.AllPointersAndInstruments[i] = (byte)(songData.PositionInARAM & 0xFF);
+                        songData.AllPointersAndInstruments[i + 1] = (byte)(songData.PositionInARAM >> 8);
+                    }
+                    else if (temp == 0xFFFB) // 0xFFFB = swap with 0x0000, but don't set untilSkip.
+                    {
+                        songData.AllPointersAndInstruments[i] = 0;
+                        songData.AllPointersAndInstruments[i + 1] = 0;
+                    }
+                    else
+                    {
+                        temp += songData.PositionInARAM;
+                        songData.AllPointersAndInstruments[i] = (byte)(temp & 0xFF);
+                        songData.AllPointersAndInstruments[i + 1] = (byte)(temp >> 8);
+                    }
+
+                    untilJump--;
+                }
+
+                var totalChannelSizes = songData.ChannelData.Sum(c => c.ChannelData.Count);
+                var combinedChannelData = new List<byte>();
+
+                foreach(var channel in songData.ChannelData)
+                {
+                    foreach(var location in channel.LoopLocations)
+                    {
+                        var temp = (channel.ChannelData[location] & 0xFF) | (channel.ChannelData[location + 1] << 8);
+                        temp += songData.PositionInARAM + totalChannelSizes + songData.SpaceForPointersAndInstruments;
+                        channel.ChannelData[location] = (byte)(temp & 0xFF);
+                        channel.ChannelData[location + 1] = (byte)(temp >> 8);
+                    }
+                    combinedChannelData.AddRange(channel.ChannelData);
+                }
+
+                var songRatsData = new List<byte>();
+                var finalSongBinData = new List<byte>();
+
+                var sizePadding = (songData.MinSize > 0) ? songData.MinSize : songData.TotalSize;
+
+                if(song.Configuration.IntNumber > highestGlobalSong)
+                {
+                    var ratsSize = songData.TotalSize + 4 - 1;
+
+                    songRatsData.AddRange(MagicNumbers.StarTag);
+                    
+                    songRatsData.Add((byte)(ratsSize & 0xFF));
+                    songRatsData.Add((byte)(ratsSize >> 8));
+                    
+                    songRatsData.Add((byte)(~ratsSize & 0xFF));
+                    songRatsData.Add((byte)(~ratsSize >> 8));
+                    
+                    songRatsData.Add((byte)(sizePadding & 0xFF));
+                    songRatsData.Add((byte)(sizePadding >> 8));
+
+                    songRatsData.Add((byte)(songDataAramPosition & 0xFF));
+                    songRatsData.Add((byte)(songDataAramPosition >> 8));
+
+                }
+
+                finalSongBinData.AddRange(songData.AllPointersAndInstruments);
+                finalSongBinData.AddRange(combinedChannelData);
+                if(songData.MinSize > 0 && song.Configuration.IntNumber <= highestGlobalSong)
+                {
+                    var remainingSize = (songRatsData.Count + finalSongBinData.Count) - songData.MinSize;
+                    if (remainingSize < 0)
+                    {
+                        finalSongBinData.AddRange(Enumerable.Repeat<byte>(0, Math.Abs(remainingSize)));
+                    }
+                }
+                songData.RatsData = songRatsData;
+                songData.FinalData = finalSongBinData;
+
+                var filePath = FileNames.BinFiles.FinalMusicDataBin($"music{song.Configuration.IntNumber:X2}{FileNames.FileExtensions.BinPatchData}");
+                var writeableData = new List<byte>();
+                writeableData.AddRange(songData.RatsData);
+                writeableData.AddRange(songData.FinalData);
+                File.WriteAllBytes(filePath, writeableData.ToArray());
+
+                if(songData.SongScope == SongScope.Global)
+                {
+                    songDataAramPosition += sizePadding;
+                }
+                else if(songData.SongScope == SongScope.Local && _globalSettings.EnableEchoCheck)
+                {
+                    var spaceInfo = songData.SpaceInfo;
+                    var samples = songData.SampleInstrumentManager.UsedSamples;
+                    spaceInfo.ImportantSampleCount = samples.Where(s => s.IsImportant == true).ToList().Count;
+                    spaceInfo.SongStartPosition = songDataAramPosition;
+                    spaceInfo.SongEndPosition = songDataAramPosition + sizePadding;
+
+                    var checkPosition = songDataAramPosition + sizePadding;
+                    if((checkPosition & 0xFF) != 0)
+                    {
+                        checkPosition = ((checkPosition >> 8) + 1) << 8;
+                    }
+                    spaceInfo.SampleTableStartPosition = checkPosition;
+
+                    
+                    foreach(var sample in samples)
+                    {
+                        // check how to determine duplcaites
+
+                        var duplicate = false;
+                        if(!duplicate)
+                        {
+                            var startPosition = checkPosition;
+                            var endPosition = checkPosition + sample.SampleDataSize;
+                            spaceInfo.SamplePositions.Add(sample, (startPosition, endPosition));
+
+                            checkPosition += sample.SampleDataSize;
+                        }
+
+                    }
+
+                    var endOfSongSampleDataPosition = checkPosition;
+
+                    if(checkPosition > 0x10000)
+                    {
+                        // todo handle error for Sample Data space usage limit reached
+                        throw new Exception();
+                    }
+
+                    if ((checkPosition & 0xFF) != 0)
+                    {
+                        checkPosition = ((checkPosition >> 8) + 1) << 8;
+                    }
+
+                    checkPosition += songData.EchoBufferSize << 11;
+
+                    spaceInfo.EchoBufferStartPosition = (songData.EchoBufferSize > 0)
+                        ? 0x10000 - (songData.EchoBufferSize << 11)
+                        : 0xFF00;
+                    spaceInfo.EchoBufferEndPosition = (songData.EchoBufferSize > 0)
+                        ? 0x10000
+                        : 0xFF04;
+
+                    if (checkPosition > 0x10000)
+                    {
+                        // todo handle error for EchoBuffer Data space usage limit reached
+                        throw new Exception();
+                    }
+                }
+
+            }
+
+            var finalTempAsmBuilder = new StringBuilder();
+            var tempAsm = File.ReadAllText(FileNames.AsmFiles.TempMainAsm);
+
+            finalTempAsmBuilder.Append(tempAsm);
+            finalTempAsmBuilder.Append('\n');
+            finalTempAsmBuilder.Append(globalPointersBuilder.ToString());
+            finalTempAsmBuilder.Append('\n');
+            finalTempAsmBuilder.Append(localPointersBuilder.ToString());
+            finalTempAsmBuilder.Append('\n');
+            finalTempAsmBuilder.Append(incbinsBuilder.ToString());
+
+            File.WriteAllText(FileNames.AsmFiles.TempMainAsm, finalTempAsmBuilder.ToString());
+
+            var isCompiled = CompileAsmToBin(FileNames.AsmFiles.TempMainAsm, FileNames.BinFiles.MainSongDataBin);
+
+            if(!isCompiled)
+            {
+                // todo handle error with compilation
+                throw new Exception();
+            }
+
+            var compiledFileSize = (int)(new FileInfo(FileNames.BinFiles.MainSongDataBin).Length);
+            _globalSettings.ProgramSize = compiledFileSize;
+
+            var postCompileFileData = new List<byte>();
+            postCompileFileData.AddRange(new List<byte>
+            {
+                (byte)(compiledFileSize & 0xFF),
+                (byte)(compiledFileSize >> 8),
+                (byte)(_globalSettings.ProgramUploadPosition & 0xFF),
+                (byte)(_globalSettings.ProgramUploadPosition >> 8),
+            });
+            postCompileFileData.AddRange(File.ReadAllBytes(FileNames.BinFiles.MainSongDataBin));
+
+            File.WriteAllBytes(FileNames.BinFiles.MainSongDataBin, postCompileFileData.ToArray());
+
+            if(_globalSettings.Verbose == true)
+            {
+                // todo add message for the completion of this step
+            }
+
+            // no need to handle the bank defines portion
+        }
+
 
 
         public void AssembleSNESDriver()

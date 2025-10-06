@@ -366,7 +366,7 @@ namespace Addmusic2.Parsers
 
             // the size of an instrument is its numerical value and the hex components
             //      usually (1) + (5) for a space of 6 per instrument but dynamically calculate just in case
-            var instrumentSpace = songData.SampleInstrumentManager.Instruments.Select(i => 1 + i.HexComponents.Count).Sum();
+            var instrumentSpace = songData.SampleInstrumentManager.GetTotalInstrumentSpace();
 
             spaceForPointersAndIntegers += instrumentSpace;
 
@@ -445,7 +445,8 @@ namespace Addmusic2.Parsers
             }
 
             // calculate the total size of the song
-            songData.SpaceForPointersAndIntegers = spaceForPointersAndIntegers;
+            songData.AllPointersAndInstruments = combinedData;
+            songData.SpaceForPointersAndInstruments = spaceForPointersAndIntegers;
             songData.TotalSize = songData.ChannelData.Sum(c => c.ChannelData.Count) + spaceForPointersAndIntegers;
 
             CalculateTotalSongLength(songData);

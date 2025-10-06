@@ -125,5 +125,16 @@ namespace Addmusic2.Model
 
         #endregion
 
+
+        #region Helpers
+
+        public int GetTotalInstrumentSpace()
+        {
+            return (Instruments.Count == 0) ? 0 : Instruments.Select(i => 1 + i.HexComponents.Count).Sum();
+        }
+
+        #endregion
+
+
     }
 }

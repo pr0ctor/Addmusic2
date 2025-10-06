@@ -13,6 +13,10 @@ namespace Addmusic2.Model
         public string SongPath { get; set; }
         public SongScope SongScope { get; set; }
         public SampleInstrumentManager SampleInstrumentManager { get; set; } = new();
+        
+        public List<byte> RatsData { get; set; }
+        public List<byte> FinalData { get; set; }
+        
         public List<(double ChannelTick, int TempoChange)> TempoChanges { get; set; } = new();
         public int Seconds { get; set; }
         public int IntroSeconds { get; set; }
@@ -34,14 +38,14 @@ namespace Addmusic2.Model
         //public ushort[] LoopLengths = new ushort[0x10000];
         public string Text { get; set; }
         public int TotalSize { get; set; }
-        public int SpaceForPointersAndIntegers { get; set; }
+        public int SpaceForPointersAndInstruments { get; set; }
         public int SpaceUsedBySamples { get; set; }
 
-        public List<byte[]> AllPointersAndIntegers { get; set; } = new List<byte[]>();
+        public List<byte> AllPointersAndInstruments { get; set; } = new List<byte>();
         public List<byte[]> InstrumentData { get; set; } = new List<byte[]>();
-        public List<byte[]> FinalData { get; set; } = new List<byte[]>();
+        //public List<byte[]> FinalData { get; set; } = new List<byte[]>();
 
-        public SpaceInfo SpaceInfo { get; set; }
+        public SongSpaceInformation SpaceInfo { get; set; } = new();
 
         public int IntroLength { get; set; }
         public int MainLength { get; set; }

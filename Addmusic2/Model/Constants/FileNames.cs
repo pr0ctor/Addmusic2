@@ -26,6 +26,8 @@ namespace Addmusic2.Model.Constants
         {
             public static readonly string MainBin = Path.Combine(FolderNames.AsmBase, "main" + FileExtensions.BinPatchData);
             public static readonly string SfxDataBin = Path.Combine(FolderNames.AsmBase, "SFXData" + FileExtensions.BinPatchData);
+            public static readonly string MainSongDataBin = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, FolderNames.AsmSNESBin, "main" + FileExtensions.BinPatchData);
+            public static string FinalMusicDataBin(string filename) => Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, FolderNames.AsmSNESBin, filename);
         }
 
         public static class ConfigurationFiles

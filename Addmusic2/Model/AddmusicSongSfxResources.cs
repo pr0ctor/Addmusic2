@@ -140,7 +140,7 @@ namespace Addmusic2.Model
         public List<AddmusicSample> Samples { get; set; }
     }
 
-    internal class AddmusicSample
+    internal class AddmusicSample : IEquatable<AddmusicSample>
     {
         [JsonProperty("name")]
         public string Name {
@@ -190,6 +190,18 @@ namespace Addmusic2.Model
         public ushort LoopPoint { get; set; }
         [JsonIgnore]
         public int SampleDataSize { get; set; }
+
+        public bool Equals(AddmusicSample? other)
+        {
+            if (ReferenceEquals(this, other)) return false;
+            if (other == null) return false;
+
+            if (this.Name == other.Name && this.SampleDataSize == other.SampleDataSize)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
 }
