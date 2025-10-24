@@ -22,6 +22,26 @@ namespace Addmusic2.Helpers
             return new(regexString);
         }
 
+        public static string SetHexValueAfterText(string sourceText, string textBeforeHexValue, string valueToSet)
+        {
+            var regexString = $@"{textBeforeHexValue}\$([a-zA-Z0-9]{{1,5}})";
+
+            var match = Regex.Match(sourceText, regexString);
+
+            if(match.Success)
+            {
+                var foundText = match.Value;
+                sourceText = sourceText.Replace(match.Value, $"{textBeforeHexValue}${valueToSet}");
+            }
+            else
+            {
+                // todo handle Exception
+                throw new Exception();
+            }
+
+            return sourceText;
+        }
+
         public static bool IsHexInRange(byte hexValue)
         {
             return hexValue < 0 || hexValue > MagicNumbers.HexCommandMaximum ? false : true;

@@ -1,5 +1,7 @@
-﻿using Addmusic2.Model.Constants;
+﻿using Addmusic2.Helpers;
+using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
+using Addmusic2.Model.SongTree;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,7 @@ namespace Addmusic2.Model
 {
     internal class GlobalSettings : IGlobalSettings
     {
+        //public Rom Rom { get; set; }
         public AddmusicSongSfxResources ResourceList { get; set; } = new();
 
         #region Runtime Arguments

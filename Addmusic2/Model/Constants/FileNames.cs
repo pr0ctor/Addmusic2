@@ -17,9 +17,12 @@ namespace Addmusic2.Model.Constants
         public static class AsmFiles
         {
             public static readonly string PatchAsm = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "patch" + FileExtensions.Asm);
+            public static readonly string Patch2Asm = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "patch2" + FileExtensions.Asm);
             public static readonly string MainAsm = Path.Combine(FolderNames.AsmBase, "main" + FileExtensions.Asm);
             public static readonly string TempMainAsm = Path.Combine(FolderNames.AsmBase, "tempmain" + FileExtensions.Asm);
             public static readonly string SongSampleListAsm = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "SongSampleList" + FileExtensions.Asm);
+            public static readonly string AMUndoAsm = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "AMUndo" + FileExtensions.Asm);
+            public static readonly string TempFinalPatch = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "temppatch" + FileExtensions.Asm);
         }
 
         public static class BinFiles
@@ -28,6 +31,12 @@ namespace Addmusic2.Model.Constants
             public static readonly string SfxDataBin = Path.Combine(FolderNames.AsmBase, "SFXData" + FileExtensions.BinPatchData);
             public static readonly string MainSongDataBin = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, FolderNames.AsmSNESBin, "main" + FileExtensions.BinPatchData);
             public static string FinalMusicDataBin(string filename) => Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, FolderNames.AsmSNESBin, filename);
+            public static string FinalSampleBrrDataBin(string filename) => Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, FolderNames.AsmSNESBin, filename);
+        }
+
+        public static class SfcFiles
+        {
+            public static readonly string TempPatchSfc = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "temppatch" + FileExtensions.RomSfc);
         }
 
         public static class ConfigurationFiles
@@ -108,6 +117,7 @@ namespace Addmusic2.Model.Constants
             public static readonly string TextFile = ".txt";
             public static readonly string LogFile = ".log";
             public static readonly string MscFile = ".msc";
+            public static readonly string OldFile = ".old";
             public static readonly string RomSmc = ".smc";
             public static readonly string RomSfc = ".sfc";
             public static readonly string SampleBrr = ".brr";

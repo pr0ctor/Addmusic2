@@ -21,6 +21,7 @@ namespace Addmusic2.Helpers
         private GlobalSettings _globalSettings;
         private MessageService _messageService;
         private FileCachingService _fileCachingService;
+        //private List<byte> RomData = new();
 
         public RomOperations(IGlobalSettings settings, ILogger<IAddmusicLogic> logger, MessageService messageService, IFileCachingService fileCachingService)
         {
@@ -28,10 +29,88 @@ namespace Addmusic2.Helpers
             _messageService = messageService;
             _logger = logger;
             _fileCachingService = (FileCachingService)fileCachingService;
+
         }
 
-        public int FindFreeSpaceInROM(int size, int start, string romPath)
+        public Rom LoadRomData()
         {
+            var romPath = "";
+
+            // catches full filepath or name is in the current location that the program can pull from
+            if (File.Exists(_globalSettings.RomName))
+            {
+                romPath = _globalSettings.RomName;
+            }
+            // check to see if the rom is either in the Install Location or in the Execution Location
+            //      and if its not then the file data from the rom cannot be determined or the name is wrong
+            else
+            {
+                var executionLocationRom = Path.Combine(FileNames.ExecutionLocations.ExecutionLocation, _globalSettings.RomName);
+                var installLocationRom = Path.Combine(FileNames.ExecutionLocations.InstallLocation, _globalSettings.RomName);
+                if (File.Exists(installLocationRom))
+                {
+                    romPath = installLocationRom;
+                }
+                else if (File.Exists(executionLocationRom))
+                {
+                    romPath = executionLocationRom;
+                }
+                else
+                {
+                    // todo fix exception message
+                    throw new FileNotFoundException();
+                }
+            }
+
+            // Fix cases of mixed slashes and standardize them for the current operation system file structure
+            var standardizedPath = Helpers.StandardizeFileDirectoryDelimiters(romPath);
+            var lastDirectorySeparator = (standardizedPath.Contains(@"\"))
+                ? standardizedPath.LastIndexOf(@"\")
+                : (standardizedPath.Contains(@"/"))
+                    ? standardizedPath.LastIndexOf(@"/")
+                    : 0;
+            var romName = standardizedPath[lastDirectorySeparator..];
+            var romInfo = new FileInfo(standardizedPath);
+            var rom = new Rom(_messageService, this)
+            {
+                RomFileName = romInfo.Name,
+                RomFilePath = romInfo.FullName,
+                RomFileExtension = romInfo.Extension,
+                RomFileSize = romInfo.Length,
+                AllowSA1 = _globalSettings.EnableSA1Addressing,
+            };
+
+            rom.LoadRomData();
+
+            return rom;
+        }
+
+        public Rom LoadRomData(string romPath)
+        {
+            var romInfo = new FileInfo(romPath);
+            // var romData = File.ReadAllBytes(romPath);
+            var rom = new Rom(_messageService, this)
+            {
+                RomFileName = romInfo.Name,
+                RomFilePath = romInfo.FullName,
+                RomFileExtension = romInfo.Extension,
+                RomFileSize = romInfo.Length,
+                AllowSA1 = _globalSettings.EnableSA1Addressing,
+            };
+
+            rom.LoadRomData();
+
+            //RomData.AddRange(romData);
+            return rom;
+        }
+
+        public int FindFreeSpaceInROM(Rom rom, int size, int start)
+        {
+            if(rom.RomData.Count == 0)
+            {
+                throw new Exception("Rom Data not loaded.");
+            }
+
             if(size == 0)
             {
                 // todo handle case where size cannot be 0
@@ -44,13 +123,11 @@ namespace Addmusic2.Helpers
                 throw new ArgumentException();
             }
 
-            var fileData = File.ReadAllBytes(romPath);
-
             var position = 0;
             var space = 0;
             size += 8;
             var index = start;
-            for(index = index; index < fileData.Length; index++)
+            for(index = index; index < rom.RomData.Count; index++)
             {
                 if(space == size)
                 {
@@ -64,11 +141,11 @@ namespace Addmusic2.Helpers
                 }
 
                 // Check for the start of a RATS tag
-                var ratsCheckSpan = new ReadOnlySpan<byte>(fileData[index..(index+4)]);
-                if(index < fileData.Length - 4 && ratsCheckSpan.SequenceEqual(MagicNumbers.StarTag))
+                var ratsCheckSpan = new ReadOnlySpan<byte>(rom.RomData.GetRange(index, 4).ToArray());
+                if(index < rom.RomData.Count - 4 && ratsCheckSpan.SequenceEqual(MagicNumbers.StarTag))
                 {
-                    var ratsSize = fileData[index + 4] | fileData[index + 5] << 8;
-                    var sizeInv = (fileData[index + 6] | fileData[index + 7] << 8) ^ 0xFFFF;
+                    var ratsSize = rom.RomData[index + 4] | rom.RomData[index + 5] << 8;
+                    var sizeInv = (rom.RomData[index + 6] | rom.RomData[index + 7] << 8) ^ 0xFFFF;
 
                     // If theres a size mismatch or if theres technically a sequence match but its not a RATS tag
                     //      continue;
@@ -83,7 +160,7 @@ namespace Addmusic2.Helpers
                     index = index + ratsSize + 8;
                     space = 0;
                 }
-                else if (fileData[index] == 0 || _globalSettings.EnableAggressiveFreespace == true)
+                else if (rom.RomData[index] == 0 || _globalSettings.EnableAggressiveFreespace == true)
                 {
                     space++;
                 }
@@ -106,7 +183,7 @@ namespace Addmusic2.Helpers
                 }
                 else
                 {
-                    return FindFreeSpaceInROM(size, 0x080000, romPath);
+                    return FindFreeSpaceInROM(rom, size, 0x080000);
                 }
             }
 
@@ -115,11 +192,8 @@ namespace Addmusic2.Helpers
             var bytesToInsert = new List<byte>();
             bytesToInsert.AddRange(MagicNumbers.StarTag);
             bytesToInsert.AddRange(GenerateRatsSizeValue(size - 9));
-
-            var finalFileData = fileData.ToList();
-            finalFileData.InsertRange(insertPosition, bytesToInsert);
-
-            // todo double check to see if data needs to be written back to the file
+            rom.RomData.RemoveRange(insertPosition, bytesToInsert.Count);
+            rom.RomData.InsertRange(insertPosition, bytesToInsert);
 
             return position;
         }
@@ -137,6 +211,16 @@ namespace Addmusic2.Helpers
 
         public int SNESToPC(int address)
         {
+            return convertSNESToPC(address, _globalSettings.EnableSA1Addressing);
+        }
+
+        public int SNESToPC(int address, bool useSA1)
+        {
+            return convertSNESToPC(address, useSA1);
+        }
+
+        private int convertSNESToPC(int address, bool useSA1)
+        {
             if (address < 0 || address > 0xFFFFFF ||     // not 24bit
                 (address & 0xFE0000) == 0x7E0000 ||     // wram
                 (address & 0x408000) == 0x000000)     // hardward registers
@@ -144,7 +228,7 @@ namespace Addmusic2.Helpers
                 return -1;
             }
 
-            if (_globalSettings.EnableSA1Addressing && address >= 0x808000)
+            if (useSA1 && address >= 0x808000)
             {
                 address -= 0x400000;
             }
@@ -156,6 +240,16 @@ namespace Addmusic2.Helpers
 
         public int PCToSNES(int address)
         {
+            return convertPCToSNES(address, _globalSettings.EnableSA1Addressing);
+        }
+
+        public int PCToSNES(int address, bool useSA1)
+        {
+            return convertPCToSNES(address, useSA1);
+        }
+
+        private int convertPCToSNES(int address, bool useSA1)
+        {
             if (address < 0 || address >= 0x400000)
             {
                 return -1;
@@ -163,12 +257,12 @@ namespace Addmusic2.Helpers
 
             address = ((address << 1) & 0x7F0000) | (address & 0x7FFF) | 0x8000;
 
-            if (!_globalSettings.EnableSA1Addressing && (address & 0xF00000) == 0x700000)
+            if (useSA1 && (address & 0xF00000) == 0x700000)
             {
                 address |= 0x800000;
             }
 
-            if (_globalSettings.EnableSA1Addressing && address >= 0x400000)
+            if (useSA1 && address >= 0x400000)
             {
                 address += 0x400000;
             }
@@ -235,6 +329,70 @@ namespace Addmusic2.Helpers
             using var binFile = File.Open(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempBinFile), FileMode.OpenOrCreate);
             binFile.Write(dataOutArray);
             binFile.Flush();
+            return true;
+        }
+
+        public bool PatchAsmToRom(string sourceFileName, string romToPatch)
+        {
+            using var tempTextFileWriter = new StreamWriter(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempTextFile), true);
+            using var tempLogFileWriter = new StreamWriter(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempLogFile), true);
+            var messageBuilder = new StringBuilder();
+
+            var romBytes = File.ReadAllBytes(romToPatch);
+
+            var warningSettings = new Dictionary<string, bool>()
+            {
+                { MagicNumbers.AsarWarnings.RelativePathWarning.WarningName, MagicNumbers.AsarWarnings.RelativePathWarning.WarningToggle }
+            };
+
+            var isPatchSuccessful = Asar.patch(sourceFileName,
+                ref romBytes,
+                default,
+                default,
+                default,
+                default,
+                default,
+                warningSettings,
+                default,
+                default
+            );
+
+            var notifications = Asar.getprints();
+            var warnings = Asar.getwarnings();
+            var errors = Asar.geterrors();
+
+            foreach (var notification in notifications)
+            {
+                messageBuilder.AppendLine(notification.ToString());
+            }
+
+            if (notifications.Length > 0)
+            {
+                tempTextFileWriter.WriteLine(messageBuilder.ToString());
+                messageBuilder.Clear();
+            }
+
+            // todo improve logging
+            messageBuilder.AppendLine("Warnings:");
+            foreach (var warning in warnings)
+            {
+                messageBuilder.AppendLine(warning.Fullerrdata);
+            }
+            messageBuilder.AppendLine("Errors:");
+            foreach (var warning in warnings)
+            {
+                messageBuilder.AppendLine(warning.Fullerrdata);
+            }
+
+            if (warnings.Length > 0 || errors.Length > 0)
+            {
+                tempLogFileWriter.WriteLine(messageBuilder.ToString());
+                return false;
+            }
+
+            using var sfcFile = File.Open(FileNames.SfcFiles.TempPatchSfc, FileMode.OpenOrCreate);
+            sfcFile.Write(romBytes);
+            sfcFile.Flush();
             return true;
         }
 
@@ -506,7 +664,7 @@ namespace Addmusic2.Helpers
 
         }
 
-        public void CompileSongs(List<Song> songs)
+        public void CompileSongs(Rom rom, List<Song> songs)
         {
             var highestGlobalSongNumber = _globalSettings.ResourceList.Songs.GlobalSongs.Max(s => s.IntNumber);
             var totalSampleCount = 0;
@@ -599,7 +757,7 @@ namespace Addmusic2.Helpers
 
             }
             var songSampleListAsmBuilder = new StringBuilder();
-            var freespaceLocation = FindFreeSpaceInROM(songSampleListSize, _globalSettings.BankStart, _globalSettings.RomName);
+            var freespaceLocation = FindFreeSpaceInROM(rom, songSampleListSize, _globalSettings.BankStart);
             var freespaceSNESValue = PCToSNES(freespaceLocation);
             songSampleListAsmBuilder.Append($"org ${freespaceSNESValue:X6}\n\n");
             songSampleListAsmBuilder.Append(songPointerListBuilder.ToString());
@@ -861,102 +1019,195 @@ namespace Addmusic2.Helpers
             // no need to handle the bank defines portion
         }
 
+        public void AssembleFinalPatch(Rom rom, List<Song> songs)
+        {
 
+            var patchData = File.ReadAllText(FileNames.AsmFiles.PatchAsm);
+            var replacePatchData = Helpers.SetHexValueAfterText(patchData, ExtractedAsmDataNames.PatchAsmLocationNames.ExpARAMRetText, $"{_globalSettings.ProgramReuploadPosition:X4}");
+            replacePatchData = Helpers.SetHexValueAfterText(replacePatchData, ExtractedAsmDataNames.PatchAsmLocationNames.DefARAMRetText, $"{_globalSettings.MainLoopPosition:X4}");
+            replacePatchData = Helpers.SetHexValueAfterText(replacePatchData, ExtractedAsmDataNames.PatchAsmLocationNames.SongCountText, $"{songs.Count:X2}");
+
+            var musicPointersLocation = replacePatchData.IndexOf(ExtractedAsmDataNames.PatchAsmLocationNames.MusicPointersText);
+            if(musicPointersLocation == -1 )
+            {
+                // todo handle case where the ExtractedAsmDataNames.PatchAsmLocationNames.MusicPointersText is missing
+                throw new Exception();
+            }
+            var subPatchBuilder = new StringBuilder();
+            subPatchBuilder.Append(replacePatchData[..musicPointersLocation]);
+
+            var musicPointerBuilder = new StringBuilder();
+            musicPointerBuilder.Append("MusicPtrs: \ndl ");
+            var samplePointerBuilder = new StringBuilder();
+            samplePointerBuilder.Append("\n\nSamplePtrs:\ndl ");
+            var sampleLoopPointerBuilder = new StringBuilder();
+            sampleLoopPointerBuilder.Append("\n\nSampleLoopPtrs:\ndw ");
+            var musicIncBinsPointerBuilder = new StringBuilder();
+            musicIncBinsPointerBuilder.Append("\n\n");
+            var sampleIncBinsPointerBuilder = new StringBuilder();
+            sampleIncBinsPointerBuilder.Append("\n\n");
+
+            var songCount = 0;
+            var usedSamples = new List<AddmusicSample>();
+            foreach ( var song in songs )
+            {
+                if(song.SongData.SongScope == SongScope.Local)
+                {
+                    var fileName = FileNames.BinFiles.FinalMusicDataBin($"music{song.Configuration.IntNumber:X2}{FileNames.FileExtensions.BinPatchData}");
+                    var songDataFileSize = (int)(new FileInfo(fileName).Length);
+                    var freespace = FindFreeSpaceInROM(rom, songDataFileSize, _globalSettings.BankStart);
+
+                    if(freespace == -1)
+                    {
+                        // todo handle exception
+                        throw new Exception();
+                    }
+
+                    var snesFreespace = PCToSNES(freespace);
+
+                    musicPointerBuilder.Append($"music{song.Configuration.IntNumber:X2}+8");
+                    musicIncBinsPointerBuilder.Append(PatchBuilders.MusicIncBinBuilder(freespace, song.Configuration.IntNumber));
+                }
+                else
+                {
+                    musicPointerBuilder.Append($"${0:X6}");
+                }
+
+                if((songCount % 16) == 0 && songCount != songs.Count - 1)
+                {
+                    musicPointerBuilder.Append("\ndl ");
+                }
+                else
+                {
+                    musicPointerBuilder.Append(", ");
+                }
+
+                usedSamples.AddRange(song.SongData.SampleInstrumentManager.UsedSamples);
+
+                songCount++;
+            }
+
+            var sampleCount = 0;
+            foreach (var sample in usedSamples)
+            {
+                var sampleData = new List<byte>();
+                sampleData.AddRange(MagicNumbers.StarTag);
+                sampleData.Add((byte)((sample.SampleDataSize + 1) & 0xFF));
+                sampleData.Add((byte)((sample.SampleDataSize + 1) >> 8));
+                sampleData.Add((byte)(~(sample.SampleDataSize + 1) & 0xFF));
+                sampleData.Add((byte)(~(sample.SampleDataSize + 1) >> 8));
+                sampleData.Add((byte)(sample.SampleDataSize & 0xFF));
+                sampleData.Add((byte)(sample.SampleDataSize >> 8));
+
+                var sampleDataStream = _fileCachingService.GetFromCache(sample.Name);
+                sampleData.AddRange(sampleData.ToArray());
+                var sampleFileName = FileNames.BinFiles.FinalSampleBrrDataBin($"brr{sampleCount}{FileNames.FileExtensions.BinPatchData}");
+                File.WriteAllBytes(sampleFileName, sampleData.ToArray());
+                var brrBinFileSize = (int)(new FileInfo(sampleFileName).Length);
+
+                var freespace = FindFreeSpaceInROM(rom, brrBinFileSize, _globalSettings.BankStart);
+
+                if (freespace == -1)
+                {
+                    // todo handle exception
+                    throw new Exception();
+                }
+                var snesFreespace = PCToSNES(freespace);
+
+                samplePointerBuilder.Append($"brr{sampleCount:X2}+8");
+                sampleIncBinsPointerBuilder.Append(PatchBuilders.SampleBrrIncBinBuilder(freespace, sampleCount));
+
+
+                sampleLoopPointerBuilder.Append($"${sample.LoopPoint:X4}");
+
+                if(sampleCount % 16 == 0 && sampleCount != usedSamples.Count - 1)
+                {
+                    samplePointerBuilder.Append("\ndl ");
+                    sampleLoopPointerBuilder.Append("\ndw ");
+                }
+                else
+                {
+                    samplePointerBuilder.Append(", ");
+                    sampleLoopPointerBuilder.Append(", ");
+                }
+
+                sampleCount++;
+            }
+
+            subPatchBuilder.Append("pullpc\n\n");
+            musicPointerBuilder.Append("\ndl $FFFFFF\n");
+            samplePointerBuilder.Append("\ndl $FFFFFF\n");
+
+            subPatchBuilder.Append(musicPointerBuilder.ToString());
+            subPatchBuilder.Append(samplePointerBuilder.ToString());
+            subPatchBuilder.Append(sampleLoopPointerBuilder.ToString());
+            subPatchBuilder.Append(musicIncBinsPointerBuilder.ToString());
+            subPatchBuilder.Append(sampleIncBinsPointerBuilder.ToString());
+
+            subPatchBuilder.Append(PatchBuilders.FinalDataPatchSpcProgramLocation);
+
+            var finalSubPatch = Helpers.SetHexValueAfterText(
+                subPatchBuilder.ToString(),
+                ExtractedAsmDataNames.PatchAsmLocationNames.GlobalMusicCountText,
+                $"{_globalSettings.ResourceList.Songs.GlobalSongs.Max(s => s.IntNumber):X2}"
+            );
+
+            if(File.Exists(FileNames.SfcFiles.TempPatchSfc))
+            {
+                File.Delete(FileNames.SfcFiles.TempPatchSfc);
+            }
+
+            var amUndo = File.ReadAllText(FileNames.AsmFiles.AMUndoAsm);
+
+            File.WriteAllText(FileNames.AsmFiles.TempFinalPatch, amUndo + finalSubPatch.ToString());
+
+            if(_globalSettings.Verbose)
+            {
+                // todo handle verbosity
+            }
+
+            if(_globalSettings.GeneratePatches == false)
+            {
+                var isPatched = PatchAsmToRom(FileNames.AsmFiles.TempFinalPatch, FileNames.SfcFiles.TempPatchSfc);
+
+                if(!isPatched)
+                {
+                    // todo fix exception for failed asar patch
+                    throw new Exception();
+                }
+
+                var patchedRomData = File.ReadAllBytes(FileNames.SfcFiles.TempPatchSfc);
+
+                // todo fix and manage ROM lifecycle
+                var finalRomData = new List<byte>();
+
+                var romName = "" + "~" + FileNames.FileExtensions.OldFile;
+
+                File.Delete(romName);
+                File.WriteAllBytes(romName, finalRomData.ToArray());
+
+                // todo fix this section
+            }
+        }
 
         public void AssembleSNESDriver()
         {
 
         }
 
-        public void GenerateMSC(string romName, List<string> songNames)
+        public void GenerateMSC(string romName, List<Song> songs)
         {
-
+            var mscName = romName[..romName.LastIndexOf(".")];
+            var mscBuilder = new StringBuilder();
+            foreach(var song in songs)
+            {
+                mscBuilder.Append($"{song.Configuration.IntNumber:X2}\t0\t{song.Configuration.Name}\n");
+                mscBuilder.Append($"{song.Configuration.IntNumber:X2}\t1\t{song.Configuration.Name}\n");
+            }
+            File.WriteAllText(mscName, mscBuilder.ToString());
         }
 
 
     }
 
-
-    //internal class RomOperations : IRomOperations
-    //{
-    //    private GlobalSettings Settings { get; set; }
-
-    //    public RomOperations(IGlobalSettings settings)
-    //    {
-    //        Settings = (GlobalSettings)settings;
-    //    }
-
-    //    public int SNESToPC(int address)
-    //    {
-    //        if(address < 0 || address > 0xFFFFFF ||     // not 24bit
-    //            (address & 0xFE0000) == 0x7E0000 ||     // wram
-    //            (address & 0x408000) == 0x000000)     // hardward registers
-    //        {
-    //            return -1;
-    //        }
-
-    //        if(Settings.EnableSA1Addressing && address >= 0x808000)
-    //        {
-    //            address -= 0x400000;
-    //        }
-
-    //        address = ((address & 0x7F0000) >> 1 | (address & 0x7FFF));
-
-    //        return address;
-    //    }
-
-    //    public int PCToSNES(int address)
-    //    {
-    //        if(address < 0 || address >= 0x400000)
-    //        {
-    //            return -1;
-    //        }
-
-    //        address = ((address << 1) & 0x7F0000) | (address & 0x7FFF) | 0x8000;
-
-    //        if(!Settings.EnableSA1Addressing && (address & 0xF00000) == 0x700000)
-    //        {
-    //            address |= 0x800000;
-    //        }
-
-    //        if(Settings.EnableSA1Addressing && address >= 0x400000)
-    //        {
-    //            address += 0x400000;
-    //        }
-
-    //        return address;
-    //    }
-
-    //    public bool FindRATS(byte[] romData, int offset)
-    //    {
-    //        if (romData[offset] != 0x53)
-    //        {
-    //            return false;
-    //        }
-    //        if (romData[offset] != 0x54)
-    //        {
-    //            return false;
-    //        }
-    //        if (romData[offset] != 0x41)
-    //        {
-    //            return false;
-    //        }
-    //        if (romData[offset] != 0x52)
-    //        {
-    //            return false;
-    //        }
-    //        return true;
-    //    }
-
-    //    public int ClearRATS(byte[] romData, int offset)
-    //    {
-    //        int size = ((romData[offset + 5] << 8) | romData[offset + 4]) + 8;
-    //        int r = size;
-    //        while (size >= 0)
-    //        {
-    //            romData[offset + size--] = 0;
-    //        }
-    //        return r + 1;
-    //    }
-    //}
 }

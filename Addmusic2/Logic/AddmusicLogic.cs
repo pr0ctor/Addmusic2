@@ -49,6 +49,8 @@ namespace Addmusic2.Logic
         public void Run()
         {
 
+            var loadedRom = _romOperations.LoadRomData();
+
             LoadRequiredSampleGroups();
 
             ProcessAllSongs();
@@ -58,9 +60,16 @@ namespace Addmusic2.Logic
             _romOperations.GetProgramUploadPosition();
             _romOperations.AssembleSNESDriver();
             _romOperations.CompileAllSoundEffects(SoundEffects);
-            _romOperations.CompileSongs(Songs);
+            _romOperations.CompileSongs(loadedRom, Songs);
 
             _romOperations.FixMusicPointers(Songs);
+
+            if(_globalSettings.GenerateSPC == true)
+            {
+                _romOperations.AssembleFinalPatch(loadedRom, Songs);
+                // todo double check romname logic
+                _romOperations.GenerateMSC(loadedRom.RomFileName, Songs);
+            }
 
         }
 
@@ -264,6 +273,17 @@ namespace Addmusic2.Logic
         #endregion
 
 
+        #region Addmusic Core Logic
+
+
+
+
+
+        #endregion
+
+
+        #region Helpers
+
         private void LoadRequiredSampleGroups()
         {
             var sampleGroups = _globalSettings.ResourceList.SampleGroups;
@@ -292,5 +312,7 @@ namespace Addmusic2.Logic
             Helpers.Helpers.LoadSampleGroupToCache(_fileService, defaultGroup.First());
             Helpers.Helpers.LoadSampleGroupToCache(_fileService, optimizedGroup.First());
         }
+
+        #endregion
     }
 }

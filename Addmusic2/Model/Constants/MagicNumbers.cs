@@ -52,6 +52,11 @@ namespace Addmusic2.Model.Constants
         public static readonly int SfxCompiledBinCodeLocation = 0x08000;
         public static readonly int AsmToBinBufferLength = 0x10000;
 
+        public static readonly int RomHeaderLength = 0x200;
+        public static readonly int RomSizeMultiple = 0x8000;
+        public static readonly int RomMinimumSize = 0x80000;
+        public static readonly int SA1CheckBitLocation = 0xFFD5;
+        public static readonly int SA1CheckBitValue = 0x23;
 
         public static readonly int ChannelCount = 8;
         public static readonly int MaxSamplesCount = 256;

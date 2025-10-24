@@ -21,6 +21,7 @@ namespace Addmusic2.Model.Constants
             public static readonly string ReuploadPositionText = "ReuploadPos: ";
             public static readonly string SFXTable0Text = "SFXTable0:";
             public static readonly string SFXTable1Text = "SFXTable1:";
+            public static readonly string GlobalMusicCountText = "!GlobalMusicCount = #";
         }
 
         public static class AdditionalValues

@@ -33,5 +33,9 @@ org $008000
         public static string SongSampleGroupPointerLabel = "dw SGEnd-SampleGroupPtrs-$01\ndw SGEnd-SampleGroupPtrs-$01^$FFFF\nSampleGroupPtrs:\n\n";
         public static string SongSampleListEndLabel = "SGEnd:";
 
+        public static string FinalDataPatchSpcProgramLocation = "\n\norg !SPCProgramLocation \nincbin \"bin/main.bin\"";
+        public static string MusicIncBinBuilder(int freespace, int musicNumber) => $"org ${freespace:X6}\nmusic{musicNumber:X2}: incbin \"bin/music{musicNumber:X2}.bin\"\n";
+        public static string SampleBrrIncBinBuilder(int freespace, int brrNumber) => $"org ${freespace:X6}\nbrr{brrNumber:X2}: incbin \"bin/brr{brrNumber:X2}.bin\"\n";
+
     }
 }
