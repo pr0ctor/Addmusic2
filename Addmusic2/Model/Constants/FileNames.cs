@@ -36,6 +36,7 @@ namespace Addmusic2.Model.Constants
 
         public static class SfcFiles
         {
+            public static readonly string TempRomSfc = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "temp" + FileExtensions.RomSfc);
             public static readonly string TempPatchSfc = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "temppatch" + FileExtensions.RomSfc);
         }
 

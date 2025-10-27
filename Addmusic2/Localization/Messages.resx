@@ -477,4 +477,12 @@
     <value>Total space used by 1DFC sound effects: {0}</value>
     <comment>Informational Message to display the amount of space used by 1DFC Sound Effects</comment>
   </data>
+  <data name="NotificationRomAmkVersionCannotBeDetermined" xml:space="preserve">
+    <value>Error: The identifier for this ROM, "{0}", could not be identified. It should be "{1}". This either means that some other program has modified this area of your ROM, or your ROM is corrupted.</value>
+    <comment>Warning for when the supplied Rom does not have the proper AMK Identifier</comment>
+  </data>
+  <data name="NotificationRomAmkDataVersionMismatch" xml:space="preserve">
+    <value>WARNING: This ROM was modified using a newer version {0} of AddmusicK. You can continue, but it is HIGHLY recommended that you upgrade AMK first.</value>
+    <comment>Warning for when the supplied Rom does not have the proper AMK Identifier</comment>
+  </data>
 </root>

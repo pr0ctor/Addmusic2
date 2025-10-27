@@ -781,6 +781,24 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to WARNING: This ROM was modified using a newer version {0} of AddmusicK. You can continue, but it is HIGHLY recommended that you upgrade AMK first..
+        /// </summary>
+        internal static string NotificationRomAmkDataVersionMismatch {
+            get {
+                return ResourceManager.GetString("NotificationRomAmkDataVersionMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: The identifier for this ROM, &quot;{0}&quot;, could not be identified. It should be &quot;{1}&quot;. This either means that some other program has modified this area of your ROM, or your ROM is corrupted..
+        /// </summary>
+        internal static string NotificationRomAmkVersionCannotBeDetermined {
+            get {
+                return ResourceManager.GetString("NotificationRomAmkVersionCannotBeDetermined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to WARNING: A default note length was used that is not divisible by 192 ticks, and thus results in a fractional tick value..
         /// </summary>
         internal static string WarningDefaultLengthValidation {

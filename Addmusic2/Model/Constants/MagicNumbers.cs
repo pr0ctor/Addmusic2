@@ -103,6 +103,9 @@ namespace Addmusic2.Model.Constants
         // Used to reduce function calls since the RatsTag array can be reversed
         public static readonly byte[] StarTag = [0x53, 0x54, 0x41, 0x52];
 
+        public static readonly int SamplesNumbersListAddress = 0x70005;
+        public static readonly int SongSamplePointersAddress = 0x70008;
+
         public static class CommandValues
         {
             public static readonly byte Tie = 0xC6;

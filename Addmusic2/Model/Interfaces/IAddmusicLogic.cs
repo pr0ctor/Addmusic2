@@ -9,6 +9,9 @@ namespace Addmusic2.Model.Interfaces
 {
     internal interface IAddmusicLogic
     {
+
+        public int AddmusicLogicDataVersion { get; }
+        public IAddmusicCheckBits CheckBits { get; }
         public void Run();
         public void RunSingleSong(string fileData);
         public string PreProcessSong(string fileData);

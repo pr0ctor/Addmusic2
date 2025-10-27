@@ -23,7 +23,7 @@ namespace Addmusic2.Parsers
         private readonly MessageService _messageService;
         //private readonly SongListItem _songListItem;
         private readonly GlobalSettings _globalSettings;
-        private readonly FileCachingService _fileCachingService;
+        private readonly IFileCachingService _fileCachingService;
         private readonly RomOperations _romOperations;
         //private readonly SongScope _songScope;
         public SoundEffectData SoundEffectData { get; set; } = new();
@@ -48,7 +48,7 @@ namespace Addmusic2.Parsers
             ILogger<IAddmusicLogic> logger,
             MessageService messageService,
             GlobalSettings globalSettings,
-            FileCachingService fileCachingService,
+            IFileCachingService fileCachingService,
             RomOperations romOperations
             //SongListItem songItem,
             //SongScope songScope

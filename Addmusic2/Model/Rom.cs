@@ -54,6 +54,23 @@ namespace Addmusic2.Model
             File.WriteAllBytes(filePath, fullList.ToArray());
         }
 
+        public Rom CreateTempRomCopy()
+        {
+            var newTempRom = new Rom(_messageService, _romOperations)
+            {
+                RomFileName = RomFileName,
+                RomFilePath = RomFilePath,
+                RomFileExtension = RomFileExtension,
+                RomFileSize = RomFileSize,
+                IsRomSA1 = IsRomSA1,
+                AllowSA1 = AllowSA1,
+                RomHeader = [.. RomHeader],
+                RomData = [.. RomData]
+            };
+
+            return newTempRom;
+        }
+
         public Rom CreateTempRomCopy(string romFileName)
         {
             var newTempRom = new Rom(_messageService, _romOperations)
@@ -61,6 +78,23 @@ namespace Addmusic2.Model
                 RomFileName = romFileName,
                 RomFilePath = RomFilePath.Replace(RomFileName, romFileName),
                 RomFileExtension = RomFileExtension,
+                RomFileSize = RomFileSize,
+                IsRomSA1 = IsRomSA1,
+                AllowSA1 = AllowSA1,
+                RomHeader = [.. RomHeader],
+                RomData = [.. RomData]
+            };
+
+            return newTempRom;
+        }
+
+        public Rom CreateTempRomCopy(string romFileName, string fileExtension)
+        {
+            var newTempRom = new Rom(_messageService, _romOperations)
+            {
+                RomFileName = romFileName,
+                RomFilePath = RomFilePath.Replace(RomFileName, romFileName).Replace(RomFileExtension, fileExtension),
+                RomFileExtension = fileExtension,
                 RomFileSize = RomFileSize,
                 IsRomSA1 = IsRomSA1,
                 AllowSA1 = AllowSA1,

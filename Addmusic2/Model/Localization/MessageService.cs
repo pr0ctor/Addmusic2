@@ -92,6 +92,27 @@ namespace Addmusic2.Model.Localization
 
         #endregion
 
+        #region Notifications
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetNotificationRomAmkDataVersionMismatchMessage(string version)
+        {
+            LocalizedString localizedString = _localizer["NotificationRomAmkDataVersionMismatch", version];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetNotificationRomAmkVersionCannotBeDeterminedMessage(string foundIdentifier, string expectedIdentifier)
+        {
+            LocalizedString localizedString = _localizer["NotificationRomAmkVersionCannotBeDetermined", foundIdentifier, expectedIdentifier];
+
+            return localizedString;
+        }
+
+
+        #endregion
+
         #region CLArgs Messages, Names, and Descriptions
 
         [return: NotNullIfNotNull(nameof(_localizer))]

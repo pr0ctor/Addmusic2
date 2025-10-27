@@ -21,7 +21,7 @@ namespace Addmusic2.Parsers
         private readonly MessageService _messageService;
         private readonly SongListItem _songListItem;
         private readonly GlobalSettings _globalSettings;
-        private readonly FileCachingService _fileCachingService;
+        private readonly IFileCachingService _fileCachingService;
         private readonly SongScope _songScope;
         public SongData SongData { get; set; } = new SongData();
 
@@ -61,7 +61,7 @@ namespace Addmusic2.Parsers
             ILogger<IAddmusicLogic> logger,
             MessageService messageService,
             GlobalSettings globalSettings,
-            FileCachingService fileCachingService,
+            IFileCachingService fileCachingService,
             //SongListItem songItem,
             SongScope songScope
         )
