@@ -8,7 +8,7 @@ namespace Addmusic2.Model
 {
     internal class SampleGroup
     {
-        public string Name { get; set; }
-        public List<Sample> Samples { get; set; } = new List<Sample>();
+        public string Name { get; set; } = string.Empty;
+        public List<Sample> Samples { get; set; } = new();
     }
 }

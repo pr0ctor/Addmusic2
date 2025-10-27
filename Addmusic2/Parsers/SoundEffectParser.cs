@@ -59,6 +59,7 @@ namespace Addmusic2.Parsers
             //_songListItem = songItem;
             _globalSettings = globalSettings;
             _fileCachingService = fileCachingService;
+            _romOperations = romOperations;
             //_songScope = songScope;
         }
 

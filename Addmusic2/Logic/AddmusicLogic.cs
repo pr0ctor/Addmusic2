@@ -586,13 +586,13 @@ namespace Addmusic2.Logic
 
             var mainAsmText = Encoding.UTF8.GetString(mainAsm.ToArray());
             var sfxTable0Position = mainAsmText.IndexOf(ExtractedAsmDataNames.PatchAsmLocationNames.SFXTable0Text);
-            mainAsmText.Insert(
+            mainAsmText = mainAsmText.Insert(
                 sfxTable0Position + ExtractedAsmDataNames.PatchAsmLocationNames.SFXTable0Text.Length,
                 PatchBuilders.SfxTable0Contents
             );
 
             var sfxTable1Position = mainAsmText.IndexOf(ExtractedAsmDataNames.PatchAsmLocationNames.SFXTable1Text);
-            mainAsmText.Insert(
+            mainAsmText = mainAsmText.Insert(
                 sfxTable0Position + ExtractedAsmDataNames.PatchAsmLocationNames.SFXTable1Text.Length,
                 PatchBuilders.SfxTable1Contents
             );

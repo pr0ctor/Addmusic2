@@ -18,7 +18,7 @@ namespace Addmusic2.Model
             Skip,
         }
         public ResultType Type { get; set; }
-        public List<string> Message { get; set; }
+        public List<string> Message { get; set; } = new();
         public ValidationResult() { }
     }
 }
