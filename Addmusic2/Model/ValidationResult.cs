@@ -1,4 +1,5 @@
-﻿using Addmusic2.Model.Interfaces;
+﻿using Addmusic2.Model.Constants;
+using Addmusic2.Model.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +10,6 @@ namespace Addmusic2.Model
 {
     internal class ValidationResult : IValidationResult
     {
-        public enum ResultType
-        {
-            Success,
-            Warning,
-            Failure,
-            Error,
-            Skip,
-        }
         public ResultType Type { get; set; }
         public List<string> Message { get; set; } = new();
         public ValidationResult() { }

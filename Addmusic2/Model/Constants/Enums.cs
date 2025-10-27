@@ -77,4 +77,13 @@ namespace Addmusic2.Model.Constants
         Global,
         Local,
     }
+
+    public enum ResultType
+    {
+        Success,
+        Warning,
+        Failure,
+        Error,
+        Skip,
+    }
 }
