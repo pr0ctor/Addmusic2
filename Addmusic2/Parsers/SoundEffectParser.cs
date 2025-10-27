@@ -143,16 +143,16 @@ namespace Addmusic2.Parsers
         {
             var validationResult = (ValidationResult)ValidateNode(node);
 
-            if (validationResult.Type == ValidationResult.ResultType.Skip)
+            if (validationResult.Type == ResultType.Skip)
             {
                 return;
             }
-            else if (validationResult.Type == ValidationResult.ResultType.Failure)
+            else if (validationResult.Type == ResultType.Failure)
             {
                 // todo handle failure cases
             }
-            else if (validationResult.Type == ValidationResult.ResultType.Warning ||
-                validationResult.Type == ValidationResult.ResultType.Error)
+            else if (validationResult.Type == ResultType.Warning ||
+                validationResult.Type == ResultType.Error)
             {
                 // todo handle error cases
             }
@@ -172,7 +172,7 @@ namespace Addmusic2.Parsers
                 HexNode => ValidateHexNode(songNode as HexNode),
                 _ => new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Skip,
+                    Type = ResultType.Skip,
                 },
             };
         }
@@ -746,7 +746,7 @@ namespace Addmusic2.Parsers
                 SongNodeType.Octave or
                 SongNodeType.Pipe => new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Success
+                    Type = ResultType.Success
                 },
                 // Requires Validation
                 SongNodeType.DefaultLength => ValidateDefaultLengthNode(atomic),
@@ -771,7 +771,7 @@ namespace Addmusic2.Parsers
             {
                 return new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Error,
+                    Type = ResultType.Error,
                     Message = new List<string>() {
                         _messageService.GetDefaultLengthOutOfRangeMessage(1, MagicNumbers.NoteLengthMaximum, defaultLengthPayload.Length)
                     },
@@ -784,7 +784,7 @@ namespace Addmusic2.Parsers
             {
                 return new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Warning,
+                    Type = ResultType.Warning,
                     Message = new List<string>() {
                         _messageService.GetWarningDefaultLengthValidationMessage()
                     },
@@ -794,7 +794,7 @@ namespace Addmusic2.Parsers
             {
                 return new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Success,
+                    Type = ResultType.Success,
                 };
             }
         }
@@ -828,12 +828,12 @@ namespace Addmusic2.Parsers
             return messages.Count > 0
                 ? new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Error,
+                    Type = ResultType.Error,
                     Message = messages,
                 }
                 : new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Success,
+                    Type = ResultType.Success,
                 };
         }
 
@@ -872,12 +872,12 @@ namespace Addmusic2.Parsers
             return messages.Count > 0
                 ? new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Error,
+                    Type = ResultType.Error,
                     Message = messages,
                 }
                 : new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Success,
+                    Type = ResultType.Success,
                 };
         }
 
@@ -908,7 +908,7 @@ namespace Addmusic2.Parsers
                     continue;
                 }
                 var validationResult = (ValidationResult)ValidateNode(child);
-                if (validationResult.Type != ValidationResult.ResultType.Success)
+                if (validationResult.Type != ResultType.Success)
                 {
                     messages.AddRange(validationResult.Message);
                 }
@@ -916,12 +916,12 @@ namespace Addmusic2.Parsers
             return messages.Count > 0
                 ? new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Error,
+                    Type = ResultType.Error,
                     Message = messages,
                 }
                 : new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Success
+                    Type = ResultType.Success
                 };
         }
 
@@ -940,7 +940,7 @@ namespace Addmusic2.Parsers
             {
                 return new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Error,
+                    Type = ResultType.Error,
                     Message = new List<string>
                     {
                         _messageService.GetErrorUnknownHexCommandMessage(hexPayload.HexValue),
@@ -952,7 +952,7 @@ namespace Addmusic2.Parsers
             {
                 return new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Error,
+                    Type = ResultType.Error,
                     Message = new List<string>
                     {
                         _messageService.GetErrorHexCommandValueOutOfRangeMessage(hexPayload.HexValue, 0, MagicNumbers.HexCommandMaximum),
@@ -962,7 +962,7 @@ namespace Addmusic2.Parsers
 
             return new ValidationResult
             {
-                Type = ValidationResult.ResultType.Success,
+                Type = ResultType.Success,
             };
         }
 
@@ -972,7 +972,7 @@ namespace Addmusic2.Parsers
             foreach (SongNode child in tripletNode.Children)
             {
                 var validationResult = (ValidationResult)ValidateNode(child);
-                if (validationResult.Type != ValidationResult.ResultType.Success)
+                if (validationResult.Type != ResultType.Success)
                 {
                     messages.AddRange(validationResult.Message);
                 }
@@ -980,12 +980,12 @@ namespace Addmusic2.Parsers
             return messages.Count > 0
                 ? new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Error,
+                    Type = ResultType.Error,
                     Message = messages,
                 }
                 : new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Success
+                    Type = ResultType.Success
                 };
         }
 
@@ -1002,7 +1002,7 @@ namespace Addmusic2.Parsers
                 SongNodeType.Asm or
                 SongNodeType.Jsr => new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Success
+                    Type = ResultType.Success
                 },
                 _ => throw new Exception()
             };
@@ -1037,12 +1037,12 @@ namespace Addmusic2.Parsers
             return messages.Count > 0
                 ? new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Error,
+                    Type = ResultType.Error,
                     Message = messages,
                 }
                 : new ValidationResult
                 {
-                    Type = ValidationResult.ResultType.Success,
+                    Type = ResultType.Success,
                 };
         }
 
