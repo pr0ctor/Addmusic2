@@ -119,6 +119,8 @@ var startTime = DateTime.Now;
 // load Asar here
 var asarLoaded = Asar.init();
 
+// check asar loaded
+
 // Set up Dependency Injection
 
 var services = new ServiceCollection();
@@ -140,7 +142,7 @@ services.AddTransient<MessageService>();
 
 services.AddLogging(builder => builder.AddConsole());
 
-// services.AddScoped<IRomOperations, RomOperations>();
+services.AddTransient<RomOperations>();
 
 // services.AddSingleton<IAsarInterface>();
 services.AddSingleton<IGlobalSettings>(globalSettings);

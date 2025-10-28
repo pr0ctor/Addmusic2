@@ -29,13 +29,21 @@ namespace Addmusic2.Model
     internal class SongListItem
     {
         [JsonProperty("number", Required = Required.Always)]
-        public string Number { get; set; }
+        public string Number { get; set; } = string.Empty;
+        [JsonIgnore]
+        public int IntNumber
+        {
+            get
+            {
+                return Convert.ToInt32(Number, 16);
+            }
+        }
         [JsonProperty("name", Required = Required.Always)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         [JsonProperty("path", Required = Required.Always)]
-        public string Path { get; set; }
+        public string Path { get; set; } = string.Empty;
         [JsonProperty("type")]
-        private string ItemType { get; set; }
+        private string ItemType { get; set; } = string.Empty;
         [JsonIgnore]
         private SongListItemType TypeTemp { get; set; }
         [JsonIgnore]
@@ -72,13 +80,21 @@ namespace Addmusic2.Model
     internal class SfxListItem
     {
         [JsonProperty("number", Required = Required.Always)]
-        public string Number { get; set; }
+        public string Number { get; set; } = string.Empty;
+        [JsonIgnore]
+        public int IntNumber 
+        { 
+            get
+            {
+                return Convert.ToInt32(Number, 16);
+            }
+        }
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         [JsonProperty("path", Required = Required.Always)]
-        public string Path { get; set; }
+        public string Path { get; set; } = string.Empty;
         [JsonProperty("type")]
-        private string ItemType { get; set; }
+        private string ItemType { get; set; } = string.Empty;
         [JsonIgnore]
         private SfxListItemType TypeTemp { get; set; }
         [JsonIgnore]
@@ -112,17 +128,19 @@ namespace Addmusic2.Model
         public bool Loop { get; set; }
         [JsonProperty("pointer", Required = Required.DisallowNull)]
         public bool Pointer { get; set; }
+        [JsonProperty("copyOf")]
+        public string CopyOf { get; set; } = string.Empty;
     }
 
     internal class AddmusicSampleGroup
     {
         [JsonProperty("name", Required = Required.Always)]
-        public string Name { get; set;}
+        public string Name { get; set; } = string.Empty;
         [JsonProperty("samples")]
-        public List<AddmusicSample> Samples { get; set; }
+        public List<AddmusicSample> Samples { get; set; } = new();
     }
 
-    internal class AddmusicSample
+    internal class AddmusicSample : IEquatable<AddmusicSample>
     {
         [JsonProperty("name")]
         public string Name {
@@ -142,7 +160,7 @@ namespace Addmusic2.Model
             }
         }
         [JsonIgnore]
-        private string NameValue { get; set; }
+        private string NameValue { get; set; } = string.Empty;
         [JsonProperty("path", Required = Required.Always)]
         public string Path
         {
@@ -163,7 +181,7 @@ namespace Addmusic2.Model
             }
         }
         [JsonIgnore] 
-        private string PathValue { get; set; }
+        private string PathValue { get; set; } = string.Empty;
         [JsonProperty("important", Required = Required.Default)]
         public bool IsImportant { get; set; } = false;
         [JsonProperty("loop", Required = Required.Default)]
@@ -172,6 +190,18 @@ namespace Addmusic2.Model
         public ushort LoopPoint { get; set; }
         [JsonIgnore]
         public int SampleDataSize { get; set; }
+
+        public bool Equals(AddmusicSample? other)
+        {
+            if (ReferenceEquals(this, other)) return false;
+            if (other == null) return false;
+
+            if (this.Name == other.Name && this.SampleDataSize == other.SampleDataSize)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
 }

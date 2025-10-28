@@ -26,8 +26,10 @@ namespace Addmusic2.Model.Constants
             public static readonly int InitialSfxLeftVolume = 0x7F;
             public static readonly int InitialSfxRightVolume = 0x7F;
             public static readonly int InitialSfxNoteLength = 8;
+            public static readonly int InitialSongSampleListLength = 8;
         }
 
+        public static readonly int FourKiBRomSize = 0x7FF8;
         public static readonly int NoteLengthMaximum = 192;
         public static readonly byte NoteLengthMaxBeforeSplit = 0x80;
         public static readonly byte NoteLengthDecreaseFactor = 0x60;
@@ -50,6 +52,11 @@ namespace Addmusic2.Model.Constants
         public static readonly int SfxCompiledBinCodeLocation = 0x08000;
         public static readonly int AsmToBinBufferLength = 0x10000;
 
+        public static readonly int RomHeaderLength = 0x200;
+        public static readonly int RomSizeMultiple = 0x8000;
+        public static readonly int RomMinimumSize = 0x80000;
+        public static readonly int SA1CheckBitLocation = 0xFFD5;
+        public static readonly int SA1CheckBitValue = 0x23;
 
         public static readonly int ChannelCount = 8;
         public static readonly int MaxSamplesCount = 256;
@@ -89,6 +96,15 @@ namespace Addmusic2.Model.Constants
                 bufferSize,
             };
         };
+
+        // Char: R(82//0x52) A(65//0x41) T(84//0x54) S(83//0x53)
+        public static readonly byte[] RatsTag = [0x52, 0x41, 0x54, 0x53];
+        // Char: S(83//0x53) T(84//0x54) A(65//0x41) R(82//0x52)
+        // Used to reduce function calls since the RatsTag array can be reversed
+        public static readonly byte[] StarTag = [0x53, 0x54, 0x41, 0x52];
+
+        public static readonly int SamplesNumbersListAddress = 0x70005;
+        public static readonly int SongSamplePointersAddress = 0x70008;
 
         public static class CommandValues
         {

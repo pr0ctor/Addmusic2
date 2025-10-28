@@ -429,7 +429,11 @@
     <value>WARNING: A note length was used that is not divisible by {0:D} ticks, and thus results in a fractional tick value. Song - {1) , Line - {2:D} , Column - {3:D}</value>
     <comment>Warning for when a note length is not divisible by the given amount and will yield a fractional tick value</comment>
   </data>
-  <data name="WarningOctaveDroppedTooLow" xml:space="preserve">
+  <data name="InfoSoundEffectsNotIncluded" xml:space="preserve">
+    <value>!noSFX is enabled in asm/UserDefines.asm, sound effects are not included</value>
+    <comment>Informational Message for when sound effects are not enabled</comment>
+  </data>
+  <data name="WarningOctaveDroppedTooLow1" xml:space="preserve">
     <value>The octave has been dropped too low.</value>
     <comment>Warning for when the octave is dropped too low during parsing</comment>
   </data>
@@ -448,5 +452,37 @@
   <data name="ErrorInstrumentDefinitionHexValueOutOfRange" xml:space="preserve">
     <value>Error parsing instrument definition. Hex value found (0x{0}) must be between 0x{1} and 0x{2} .</value>
     <comment>Error for when an instrument definition contains a hex value that is out of range</comment>
+  </data>
+  <data name="WarningNoSfxEnabledAndDumpSfx" xml:space="preserve">
+    <value>The sound driver build does not support sound effects due to the !noSFX flag being enabled in asm/UserDefines.asm, yet you requested to dump SFX. There will be no new SPC dumps of the sound effects since the data is not included by default, nor is the playback code for the sound effects.</value>
+    <comment>Warning for when the user uses the  DumpSfx commandline argument and the !noSFX flag is enabled in the user defines</comment>
+  </data>
+  <data name="InfoTotalSpaceUsedByAllSoundEffects" xml:space="preserve">
+    <value>Total space used by all sound effects: {0}</value>
+    <comment>Informational Message to display the amount of space used by all Sound Effects</comment>
+  </data>
+  <data name="InfoTotalSizeOfProgram" xml:space="preserve">
+    <value>Total size of main program: {0}</value>
+    <comment>Informational Message to display the total size of the program</comment>
+  </data>
+  <data name="InfoTotalSizeOfProgramWithSfx" xml:space="preserve">
+    <value>Total size of main program and all sound effects: {0}</value>
+    <comment>Informational Message to display the total size of the program with sound effects</comment>
+  </data>
+  <data name="InfoTotalSpaceUsedBy1DF9Sfx" xml:space="preserve">
+    <value>Total space used by 1DF9 sound effects: {0}</value>
+    <comment>Informational Message to display the amount of space used by 1DF9 Sound Effects</comment>
+  </data>
+  <data name="InfoTotalSpaceUsedBy1DFCSfx" xml:space="preserve">
+    <value>Total space used by 1DFC sound effects: {0}</value>
+    <comment>Informational Message to display the amount of space used by 1DFC Sound Effects</comment>
+  </data>
+  <data name="NotificationRomAmkVersionCannotBeDetermined" xml:space="preserve">
+    <value>Error: The identifier for this ROM, "{0}", could not be identified. It should be "{1}". This either means that some other program has modified this area of your ROM, or your ROM is corrupted.</value>
+    <comment>Warning for when the supplied Rom does not have the proper AMK Identifier</comment>
+  </data>
+  <data name="NotificationRomAmkDataVersionMismatch" xml:space="preserve">
+    <value>WARNING: This ROM was modified using a newer version {0} of AddmusicK. You can continue, but it is HIGHLY recommended that you upgrade AMK first.</value>
+    <comment>Warning for when the supplied Rom does not have the proper AMK Identifier</comment>
   </data>
 </root>

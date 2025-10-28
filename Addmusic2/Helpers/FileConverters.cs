@@ -162,6 +162,11 @@ namespace Addmusic2.Helpers
                         ? SfxListItemType.Sfx1DF9
                         : SfxListItemType.Sfx1DFC;
 
+                    sfxListItem.Number = sfxNumber;
+                    sfxListItem.Name = sfxName;
+                    sfxListItem.Path = sfxPath;
+                    sfxListItem.Type = sfxType;
+
                     if (toggleSymbolGroup != null && toggleSymbolGroup.Value.Length > 0)
                     {
                         var settings = new SfxSettings();
@@ -174,15 +179,15 @@ namespace Addmusic2.Helpers
                             ? true
                             : false;
 
+                        if(settings.Pointer == true)
+                        {
+                            settings.CopyOf = sfxListItem.Name;
+                        }
+
                         sfxListItem.Settings = settings;
                     }
 
-                    sfxListItem.Number = sfxNumber;
-                    sfxListItem.Name = sfxName;
-                    sfxListItem.Path = sfxPath;
-                    sfxListItem.Type = sfxType;
-
-                    if(inSFX1DF9)
+                    if (inSFX1DF9)
                     {
                         addmusicSfxList.Sfx1DF9.Add(sfxListItem);
                     }

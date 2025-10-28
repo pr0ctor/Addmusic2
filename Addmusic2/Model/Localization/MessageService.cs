@@ -40,8 +40,81 @@ namespace Addmusic2.Model.Localization
 
         #endregion
 
+        #region Info Messages
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetInfoTotalSpaceUsedBy1DF9SfxMessage(string amount)
+        {
+            LocalizedString localizedString = _localizer["InfoTotalSpaceUsedBy1DF9Sfx", amount];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetInfoTotalSpaceUsedBy1DFCSfxMessage(string amount)
+        {
+            LocalizedString localizedString = _localizer["InfoTotalSpaceUsedBy1DFCSfx", amount];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetInfoTotalSpaceUsedByAllSoundEffectsMessage(string amount)
+        {
+            LocalizedString localizedString = _localizer["InfoTotalSpaceUsedByAllSoundEffects", amount];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetInfoTotalSizeOfProgramMessage(string amount)
+        {
+            LocalizedString localizedString = _localizer["InfoTotalSizeOfProgram", amount];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetInfoTotalSizeOfProgramWithSfxMessage(string amount)
+        {
+            LocalizedString localizedString = _localizer["InfoTotalSizeOfProgramWithSfx", amount];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetInfoSoundEffectsNotIncludedMessage()
+        {
+            LocalizedString localizedString = _localizer["InfoSoundEffectsNotIncluded"];
+
+            return localizedString;
+        }
+
+        #endregion
+
+        #region Notifications
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetNotificationRomAmkDataVersionMismatchMessage(string version)
+        {
+            LocalizedString localizedString = _localizer["NotificationRomAmkDataVersionMismatch", version];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetNotificationRomAmkVersionCannotBeDeterminedMessage(string foundIdentifier, string expectedIdentifier)
+        {
+            LocalizedString localizedString = _localizer["NotificationRomAmkVersionCannotBeDetermined", foundIdentifier, expectedIdentifier];
+
+            return localizedString;
+        }
+
+
+        #endregion
+
         #region CLArgs Messages, Names, and Descriptions
-        
+
         [return: NotNullIfNotNull(nameof(_localizer))]
         public string? GetCLArgRomNameNameMessage()
         {
@@ -394,6 +467,21 @@ namespace Addmusic2.Model.Localization
 
 
         #endregion
+
+
+        #region Addmusic Logic Warning Messages
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetWarningNoSfxEnabledAndDumpSfxMessage()
+        {
+            LocalizedString localizedString = _localizer["WarningNoSfxEnabledAndDumpSfx"];
+
+            return localizedString;
+        }
+
+
+        #endregion
+
 
         #endregion
 

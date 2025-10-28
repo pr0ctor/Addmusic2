@@ -1,19 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Addmusic2.Model;
+﻿using Addmusic2.Model;
 using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
 using Addmusic2.Services;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using static Addmusic2.Model.SongTree.NotePayload;
 
 namespace Addmusic2.Helpers
 {
     internal static class Helpers
     {
+
+        public static Regex GetHexValueAfterText(string textBeforeHexValue)
+        {
+            var regexString = $@"{textBeforeHexValue}\$([a-zA-Z0-9]{{1,5}})";
+            return new(regexString);
+        }
+
+        public static string SetHexValueAfterText(string sourceText, string textBeforeHexValue, string valueToSet)
+        {
+            var regexString = $@"{textBeforeHexValue}\$([a-zA-Z0-9]{{1,5}})";
+
+            var match = Regex.Match(sourceText, regexString);
+
+            if(match.Success)
+            {
+                var foundText = match.Value;
+                sourceText = sourceText.Replace(match.Value, $"{textBeforeHexValue}${valueToSet}");
+            }
+            else
+            {
+                // todo handle Exception
+                throw new Exception();
+            }
+
+            return sourceText;
+        }
 
         public static bool IsHexInRange(byte hexValue)
         {
@@ -73,6 +100,36 @@ namespace Addmusic2.Helpers
             }
 
             fileCache.AddToCache(sample.Path, fullPath);
+        }
+
+        public static byte[] GetSampleDataFromCache(IFileCachingService fileCache, AddmusicSample sample)
+        {
+            var cacheContains = fileCache.CheckCacheContains(sample.Path);
+            if(cacheContains.IsFound == true)
+            {
+                var dataStream = fileCache.GetFromCache(cacheContains.Filename);
+                return dataStream!.ToArray();
+            }
+            else
+            {
+                // todo update exception
+                throw new Exception();
+            }
+        }
+
+        public static int GetSampleDataLengthFromCache(IFileCachingService fileCache, AddmusicSample sample)
+        {
+            var cacheContains = fileCache.CheckCacheContains(sample.Path);
+            if (cacheContains.IsFound == true)
+            {
+                var dataStream = fileCache.GetFromCache(cacheContains.Filename);
+                return dataStream!.ToArray().Length;
+            }
+            else
+            {
+                // todo update exception
+                throw new Exception();
+            }
         }
 
         public static string ParseAccidentalToString(Accidentals accidental) => accidental switch

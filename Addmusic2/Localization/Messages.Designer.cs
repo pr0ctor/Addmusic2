@@ -700,6 +700,60 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to !noSFX is enabled in asm/UserDefines.asm, sound effects are not included.
+        /// </summary>
+        internal static string InfoSoundEffectsNotIncluded {
+            get {
+                return ResourceManager.GetString("InfoSoundEffectsNotIncluded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total size of main program: {0}.
+        /// </summary>
+        internal static string InfoTotalSizeOfProgram {
+            get {
+                return ResourceManager.GetString("InfoTotalSizeOfProgram", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total size of main program and all sound effects: {0}.
+        /// </summary>
+        internal static string InfoTotalSizeOfProgramWithSfx {
+            get {
+                return ResourceManager.GetString("InfoTotalSizeOfProgramWithSfx", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total space used by 1DF9 sound effects: {0}.
+        /// </summary>
+        internal static string InfoTotalSpaceUsedBy1DF9Sfx {
+            get {
+                return ResourceManager.GetString("InfoTotalSpaceUsedBy1DF9Sfx", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total space used by 1DFC sound effects: {0}.
+        /// </summary>
+        internal static string InfoTotalSpaceUsedBy1DFCSfx {
+            get {
+                return ResourceManager.GetString("InfoTotalSpaceUsedBy1DFCSfx", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total space used by all sound effects: {0}.
+        /// </summary>
+        internal static string InfoTotalSpaceUsedByAllSoundEffects {
+            get {
+                return ResourceManager.GetString("InfoTotalSpaceUsedByAllSoundEffects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Addmusic Version.
         /// </summary>
         internal static string IntroAddmusicVersion {
@@ -723,6 +777,24 @@ namespace Addmusic2.Localization {
         internal static string IntroReadTheReadMe {
             get {
                 return ResourceManager.GetString("IntroReadTheReadMe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WARNING: This ROM was modified using a newer version {0} of AddmusicK. You can continue, but it is HIGHLY recommended that you upgrade AMK first..
+        /// </summary>
+        internal static string NotificationRomAmkDataVersionMismatch {
+            get {
+                return ResourceManager.GetString("NotificationRomAmkDataVersionMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: The identifier for this ROM, &quot;{0}&quot;, could not be identified. It should be &quot;{1}&quot;. This either means that some other program has modified this area of your ROM, or your ROM is corrupted..
+        /// </summary>
+        internal static string NotificationRomAmkVersionCannotBeDetermined {
+            get {
+                return ResourceManager.GetString("NotificationRomAmkVersionCannotBeDetermined", resourceCulture);
             }
         }
         
@@ -763,6 +835,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The sound driver build does not support sound effects due to the !noSFX flag being enabled in asm/UserDefines.asm, yet you requested to dump SFX. There will be no new SPC dumps of the sound effects since the data is not included by default, nor is the playback code for the sound effects..
+        /// </summary>
+        internal static string WarningNoSfxEnabledAndDumpSfx {
+            get {
+                return ResourceManager.GetString("WarningNoSfxEnabledAndDumpSfx", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to WARNING: A note length was used that is not divisible by {0:D} ticks, and thus results in a fractional tick value. Song - {1) , Line - {2:D} , Column - {3:D}.
         /// </summary>
         internal static string WarningNoteLengthFractionalTickValue {
@@ -774,9 +855,9 @@ namespace Addmusic2.Localization {
         /// <summary>
         ///   Looks up a localized string similar to The octave has been dropped too low..
         /// </summary>
-        internal static string WarningOctaveDroppedTooLow {
+        internal static string WarningOctaveDroppedTooLow1 {
             get {
-                return ResourceManager.GetString("WarningOctaveDroppedTooLow", resourceCulture);
+                return ResourceManager.GetString("WarningOctaveDroppedTooLow1", resourceCulture);
             }
         }
         

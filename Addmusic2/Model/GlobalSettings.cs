@@ -1,5 +1,7 @@
-﻿using Addmusic2.Model.Constants;
+﻿using Addmusic2.Helpers;
+using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
+using Addmusic2.Model.SongTree;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,7 @@ namespace Addmusic2.Model
 {
     internal class GlobalSettings : IGlobalSettings
     {
+        //public Rom Rom { get; set; }
         public AddmusicSongSfxResources ResourceList { get; set; } = new();
 
         #region Runtime Arguments
@@ -36,6 +39,23 @@ namespace Addmusic2.Model
 
         #endregion
 
+        #region Extracted Asm Data
+
+        public int ProgramSize { get; set; }
+        public int ProgramUploadPosition { get; set; }
+        public string ProgramReuploadPosition { get; set; } = string.Empty;
+        public string MusicPointersPosition { get; set; } = string.Empty;
+        public string MainLoopPosition { get; set; } = string.Empty;
+        public int ExARAMRet { get; set; }
+        public int DefARAMRet { get; set; }
+        public int SongCount { get; set; }
+        public string SfxTable0 { get; set; } = string.Empty;
+        public string SfxTable1 { get; set; } = string.Empty;
+
+
+        #endregion
+
+
         public int GlobalSongMaxIndex { get; set; }
 
         public GlobalSettings() { }
@@ -47,7 +67,7 @@ namespace Addmusic2.Model
 
         public void LoadAddusicSongSfxResourceLists()
         {
-            var initialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var initialDirectory = FileNames.ExecutionLocations.InstallLocation;
             // OG file
             var songFileLocation = Path.Combine(initialDirectory, FileNames.ConfigurationFiles.SongList);
             var sampleGroupFileLocation = Path.Combine(initialDirectory, FileNames.ConfigurationFiles.SampleGroups);

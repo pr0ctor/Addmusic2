@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Addmusic2.Visitors
 {
-    internal class AdvMmlVisitor : MmlBaseVisitor<ISongNode>//, IMmlVisitor<ISongNode>
+    internal class AdvMmlVisitor : MmlBaseVisitor<ISongNode>, IMmlVisitor<ISongNode>
     {
         #region General Items
 

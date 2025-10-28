@@ -15,7 +15,7 @@ namespace Addmusic2.Services
     {
         private ILogger<IAddmusicLogic> _logger;
 
-        // Dict(FileName, FileData>
+        // Dict(FileName, FileData>)
         // FileHash is needed for collisions due to samples with identical names but different data contents
         private Dictionary<string, MemoryStream> _cache = new();
 
@@ -23,7 +23,7 @@ namespace Addmusic2.Services
         // MD5 hashes of all of the files in the Cache with their associated filename
         private Dictionary<string, string> _fileHashes = new();
 
-        // Dict(FileName, List<FileNames with same MD5 Hash>
+        // Dict(FileName, List<FileNames with same MD5 Hash>)
         // Dictionary storing files that have identical data
         //      Only stores duplicates, does not store singletons
         private Dictionary<string, List<string>> _duplicateAliases = new();
@@ -111,21 +111,21 @@ namespace Addmusic2.Services
                     {
                         _duplicateAliases[originalFileName].Add(fileName);
                         _duplicateAliases.Add(fileName, new List<string>
-                    {
-                        originalFileName
-                    });
+                        {
+                            originalFileName
+                        });
                     }
                     else
                     {
                         _duplicateAliases[originalFileName] = new List<string>
-                    {
-                        originalFileName,
-                        fileName,
-                    };
+                        {
+                            originalFileName,
+                            fileName,
+                        };
                         _duplicateAliases[fileName] = new List<string>
-                    {
-                        originalFileName,
-                    };
+                        {
+                            originalFileName,
+                        };
                     }
                     duplicateStream = GetFromCache(originalFileName);
                 }
@@ -172,6 +172,22 @@ namespace Addmusic2.Services
             }
 
             return null;
+        }
+
+        public ( bool IsFound, string Filename ) CheckCacheContains(string fileName)
+        {
+            if( _cache.ContainsKey(fileName))
+            {
+                return (true, fileName);
+            }
+            else if(_duplicateAliases.ContainsKey(fileName))
+            {
+                return (true, _duplicateAliases[fileName].First());
+            }
+            else
+            {
+                return (false, string.Empty);
+            }
         }
 
         private string ComputeMD5HashOfFile(Stream dataStream)

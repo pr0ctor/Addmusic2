@@ -16,6 +16,9 @@ namespace Addmusic2.Model
         public ISongNode RootNode { get; set; }
         public ISongParser Parser { get; set; }
         public string SongText { get; set; } = string.Empty;
+
+        public SongListItem Configuration { get; set; }
+
         public SongData SongData { get; set; } = new();
 
         public Song(SongParser parser)

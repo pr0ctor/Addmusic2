@@ -16,7 +16,11 @@ namespace Addmusic2.Model
         public ISoundEffectParser Parser { get; set; }
         public string SoundEffectText { get; set; } = string.Empty;
 
+        public SfxListItem Configuration { get; set; } = new();
+
         public SoundEffectData SoundEffectData { get; set; } = new();
+
+        public SoundEffect() { }
 
         public SoundEffect(SoundEffectParser parser)
         {

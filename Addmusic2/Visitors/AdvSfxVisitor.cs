@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Addmusic2.Visitors
 {
-    internal class AdvSfxVisitor : SfxBaseVisitor<ISongNode> //,*/ ISfxVisitor<ISongNode>
+    internal class AdvSfxVisitor : SfxBaseVisitor<ISongNode>, ISfxVisitor<ISongNode>
     {
 
         #region General Items

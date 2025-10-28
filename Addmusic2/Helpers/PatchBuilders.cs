@@ -15,7 +15,7 @@ arch spc700
 
 org $000000
 incsrc ""asm/main.asm""
-base ${aramPosition.ToString("X4")}
+base ${aramPosition:X4}
 
 
 org $008000
@@ -24,6 +24,18 @@ org $008000
 
 ";
 
+        public static string SongListPointerName(string number) => $"SGPointer{number}";
+
+        public static string SfxTable0Contents = "\r\nincbin \"SFX1DF9Table.bin\"\r\n";
+        public static string SfxTable1Contents = "\r\nincbin \"SFX1DFCTable.bin\"\r\nincbin \"SFXData.bin\"\r\n";
+
+        public static string SongSampleListXkasOverride = "db $53, $54, $41, $52\t\t\t\t; Needed to stop Asar from treating this like an xkas patch.\n";
+        public static string SongSampleGroupPointerLabel = "dw SGEnd-SampleGroupPtrs-$01\ndw SGEnd-SampleGroupPtrs-$01^$FFFF\nSampleGroupPtrs:\n\n";
+        public static string SongSampleListEndLabel = "SGEnd:";
+
+        public static string FinalDataPatchSpcProgramLocation = "\n\norg !SPCProgramLocation \nincbin \"bin/main.bin\"";
+        public static string MusicIncBinBuilder(int freespace, int musicNumber) => $"org ${freespace:X6}\nmusic{musicNumber:X2}: incbin \"bin/music{musicNumber:X2}.bin\"\n";
+        public static string SampleBrrIncBinBuilder(int freespace, int brrNumber) => $"org ${freespace:X6}\nbrr{brrNumber:X2}: incbin \"bin/brr{brrNumber:X2}.bin\"\n";
 
     }
 }
