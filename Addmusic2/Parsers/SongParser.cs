@@ -17,7 +17,7 @@ namespace Addmusic2.Parsers
 {
     internal class SongParser : ISongParser
     {
-        private readonly ILogger<IAddmusicLogic> _logger;
+        private readonly IAddmusicLogger _logger;
         private readonly MessageService _messageService;
         private readonly SongListItem _songListItem;
         private readonly GlobalSettings _globalSettings;
@@ -30,7 +30,6 @@ namespace Addmusic2.Parsers
         private List<ChannelInformation> Channels { get; set; } = new();
         private List<byte> CurrentLoopData = new List<byte>();
         private List<byte> CurrentSubLoopData = new List<byte>();
-        private Dictionary<int, double> ChannelLength = new();
         private Dictionary<string, LoopInformation> RemoteCodeDefinitions = new();
         private Dictionary<string, LoopInformation> NamedLoopDefinitions = new();
         private List<(double ChannelTick, int TempoChange)> TempoChanges = new();
@@ -58,7 +57,7 @@ namespace Addmusic2.Parsers
 
 
         public SongParser(
-            ILogger<IAddmusicLogic> logger,
+            IAddmusicLogger logger,
             MessageService messageService,
             GlobalSettings globalSettings,
             IFileCachingService fileCachingService,
@@ -80,11 +79,10 @@ namespace Addmusic2.Parsers
             CatalogueUserDefinedInformation(nodes);
 
             var channels = nodes
-                .Where(n => ((SongNode)n).NodeType == SongNodeType.Channel)
+                .Where(n => n.NodeType == SongNodeType.Channel)
                 .ToList();
             var specialDirectives = nodes
-                .Where(n =>
-                    ((SongNode)n).NodeType != SongNodeType.Channel &&
+                .Where(n => n.NodeType != SongNodeType.Channel &&
                     n.GetType() == typeof(DirectiveNode)
                 ).ToList();
 
@@ -166,7 +164,7 @@ namespace Addmusic2.Parsers
 
         public void ParseNode(SongNode node)
         {
-            var validationResult = (ValidationResult)ValidateNode(node);
+            var validationResult = ValidateNode(node);
 
             if (validationResult.Type == ResultType.Skip)
             {
@@ -176,10 +174,13 @@ namespace Addmusic2.Parsers
             {
                 // todo handle failure cases
             }
-            else if (validationResult.Type == ResultType.Warning ||
-                validationResult.Type == ResultType.Error)
+            else if (validationResult.Type == ResultType.Warning)
             {
                 // todo handle error cases
+            }
+            else if (validationResult.Type == ResultType.Error)
+            {
+                
             }
 
             EvaluateNode(node);
@@ -241,7 +242,6 @@ namespace Addmusic2.Parsers
                 }
 
                 if(node is LoopNode)
-                //if (node.GetType() == typeof(LoopNode))
                 {
                     if (node.NodeType == SongNodeType.SimpleLoop)
                     {

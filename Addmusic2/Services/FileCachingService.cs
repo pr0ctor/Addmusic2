@@ -13,7 +13,7 @@ namespace Addmusic2.Services
 {
     internal class FileCachingService : IFileCachingService
     {
-        private ILogger<IAddmusicLogic> _logger;
+        private IAddmusicLogger _logger;
 
         // Dict(FileName, FileData>)
         // FileHash is needed for collisions due to samples with identical names but different data contents
@@ -28,7 +28,7 @@ namespace Addmusic2.Services
         //      Only stores duplicates, does not store singletons
         private Dictionary<string, List<string>> _duplicateAliases = new();
 
-        public FileCachingService(ILogger<IAddmusicLogic> logger) 
+        public FileCachingService(IAddmusicLogger logger) 
         {
             _logger = logger;
         }

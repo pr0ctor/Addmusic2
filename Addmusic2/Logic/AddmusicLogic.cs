@@ -20,7 +20,7 @@ namespace Addmusic2.Logic
 {
     internal class AddmusicLogic : IAddmusicLogic
     {
-        private ILogger<IAddmusicLogic> _logger;
+        private IAddmusicLogger _logger;
         private MessageService _messageService;
         private IFileCachingService _fileCachingService;
         private GlobalSettings _globalSettings;
@@ -37,7 +37,7 @@ namespace Addmusic2.Logic
         IAddmusicCheckBits IAddmusicLogic.CheckBits => CheckBits;
 
         public AddmusicLogic(
-            ILogger<IAddmusicLogic> logger,
+            IAddmusicLogger logger,
             MessageService messageService,
             IFileCachingService fileCachingService,
             IGlobalSettings globalSettings,

@@ -2,6 +2,7 @@
 using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
 using Addmusic2.Model.SongTree;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,14 @@ namespace Addmusic2.Model
         public bool ForceNoContinuePopup { get; set; } = false;
         public bool RedirectStandardStreams { get; set; } = false;
         public bool GenerateSPC { get; set; } = false;
+
+        #endregion
+
+        #region File Specific Options
+
+        public bool LogToFile { get; set; } = false;
+        public string LogLocation { get; set; } = "";
+        public LogLevel LoggingLevel { get; set; } = LogLevel.Information;
 
         #endregion
 
@@ -252,6 +261,20 @@ namespace Addmusic2.Model
             {
                 GenerateVisualization = (bool)fileOptions.GenerateVisualization;
             }
+
+            if(clArgs.Verbose != null)
+            {
+                Verbose = (bool)clArgs.Verbose;
+            }
+
+
+            if(fileOptions.LoggingSettings != null)
+            {
+                LoggingLevel = Enum.Parse<LogLevel>(fileOptions.LoggingSettings.LoggingLevel.Trim());
+                LogLocation = fileOptions.LoggingSettings.LogLocation.Trim();
+                LogToFile = fileOptions.LoggingSettings.LogToFile;
+            }
+
         }
     }
 }

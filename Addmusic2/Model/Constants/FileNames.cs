@@ -62,11 +62,13 @@ namespace Addmusic2.Model.Constants
             public static readonly string TempAsmFile = "temp" + FileExtensions.Asm;
             public static readonly string TempBinFile = "temp" + FileExtensions.BinPatchData;
             public static readonly string EmptyBrr = "EMPTY" + FileExtensions.SampleBrr;
-            public static string GetEmptyBrrLocation()
-            {
-                var initialLocation = ExecutionLocations.InstallLocation;
-                return Path.Combine(initialLocation, FolderNames.SamplesBase, EmptyBrr);
-            }
+            public static string GetEmptyBrrLocation() => Path.Combine(ExecutionLocations.InstallLocation, FolderNames.SamplesBase, EmptyBrr);
+        }
+
+        public static class LogFiles
+        {
+            public static readonly string GeneralLogFileBase = "log";
+            public static string GeneralLogFile(string fileNameNoExt) => Path.Combine(ExecutionLocations.InstallLocation, FolderNames.LogFolder, fileNameNoExt + FileExtensions.TextFile);
         }
         
         public static class FolderNames

@@ -18,46 +18,6 @@ using AsarCLR.Asar191;
 
 //[assembly: RootNamespace("Addmusic2")]
 
-Console.WriteLine("Hello, World!");
-
-/*var fileData = File.ReadAllText(@"Samples/Seenpoint Intro.txt");
-
-var replacementsRegex = new Regex(@$"""([^\s=""]+)\s*=\s*([^""]+)""");
-
-var matches = replacementsRegex.Matches(fileData);
-
-foreach (Match match in matches)
-{
-    var searchValue = match.Groups[1].Value;
-    var replaceValue = match.Groups[2].Value;
-
-    fileData = fileData.Replace(searchValue, replaceValue);
-}
-
-var stream = CharStreams.fromString(fileData);
-
-var lexer = new MmlLexer(stream);
-var tokenStream = new CommonTokenStream(lexer);
-var parser = new MmlParser(tokenStream);
-var newParser = new AdvMmlVisitor();
-
-var songContext = parser.song();
-
-var songNodeTree = newParser.VisitSong(songContext);
-
-var x = 1;*/
-
-var logFactory = LoggerFactory.Create(builder =>
-{
-    builder
-        .AddFilter("Microsoft", LogLevel.Warning)
-        .AddFilter("System", LogLevel.Warning)
-        .AddFilter("Addmusic2.Program", LogLevel.Debug) //(globalSettings.Verbose) ? LogLevel.Debug : LogLevel.Information)
-        .AddConsole();
-});
-
-var logger = logFactory.CreateLogger<IAddmusicLogic>();
-
 // bad and dirty way to get early localization
 var tempService = new ServiceCollection();
 tempService.AddLogging(builder => builder.AddConsole());
@@ -125,26 +85,25 @@ var asarLoaded = Asar.init();
 
 var services = new ServiceCollection();
 
-// recreate logfactory
-logFactory = LoggerFactory.Create(builder =>
+var addmusicLoggingOptions = new AddmusicLoggerOptions()
 {
-    builder
-        .AddFilter("Microsoft", LogLevel.Warning)
-        .AddFilter("System", LogLevel.Warning)
-        .AddFilter("Addmusic2.Program", (globalSettings.Verbose) ? LogLevel.Debug : LogLevel.Information)
-        .AddConsole();
-});
+    Enable = globalSettings.Verbose,
+    LogToFile = globalSettings.LogToFile,
+    LoggingLevel = globalSettings.LoggingLevel,
+    LogFilePath = globalSettings.LogLocation,
+};
 
-logger = logFactory.CreateLogger<IAddmusicLogic>();
+//var logger = new AddmusicLogger(addmusicLoggingOptions);
 
+// needed for the localization message service
+services.AddLogging(builder => builder.AddConsole());
 services.AddLocalization();
 services.AddTransient<MessageService>();
-
-services.AddLogging(builder => builder.AddConsole());
 
 services.AddTransient<RomOperations>();
 
 // services.AddSingleton<IAsarInterface>();
+services.AddSingleton<IAddmusicLogger>(new AddmusicLogger(addmusicLoggingOptions));
 services.AddSingleton<IGlobalSettings>(globalSettings);
 services.AddSingleton<IAddmusicLogic, AddmusicLogic>();
 services.AddSingleton<IFileCachingService, FileCachingService>();
@@ -154,18 +113,15 @@ var serviceProvider = services.BuildServiceProvider();
 var addmusicLogic = serviceProvider.GetRequiredService<IAddmusicLogic>();
 var messageService = serviceProvider.GetRequiredService<MessageService>();
 var fileService = serviceProvider.GetRequiredService<IFileCachingService>();
+var logger = serviceProvider.GetRequiredService<IAddmusicLogger>();
 
 // Load Necessary file data into Cache
 fileService.InitializeCache();
 
-logger.LogInformation(messageService.GetIntroAddmusicVersionMessage());
-logger.LogInformation(messageService.GetIntroParserVersionMessage());
-logger.LogInformation(messageService.GetIntroReadTheReadMeMessage());
-logger.LogInformation("Asar Version: " + Asar.version());
-
-/*Console.WriteLine(Messages.IntroMessages.AddmusicVersion);
-Console.WriteLine(Messages.IntroMessages.ParserVersion);
-Console.WriteLine(Messages.IntroMessages.ReadTheReadMe);*/
+logger.LogInformation(LogLevel.Information, messageService.GetIntroAddmusicVersionMessage(), true);
+logger.LogInformation(LogLevel.Information, messageService.GetIntroParserVersionMessage(), true);
+logger.LogInformation(LogLevel.Information, messageService.GetIntroReadTheReadMeMessage(), true);
+logger.LogInformation(LogLevel.Information, $"Asar Version: {Asar.version()}", true);
 
 addmusicLogic.Run();
 

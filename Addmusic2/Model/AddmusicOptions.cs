@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,9 +43,13 @@ namespace Addmusic2.Model
     internal class LoggingSettings
     {
         // Type of logs to display
+        [JsonProperty("logToFile")]
+        public bool LogToFile { get; set; } = false;
+        // Type of logs to display
         [JsonProperty("loggingLevel")]
-        public string LoggingLevel { get; set; }
+        public string LoggingLevel { get; set; } = nameof(LogLevel.Information);
         // Where to pipe the log data to
+        //      can be either a path to a file or to a folder 
         [JsonProperty("logLocation")]
         public string LogLocation { get; set; }
     }

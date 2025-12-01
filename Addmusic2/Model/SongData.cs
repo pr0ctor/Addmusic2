@@ -27,11 +27,8 @@ namespace Addmusic2.Model
 
         public string Name { get; set; }
         public string PathlessSongName { get; set; }
-        //public byte[] Data { get; set; } = new byte[MagicNumbers.ChannelCount];
         public List<ChannelInformation> ChannelData { get; set; } = new();
         public bool[,] NoMusic { get; set; } = new bool[8,2];
-        public ushort[] LoopLocations { get; set; } = new ushort[MagicNumbers.ChannelCount];
-        public bool PlayOnce { get; set; }
         public bool HasIntro { get; set; }
         public ushort[,] PhrasePointers = new ushort[8,2];
         public ushort[] LoopPointers = new ushort[0x10000];
@@ -42,8 +39,6 @@ namespace Addmusic2.Model
         public int SpaceUsedBySamples { get; set; }
 
         public List<byte> AllPointersAndInstruments { get; set; } = new List<byte>();
-        public List<byte[]> InstrumentData { get; set; } = new List<byte[]>();
-        //public List<byte[]> FinalData { get; set; } = new List<byte[]>();
 
         public SongSpaceInformation SpaceInfo { get; set; } = new();
 
@@ -53,9 +48,6 @@ namespace Addmusic2.Model
 
         public bool HasYoshiDrums { get; set; }
         public bool KnowsLength { get; set; }
-        public int Index { get; set; }
-
-        public List<ushort> Samples { get; set; } = new List<ushort>();
         public int EchoBufferSize { get; set; }
         public bool HasEchoBufferCommand { get; set; }
         public bool EchoBufferAlloVCMDIsSet { get; set; }
@@ -68,26 +60,11 @@ namespace Addmusic2.Model
         public string Game { get; set; }
         public string Comment { get; set; }
 
-        public bool[] UsedSamples { get; set; } = new bool[MagicNumbers.MaxSamplesCount];
-
         public int MinSize { get; set; }
-        public bool Exists { get; set; }
         public int PositionInARAM { get; set; }
-        //public int RemoteDefinitionType { get; set; }
-        //public bool InRemoteDefinition { get; set; }
-        //public int RemoteDefinitionArg { get; set; }
-
-        //public Dictionary<string, string> Replacements { get; set; } = new Dictionary<string, string>();
 
         public bool GuessLength { get; set; }
         public bool DoesntLoop { get; set; }
-
-        private int resizedChannel;
-        private double[] channelLengths { get; set; } = new double[8];               // How many ticks are in each channel.
-        private double[] loopLengths { get; set; } = new double[0x10000];                // How many ticks are in each loop.
-        private double normalLoopLength;                // How many ticks were in the most previously declared normal loop.
-        private double superLoopLength;                 // How many ticks were in the most previously declared super loop.
-        //private std::vector<std::pair<double, int>> tempoChanges;   // Where any changes in tempo occur. A negative tempo marks the beginning of the main loop, if an intro exists.
 
         public SongData()
         {

@@ -17,17 +17,17 @@ namespace Addmusic2.Helpers
 {
     internal class RomOperations : IRomOperations
     {
-        private ILogger<IAddmusicLogic> _logger;
+        private IAddmusicLogger _logger;
         private GlobalSettings _globalSettings;
         private MessageService _messageService;
-        private FileCachingService _fileCachingService;
+        private IFileCachingService _fileCachingService;
 
-        public RomOperations(IGlobalSettings settings, ILogger<IAddmusicLogic> logger, MessageService messageService, IFileCachingService fileCachingService)
+        public RomOperations(IGlobalSettings settings, IAddmusicLogger logger, MessageService messageService, IFileCachingService fileCachingService)
         {
             _globalSettings = (GlobalSettings)settings;
             _messageService = messageService;
             _logger = logger;
-            _fileCachingService = (FileCachingService)fileCachingService;
+            _fileCachingService = fileCachingService;
 
         }
 

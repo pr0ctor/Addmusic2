@@ -19,7 +19,7 @@ namespace Addmusic2.Parsers
 {
     internal class SoundEffectParser : ISoundEffectParser
     {
-        private readonly ILogger<IAddmusicLogic> _logger;
+        private readonly IAddmusicLogger _logger;
         private readonly MessageService _messageService;
         //private readonly SongListItem _songListItem;
         private readonly GlobalSettings _globalSettings;
@@ -45,7 +45,7 @@ namespace Addmusic2.Parsers
         private bool UpdateVolume { get; set; } = false;
 
         public SoundEffectParser(
-            ILogger<IAddmusicLogic> logger,
+            IAddmusicLogger logger,
             MessageService messageService,
             GlobalSettings globalSettings,
             IFileCachingService fileCachingService,
