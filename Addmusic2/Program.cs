@@ -93,10 +93,9 @@ var addmusicLoggingOptions = new AddmusicLoggerOptions()
     LogFilePath = globalSettings.LogLocation,
 };
 
-//var logger = new AddmusicLogger(addmusicLoggingOptions);
-
 // needed for the localization message service
 services.AddLogging(builder => builder.AddConsole());
+
 services.AddLocalization();
 services.AddTransient<MessageService>();
 

@@ -1,20 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using Addmusic2.Exceptions;
+using Addmusic2.Helpers;
 using Addmusic2.Model;
+using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
 using Addmusic2.Model.Localization;
 using Addmusic2.Parsers;
 using Addmusic2.Services;
 using Addmusic2.Visitors;
-using Addmusic2.Model.Constants;
 using Antlr4.Runtime;
-using Microsoft.Extensions.Logging;
 using AsarCLR.Asar191;
-using Addmusic2.Helpers;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Addmusic2.Logic
 {
@@ -54,36 +56,53 @@ namespace Addmusic2.Logic
         public void Run()
         {
 
+            _logger.LogInformation(LogLevel.Information, $"Beginning processing for Addmusic data version {AddmusicLogicDataVersion}", true);
+
             var loadedRom = _romOperations.LoadRomData();
 
+            _logger.LogInformation(LogLevel.Debug, $"Loaded Rom {loadedRom.RomFileName}");
+
+            _logger.LogInformation(LogLevel.Debug, "Cleaning existing Rom data");
             var roms = CleanRomData(loadedRom);
 
             LoadRequiredSampleGroups();
 
+            _logger.LogInformation(LogLevel.Information, "Processing All Songs");
+
             ProcessAllSongs();
+
+            _logger.LogInformation(LogLevel.Information, "Processing All Sound Effects");
 
             ProcessAllSoundEffects();
 
             GetProgramUploadPosition();
 
+            _logger.LogInformation(LogLevel.Information, "Compiling Songs and Sound Effects");
+
             CompileAllSoundEffects(SoundEffects);
             CompileSongs(roms.TempRom, Songs);
+
+            _logger.LogInformation(LogLevel.Information, "Fixing Pointers");
 
             FixMusicPointers(Songs);
 
             if(_globalSettings.GenerateSPC == true)
             {
+                _logger.LogInformation(LogLevel.Information, "Assembling final patch");
+
                 AssembleFinalPatch(roms.TempRom, Songs);
                 // todo double check romname logic
                 GenerateMSC(roms.OrignalRom.RomFileName, Songs);
             }
 
+            _logger.LogInformation(LogLevel.Information, "Finished processing");
         }
 
         #region Song Processing
 
         public void ProcessAllSongs()
         {
+            _logger.LogInformation(LogLevel.Debug, $"Processing {_globalSettings.ResourceList.Songs.GlobalSongs.Count} Global Songs");
             // load global songs
             foreach (var globalSong in _globalSettings.ResourceList.Songs.GlobalSongs)
             {
@@ -99,6 +118,8 @@ namespace Addmusic2.Logic
                 Songs.Add(songData);
             }
 
+            _logger.LogInformation(LogLevel.Debug, $"Processing {_globalSettings.ResourceList.Songs.LocalSongs.Count} Local Songs");
+
             // load local songs
             foreach (var localSong in _globalSettings.ResourceList.Songs.LocalSongs)
             {
@@ -113,6 +134,8 @@ namespace Addmusic2.Logic
 
                 Songs.Add(songData);
             }
+
+            _logger.LogInformation(LogLevel.Debug, $"Processed {Songs.Count} Songs");
         }
 
 
@@ -127,10 +150,14 @@ namespace Addmusic2.Logic
 
             var matches = replacementsRegex.Matches(fileData);
 
+            _logger.LogInformation(LogLevel.Trace, $"Found {matches.Count} matches");
+
             foreach (Match match in matches)
             {
                 var searchValue = match.Groups[1].Value;
                 var replaceValue = match.Groups[2].Value;
+
+                _logger.LogInformation(LogLevel.Trace, $"Found search value {searchValue} // Replacing with {replaceValue}");
 
                 fileData = fileData.Replace(searchValue, replaceValue);
             }
@@ -183,6 +210,7 @@ namespace Addmusic2.Logic
 
         public void ProcessAllSoundEffects()
         {
+            _logger.LogInformation(LogLevel.Debug, $"Processing {_globalSettings.ResourceList.SoundEffects.Sfx1DF9.Count} 1DF9 SFX");
             // load 1DF9 sound effects
             foreach (var sfx1DF9 in _globalSettings.ResourceList.SoundEffects.Sfx1DF9)
             {
@@ -208,6 +236,7 @@ namespace Addmusic2.Logic
                 SoundEffects.Add(soundEffectData);
             }
 
+            _logger.LogInformation(LogLevel.Debug, $"Processing {_globalSettings.ResourceList.SoundEffects.Sfx1DFC.Count} 1DFC SFX");
             // load 1DFC sound effects
             foreach (var sfx1DFC in _globalSettings.ResourceList.SoundEffects.Sfx1DFC)
             {
@@ -295,6 +324,7 @@ namespace Addmusic2.Logic
             if (rom.RomData[CheckBits.CleanRomFirstCheckBitLocation] == CheckBits.CleanRomFirstCheckBitValue
                 && rom.RomData[CheckBits.CleanRomSecondCheckBitLocation] == CheckBits.CleanRomSecondCheckBitValue)
             {
+                _logger.LogInformation(LogLevel.Information, _messageService.GetNotificationCurrentRomIsCleanRomMessage(), true);
                 return (rom, tempRom);
             }
 
@@ -302,18 +332,21 @@ namespace Addmusic2.Logic
             var programNameRaw = tempRom.RomData.GetRange(_romOperations.SNESToPC(CheckBits.AmkCheckValueLocation), CheckBits.AmkCheckValueLength);
             var programNameString = new String(programNameRaw.Select(x => (char)x).ToArray());
 
+            _logger.LogInformation(LogLevel.Trace, $"Found Addmusic Program Name '{programNameString}'");
+
             if (programNameString != CheckBits.AmkCheckValueStringValue)
             {
-                _messageService.GetNotificationRomAmkVersionCannotBeDeterminedMessage(programNameString, CheckBits.AmkCheckValueStringValue);
-                // todo handle case here
+                _logger.LogError(LogLevel.Critical, _messageService.GetNotificationRomAmkVersionCannotBeDeterminedMessage(programNameString, CheckBits.AmkCheckValueStringValue), true);
+                throw new InvalidAddmusicVersionException(_messageService.GetNotificationRomAmkVersionCannotBeDeterminedMessage(programNameString, CheckBits.AmkCheckValueStringValue));
             }
 
             var romDataVersion = tempRom.RomData[_romOperations.SNESToPC(CheckBits.AmkDataVersionLocation)];
+            _logger.LogInformation(LogLevel.Trace, $"Found Rom Data Version {romDataVersion}");
 
             if (romDataVersion > AddmusicLogicDataVersion)
             {
-                _messageService.GetNotificationRomAmkDataVersionMismatchMessage(romDataVersion.ToString());
-                // todo handle case here
+                _logger.LogError(LogLevel.Critical, _messageService.GetNotificationRomAmkDataVersionMismatchMessage(romDataVersion.ToString()), true);
+                throw new InvalidAddmusicVersionException(_messageService.GetNotificationRomAmkDataVersionMismatchMessage(romDataVersion.ToString()));
             }
 
             var samplesNumbersListAddress = _romOperations.SNESToPC(MagicNumbers.SamplesNumbersListAddress & 0xFFFFFF);
@@ -343,6 +376,7 @@ namespace Addmusic2.Logic
                     if(samplesNumbersListAddress != 0)
                     {
                         _romOperations.ClearRATSTag(ref tempRom, samplesNumbersListAddress - 8);
+                        _logger.LogInformation(LogLevel.Trace, $"Cleared RATS tag at {samplesNumbersListAddress - 8}");
                     }
                 }
 
@@ -360,15 +394,17 @@ namespace Addmusic2.Logic
             var patchAsmStream = Encoding.Unicode.GetString(patchAsm.ToArray());
             var programUploadPositionRegex = Helpers.Helpers.GetHexValueAfterText(ExtractedAsmDataNames.PatchAsmLocationNames.ProgramUploadPositionText);
             var matches = programUploadPositionRegex.Matches(patchAsmStream);
+            // If no matches are found, then that value is missing from the expected file
             if (matches.Count == 0)
             {
-                // todo catch exception when the data is missing from the file
-                throw new Exception();
+                _logger.LogError(LogLevel.Critical, _messageService.GetErrorProgramUploadPositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.ProgramUploadPositionText, FileNames.AsmFiles.PatchAsm), true);
+                throw new MissingFileDataException(_messageService.GetErrorProgramUploadPositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.ProgramUploadPositionText, FileNames.AsmFiles.PatchAsm));
             }
 
             // get the base16 value for the position
             var value = matches.First().Groups[1].Value;
 
+            // convert it to an int from base16
             var intValue = Convert.ToInt32(value, 16);
             _globalSettings.ProgramUploadPosition = intValue;
         }
@@ -391,8 +427,8 @@ namespace Addmusic2.Logic
 
             if (!complied)
             {
-                // todo handle error
-                throw new Exception();
+                _logger.LogError(LogLevel.Critical, _messageService.GetErrorAsarErrorOccurredMessage(), true);
+                throw new AsarExecutionException(_messageService.GetErrorAsarErrorOccurredMessage());
             }
 
             var tempTextFile = File.ReadAllText(FileNames.StaticFiles.TempTextFile);
@@ -403,23 +439,24 @@ namespace Addmusic2.Logic
             var mainLoopMatches = mainLoopPositionRegex.Matches(tempTextFile);
             var reuploadMatches = reuploadPositionRegex.Matches(tempTextFile);
 
+            // Cannot find Main Loop Position from the file
             if (mainLoopMatches.Count == 0)
             {
-                // todo handle error
-                throw new Exception();
+                _logger.LogError(LogLevel.Critical, _messageService.GetErrorMainLoopPositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.MainLoopPositionText, FileNames.StaticFiles.TempTextFile), true);
+                throw new MissingFileDataException(_messageService.GetErrorMainLoopPositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.MainLoopPositionText, FileNames.StaticFiles.TempTextFile));
             }
+            // Cannot find Reupload Position from the file
             if (reuploadMatches.Count == 0)
             {
-                // todo handle error
-                throw new Exception();
+                _logger.LogError(LogLevel.Critical, _messageService.GetErrorReuploadPositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.ReuploadPositionText, FileNames.StaticFiles.TempTextFile), true);
+                throw new MissingFileDataException(_messageService.GetErrorReuploadPositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.ReuploadPositionText, FileNames.StaticFiles.TempTextFile));
             }
 
             var noSFXIsFound = tempTextFile.IndexOf(ExtractedAsmDataNames.AdditionalValues.NoSFXIsEnabled) != -1;
 
             if (_globalSettings.ExportSfx == true && noSFXIsFound == false)
             {
-                // todo fix logging
-                _messageService.GetWarningNoSfxEnabledAndDumpSfxMessage();
+                _logger.LogWarning(LogLevel.Information, _messageService.GetWarningNoSfxEnabledAndDumpSfxMessage(), true);
                 _globalSettings.ExportSfx = false;
             }
 
@@ -573,9 +610,9 @@ namespace Addmusic2.Logic
             var df9Size = (df9DataTotal + (sfx1DF9Max * 2));
             var dfcSize = (dfcDataTotal + (sfx1DFCMax * 2));
             var allSize = df9Size + dfcSize;
-            _messageService.GetInfoTotalSpaceUsedBy1DF9SfxMessage($"0x{PatchBuilders.HexWidthFormat(df9DataTotal.ToString(), 4)}");
-            _messageService.GetInfoTotalSpaceUsedBy1DFCSfxMessage($"0x{PatchBuilders.HexWidthFormat(df9DataTotal.ToString(), 4)}");
-            _messageService.GetInfoTotalSpaceUsedByAllSoundEffectsMessage($"0x{PatchBuilders.HexWidthFormat(allSize.ToString(), 4)}");
+            _logger.LogInformation(LogLevel.Information, _messageService.GetInfoTotalSpaceUsedBy1DF9SfxMessage($"0x{PatchBuilders.HexWidthFormat(df9DataTotal.ToString(), 4)}"));
+            _logger.LogInformation(LogLevel.Information, _messageService.GetInfoTotalSpaceUsedBy1DFCSfxMessage($"0x{PatchBuilders.HexWidthFormat(df9DataTotal.ToString(), 4)}"));
+            _logger.LogInformation(LogLevel.Information, _messageService.GetInfoTotalSpaceUsedByAllSoundEffectsMessage($"0x{PatchBuilders.HexWidthFormat(allSize.ToString(), 4)}"));
 
 
 
@@ -603,7 +640,11 @@ namespace Addmusic2.Logic
 
             var isCompiled = _romOperations.CompileAsmToBin(FileNames.AsmFiles.TempMainAsm, FileNames.BinFiles.MainBin);
 
-            // todo handle when it fails to compile
+            if (!isCompiled)
+            {
+                _logger.LogError(LogLevel.Critical, _messageService.GetErrorAsarErrorOccurredMessage(), true);
+                throw new AsarExecutionException(_messageService.GetErrorAsarErrorOccurredMessage());
+            }
 
 
             var newProgramSize = (int)(new FileInfo(FileNames.BinFiles.MainBin).Length);
@@ -689,7 +730,7 @@ namespace Addmusic2.Logic
                 }
 
                 // skip samples if the current song is missing
-                if (missingCurrentIndex)
+                if (missingCurrentIndex || song == null)
                 {
                     continue;
                 }
@@ -708,7 +749,7 @@ namespace Addmusic2.Logic
 
                 var sampleLengths = song.SongData.SampleInstrumentManager.UsedSamples.Select(s =>
                 {
-                    return $"${Helpers.Helpers.GetSampleDataLengthFromCache(_fileCachingService, s):X4}";
+                    return $"${Helpers.Helpers.GetSampleDataLengthFromCache(_logger, _fileCachingService, s):X4}";
                 });
 
                 samplePointerListBuilder.Append($"{string.Join(",", sampleLengths)}\n");
@@ -888,7 +929,7 @@ namespace Addmusic2.Logic
 
                     foreach (var sample in samples)
                     {
-                        // check how to determine duplcaites
+                        // todo check how to determine duplcaites
 
                         var duplicate = false;
                         if (!duplicate)
@@ -950,8 +991,8 @@ namespace Addmusic2.Logic
 
             if (!isCompiled)
             {
-                // todo handle error with compilation
-                throw new Exception();
+                _logger.LogError(LogLevel.Critical, _messageService.GetErrorAsarErrorOccurredMessage(), true);
+                throw new AsarExecutionException(_messageService.GetErrorAsarErrorOccurredMessage());
             }
 
             var compiledFileSize = (int)(new FileInfo(FileNames.BinFiles.MainSongDataBin).Length);
@@ -986,10 +1027,11 @@ namespace Addmusic2.Logic
             replacePatchData = Helpers.Helpers.SetHexValueAfterText(replacePatchData, ExtractedAsmDataNames.PatchAsmLocationNames.SongCountText, $"{songs.Count:X2}");
 
             var musicPointersLocation = replacePatchData.IndexOf(ExtractedAsmDataNames.PatchAsmLocationNames.MusicPointersText);
+            // Cannot find MusicPointersText from the file
             if (musicPointersLocation == -1)
             {
-                // todo handle case where the ExtractedAsmDataNames.PatchAsmLocationNames.MusicPointersText is missing
-                throw new Exception();
+                _logger.LogError(LogLevel.Critical, _messageService.GetErrorMusicPointersTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.MusicPointersText, FileNames.AsmFiles.PatchAsm), true);
+                throw new MissingFileDataException(_messageService.GetErrorMainLoopPositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.MainLoopPositionText, FileNames.AsmFiles.PatchAsm));
             }
             var subPatchBuilder = new StringBuilder();
             subPatchBuilder.Append(replacePatchData[..musicPointersLocation]);
@@ -1130,8 +1172,8 @@ namespace Addmusic2.Logic
 
                 if (!isPatched)
                 {
-                    // todo fix exception for failed asar patch
-                    throw new Exception();
+                    _logger.LogError(LogLevel.Critical, _messageService.GetErrorAsarErrorOccurredMessage(), true);
+                    throw new AsarExecutionException(_messageService.GetErrorAsarErrorOccurredMessage());
                 }
 
                 var patchedRomData = File.ReadAllBytes(FileNames.SfcFiles.TempPatchSfc);
@@ -1150,7 +1192,8 @@ namespace Addmusic2.Logic
 
         public void GenerateMSC(string romName, List<Song> songs)
         {
-            var mscName = romName[..romName.LastIndexOf(".")];
+            var mscName = $"{romName[..romName.LastIndexOf(".")]}{FileNames.FileExtensions.MscFile}";
+            _logger.LogInformation(LogLevel.Debug, $"Generating {mscName} with {songs.Count} song{((songs.Count == 1) ? "" : "s")}");
             var mscBuilder = new StringBuilder();
             foreach (var song in songs)
             {
@@ -1169,31 +1212,40 @@ namespace Addmusic2.Logic
 
         private void LoadRequiredSampleGroups()
         {
+            _logger.LogInformation(LogLevel.Debug, "Loading required Sample Groups '#default' and '#optimized'");
             var sampleGroups = _globalSettings.ResourceList.SampleGroups;
 
             var defaultGroup = sampleGroups.FindAll(g => g.Name.Equals(FileNames.FolderNames.SamplesDefault, StringComparison.InvariantCultureIgnoreCase));
             var optimizedGroup = sampleGroups.FindAll(g => g.Name.Equals(FileNames.FolderNames.SamplesOptimized, StringComparison.InvariantCultureIgnoreCase));
 
+            // Error if there are multiple Sample Groups named '#default'
             if(defaultGroup.Count > 1)
             {
-                // todo handle more than one "default" group
+                _logger.LogError(LogLevel.Critical, _messageService.GetErrorFoundDuplicateDefaultSampleGroupsMessage(), true);
+                throw new Exception(_messageService.GetErrorFoundDuplicateDefaultSampleGroupsMessage());
             }
+            // Error if there are no Sample Groups named '#default'
             else if(defaultGroup.Count == 0)
             {
-                // todo handle missing "default" group
+                _logger.LogError(LogLevel.Critical, _messageService.GetErrorMissingDefaultSampleGroupMessage(), true);
+                throw new Exception(_messageService.GetErrorMissingDefaultSampleGroupMessage());
             }
 
+            // Error if there are multiple Sample Groups named '#optimized'
             if (optimizedGroup.Count > 1)
             {
-                // todo handle more than one "optimized" group
+                _logger.LogError(LogLevel.Critical, _messageService.GetErrorFoundDuplicateOptimizedSampleGroupsMessage(), true);
+                throw new Exception(_messageService.GetErrorFoundDuplicateOptimizedSampleGroupsMessage());
             }
-            else if(optimizedGroup.Count == 0)
+            // Error if there are no Sample Groups named '#optimized'
+            else if (optimizedGroup.Count == 0)
             {
-                // todo handle missing "optimized" group
+                _logger.LogError(LogLevel.Critical, _messageService.GetErrorMissingOptimizedSampleGroupMessage(), true);
+                throw new Exception(_messageService.GetErrorMissingOptimizedSampleGroupMessage());
             }
 
-            Helpers.Helpers.LoadSampleGroupToCache(_fileCachingService, defaultGroup.First());
-            Helpers.Helpers.LoadSampleGroupToCache(_fileCachingService, optimizedGroup.First());
+            Helpers.Helpers.LoadSampleGroupToCache(_logger, _fileCachingService, defaultGroup.First());
+            Helpers.Helpers.LoadSampleGroupToCache(_logger, _fileCachingService, optimizedGroup.First());
         }
 
         #endregion

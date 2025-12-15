@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,6 +32,7 @@ namespace Addmusic2.Helpers
 
         public void ClearRATSTag(ref Rom rom, int offset)
         {
+            _logger.LogInformation(LogLevel.Debug, $"Clearing RATS tag from Rom({rom.RomFileName}) at offset({offset})");
             var size = ((rom.RomData[offset + 5] << 8) | rom.RomData[offset + 4]) + 8;
             rom.RomData.RemoveRange(offset, size);
             rom.RomData.InsertRange(offset, Enumerable.Repeat<byte>(0, size));
@@ -45,6 +45,7 @@ namespace Addmusic2.Helpers
             // catches full filepath or name is in the current location that the program can pull from
             if (File.Exists(_globalSettings.RomName))
             {
+                _logger.LogInformation(LogLevel.Debug, $"Found ROM file [{_globalSettings.RomName}]");
                 romPath = _globalSettings.RomName;
             }
             // check to see if the rom is either in the Install Location or in the Execution Location
@@ -63,21 +64,18 @@ namespace Addmusic2.Helpers
                 }
                 else
                 {
-                    // todo fix exception message
-                    throw new FileNotFoundException();
+                    _logger.LogError(LogLevel.Critical, _messageService.GetErrorCannotFindRomInLocationsMessage(_globalSettings.RomName), true);
+                    throw new FileNotFoundException(_messageService.GetErrorCannotFindRomInLocationsMessage(_globalSettings.RomName));
                 }
+                _logger.LogInformation(LogLevel.Debug, $"Found ROM File at location: {{{romPath}}}");
             }
 
             // Fix cases of mixed slashes and standardize them for the current operation system file structure
             var standardizedPath = Helpers.StandardizeFileDirectoryDelimiters(romPath);
-            var lastDirectorySeparator = (standardizedPath.Contains(@"\"))
-                ? standardizedPath.LastIndexOf(@"\")
-                : (standardizedPath.Contains(@"/"))
-                    ? standardizedPath.LastIndexOf(@"/")
-                    : 0;
-            var romName = standardizedPath[lastDirectorySeparator..];
+            var lastDirectorySeparatorIndex = Helpers.GetLastDirectorySeparatorIndex(standardizedPath);
+            var romName = standardizedPath[lastDirectorySeparatorIndex..];
             var romInfo = new FileInfo(standardizedPath);
-            var rom = new Rom(_messageService, this)
+            var rom = new Rom(_messageService, this, _logger)
             {
                 RomFileName = romInfo.Name,
                 RomFilePath = romInfo.FullName,
@@ -94,8 +92,7 @@ namespace Addmusic2.Helpers
         public Rom LoadRomData(string romPath)
         {
             var romInfo = new FileInfo(romPath);
-            // var romData = File.ReadAllBytes(romPath);
-            var rom = new Rom(_messageService, this)
+            var rom = new Rom(_messageService, this, _logger)
             {
                 RomFileName = romInfo.Name,
                 RomFilePath = romInfo.FullName,
@@ -106,27 +103,29 @@ namespace Addmusic2.Helpers
 
             rom.LoadRomData();
 
-            //RomData.AddRange(romData);
             return rom;
         }
 
         public int FindFreeSpaceInROM(Rom rom, int size, int start)
         {
+            _logger.LogInformation(LogLevel.Debug, $"Searching {rom.RomFileName} for freespace of length {size} starting at index {start}");
             if(rom.RomData.Count == 0)
             {
                 throw new Exception("Rom Data not loaded.");
             }
 
+            // Handle case where the size of the freespace to find is 0
             if(size == 0)
             {
-                // todo handle case where size cannot be 0
-                throw new ArgumentException();
+                _logger.LogError(LogLevel.Warning, $"Cannot find freespace where the given length of the freespace is 0.", true);
+                throw new ArgumentException($"Cannot find freespace where the given length of the freespace is 0.");
             }
 
+            // Handle case where the freespace to search for is larger than 4KiB
             if(size > MagicNumbers.FourKiBRomSize)
             {
-                // todo handle case where size cannot be larger than 4KiB
-                throw new ArgumentException();
+				_logger.LogError(LogLevel.Warning, $"Cannot find freespace in Rom({rom.RomFileName}) where the specified size({size}) is larger than {MagicNumbers.FourKiBRomSize} .", true);
+				throw new ArgumentException($"Cannot find freespace in Rom({rom.RomFileName}) where the specified size({size}) is larger than {MagicNumbers.FourKiBRomSize} .");
             }
 
             var position = 0;
@@ -153,7 +152,7 @@ namespace Addmusic2.Helpers
                     var ratsSize = rom.RomData[index + 4] | rom.RomData[index + 5] << 8;
                     var sizeInv = (rom.RomData[index + 6] | rom.RomData[index + 7] << 8) ^ 0xFFFF;
 
-                    // If theres a size mismatch or if theres technically a sequence match but its not a RATS tag
+                    // If there's a size mismatch or if theres technically a sequence match but its not a RATS tag
                     //      continue;
                     // Otherwise
                     //      skip from the current position to the end of the protected RATS section
@@ -183,7 +182,8 @@ namespace Addmusic2.Helpers
 
             if(position == 0)
             {
-                if(start == 0x080000)
+				_logger.LogError(LogLevel.Critical, $"Failed to find freespace in Rom({rom.RomFileName}) of size({size}) starting at index({start})", true);
+				if (start == 0x080000)
                 {
                     return -1;
                 }
@@ -195,7 +195,9 @@ namespace Addmusic2.Helpers
 
             var insertPosition = position - size;
 
-            var bytesToInsert = new List<byte>();
+			_logger.LogInformation(LogLevel.Debug, $"Found freespace at {insertPosition}.");
+
+			var bytesToInsert = new List<byte>();
             bytesToInsert.AddRange(MagicNumbers.StarTag);
             bytesToInsert.AddRange(GenerateRatsSizeValue(size - 9));
             rom.RomData.RemoveRange(insertPosition, bytesToInsert.Count);
@@ -278,10 +280,9 @@ namespace Addmusic2.Helpers
 
         public bool CompileAsmToBin(string sourceFileName, string binToWrite)
         {
-
+            _logger.LogInformation(LogLevel.Debug, $"Compiling Asm({sourceFileName}) to .bin({binToWrite})");
             using var tempTextFileWriter = new StreamWriter(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempTextFile), true);
             using var tempLogFileWriter = new StreamWriter(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempLogFile), true);
-            var messageBuilder = new StringBuilder();
 
             var dataOutArray = new byte[MagicNumbers.AsmToBinBufferLength];
             var warningSettings = new Dictionary<string, bool>()
@@ -304,30 +305,9 @@ namespace Addmusic2.Helpers
             var warnings = Asar.getwarnings();
             var errors = Asar.geterrors();
 
-            foreach ( var notification in notifications )
-            {
-                messageBuilder.AppendLine( notification.ToString() );
-            }
+			var messageBuilder = LogAsarMessages(notifications, warnings, errors);
 
-            if (notifications.Length > 0)
-            {
-                tempTextFileWriter.WriteLine(messageBuilder.ToString());
-                messageBuilder.Clear();
-            }
-
-            // todo improve logging
-            messageBuilder.AppendLine("Warnings:");
-            foreach ( var warning in warnings )
-            {
-                messageBuilder.AppendLine( warning.Fullerrdata );
-            }
-            messageBuilder.AppendLine("Errors:");
-            foreach (var warning in warnings)
-            {
-                messageBuilder.AppendLine(warning.Fullerrdata);
-            }
-
-            if(warnings.Length > 0 || errors.Length > 0)
+			if (warnings.Length > 0 || errors.Length > 0)
             {
                 tempLogFileWriter.WriteLine(messageBuilder.ToString());
                 return false;
@@ -340,9 +320,9 @@ namespace Addmusic2.Helpers
 
         public bool PatchAsmToRom(string sourceFileName, string romToPatch)
         {
-            using var tempTextFileWriter = new StreamWriter(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempTextFile), true);
+			_logger.LogInformation(LogLevel.Debug, $"Compiling Asm({sourceFileName}) to Rom({romToPatch})");
+			using var tempTextFileWriter = new StreamWriter(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempTextFile), true);
             using var tempLogFileWriter = new StreamWriter(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempLogFile), true);
-            var messageBuilder = new StringBuilder();
 
             var romBytes = File.ReadAllBytes(romToPatch);
 
@@ -367,40 +347,66 @@ namespace Addmusic2.Helpers
             var warnings = Asar.getwarnings();
             var errors = Asar.geterrors();
 
-            foreach (var notification in notifications)
-            {
-                messageBuilder.AppendLine(notification.ToString());
-            }
+            var messageBuilder = LogAsarMessages(notifications, warnings, errors);
 
-            if (notifications.Length > 0)
-            {
-                tempTextFileWriter.WriteLine(messageBuilder.ToString());
-                messageBuilder.Clear();
-            }
+			if (warnings.Length > 0 || errors.Length > 0)
+			{
+				tempLogFileWriter.WriteLine(messageBuilder.ToString());
+				return false;
+			}
 
-            // todo improve logging
-            messageBuilder.AppendLine("Warnings:");
-            foreach (var warning in warnings)
-            {
-                messageBuilder.AppendLine(warning.Fullerrdata);
-            }
-            messageBuilder.AppendLine("Errors:");
-            foreach (var warning in warnings)
-            {
-                messageBuilder.AppendLine(warning.Fullerrdata);
-            }
-
-            if (warnings.Length > 0 || errors.Length > 0)
-            {
-                tempLogFileWriter.WriteLine(messageBuilder.ToString());
-                return false;
-            }
-
-            using var sfcFile = File.Open(FileNames.SfcFiles.TempPatchSfc, FileMode.OpenOrCreate);
+			using var sfcFile = File.Open(FileNames.SfcFiles.TempPatchSfc, FileMode.OpenOrCreate);
             sfcFile.Write(romBytes);
             sfcFile.Flush();
             return true;
         }
+
+        public StringBuilder LogAsarMessages(string[]? notifications, Asarerror[]? warnings, Asarerror[]? errors)
+        {
+			var notificationMessages = notifications?.ToList() ?? new List<string>();
+			var warningMessages = warnings?.Select(w => w.Fullerrdata).ToList() ?? new List<string>();
+			var errorMessages = errors?.Select(w => w.Fullerrdata).ToList() ?? new List<string>();
+
+			var fullStringBuilder = new StringBuilder();
+            var notificationBuilder = new StringBuilder();
+            var warningBuilder = new StringBuilder();
+            var errorBuilder = new StringBuilder();
+
+            if(notificationMessages.Count > 0)
+            {
+                notificationBuilder.AppendLine("Asar Notifications: ");
+                foreach( var notification in notificationMessages)
+                {
+                    notificationBuilder.AppendLine(notification);
+                }
+                _logger.LogInformation(LogLevel.Debug, notificationBuilder.ToString());
+                fullStringBuilder.AppendLine(notificationBuilder.ToString());
+            }
+
+			if (warningMessages.Count > 0)
+			{
+				warningBuilder.AppendLine("Asar Warnings: ");
+				foreach (var warning in warningMessages)
+				{
+					warningBuilder.AppendLine(warning);
+				}
+                _logger.LogWarning(LogLevel.Warning, warningBuilder.ToString());
+                fullStringBuilder.AppendLine(warningBuilder.ToString());
+			}
+
+			if (errorMessages.Count > 0)
+			{
+				errorBuilder.AppendLine("Asar Errors: ");
+				foreach (var error in errorMessages)
+				{
+					errorBuilder.AppendLine(error);
+				}
+				_logger.LogError(LogLevel.Critical, errorBuilder.ToString());
+				fullStringBuilder.AppendLine(errorBuilder.ToString());
+			}
+
+            return fullStringBuilder;
+		}
 
 
     }

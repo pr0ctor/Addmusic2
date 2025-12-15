@@ -1256,7 +1256,7 @@ namespace Addmusic2.Parsers
                 };
                 SampleInstrumentManager.AddNewSample(sampleData);
                 SampleInstrumentManager.UseSample(sampleData);
-                Helpers.Helpers.LoadSampleToCache(_fileCachingService, sampleData);
+                Helpers.Helpers.LoadSampleToCache(_logger, _fileCachingService, sampleData);
 
                 var sampleIndex = SampleInstrumentManager.Samples.FindIndex(s => s.Name == sampleName);
 
@@ -2764,7 +2764,7 @@ namespace Addmusic2.Parsers
 
                     SampleInstrumentManager.AddNewSample(sample);
                     //Samples.Add(sample);
-                    Helpers.Helpers.LoadSampleToCache(_fileCachingService, sample);
+                    Helpers.Helpers.LoadSampleToCache(_logger, _fileCachingService, sample);
 
                 }
             }
@@ -2820,7 +2820,7 @@ namespace Addmusic2.Parsers
                     };
                     SampleInstrumentManager.AddNewSample(sampleData);
                     //Samples.Add(sampleData);
-                    Helpers.Helpers.LoadSampleToCache(_fileCachingService, sampleData);
+                    Helpers.Helpers.LoadSampleToCache(_logger, _fileCachingService, sampleData);
                 }
             }
 

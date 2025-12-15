@@ -110,6 +110,14 @@ namespace Addmusic2.Model.Localization
             return localizedString;
         }
 
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetNotificationCurrentRomIsCleanRomMessage()
+        {
+            LocalizedString localizedString = _localizer["NotificationCurrentRomIsCleanRom"];
+
+            return localizedString;
+        }
+
 
         #endregion
 
@@ -486,6 +494,91 @@ namespace Addmusic2.Model.Localization
         #endregion
 
         #region Error Messages
+
+        #region General Messages
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorCannotFindRomInLocationsMessage(string romName)
+        {
+            LocalizedString localizedString = _localizer["ErrorCannotFindRomInLocations", romName];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorFoundDuplicateDefaultSampleGroupsMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorFoundDuplicateDefaultSampleGroups"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorMissingDefaultSampleGroupMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorMissingDefaultSampleGroup"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorFoundDuplicateOptimizedSampleGroupsMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorFoundDuplicateOptimizedSampleGroups"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorMissingOptimizedSampleGroupMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorMissingOptimizedSampleGroup"];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorProgramUploadPositionTextMissingMessage(string tagName, string fileName)
+        {
+            LocalizedString localizedString = _localizer["ErrorProgramUploadPositionTextMissing", tagName, fileName];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorMainLoopPositionTextMissingMessage(string tagName, string fileName)
+        {
+            LocalizedString localizedString = _localizer["ErrorMainLoopPositionTextMissing", tagName, fileName];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorReuploadPositionTextMissingMessage(string tagName, string fileName)
+        {
+            LocalizedString localizedString = _localizer["ErrorReuploadPositionTextMissing", tagName, fileName];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorMusicPointersTextMissingMessage(string tagName, string fileName)
+        {
+            LocalizedString localizedString = _localizer["ErrorMusicPointersTextMissing", tagName, fileName];
+
+            return localizedString;
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string? GetErrorAsarErrorOccurredMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorAsarErrorOccurred"];
+
+            return localizedString;
+        }
+
+        #endregion
+
 
         #region Validation Error Messages
 

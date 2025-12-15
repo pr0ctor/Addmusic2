@@ -2,7 +2,7 @@
 using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
 using Addmusic2.Services;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,8 +35,7 @@ namespace Addmusic2.Helpers
             }
             else
             {
-                // todo handle Exception
-                throw new Exception();
+                throw new Exception($"Text({textBeforeHexValue}) not found in the source text.");
             }
 
             return sourceText;
@@ -47,13 +46,22 @@ namespace Addmusic2.Helpers
             return hexValue < 0 || hexValue > MagicNumbers.HexCommandMaximum ? false : true;
         }
 
+        public static int GetLastDirectorySeparatorIndex(string path)
+        {
+            return (path.Contains(@"\"))
+                ? path.LastIndexOf(@"\")
+                : (path.Contains(@"/"))
+                    ? path.LastIndexOf(@"/")
+                    : 0;
+        }
+
         public static string StandardizeFileDirectoryDelimiters(string path)
         {
             var pathPieces = path.Split([@"\", @"/"], StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
             return Path.Combine(pathPieces);
         }
 
-        public static void LoadSampleGroupToCache(IFileCachingService fileCache, AddmusicSampleGroup sampleGroup, string subDirectory = "")
+        public static void LoadSampleGroupToCache(IAddmusicLogger logger, IFileCachingService fileCache, AddmusicSampleGroup sampleGroup, string subDirectory = "")
         {
             var intermediaryDirectory = StandardizeFileDirectoryDelimiters(subDirectory);
             foreach (var sample in sampleGroup.Samples)
@@ -72,14 +80,15 @@ namespace Addmusic2.Helpers
                 }
                 else
                 {
-                    // todo throw exception and handle missing file
+                    logger.LogError(LogLevel.Debug, $"Sample({sample.Name}) in Sample Group({sampleGroup.Name}) not found.", true);
+                    throw new FileNotFoundException($"Sample({sample.Name}) in Sample Group({sampleGroup.Name}) not found.");
                 }
 
                 fileCache.AddToCache(sample.Path, fullPath);
             }
         }
 
-        public static void LoadSampleToCache(IFileCachingService fileCache, AddmusicSample sample, string subDirectory = "")
+        public static void LoadSampleToCache(IAddmusicLogger logger, IFileCachingService fileCache, AddmusicSample sample, string subDirectory = "")
         {
             var intermediaryDirectory = StandardizeFileDirectoryDelimiters(subDirectory);
             var fullPath = "";
@@ -96,13 +105,14 @@ namespace Addmusic2.Helpers
             }
             else
             {
-                // todo throw exception and handle missing file
+                logger.LogError(LogLevel.Debug, $"Sample({sample.Name}) not found.", true);
+                throw new FileNotFoundException($"Sample({sample.Name}) not found.");
             }
 
             fileCache.AddToCache(sample.Path, fullPath);
         }
 
-        public static byte[] GetSampleDataFromCache(IFileCachingService fileCache, AddmusicSample sample)
+        public static byte[] GetSampleDataFromCache(IAddmusicLogger logger, IFileCachingService fileCache, AddmusicSample sample)
         {
             var cacheContains = fileCache.CheckCacheContains(sample.Path);
             if(cacheContains.IsFound == true)
@@ -112,12 +122,12 @@ namespace Addmusic2.Helpers
             }
             else
             {
-                // todo update exception
-                throw new Exception();
+                logger.LogError(LogLevel.Debug, $"Sample({sample.Name}) not found.", true);
+                throw new FileNotFoundException($"Sample({sample.Name}) not found.");
             }
         }
 
-        public static int GetSampleDataLengthFromCache(IFileCachingService fileCache, AddmusicSample sample)
+        public static int GetSampleDataLengthFromCache(IAddmusicLogger logger, IFileCachingService fileCache, AddmusicSample sample)
         {
             var cacheContains = fileCache.CheckCacheContains(sample.Path);
             if (cacheContains.IsFound == true)
@@ -127,8 +137,8 @@ namespace Addmusic2.Helpers
             }
             else
             {
-                // todo update exception
-                throw new Exception();
+                logger.LogError(LogLevel.Debug, $"Sample({sample.Name}) not found.", true);
+                throw new FileNotFoundException($"Sample({sample.Name}) not found.");
             }
         }
 

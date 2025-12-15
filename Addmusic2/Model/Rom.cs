@@ -1,6 +1,7 @@
 ﻿using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
 using Addmusic2.Model.Localization;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace Addmusic2.Model
     {
         private MessageService _messageService;
         private IRomOperations _romOperations;
+        private IAddmusicLogger _logger;
         public string RomFileName { get; set; } = string.Empty;
         public string RomFilePath { get; set; } = string.Empty;
         public string RomFileExtension {  get; set; } = string.Empty;
@@ -22,7 +24,7 @@ namespace Addmusic2.Model
         public List<byte> RomHeader { get; set; } = new();
         public List<byte> RomData { get; set; } = new();
 
-        public Rom(MessageService messageService, IRomOperations romOperations)
+        public Rom(MessageService messageService, IRomOperations romOperations, IAddmusicLogger logger)
         {
             _messageService = messageService;
             _romOperations = romOperations;
@@ -52,11 +54,12 @@ namespace Addmusic2.Model
             fullList.AddRange(RomHeader);
             fullList.AddRange(RomData);
             File.WriteAllBytes(filePath, fullList.ToArray());
+            _logger.LogInformation(LogLevel.Debug, $"Wrote {fullList.Count} bytes to {filePath}");
         }
 
         public Rom CreateTempRomCopy()
         {
-            var newTempRom = new Rom(_messageService, _romOperations)
+            var newTempRom = new Rom(_messageService, _romOperations, _logger)
             {
                 RomFileName = RomFileName,
                 RomFilePath = RomFilePath,
@@ -73,7 +76,7 @@ namespace Addmusic2.Model
 
         public Rom CreateTempRomCopy(string romFileName)
         {
-            var newTempRom = new Rom(_messageService, _romOperations)
+            var newTempRom = new Rom(_messageService, _romOperations, _logger)
             {
                 RomFileName = romFileName,
                 RomFilePath = RomFilePath.Replace(RomFileName, romFileName),
@@ -90,7 +93,7 @@ namespace Addmusic2.Model
 
         public Rom CreateTempRomCopy(string romFileName, string fileExtension)
         {
-            var newTempRom = new Rom(_messageService, _romOperations)
+            var newTempRom = new Rom(_messageService, _romOperations, _logger)
             {
                 RomFileName = romFileName,
                 RomFilePath = RomFilePath.Replace(RomFileName, romFileName).Replace(RomFileExtension, fileExtension),
@@ -117,6 +120,7 @@ namespace Addmusic2.Model
 
         protected void LoadRomDataFromFile(string path, string fileName)
         {
+            _logger.LogInformation(LogLevel.Debug, $"Loading ROM({fileName}) at path({path})");
             if (!fileName.Contains(FileNames.FileExtensions.RomSmc) && !fileName.Contains(FileNames.FileExtensions.RomSfc))
             {
                 // todo fix exception message
@@ -129,6 +133,7 @@ namespace Addmusic2.Model
                 throw new FileNotFoundException();
             }
 
+            // read the Rom data in as a list
             var romData = File.ReadAllBytes(path).ToList();
 
             if(romData.Count <= MagicNumbers.RomMinimumSize)
@@ -145,12 +150,18 @@ namespace Addmusic2.Model
                 // Get the rest of the bytes that aren't the header
                 RomData = romData.GetRange(MagicNumbers.RomHeaderLength + 1, romData.Count - MagicNumbers.RomHeaderLength);
             }
+            else
+            {
+                // todo fix exception
+                throw new Exception();
+            }
 
-            if(_romOperations.SNESToPC(MagicNumbers.SA1CheckBitLocation) == MagicNumbers.SA1CheckBitValue && AllowSA1 == true)
+            // validate that the Rom has a valid check bit for SA1 and note if that is the case assuming SA1 is allowed
+            if (_romOperations.SNESToPC(MagicNumbers.SA1CheckBitLocation) == MagicNumbers.SA1CheckBitValue && AllowSA1 == true)
             {
                 IsRomSA1 = true;
             }
-            
+            _logger.LogInformation(LogLevel.Debug, $"Loaded {romData.Count} bytes for ROM({fileName}) at path({path})");
         }
 
     }

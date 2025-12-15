@@ -485,4 +485,48 @@
     <value>WARNING: This ROM was modified using a newer version {0} of AddmusicK. You can continue, but it is HIGHLY recommended that you upgrade AMK first.</value>
     <comment>Warning for when the supplied Rom does not have the proper AMK Identifier</comment>
   </data>
+  <data name="ErrorCannotFindRomInLocations" xml:space="preserve">
+    <value>Rom({0}) not found in either the Execution, Install, or given locations. Please make sure that a Rom file with the specified name is at one of those locations or provide an absolute uri.</value>
+    <comment>Error message for when the specified Rom name cannot be found in the Execution, Install, or the given location (if romname is a path)</comment>
+  </data>
+  <data name="ErrorFoundDuplicateDefaultSampleGroups" xml:space="preserve">
+    <value>Found more than one Sample Group named '#default'. Cannot determine the correct one to use. </value>
+    <comment>Error for when there exists more than one Sample Group with the name '#default'.</comment>
+  </data>
+  <data name="ErrorFoundDuplicateOptimizedSampleGroups" xml:space="preserve">
+    <value>Found more than one Sample Group named '#optimized'. Cannot determine the correct one to use. </value>
+    <comment>Error for when there exists more than one Sample Group with the name '#default'.</comment>
+  </data>
+  <data name="ErrorMissingDefaultSampleGroup" xml:space="preserve">
+    <value>No Sample Group '#default' found. Please make sure that the '#default' Sample Group is defined.</value>
+    <comment>Error for when there does not exist a Sample Group with the name '#default'.</comment>
+  </data>
+  <data name="ErrorMissingOptimizedSampleGroup" xml:space="preserve">
+    <value>No Sample Group '#optimized' found. Please make sure that the '#optimized' Sample Group is defined.</value>
+    <comment>Error for when there does not exist a Sample Group with the name '#default'.</comment>
+  </data>
+  <data name="NotificationCurrentRomIsCleanRom" xml:space="preserve">
+    <value>The supplied Rom is a clean Rom</value>
+    <comment>Message to show when the provided rom is a rom that hasn't been operated upon by an Addmusic program</comment>
+  </data>
+  <data name="ErrorProgramUploadPositionTextMissing" xml:space="preserve">
+    <value>The tag for the Program Upload Position "{0}" was not found in file "{1}".</value>
+    <comment>Error for when the required tag is not found in the specified file</comment>
+  </data>
+  <data name="ErrorMainLoopPositionTextMissing" xml:space="preserve">
+    <value>The tag for the Main Loop Position "{0}" was not found in file "{1}".</value>
+    <comment>Error for when the Main Loop Position text cannot be found in the specified file</comment>
+  </data>
+  <data name="ErrorReuploadPositionTextMissing" xml:space="preserve">
+    <value>The tag for the Reupload Position "{0}" was not found in file "{1}".</value>
+    <comment>Error for when the Reupload Position text cannot be found in the specified file</comment>
+  </data>
+  <data name="ErrorMusicPointersTextMissing" xml:space="preserve">
+    <value>The tag for the Music Pointers "{0}" was not found in file "{1}".</value>
+    <comment>Error for when the Music Pointers text cannot be found in the specified file</comment>
+  </data>
+  <data name="ErrorAsarErrorOccurred" xml:space="preserve">
+    <value>An Asar Error occurred. For more information check the log file.</value>
+    <comment>Message for when an Asar error or otherwise occurs during execution.</comment>
+  </data>
 </root>

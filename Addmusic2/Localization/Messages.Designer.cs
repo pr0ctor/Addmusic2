@@ -376,6 +376,24 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An Asar Error occurred. For more information check the log file..
+        /// </summary>
+        internal static string ErrorAsarErrorOccurred {
+            get {
+                return ResourceManager.GetString("ErrorAsarErrorOccurred", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rom({0}) not found in either the Execution, Install, or given locations. Please make sure that a Rom file with the specified name is at one of those locations or provide an absolute uri..
+        /// </summary>
+        internal static string ErrorCannotFindRomInLocations {
+            get {
+                return ResourceManager.GetString("ErrorCannotFindRomInLocations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Illegal Default Length Command (&quot;l&quot;) value ({0:D}) found. Value must be between {1:D} and {2:D} ..
         /// </summary>
         internal static string ErrorDefaultLengthOutOfRange {
@@ -399,6 +417,24 @@ namespace Addmusic2.Localization {
         internal static string ErrorDuplicateRemoteCodeDefinitionNameDefined {
             get {
                 return ResourceManager.GetString("ErrorDuplicateRemoteCodeDefinitionNameDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Found more than one Sample Group named &apos;#default&apos;. Cannot determine the correct one to use. .
+        /// </summary>
+        internal static string ErrorFoundDuplicateDefaultSampleGroups {
+            get {
+                return ResourceManager.GetString("ErrorFoundDuplicateDefaultSampleGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Found more than one Sample Group named &apos;#optimized&apos;. Cannot determine the correct one to use. .
+        /// </summary>
+        internal static string ErrorFoundDuplicateOptimizedSampleGroups {
+            get {
+                return ResourceManager.GetString("ErrorFoundDuplicateOptimizedSampleGroups", resourceCulture);
             }
         }
         
@@ -484,11 +520,47 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The tag for the Main Loop Position &quot;{0}&quot; was not found in file &quot;{1}&quot;..
+        /// </summary>
+        internal static string ErrorMainLoopPositionTextMissing {
+            get {
+                return ResourceManager.GetString("ErrorMainLoopPositionTextMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximum number of named loops and remote code definitions reached..
         /// </summary>
         internal static string ErrorMaximumAllowedNumberOfLoopsReached {
             get {
                 return ResourceManager.GetString("ErrorMaximumAllowedNumberOfLoopsReached", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Sample Group &apos;#default&apos; found. Please make sure that the &apos;#default&apos; Sample Group is defined..
+        /// </summary>
+        internal static string ErrorMissingDefaultSampleGroup {
+            get {
+                return ResourceManager.GetString("ErrorMissingDefaultSampleGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Sample Group &apos;#optimized&apos; found. Please make sure that the &apos;#optimized&apos; Sample Group is defined..
+        /// </summary>
+        internal static string ErrorMissingOptimizedSampleGroup {
+            get {
+                return ResourceManager.GetString("ErrorMissingOptimizedSampleGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The tag for the Music Pointers &quot;{0}&quot; was not found in file &quot;{1}&quot;..
+        /// </summary>
+        internal static string ErrorMusicPointersTextMissing {
+            get {
+                return ResourceManager.GetString("ErrorMusicPointersTextMissing", resourceCulture);
             }
         }
         
@@ -511,6 +583,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The tag for the Program Upload Position &quot;{0}&quot; was not found in file &quot;{1}&quot;..
+        /// </summary>
+        internal static string ErrorProgramUploadPositionTextMissing {
+            get {
+                return ResourceManager.GetString("ErrorProgramUploadPositionTextMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Illegal Quantization Command (&quot;t&quot;) volume node..
         /// </summary>
         internal static string ErrorQuantizationVolumeValueOutOfRange {
@@ -525,6 +606,15 @@ namespace Addmusic2.Localization {
         internal static string ErrorQuestionMarkValueOutOfRange {
             get {
                 return ResourceManager.GetString("ErrorQuestionMarkValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The tag for the Reupload Position &quot;{0}&quot; was not found in file &quot;{1}&quot;..
+        /// </summary>
+        internal static string ErrorReuploadPositionTextMissing {
+            get {
+                return ResourceManager.GetString("ErrorReuploadPositionTextMissing", resourceCulture);
             }
         }
         
@@ -777,6 +867,15 @@ namespace Addmusic2.Localization {
         internal static string IntroReadTheReadMe {
             get {
                 return ResourceManager.GetString("IntroReadTheReadMe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The supplied Rom is a clean Rom.
+        /// </summary>
+        internal static string NotificationCurrentRomIsCleanRom {
+            get {
+                return ResourceManager.GetString("NotificationCurrentRomIsCleanRom", resourceCulture);
             }
         }
         

@@ -63,7 +63,7 @@
 		<SourceDataFiles Include="$(MSBuildProjectDirectory)\datafiles\**\*.*" />
 	</ItemGroup>
 
-	<Copy SourceFiles="@(AsarDLLFiles)" DestinationFolder="$(OutputPath)\" SkipUnchangedFiles="true"  />
+	<Copy SourceFiles="@(AsarDLLFiles)" DestinationFolder="$(OutputPath)\" SkipUnchangedFiles="true" />
 	<Copy SourceFiles="@(SourceDataFiles)" DestinationFolder="$(OutputPath)\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
 
