@@ -1,5 +1,7 @@
-﻿using Addmusic2.Model;
+﻿using Addmusic2.Exceptions;
+using Addmusic2.Model;
 using Addmusic2.Model.Constants;
+using Addmusic2.Model.Localization;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
@@ -33,7 +35,7 @@ namespace Addmusic2.Helpers
 
 
         // Converts the "Addmusic_list.txt" to the new json format
-        public static AddmusicSongList ConvertToAddmusicSongList(string fileData)
+        public static AddmusicSongList ConvertToAddmusicSongList(MessageService _messageService, string fileName, string fileData)
         {
             var oldSongList = fileData.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
                 .ToList();
@@ -60,8 +62,7 @@ namespace Addmusic2.Helpers
 
                 if(songNumberSet.Contains(songNumber))
                 {
-                    // todo write exception error for this case as there is a duplicate entry
-                    throw new Exception();
+                    throw new InvalidConfigurationException(_messageService.GetConfigErrorDuplicateSongNumberMessage(songNumber, fileName));
                 }
                 else
                 {
@@ -102,7 +103,7 @@ namespace Addmusic2.Helpers
         }
 
         // Converts the "Addmusic_sound effects.txt" to the new json format
-        public static AddmusicSfxList ConvertToAddmusicSfxList(string fileData)
+        public static AddmusicSfxList ConvertToAddmusicSfxList(MessageService _messageService, string fileName, string fileData)
         {
             var oldsfxList = fileData.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
                 .ToList();
@@ -115,92 +116,89 @@ namespace Addmusic2.Helpers
             var addmusicSfxList = new AddmusicSfxList();
             foreach (var line in oldsfxList)
             {
-                if (line == "SFX1DF9:")
+                var l = line.Trim();
+                if (l == "SFX1DF9:")
                 {
                     inSFX1DF9 = true;
                     continue;
                 }
-                else if (line == "SFX1DFC:")
+                else if (l == "SFX1DFC:")
                 {
                     inSFX1DF9 = false;
                     continue;
                 }
 
-                // todo fix this as it might cause issues with filenames that have a sequence of multiple space characters
-                var l = Regex.Replace(line, @"\s+", " ");
                 var matches = sfxLineRegex.Match(l);
-                if(matches.Success)
+
+                if(!matches.Success)
                 {
-                    var sfxListItem = new SfxListItem();
-                    var numberGroup = matches.Groups[1];
-                    var toggleSymbolGroup = matches.Groups[2];
-                    var sfxNameGroup = matches.Groups[3];
-
-                    var sfxNumber = numberGroup.Value;
-
-                    if(inSFX1DF9 == true && sfx1DF9NumberSet.Contains(sfxNumber)
-                        || inSFX1DF9 == false && sfx1DFCNumberSet.Contains(sfxNumber))
-                    {
-                        // todo write exception error for this case as there is a duplicate entry
-                        throw new Exception();
-                    }
-
-                    if(inSFX1DF9 == true)
-                    {
-                        sfx1DF9NumberSet.Add(sfxNumber);
-                    }
-                    else if(inSFX1DF9 == false)
-                    {
-                        sfx1DFCNumberSet.Add(sfxNumber);
-                    }
-
-                    var sfxName = sfxNameGroup.Value;
-                    var sfxPath = (inSFX1DF9)
-                        ? Path.Combine(FileNames.FolderNames.Sfx1DF9, sfxNameGroup.Value)
-                        : Path.Combine(FileNames.FolderNames.Sfx1DFC, sfxNameGroup.Value);
-                    var sfxType = (inSFX1DF9)
-                        ? SfxListItemType.Sfx1DF9
-                        : SfxListItemType.Sfx1DFC;
-
-                    sfxListItem.Number = sfxNumber;
-                    sfxListItem.Name = sfxName;
-                    sfxListItem.Path = sfxPath;
-                    sfxListItem.Type = sfxType;
-
-                    if (toggleSymbolGroup != null && toggleSymbolGroup.Value.Length > 0)
-                    {
-                        var settings = new SfxSettings();
-
-                        settings.Loop = (toggleSymbolGroup.Value.IndexOf("?") != -1)
-                            ? true
-                            : false;
-
-                        settings.Pointer = (toggleSymbolGroup.Value.IndexOf("*") != -1)
-                            ? true
-                            : false;
-
-                        if(settings.Pointer == true)
-                        {
-                            settings.CopyOf = sfxListItem.Name;
-                        }
-
-                        sfxListItem.Settings = settings;
-                    }
-
-                    if (inSFX1DF9)
-                    {
-                        addmusicSfxList.Sfx1DF9.Add(sfxListItem);
-                    }
-                    else if(!inSFX1DF9)
-                    {
-                        addmusicSfxList.Sfx1DFC.Add(sfxListItem);
-                    }
+                    throw new InvalidConfigurationException(_messageService.GetConfigErrorMalformedSfxLineMessage(line, fileName));
                 }
-                else
+
+                var sfxListItem = new SfxListItem();
+                var numberGroup = matches.Groups[1];
+                var toggleSymbolGroup = matches.Groups[2];
+                var sfxNameGroup = matches.Groups[3];
+
+                var sfxNumber = numberGroup.Value.Trim();
+
+                if(inSFX1DF9 == true && sfx1DF9NumberSet.Contains(sfxNumber)
+                    || inSFX1DF9 == false && sfx1DFCNumberSet.Contains(sfxNumber))
                 {
-                    // todo write exception for malformed lineitem
-                    throw new Exception();
+                    throw new InvalidConfigurationException(_messageService.GetConfigErrorDuplicateSfxNumberMessage(sfxNumber, fileName));
                 }
+
+                if(inSFX1DF9 == true)
+                {
+                    sfx1DF9NumberSet.Add(sfxNumber);
+                }
+                else if(inSFX1DF9 == false)
+                {
+                    sfx1DFCNumberSet.Add(sfxNumber);
+                }
+
+                var sfxName = sfxNameGroup.Value.Trim();
+                var sfxPath = (inSFX1DF9)
+                    ? Path.Combine(FileNames.FolderNames.Sfx1DF9, sfxNameGroup.Value.Trim())
+                    : Path.Combine(FileNames.FolderNames.Sfx1DFC, sfxNameGroup.Value.Trim());
+                var sfxType = (inSFX1DF9)
+                    ? SfxListItemType.Sfx1DF9
+                    : SfxListItemType.Sfx1DFC;
+
+                sfxListItem.Number = sfxNumber;
+                sfxListItem.Name = sfxName;
+                sfxListItem.Path = sfxPath;
+                sfxListItem.Type = sfxType;
+
+                if (toggleSymbolGroup != null && toggleSymbolGroup.Value.Length > 0)
+                {
+                    var settings = new SfxSettings();
+
+                    settings.Loop = (toggleSymbolGroup.Value.IndexOf("?") != -1)
+                        ? true
+                        : false;
+
+                    settings.Pointer = (toggleSymbolGroup.Value.IndexOf("*") != -1)
+                        ? true
+                        : false;
+
+                    if(settings.Pointer == true)
+                    {
+                        settings.CopyOf = sfxListItem.Name;
+                    }
+
+                    sfxListItem.Settings = settings;
+                }
+
+                if (inSFX1DF9)
+                {
+                    addmusicSfxList.Sfx1DF9.Add(sfxListItem);
+                }
+                else if(!inSFX1DF9)
+                {
+                    addmusicSfxList.Sfx1DFC.Add(sfxListItem);
+                }
+                
 
             }
 

@@ -96,7 +96,7 @@ namespace Addmusic2.Model
                 var requiredValidArgs = ValidArgs.Where(a => a.IsRequired).ToList();
                 if (requiredValidArgs.Count > 0)
                 {
-                    throw new ArgumentException(Messages.GenericErrorMessages.MissingRequiredArguments(requiredValidArgs.Select(a => a.Aliases.First()).ToList()));
+                    throw new ArgumentException(_messageService.GetErrorMissingRequiredCommandLineArgumentsMessage(string.Join(", ", requiredValidArgs.Select(a => a.Aliases.First()))));
                 }
                 else
                 {
@@ -167,8 +167,7 @@ namespace Addmusic2.Model
                     case "help":
                         break;
                     default:
-                        // todo fix and localize this exception
-                        throw new InvalidOperationException("Undefined Command Line Argument. Add definitions.");
+                        throw new InvalidOperationException(_messageService.GetErrorInvalidCommandLineArgumentMessage(arg.ToLower()));
                 }
             }
         }
@@ -176,8 +175,7 @@ namespace Addmusic2.Model
         public string GenerateHelp()
         {
             var builder = new StringBuilder();
-            // todo localize this message
-            builder.AppendLine("Options:");
+            builder.AppendLine(_messageService.GetCLArgHelpOptionsHeaderMessage());
 
             foreach(var argument in ValidArgs.Where(a => a.DisplayInHelp == true).OrderBy(a => a.Order))
             {

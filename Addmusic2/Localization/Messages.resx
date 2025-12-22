@@ -529,4 +529,48 @@
     <value>An Asar Error occurred. For more information check the log file.</value>
     <comment>Message for when an Asar error or otherwise occurs during execution.</comment>
   </data>
+  <data name="ErrorInvalidCommandLineArgument" xml:space="preserve">
+    <value>Invalid Command Line Argument "{0}". See --help for available arguments.</value>
+    <comment>Error for when an unknown command line argument is found when parsing arguments</comment>
+  </data>
+  <data name="ErrorMissingRequiredCommandLineArguments" xml:space="preserve">
+    <value>Missing the following required arguments: {0}</value>
+    <comment>Error for when there are missing required command line arguments</comment>
+  </data>
+  <data name="CLArgHelpOptionsHeader" xml:space="preserve">
+    <value>Options:</value>
+    <comment>Header for the Options listing for all available command line arguments</comment>
+  </data>
+  <data name="ConfigErrorDuplicateSongNumber" xml:space="preserve">
+    <value>Duplicate Song Number "{0}" found in {1}</value>
+    <comment>Error for when there is a duplicate song number listed in the config file</comment>
+  </data>
+  <data name="ConfigErrorDuplicateSfxNumber" xml:space="preserve">
+    <value>Duplicate Sfx Number "{0}" found in {1}</value>
+    <comment>Error for when there is a duplicate sfx number listed in the config file</comment>
+  </data>
+  <data name="ConfigErrorMalformedSfxLine" xml:space="preserve">
+    <value>The Sfx Line "{0}" in "{1}" is malformed. See the docs for proper formatting.</value>
+    <comment>Error for when a regex fails for the sfx config lines</comment>
+  </data>
+  <data name="ErrorRomLessThanMinimumSize" xml:space="preserve">
+    <value>The given Rom "{0}" size ({1}) is less than the minimum required size ({2})</value>
+    <comment>Error for when the provided rom has a size that is less than the minimum required size</comment>
+  </data>
+  <data name="ErrorInvalidRomFileExtension" xml:space="preserve">
+    <value>The provided Rom ({0}) either has an no file extension or invalid file extension. Valid extensions are {1}.</value>
+    <comment>Error for when the supplied rom name is missing a file extension or if it does, it has an invalid one</comment>
+  </data>
+  <data name="ErrorRomFileNotFound" xml:space="preserve">
+    <value>The given Rom Name ({0}) at the specified location {1} was not found.</value>
+    <comment>Error for when the user defined rom was not found at the specified location</comment>
+  </data>
+  <data name="ErrorRomUnexpectedFileSize" xml:space="preserve">
+    <value>The given Rom ({0}) has an unexpected file size.</value>
+    <comment>Error for when the given Rom has a file size that isn't of an expected size</comment>
+  </data>
+  <data name="ConfigErrorCannotFindConfigurationFile" xml:space="preserve">
+    <value>The Configuration File "{0}" was not found at location "{1}". Please make sure that file exists.</value>
+    <comment>Error for when a required config file is not found in its directory</comment>
+  </data>
 </root>

@@ -124,6 +124,30 @@ namespace Addmusic2.Model.Localization
         #region CLArgs Messages, Names, and Descriptions
 
         [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorInvalidCommandLineArgumentMessage(string foundCommand)
+        {
+            LocalizedString localizedString = _localizer["ErrorInvalidCommandLineArgument", foundCommand];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorMissingRequiredCommandLineArgumentsMessage(string commandList)
+        {
+            LocalizedString localizedString = _localizer["ErrorMissingRequiredCommandLineArguments", commandList];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetCLArgHelpOptionsHeaderMessage()
+        {
+            LocalizedString localizedString = _localizer["CLArgHelpOptionsHeader"];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
         public string GetCLArgRomNameNameMessage()
         {
             LocalizedString localizedString = _localizer["CLArgRomNameName"];
@@ -573,6 +597,70 @@ namespace Addmusic2.Model.Localization
         public string GetErrorAsarErrorOccurredMessage()
         {
             LocalizedString localizedString = _localizer["ErrorAsarErrorOccurred"];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetConfigErrorDuplicateSongNumberMessage(string songNumber, string fileName)
+        {
+            LocalizedString localizedString = _localizer["ConfigErrorDuplicateSongNumber", songNumber, fileName];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetConfigErrorDuplicateSfxNumberMessage(string sfxNumber, string fileName)
+        {
+            LocalizedString localizedString = _localizer["ConfigErrorDuplicateSfxNumber", sfxNumber, fileName];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetConfigErrorMalformedSfxLineMessage(string sfxLine, string fileName)
+        {
+            LocalizedString localizedString = _localizer["ConfigErrorMalformedSfxLine", sfxLine, fileName];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorRomLessThanMinimumSizeMessage(string romName, string romSize, string romMinimumSize)
+        {
+            LocalizedString localizedString = _localizer["ErrorRomLessThanMinimumSize", romName, romSize, romMinimumSize];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorInvalidRomFileExtensionMessage(string romName, string validFileExtensions)
+        {
+            LocalizedString localizedString = _localizer["ErrorInvalidRomFileExtension", romName, validFileExtensions];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorRomFileNotFoundMessage(string romName, string romPath)
+        {
+            LocalizedString localizedString = _localizer["ErrorRomFileNotFound", romName, romPath];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorRomUnexpectedFileSizeMessage(string romName)
+        {
+            LocalizedString localizedString = _localizer["ErrorRomUnexpectedFileSize", romName];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetConfigErrorCannotFindConfigurationFileMessage(string fileName, string fileLocation)
+        {
+            LocalizedString localizedString = _localizer["ConfigErrorCannotFindConfigurationFile", fileName, fileLocation];
 
             return localizedString ?? "";
         }

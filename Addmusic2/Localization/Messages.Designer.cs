@@ -241,6 +241,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Options:.
+        /// </summary>
+        internal static string CLArgHelpOptionsHeader {
+            get {
+                return ResourceManager.GetString("CLArgHelpOptionsHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Turn off hex command validation..
         /// </summary>
         internal static string CLArgHexValidationDescription {
@@ -363,6 +372,42 @@ namespace Addmusic2.Localization {
         internal static string CLArgVisualizeSPCName {
             get {
                 return ResourceManager.GetString("CLArgVisualizeSPCName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Configuration File &quot;{0}&quot; was not found at location &quot;{1}&quot;. Please make sure that file exists..
+        /// </summary>
+        internal static string ConfigErrorCannotFindConfigurationFile {
+            get {
+                return ResourceManager.GetString("ConfigErrorCannotFindConfigurationFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate Sfx Number &quot;{0}&quot; found in {1}.
+        /// </summary>
+        internal static string ConfigErrorDuplicateSfxNumber {
+            get {
+                return ResourceManager.GetString("ConfigErrorDuplicateSfxNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate Song Number &quot;{0}&quot; found in {1}.
+        /// </summary>
+        internal static string ConfigErrorDuplicateSongNumber {
+            get {
+                return ResourceManager.GetString("ConfigErrorDuplicateSongNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Sfx Line &quot;{0}&quot; in &quot;{1}&quot; is malformed. See the docs for proper formatting..
+        /// </summary>
+        internal static string ConfigErrorMalformedSfxLine {
+            get {
+                return ResourceManager.GetString("ConfigErrorMalformedSfxLine", resourceCulture);
             }
         }
         
@@ -520,6 +565,24 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid Command Line Argument &quot;{0}&quot;. See --help for available arguments..
+        /// </summary>
+        internal static string ErrorInvalidCommandLineArgument {
+            get {
+                return ResourceManager.GetString("ErrorInvalidCommandLineArgument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided Rom ({0}) either has an no file extension or invalid file extension. Valid extensions are {1}..
+        /// </summary>
+        internal static string ErrorInvalidRomFileExtension {
+            get {
+                return ResourceManager.GetString("ErrorInvalidRomFileExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The tag for the Main Loop Position &quot;{0}&quot; was not found in file &quot;{1}&quot;..
         /// </summary>
         internal static string ErrorMainLoopPositionTextMissing {
@@ -552,6 +615,15 @@ namespace Addmusic2.Localization {
         internal static string ErrorMissingOptimizedSampleGroup {
             get {
                 return ResourceManager.GetString("ErrorMissingOptimizedSampleGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing the following required arguments: {0}.
+        /// </summary>
+        internal static string ErrorMissingRequiredCommandLineArguments {
+            get {
+                return ResourceManager.GetString("ErrorMissingRequiredCommandLineArguments", resourceCulture);
             }
         }
         
@@ -615,6 +687,33 @@ namespace Addmusic2.Localization {
         internal static string ErrorReuploadPositionTextMissing {
             get {
                 return ResourceManager.GetString("ErrorReuploadPositionTextMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given Rom Name ({0}) at the specified location {1} was not found..
+        /// </summary>
+        internal static string ErrorRomFileNotFound {
+            get {
+                return ResourceManager.GetString("ErrorRomFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given Rom &quot;{0}&quot; size ({1}) is less than the minimum required size ({2}).
+        /// </summary>
+        internal static string ErrorRomLessThanMinimumSize {
+            get {
+                return ResourceManager.GetString("ErrorRomLessThanMinimumSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given Rom ({0}) has an unexpected file size..
+        /// </summary>
+        internal static string ErrorRomUnexpectedFileSize {
+            get {
+                return ResourceManager.GetString("ErrorRomUnexpectedFileSize", resourceCulture);
             }
         }
         

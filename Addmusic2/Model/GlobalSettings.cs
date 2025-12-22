@@ -1,6 +1,7 @@
 ﻿using Addmusic2.Helpers;
 using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
+using Addmusic2.Model.Localization;
 using Addmusic2.Model.SongTree;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -74,7 +75,7 @@ namespace Addmusic2.Model
             ReconcileFileSettingsAndCLArgs(fileOptions, clArgs);
         }
 
-        public void LoadAddusicSongSfxResourceLists()
+        public void LoadAddusicSongSfxResourceLists(MessageService _messageService)
         {
             var initialDirectory = FileNames.ExecutionLocations.InstallLocation;
             // OG file
@@ -92,14 +93,20 @@ namespace Addmusic2.Model
                 var songJson = JsonConvert.DeserializeObject<AddmusicSongList>(songJsonFile);
                 ResourceList.Songs = songJson;
             }
-            else
+            else if(File.Exists(songFileLocation))
             {
                 var ogSongFile = File.ReadAllText(songFileLocation);
-                var parsedData = Helpers.FileConverters.ConvertToAddmusicSongList(ogSongFile);
+                var parsedData = Helpers.FileConverters.ConvertToAddmusicSongList(_messageService, FileNames.ConfigurationFiles.SongList, ogSongFile);
 
-                // todo add logic to write out the new json file before leaving this codeblock
+                // Write converted data to new file
+                var songJsonString = JsonConvert.SerializeObject(parsedData, Newtonsoft.Json.Formatting.Indented);
+                File.WriteAllText(songJsonFileLocation, songJsonString);
 
                 ResourceList.Songs = parsedData;
+            }
+            else
+            {
+                throw new FileNotFoundException(_messageService.GetConfigErrorCannotFindConfigurationFileMessage(FileNames.ConfigurationFiles.SongList, initialDirectory));
             }
 
             if (File.Exists(sampleGroupJsonFileLocation))
@@ -108,31 +115,43 @@ namespace Addmusic2.Model
                 var sampleGroupJson = JsonConvert.DeserializeObject<List<AddmusicSampleGroup>>(sampleGroupJsonFile);
                 ResourceList.SampleGroups = sampleGroupJson;
             }
-            else
+            else if(File.Exists(sampleGroupFileLocation))
             {
                 var ogSampleGroupFile = File.ReadAllText(sampleGroupFileLocation);
                 var parsedData = Helpers.FileConverters.ConverToAddmusicSampleGroups(ogSampleGroupFile);
 
-                // todo add logic to write out the new json file before leaving this codeblock
+                // Write converted data to new file
+                var sampleGroupJsonString = JsonConvert.SerializeObject(parsedData, Newtonsoft.Json.Formatting.Indented);
+                File.WriteAllText(sampleGroupJsonFileLocation, sampleGroupJsonString);
 
                 ResourceList.SampleGroups = parsedData;
             }
+            else
+            {
+                throw new FileNotFoundException(_messageService.GetConfigErrorCannotFindConfigurationFileMessage(FileNames.ConfigurationFiles.SampleGroups, initialDirectory));
+            }
 
-            if(File.Exists(sfxJsonFileLocation))
+            if (File.Exists(sfxJsonFileLocation))
             {
                 var sfxJsonFile = File.ReadAllText(sfxJsonFileLocation);
                 var parsedData = JsonConvert.DeserializeObject<AddmusicSfxList>(sfxJsonFile);
 
-                // todo add logic to write out the new json file before leaving this codeblock
+                ResourceList.SoundEffects = parsedData;
+            }
+            else if (File.Exists(sfxFileLocation))
+            {
+                var ogSFXFile = File.ReadAllText(sfxFileLocation);
+                var parsedData = Helpers.FileConverters.ConvertToAddmusicSfxList(_messageService, FileNames.ConfigurationFiles.SoundEffects, ogSFXFile);
+
+                // Write converted data to new file
+                var sfxJsonString = JsonConvert.SerializeObject(parsedData, Newtonsoft.Json.Formatting.Indented);
+                File.WriteAllText(sfxJsonFileLocation, sfxJsonString);
 
                 ResourceList.SoundEffects = parsedData;
             }
             else
             {
-                var ogSFXFile = File.ReadAllText(sfxFileLocation);
-                var parsedData = Helpers.FileConverters.ConvertToAddmusicSfxList(ogSFXFile);
-
-                ResourceList.SoundEffects = parsedData;
+                throw new FileNotFoundException(_messageService.GetConfigErrorCannotFindConfigurationFileMessage(FileNames.ConfigurationFiles.SoundEffects, initialDirectory));
             }
 
         }

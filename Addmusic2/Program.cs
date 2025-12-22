@@ -72,7 +72,6 @@ tempServiceProvider.Dispose();
 var globalSettings = new GlobalSettings();
 
 globalSettings.ReconcileFileSettingsAndCLArgs(addmusicSettings, clArgs);
-globalSettings.LoadAddusicSongSfxResourceLists();
 
 var startTime = DateTime.Now;
 
@@ -116,6 +115,7 @@ var logger = serviceProvider.GetRequiredService<IAddmusicLogger>();
 
 // Load Necessary file data into Cache
 fileService.InitializeCache();
+globalSettings.LoadAddusicSongSfxResourceLists(messageService);
 
 logger.LogInformation(LogLevel.Information, messageService.GetIntroAddmusicVersionMessage(), true);
 logger.LogInformation(LogLevel.Information, messageService.GetIntroParserVersionMessage(), true);

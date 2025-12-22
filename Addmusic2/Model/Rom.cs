@@ -1,4 +1,5 @@
-﻿using Addmusic2.Model.Constants;
+﻿using Addmusic2.Exceptions;
+using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
 using Addmusic2.Model.Localization;
 using Microsoft.Extensions.Logging;
@@ -123,14 +124,13 @@ namespace Addmusic2.Model
             _logger.LogInformation(LogLevel.Debug, $"Loading ROM({fileName}) at path({path})");
             if (!fileName.Contains(FileNames.FileExtensions.RomSmc) && !fileName.Contains(FileNames.FileExtensions.RomSfc))
             {
-                // todo fix exception message
-                throw new ArgumentException();
+                _logger.LogError(LogLevel.Debug, _messageService.GetErrorInvalidRomFileExtensionMessage(fileName, $" {FileNames.FileExtensions.RomSmc}, {FileNames.FileExtensions.RomSfc}"));
+                throw new ArgumentException(_messageService.GetErrorInvalidRomFileExtensionMessage(fileName, $" {FileNames.FileExtensions.RomSmc}, {FileNames.FileExtensions.RomSfc}"));
             }
 
             if (!File.Exists(path))
             {
-                // todo fix exception message
-                throw new FileNotFoundException();
+                throw new FileNotFoundException(_messageService.GetErrorRomFileNotFoundMessage(fileName, path));
             }
 
             // read the Rom data in as a list
@@ -138,8 +138,7 @@ namespace Addmusic2.Model
 
             if(romData.Count <= MagicNumbers.RomMinimumSize)
             {
-                // todo fix exception message
-                throw new Exception();
+                throw new InvalidConfigurationException(_messageService.GetErrorRomLessThanMinimumSizeMessage(fileName, romData.Count.ToString(), MagicNumbers.RomMinimumSize.ToString()));
             }
 
             // validate that the rom is of an expected size
@@ -152,8 +151,7 @@ namespace Addmusic2.Model
             }
             else
             {
-                // todo fix exception
-                throw new Exception();
+                throw new InvalidConfigurationException(_messageService.GetErrorRomUnexpectedFileSizeMessage(fileName));
             }
 
             // validate that the Rom has a valid check bit for SA1 and note if that is the case assuming SA1 is allowed
