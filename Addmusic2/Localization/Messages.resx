@@ -573,4 +573,68 @@
     <value>The Configuration File "{0}" was not found at location "{1}". Please make sure that file exists.</value>
     <comment>Error for when a required config file is not found in its directory</comment>
   </data>
+  <data name="ErrorNoSongChannelDataToExport" xml:space="preserve">
+    <value>For Song "{0}", no note data was contained within the Channels. There is no data to insert.</value>
+    <comment>Error for when there is no note data for a song across all channels</comment>
+  </data>
+  <data name="ErrorRecallLoopUsedBeforeDefinition" xml:space="preserve">
+    <value>Unable to Recall Loop because there hasn't been a loop used before this command.</value>
+    <comment>Error for when the recall loop command does not have a recallable loop</comment>
+  </data>
+  <data name="ErrorRecallLoopRecallsSuperLoop" xml:space="preserve">
+    <value>Recall Loop command cannot recall a SuperLoop Command</value>
+    <comment>Error for when the Recall Loop command is called when the most recent loop type is the Super Loop which cannot be recalled</comment>
+  </data>
+  <data name="ErrorInvalidCustomInstrumentBase" xml:space="preserve">
+    <value>Instrument Definition ({0}) cannot use a custom instrument's sample as a base for another custom instrument.</value>
+    <comment>Error for when a custom instrument definition incorrectly uses a custom instrument for its base</comment>
+  </data>
+  <data name="ErrorMissingSampleNameText" xml:space="preserve">
+    <value>Text for a Sample Name is missing for this command.</value>
+    <comment>Error for when a command is missing any text for a Sample Name</comment>
+  </data>
+  <data name="ErrorSampleNameNotPreviouslyDefined" xml:space="preserve">
+    <value>The Sample Name ({0}) for this command has not been previously defined</value>
+    <comment>Error for when a Sample Name has been used but hasn't been previously defined</comment>
+  </data>
+  <data name="ErrorMissingSampleGroupNameDefinition" xml:space="preserve">
+    <value>Sample Group name is missing.</value>
+    <comment>Error for when a #sample doesn't have a Sample Group name</comment>
+  </data>
+  <data name="ErrorMultipleSampleGroupDefinitions" xml:space="preserve">
+    <value>Multiple Sample Group definitions with the same name ({0}) found.  Only one should be used.</value>
+    <comment>Error for when there are multiple sample group definitions found when there should only be one.</comment>
+  </data>
+  <data name="ErrorMultipleSameSampleGroupNames" xml:space="preserve">
+    <value>Multiple Sample Group definitions ({0}) found. The actual Sample Group cannot be determined.</value>
+    <comment>Error for when there are multiple sample group definitions found when there should only be one.</comment>
+  </data>
+  <data name="WarningMarkEchoBufferAllocVCMD" xml:space="preserve">
+    <value>The Echo Buffer Alloc VCMD will not be generated since the command is after a note or loop marker.</value>
+    <comment>Warning for when a trigger for Echo Buffer Allocation marking will not be processed due to its placement within the song</comment>
+  </data>
+  <data name="ErrorDuplicateChannelNumberFound" xml:space="preserve">
+    <value>Duplicate Channel number ({0}) found. Please ensure that each Channel has a unique number.</value>
+    <comment>Error for when a parsed channel has the same number as another previously processed channel. Each channel needs to have a unique number</comment>
+  </data>
+  <data name="ErrorNodeValidationResultError" xml:space="preserve">
+    <value>Validation Failed for Node of type {1} with contents ({1}).</value>
+    <comment>Validation error for the "Error" case. {0} is for the node type and {1} is for the the textual representation of the node (may be long). </comment>
+  </data>
+  <data name="ErrorNodeValidationResultFailure" xml:space="preserve">
+    <value>Validation Failure for Node of type {1} with contents ({1}).</value>
+    <comment>Validation error for the "Error" case. {0} is for the node type and {1} is for the the textual representation of the node (may be long). </comment>
+  </data>
+  <data name="ErrorNodeValidationResultWarning" xml:space="preserve">
+    <value>Validation Warning for Node of type {1} with contents ({1}).</value>
+    <comment>Validation error for the "Warning" case. {0} is for the node type and {1} is for the the textual representation of the node (may be long). </comment>
+  </data>
+  <data name="ErrorNodeValidationResultSkip" xml:space="preserve">
+    <value>Skipping Node of type {1} with contents ({1}).</value>
+    <comment>Validation error for the "Warning" case. {0} is for the node type and {1} is for the the textual representation of the node (may be long). </comment>
+  </data>
+  <data name="InfoLineAndColumnString" xml:space="preserve">
+    <value>[ Line: {0}  Column: {1} ]</value>
+    <comment>Message for displaying a line and column number</comment>
+  </data>
 </root>

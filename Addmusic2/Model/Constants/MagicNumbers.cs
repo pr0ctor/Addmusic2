@@ -29,6 +29,8 @@ namespace Addmusic2.Model.Constants
             public static readonly int InitialSongSampleListLength = 8;
         }
 
+        public static readonly int ExpectedInstrumentHexByteCount = 5;
+
         public static readonly int FourKiBRomSize = 0x7FF8;
         public static readonly int NoteLengthMaximum = 192;
         public static readonly byte NoteLengthMaxBeforeSplit = 0x80;

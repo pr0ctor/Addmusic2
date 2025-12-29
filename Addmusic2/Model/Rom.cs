@@ -29,6 +29,7 @@ namespace Addmusic2.Model
         {
             _messageService = messageService;
             _romOperations = romOperations;
+            _logger = logger;
         }
 
         /*public Rom(MessageService messageService, string fileName, string filePathWithFileName)

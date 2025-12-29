@@ -90,6 +90,14 @@ namespace Addmusic2.Model.Localization
             return localizedString ?? "";
         }
 
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetInfoLineAndColumnStringMessage(string lineNumber, string columnNumber)
+        {
+            LocalizedString localizedString = _localizer["InfoLineAndColumnString", lineNumber, columnNumber];
+
+            return localizedString ?? "";
+        }
+
         #endregion
 
         #region Notifications
@@ -497,6 +505,14 @@ namespace Addmusic2.Model.Localization
             return localizedString ?? "";
         }
 
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetWarningMarkEchoBufferAllocVCMDMessage()
+        {
+            LocalizedString localizedString = _localizer["WarningMarkEchoBufferAllocVCMD"];
+
+            return localizedString ?? "";
+        }
+
 
         #endregion
 
@@ -661,6 +677,14 @@ namespace Addmusic2.Model.Localization
         public string GetConfigErrorCannotFindConfigurationFileMessage(string fileName, string fileLocation)
         {
             LocalizedString localizedString = _localizer["ConfigErrorCannotFindConfigurationFile", fileName, fileLocation];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorNoSongChannelDataToExportMessage(string songName)
+        {
+            LocalizedString localizedString = _localizer["ErrorNoSongChannelDataToExport", songName];
 
             return localizedString ?? "";
         }
@@ -966,6 +990,111 @@ namespace Addmusic2.Model.Localization
 
             return localizedString ?? "";
         }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorRecallLoopUsedBeforeDefinitionMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorRecallLoopUsedBeforeDefinition"];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorRecallLoopRecallsSuperLoopMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorRecallLoopRecallsSuperLoop"];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorInvalidCustomInstrumentBaseMessage(string instrumentDefinition)
+        {
+            LocalizedString localizedString = _localizer["ErrorInvalidCustomInstrumentBase", instrumentDefinition];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorMissingSampleNameTextMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorMissingSampleNameText"];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorSampleNameNotPreviouslyDefinedMessage(string sampleName)
+        {
+            LocalizedString localizedString = _localizer["ErrorSampleNameNotPreviouslyDefined", sampleName];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorMissingSampleGroupNameDefinitionMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorMissingSampleGroupNameDefinition"];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorMultipleSampleGroupDefinitionsMessage(string listOfSampleNames)
+        {
+            LocalizedString localizedString = _localizer["ErrorMultipleSampleGroupDefinitions", listOfSampleNames];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorMultipleSameSampleGroupNamesMessage(string sampleGroupName)
+        {
+            LocalizedString localizedString = _localizer["ErrorMultipleSameSampleGroupNames", sampleGroupName];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorDuplicateChannelNumberFoundMessage(string duplicateChannelNumber)
+        {
+            LocalizedString localizedString = _localizer["ErrorDuplicateChannelNumberFound", duplicateChannelNumber];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorNodeValidationResultErrorMessage(string nodeType, string nodeContents)
+        {
+            LocalizedString localizedString = _localizer["ErrorNodeValidationResultError", nodeType, nodeContents];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorNodeValidationResultFailureMessage(string nodeType, string nodeContents)
+        {
+            LocalizedString localizedString = _localizer["ErrorNodeValidationResultFailure", nodeType, nodeContents];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorNodeValidationResultWarningMessage(string nodeType, string nodeContents)
+        {
+            LocalizedString localizedString = _localizer["ErrorNodeValidationResultWarning", nodeType, nodeContents];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorNodeValidationResultSkipMessage(string nodeType, string nodeContents)
+        {
+            LocalizedString localizedString = _localizer["ErrorNodeValidationResultSkip", nodeType, nodeContents];
+
+            return localizedString ?? "";
+        }
+
 
         #endregion
 

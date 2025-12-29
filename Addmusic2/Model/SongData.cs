@@ -10,12 +10,12 @@ namespace Addmusic2.Model
     internal class SongData
     {
         public Guid SongId { get; set; }
-        public string SongPath { get; set; }
+        public string SongPath { get; set; } = "";
         public SongScope SongScope { get; set; }
         public SampleInstrumentManager SampleInstrumentManager { get; set; } = new();
-        
-        public List<byte> RatsData { get; set; }
-        public List<byte> FinalData { get; set; }
+
+        public List<byte> RatsData { get; set; } = new();
+        public List<byte> FinalData { get; set; } = new();
         
         public List<(double ChannelTick, int TempoChange)> TempoChanges { get; set; } = new();
         public int Seconds { get; set; }
@@ -25,20 +25,19 @@ namespace Addmusic2.Model
         public int TempoRatio { get; set; }
         public bool NextHexIsArpeggioNoteLength { get; set; }
 
-        public string Name { get; set; }
-        public string PathlessSongName { get; set; }
+        public string Name { get; set; } = "";
+        public string PathlessSongName { get; set; } = "";
         public List<ChannelInformation> ChannelData { get; set; } = new();
         public bool[,] NoMusic { get; set; } = new bool[8,2];
         public bool HasIntro { get; set; }
         public ushort[,] PhrasePointers = new ushort[8,2];
         public ushort[] LoopPointers = new ushort[0x10000];
-        //public ushort[] LoopLengths = new ushort[0x10000];
-        public string Text { get; set; }
+        public string Text { get; set; } = "";
         public int TotalSize { get; set; }
         public int SpaceForPointersAndInstruments { get; set; }
         public int SpaceUsedBySamples { get; set; }
 
-        public List<byte> AllPointersAndInstruments { get; set; } = new List<byte>();
+        public List<byte> AllPointersAndInstruments { get; set; } = new();
 
         public SongSpaceInformation SpaceInfo { get; set; } = new();
 
@@ -50,15 +49,15 @@ namespace Addmusic2.Model
         public bool KnowsLength { get; set; }
         public int EchoBufferSize { get; set; }
         public bool HasEchoBufferCommand { get; set; }
-        public bool EchoBufferAlloVCMDIsSet { get; set; }
+        public bool EchoBufferAllocVCMDIsSet { get; set; }
         public ushort EchoBufferAllocVCMDILocation { get; set; }
         public int EchoBufferAllocVCMDIChannel { get; set; }
 
-        public string StatString { get; set; }
-        public string Title { get; set; }
-        public string Author { get; set; }
-        public string Game { get; set; }
-        public string Comment { get; set; }
+        public string StatString { get; set; } = "";
+        public string Title { get; set; } = "Super Mario World (custom)";
+        public string Author { get; set; } = "";
+        public string Game { get; set; } = "";
+        public string Comment { get; set; } = "";
 
         public int MinSize { get; set; }
         public int PositionInARAM { get; set; }

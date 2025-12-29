@@ -448,6 +448,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Duplicate Channel number ({0}) found. Please ensure that each Channel has a unique number..
+        /// </summary>
+        internal static string ErrorDuplicateChannelNumberFound {
+            get {
+                return ResourceManager.GetString("ErrorDuplicateChannelNumberFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Detected duplicate loop name {0} found in a loop definition. Names can only be used once..
         /// </summary>
         internal static string ErrorDuplicateLoopNameDefined {
@@ -574,6 +583,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Instrument Definition ({0}) cannot use a custom instrument&apos;s sample as a base for another custom instrument..
+        /// </summary>
+        internal static string ErrorInvalidCustomInstrumentBase {
+            get {
+                return ResourceManager.GetString("ErrorInvalidCustomInstrumentBase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The provided Rom ({0}) either has an no file extension or invalid file extension. Valid extensions are {1}..
         /// </summary>
         internal static string ErrorInvalidRomFileExtension {
@@ -628,6 +646,42 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sample Group name is missing..
+        /// </summary>
+        internal static string ErrorMissingSampleGroupNameDefinition {
+            get {
+                return ResourceManager.GetString("ErrorMissingSampleGroupNameDefinition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text for a Sample Name is missing for this command..
+        /// </summary>
+        internal static string ErrorMissingSampleNameText {
+            get {
+                return ResourceManager.GetString("ErrorMissingSampleNameText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiple Sample Group definitions ({0}) found. The actual Sample Group cannot be determined..
+        /// </summary>
+        internal static string ErrorMultipleSameSampleGroupNames {
+            get {
+                return ResourceManager.GetString("ErrorMultipleSameSampleGroupNames", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiple Sample Group definitions with the same name ({0}) found.  Only one should be used..
+        /// </summary>
+        internal static string ErrorMultipleSampleGroupDefinitions {
+            get {
+                return ResourceManager.GetString("ErrorMultipleSampleGroupDefinitions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The tag for the Music Pointers &quot;{0}&quot; was not found in file &quot;{1}&quot;..
         /// </summary>
         internal static string ErrorMusicPointersTextMissing {
@@ -637,11 +691,56 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Validation Failed for Node of type {1} with contents ({1})..
+        /// </summary>
+        internal static string ErrorNodeValidationResultError {
+            get {
+                return ResourceManager.GetString("ErrorNodeValidationResultError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validation Failure for Node of type {1} with contents ({1})..
+        /// </summary>
+        internal static string ErrorNodeValidationResultFailure {
+            get {
+                return ResourceManager.GetString("ErrorNodeValidationResultFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skipping Node of type {1} with contents ({1})..
+        /// </summary>
+        internal static string ErrorNodeValidationResultSkip {
+            get {
+                return ResourceManager.GetString("ErrorNodeValidationResultSkip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validation Warning for Node of type {1} with contents ({1})..
+        /// </summary>
+        internal static string ErrorNodeValidationResultWarning {
+            get {
+                return ResourceManager.GetString("ErrorNodeValidationResultWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Illegal Noise Command (&quot;n&quot;) value ({0:D}) found. Value must be in hex and between {1:D} and 0x{2:D} ..
         /// </summary>
         internal static string ErrorNoiseValueOutOfRange {
             get {
                 return ResourceManager.GetString("ErrorNoiseValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to For Song &quot;{0}&quot;, no note data was contained within the Channels. There is no data to insert..
+        /// </summary>
+        internal static string ErrorNoSongChannelDataToExport {
+            get {
+                return ResourceManager.GetString("ErrorNoSongChannelDataToExport", resourceCulture);
             }
         }
         
@@ -678,6 +777,24 @@ namespace Addmusic2.Localization {
         internal static string ErrorQuestionMarkValueOutOfRange {
             get {
                 return ResourceManager.GetString("ErrorQuestionMarkValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recall Loop command cannot recall a SuperLoop Command.
+        /// </summary>
+        internal static string ErrorRecallLoopRecallsSuperLoop {
+            get {
+                return ResourceManager.GetString("ErrorRecallLoopRecallsSuperLoop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to Recall Loop because there hasn&apos;t been a loop used before this command..
+        /// </summary>
+        internal static string ErrorRecallLoopUsedBeforeDefinition {
+            get {
+                return ResourceManager.GetString("ErrorRecallLoopUsedBeforeDefinition", resourceCulture);
             }
         }
         
@@ -723,6 +840,15 @@ namespace Addmusic2.Localization {
         internal static string ErrorSampleLoadTuningValueOutOfRange {
             get {
                 return ResourceManager.GetString("ErrorSampleLoadTuningValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Sample Name ({0}) for this command has not been previously defined.
+        /// </summary>
+        internal static string ErrorSampleNameNotPreviouslyDefined {
+            get {
+                return ResourceManager.GetString("ErrorSampleNameNotPreviouslyDefined", resourceCulture);
             }
         }
         
@@ -889,6 +1015,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [ Line: {0}  Column: {1} ].
+        /// </summary>
+        internal static string InfoLineAndColumnString {
+            get {
+                return ResourceManager.GetString("InfoLineAndColumnString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to !noSFX is enabled in asm/UserDefines.asm, sound effects are not included.
         /// </summary>
         internal static string InfoSoundEffectsNotIncluded {
@@ -1029,6 +1164,15 @@ namespace Addmusic2.Localization {
         internal static string WarningLoopIterationOutOfRange {
             get {
                 return ResourceManager.GetString("WarningLoopIterationOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Echo Buffer Alloc VCMD will not be generated since the command is after a note or loop marker..
+        /// </summary>
+        internal static string WarningMarkEchoBufferAllocVCMD {
+            get {
+                return ResourceManager.GetString("WarningMarkEchoBufferAllocVCMD", resourceCulture);
             }
         }
         
