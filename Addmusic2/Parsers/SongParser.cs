@@ -134,12 +134,7 @@ namespace Addmusic2.Parsers
 
         public void ParseChannel(DirectiveNode channel)
         {
-            var channelPayload = channel.Payload as ChannelPayload;
-
-            if (channelPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var channelPayload = channel.Payload as ChannelPayload ?? throw new AddmusicParserException("Null Payload found");
 
             CurrentChannel = new ChannelInformation
             {
@@ -640,12 +635,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluateInstrumentNode(AtomicNode instrumentNode)
         {
-            var instrumentPayload = instrumentNode.Payload as InstrumentPayload;
-
-            if (instrumentPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var instrumentPayload = instrumentNode.Payload as InstrumentPayload ?? throw new AddmusicParserException("Null Payload found");
 
             var instrumentNumber = instrumentPayload.InstrumentNumber;
 
@@ -732,12 +722,7 @@ namespace Addmusic2.Parsers
         public void EvaluateNoteNode(AtomicNode noteNode, bool inTriplet = false, bool inPitchSlide = false, bool isNextForDDPitchSlide = false)
         {
             CurrentChannel.HasNoteData = true;
-            var notePayload = noteNode.Payload as NotePayload;
-
-            if (notePayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var notePayload = noteNode.Payload as NotePayload ?? throw new AddmusicParserException("Null Payload found");
 
             var tempLength = GetNoteLength(noteNode, notePayload.Duration, notePayload.DotCount, inTriplet, true);
 
@@ -797,12 +782,7 @@ namespace Addmusic2.Parsers
 
             foreach (var tie in notePayload.ConnectedTies)
             {
-                var tiePayload = tie.Payload as TiePayload;
-
-                if (tiePayload == null)
-                {
-                    throw new Exception("Null Payload found");
-                }
+                var tiePayload = tie.Payload as TiePayload ?? throw new AddmusicParserException("Null Payload found");
 
                 tempLength += GetNoteLength(tie, tiePayload.Duration, tiePayload.DotCount, inTriplet, true);
             }
@@ -817,12 +797,7 @@ namespace Addmusic2.Parsers
         public void EvaluateTieNode(AtomicNode tieNode, bool inTriplet = false, bool inPitchSlide = false, bool isNextForDDPitchSlide = false)
         {
             CurrentChannel.HasNoteData = true;
-            var tiePayload = tieNode.Payload as TiePayload;
-
-            if (tiePayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var tiePayload = tieNode.Payload as TiePayload ?? throw new AddmusicParserException("Null Payload found");
 
             var tempLength = GetNoteLength(tieNode, tiePayload.Duration, tiePayload.DotCount, inTriplet, true);
 
@@ -844,12 +819,7 @@ namespace Addmusic2.Parsers
         public void EvaluateRestNode(AtomicNode restNode, bool inTriplet = false, bool inPitchSlide = false, bool isNextForDDPitchSlide = false)
         {
             CurrentChannel.HasNoteData = true;
-            var restPayload = restNode.Payload as NotePayload;
-
-            if (restPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var restPayload = restNode.Payload as NotePayload ?? throw new AddmusicParserException("Null Payload found");
 
             var tempLength = GetNoteLength(restNode, restPayload.Duration, restPayload.DotCount, inTriplet, true);
 
@@ -869,12 +839,7 @@ namespace Addmusic2.Parsers
 
             foreach (var tie in restPayload.ConnectedTies)
             {
-                var tiePayload = tie.Payload as TiePayload;
-
-                if (tiePayload == null)
-                {
-                    throw new Exception("Null Payload found");
-                }
+                var tiePayload = tie.Payload as TiePayload ?? throw new AddmusicParserException("Null Payload found");
 
                 tempLength += GetNoteLength(tie, tiePayload.Duration, tiePayload.DotCount, inTriplet, true);
             }
@@ -888,12 +853,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluateDefaultLengthNode(AtomicNode defaultLengthNode)
         {
-            var defaultLengthPayload = defaultLengthNode.Payload as DefaultLengthPayload;
-
-            if (defaultLengthPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var defaultLengthPayload = defaultLengthNode.Payload as DefaultLengthPayload ?? throw new AddmusicParserException("Null Payload found");
 
             if (defaultLengthPayload.UsedEquals)
             {
@@ -910,12 +870,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluateGlobalVolumeNode(AtomicNode globalVolumeNode)
         {
-            var globalVolumePayload = globalVolumeNode.Payload as VolumePayload;
-
-            if (globalVolumePayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var globalVolumePayload = globalVolumeNode.Payload as VolumePayload ?? throw new AddmusicParserException("Null Payload found");
 
             if (globalVolumePayload.FadeValue == -1)
             {
@@ -932,12 +887,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluateVolumeNode(AtomicNode volumeNode)
         {
-            var volumePayload = volumeNode.Payload as VolumePayload;
-
-            if (volumePayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var volumePayload = volumeNode.Payload as VolumePayload ?? throw new AddmusicParserException("Null Payload found");
 
             if (volumePayload.FadeValue == -1)
             {
@@ -964,24 +914,14 @@ namespace Addmusic2.Parsers
 
         public void EvaluateOctaveNode(AtomicNode octaveNode)
         {
-            var octavePayload = octaveNode.Payload as OctavePayload;
-
-            if (octavePayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var octavePayload = octaveNode.Payload as OctavePayload ?? throw new AddmusicParserException("Null Payload found");
 
             CurrentOctave = octavePayload.OctaveNumber;
         }
 
         public void EvaluateNoiseNode(AtomicNode noiseNode)
         {
-            var noisePayload = noiseNode.Payload as NoisePayload;
-
-            if (noisePayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var noisePayload = noiseNode.Payload as NoisePayload ?? throw new AddmusicParserException("Null Payload found");
 
             AddDataToChannel(MagicNumbers.CommandValues.Noise);
             AddDataToChannel(Convert.ToByte(noisePayload.NoiseValue));
@@ -989,12 +929,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluatePanNode(AtomicNode panNode)
         {
-            var panPayload = panNode.Payload as PanPayload;
-
-            if (panPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var panPayload = panNode.Payload as PanPayload ?? throw new AddmusicParserException("Null Payload found");
 
             var panValue = panPayload.PanPosition;
             var panRight = panPayload.SurroundSoundRight;
@@ -1017,12 +952,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluateQuantizationNode(AtomicNode quantizationNode)
         {
-            var quantizationPayload = quantizationNode.Payload as QuantizationPayload;
-
-            if (quantizationPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var quantizationPayload = quantizationNode.Payload as QuantizationPayload ?? throw new AddmusicParserException("Null Payload found");
 
             // If there is a volume node then we need to only use the delay
             // If there is no volume node then the quantization value is a HexNumber since the delay value is limited to 0->7
@@ -1053,12 +983,7 @@ namespace Addmusic2.Parsers
                 return;
             }
 
-            var questionMarkPayload = questionMarkNode.Payload as QuestionMarkPayload;
-
-            if (questionMarkPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var questionMarkPayload = questionMarkNode.Payload as QuestionMarkPayload ?? throw new AddmusicParserException("Null Payload found");
 
             if (questionMarkPayload.MarkNumber == 0)
             {
@@ -1086,12 +1011,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluateTempoNode(AtomicNode tempoNode)
         {
-            var tempoPayload = tempoNode.Payload as TempoPayload;
-
-            if (tempoPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var tempoPayload = tempoNode.Payload as TempoPayload ?? throw new AddmusicParserException("Null Payload found");
 
             var tempoValue = tempoPayload.Tempo;
             var tempoDuration = tempoPayload.FadeValue;
@@ -1135,12 +1055,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluateTuneNode(AtomicNode tuneNode)
         {
-            var tunePayload = tuneNode.Payload as TunePayload;
-
-            if (tunePayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var tunePayload = tuneNode.Payload as TunePayload ?? throw new AddmusicParserException("Null Payload found");
 
             HTranspose = tunePayload.TuneValue;
             UsingHTranspose = true;
@@ -1148,12 +1063,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluateVibratoNode(AtomicNode vibratoNode)
         {
-            var vibratoPayload = vibratoNode.Payload as VibratoPayload;
-
-            if (vibratoPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var vibratoPayload = vibratoNode.Payload as VibratoPayload ?? throw new AddmusicParserException("Null Payload found");
 
             if (vibratoPayload.DelayDurationValue == -1)
             {
@@ -1203,12 +1113,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluateHexCommand(CompositeNode node)
         {
-            var hexPayload = node.Payload as HexNumberPayload;
-
-            if (hexPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var hexPayload = node.Payload as HexNumberPayload ?? throw new AddmusicParserException("Null Payload found");
 
             var byteData = Convert.ToByte(hexPayload.HexValue, 16);
 
@@ -1238,12 +1143,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluatePitchSlideNode(CompositeNode node)
         {
-            var pitchSlidePayload = node.Payload as PitchSlidePayload;
-
-            if (pitchSlidePayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var pitchSlidePayload = node.Payload as PitchSlidePayload ?? throw new AddmusicParserException("Null Payload found");
 
             foreach (SongNode songNode in pitchSlidePayload.Nodes)
             {
@@ -1274,12 +1174,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluateSampleLoad(CompositeNode node)
         {
-            var sampleloadPayload = node.Payload as SampleLoadPayload;
-
-            if (sampleloadPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var sampleloadPayload = node.Payload as SampleLoadPayload ?? throw new AddmusicParserException("Null Payload found");
 
             byte finalSampleIndex = 0x00;
 
@@ -1415,12 +1310,7 @@ namespace Addmusic2.Parsers
 
         public void EvaluateCallRemoteCodeNode(LoopNode callRemoteCodeNode)
         {
-            var remoteCodePayload = callRemoteCodeNode.Payload as CallRemoteCodePayload;
-
-            if (remoteCodePayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var remoteCodePayload = callRemoteCodeNode.Payload as CallRemoteCodePayload ?? throw new AddmusicParserException("Null Payload found");
 
             var definitionName = remoteCodePayload.DefinitionName;
             if (!RemoteCodeDefinitions.ContainsKey(definitionName))
@@ -1612,6 +1502,7 @@ namespace Addmusic2.Parsers
         public void EvaluatePadNode(DirectiveNode padNode)
         {
             var padPayload = padNode.Payload as PadPayload ?? throw new AddmusicParserException("Null Payload found");
+
             var padAmount = Convert.ToInt32(padPayload.PadLength, 16);
             SongData.MinSize = padAmount;
         }
@@ -1722,12 +1613,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateDefaultLengthNode(AtomicNode defaultLength)
         {
-            var defaultLengthPayload = defaultLength.Payload as DefaultLengthPayload;
-
-            if (defaultLengthPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var defaultLengthPayload = defaultLength.Payload as DefaultLengthPayload ?? throw new AddmusicParserException("Null Payload found");
 
             if (defaultLengthPayload.Length < 1 || defaultLengthPayload.Length > MagicNumbers.NoteLengthMaximum)
             {
@@ -1763,12 +1649,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateVolumeNode(AtomicNode volume)
         {
-            var volumePayload = volume.Payload as VolumePayload;
-
-            if (volumePayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var volumePayload = volume.Payload as VolumePayload ?? throw new AddmusicParserException("Null Payload found");
 
             var fadeValue = volumePayload.FadeValue;
             var volumeValue = volumePayload.Volume;
@@ -1810,12 +1691,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidatePanNode(AtomicNode pan)
         {
-            var panPayload = pan.Payload as PanPayload;
-
-            if (panPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var panPayload = pan.Payload as PanPayload ?? throw new AddmusicParserException("Null Payload found");
 
             if (panPayload.PanPosition < 0 || panPayload.PanPosition > MagicNumbers.PanDirectionMaximum)
             {
@@ -1836,12 +1712,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateVibratoNode(AtomicNode vibrato)
         {
-            var vibratoPayload = vibrato.Payload as VibratoPayload;
-
-            if (vibratoPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var vibratoPayload = vibrato.Payload as VibratoPayload ?? throw new AddmusicParserException("Null Payload found");
 
             var delayValue = vibratoPayload.DelayDurationValue;
             var rateValue = vibratoPayload.RateValue;
@@ -1876,12 +1747,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateTempoNode(AtomicNode tempo)
         {
-            var tempoPayload = tempo.Payload as TempoPayload;
-
-            if (tempoPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var tempoPayload = tempo.Payload as TempoPayload ?? throw new AddmusicParserException("Null Payload found");
 
             var tempoValue = tempoPayload.Tempo;
             var fadeValue = tempoPayload.FadeValue;
@@ -1911,12 +1777,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateNoiseNode(AtomicNode noise)
         {
-            var noisePayload = noise.Payload as NoisePayload;
-
-            if (noisePayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var noisePayload = noise.Payload as NoisePayload ?? throw new AddmusicParserException("Null Payload found");
 
             var noiseValue = noisePayload.NoiseValue;
             var noiseHexValue = Convert.ToByte(noiseValue);
@@ -1941,12 +1802,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateQuantizationNode(AtomicNode quantization)
         {
-            var quantizationPayload = quantization.Payload as QuantizationPayload;
-
-            if (quantizationPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var quantizationPayload = quantization.Payload as QuantizationPayload ?? throw new AddmusicParserException("Null Payload found");
 
             if (quantizationPayload.VolumeNode != null)
             {
@@ -1972,12 +1828,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateInstrumentNode(AtomicNode instrument)
         {
-            var instrumentPayload = instrument.Payload as InstrumentPayload;
-
-            if (instrumentPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var instrumentPayload = instrument.Payload as InstrumentPayload ?? throw new AddmusicParserException("Null Payload found");
 
             var instrumentNumber = instrumentPayload.InstrumentNumber;
 
@@ -2003,12 +1854,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateQuestionMarkNode(AtomicNode questionMark)
         {
-            var questionMarkPayload = questionMark.Payload as QuestionMarkPayload;
-
-            if (questionMarkPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var questionMarkPayload = questionMark.Payload as QuestionMarkPayload ?? throw new AddmusicParserException("Null Payload found");
 
             return questionMarkPayload.MarkNumber switch
             {
@@ -2044,7 +1890,7 @@ namespace Addmusic2.Parsers
                 SongNodeType.HexCommand => ValidateHexCommand(composite),
                 SongNodeType.SampleLoad => ValidateSampleLoadNode(composite),
 
-                _ => throw new Exception("Invalid Composite Node Type found")
+                _ => throw new AddmusicParserException("Invalid Composite Node Type found")
             }; ;
         }
 
@@ -2122,12 +1968,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateHexCommand(CompositeNode hexCommand)
         {
-            var hexPayload = hexCommand.Payload as HexNumberPayload;
-
-            if (hexPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var hexPayload = hexCommand.Payload as HexNumberPayload ?? throw new AddmusicParserException("Null Payload found");
 
             var hexByte = byte.Parse(hexPayload.HexValue);
 
@@ -2163,16 +2004,11 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateSampleLoadNode(CompositeNode sampleLoadNode)
         {
-            var sampleloadPayload = sampleLoadNode.Payload as SampleLoadPayload;
-
-            if (sampleloadPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var sampleloadPayload = sampleLoadNode.Payload as SampleLoadPayload ?? throw new AddmusicParserException("Null Payload found");
 
             // todo check for sample name existence and is loaded
 
-            if(sampleloadPayload.SampleNumber == -1)
+            if (sampleloadPayload.SampleNumber == -1)
             {
                 if(sampleloadPayload.SampleName.Length == 0)
                 {
@@ -2327,12 +2163,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateRemoteCodeNode(LoopNode remoteCode)
         {
-            var remoteCodePayload = remoteCode.Payload as RemoteCodeDefinitionPayload;
-
-            if (remoteCodePayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var remoteCodePayload = remoteCode.Payload as RemoteCodeDefinitionPayload ?? throw new AddmusicParserException("Null Payload found");
 
             var messages = new List<string>();
 
@@ -2464,12 +2295,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateCallRemoteCodeNode(LoopNode callRemoteCodeNode)
         {
-            var remoteCodeCallPayload = callRemoteCodeNode.Payload as CallRemoteCodePayload;
-
-            if (remoteCodeCallPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var remoteCodeCallPayload = callRemoteCodeNode.Payload as CallRemoteCodePayload ?? throw new AddmusicParserException("Null Payload found");
 
             if (!RemoteCodeDefinitions.ContainsKey(remoteCodeCallPayload.DefinitionName))
             {
@@ -2527,14 +2353,10 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateAndProcessPathNode(DirectiveNode pathNode)
         {
-            var pathPayload = pathNode.Payload as PathPayload;
+            var pathPayload = pathNode.Payload as PathPayload ?? throw new AddmusicParserException("Null Payload found");
 
-            if(pathPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
             // no need to process further if there's no value
-            if(pathPayload.PathText.Length == 0)
+            if (pathPayload.PathText.Length == 0)
             {
                 _logger.LogInformation(LogLevel.Trace, "Empty Path found. Its still valid, just empty.");
                 return new ValidationResult
@@ -2556,12 +2378,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateAndProcessSpcDirectiveNode(DirectiveNode spc)
         {
-            var spcPayload = spc.Payload as SpcPayload;
-
-            if (spcPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var spcPayload = spc.Payload as SpcPayload ?? throw new AddmusicParserException("Null Payload found");
 
             var title = spcPayload.Title;
             var author = spcPayload.Author;
@@ -2662,12 +2479,8 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateAndProcessInstrumentDirectiveNode(DirectiveNode instruments)
         {
-            var instrumentPayload = instruments.Payload as InstrumentsPayload;
+            var instrumentPayload = instruments.Payload as InstrumentsPayload ?? throw new AddmusicParserException("Null Payload found");
 
-            if (instrumentPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
             var messages = new List<string>();
             var customInstrumentCount = MagicNumbers.StartingCustomInstrumentNumber;
             foreach (var instrument in instrumentPayload.Instruments)
@@ -2781,16 +2594,11 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateAndProcessSamplesDirectiveNode(DirectiveNode samples)
         {
-            var samplesPayload = samples.Payload as SamplesPayload;
-
-            if (samplesPayload == null)
-            {
-                throw new Exception("Null Payload found");
-            }
+            var samplesPayload = samples.Payload as SamplesPayload ?? throw new AddmusicParserException("Null Payload found");
 
             // add the default group is none are present
 
-            if(samplesPayload.SampleGroupPaths.Count == 0)
+            if (samplesPayload.SampleGroupPaths.Count == 0)
             {
                 samplesPayload.SampleGroupPaths.Add("#default");
             }
