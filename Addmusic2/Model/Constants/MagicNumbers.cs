@@ -9,6 +9,17 @@ namespace Addmusic2.Model.Constants
     internal static class MagicNumbers
     {
 
+        public static class StringValues
+        {
+            public static List<string> ValidAmkVersions = new()
+            {
+                "1",
+                "2",
+                "4",
+            };
+            public static readonly string DefaultSpcTitleName = "Super Mario World (custom)";
+        }
+
         public static class AsarWarnings
         {
             public static (string WarningName, bool WarningToggle) RelativePathWarning = ("Wrelative_path_used",false);
@@ -126,10 +137,26 @@ namespace Addmusic2.Model.Constants
             public static readonly byte Loop = 0xE9;
             public static readonly byte SfxPitchSlide = 0xEB;
             public static readonly byte SampleLoad = 0xF3;
+            public static readonly byte TempoImmunity = 0xF4;
             public static readonly byte Noise = 0xF8;
+            public static readonly byte FAOption = 0xFA;
             public static readonly byte RemoteCode = 0xFC;
             public static readonly byte SfxJsrCommand = 0xFD;
+
+            public static class SecondaryValues
+            {
+                public static readonly byte TempoImmunitySecondary = 0x07;
+            }
+
+            public static class FAValues
+            {
+                public static readonly byte TableType = 0x06;
+                public static readonly byte SmwVTable = 0x00;
+                public static readonly byte NspcVTable = 0x01;
+                public static readonly byte Amk109HotPatch = 0x7F;
+            }
         }
+
     }
     
 }

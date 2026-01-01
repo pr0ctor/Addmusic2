@@ -637,4 +637,55 @@
     <value>[ Line: {0}  Column: {1} ]</value>
     <comment>Message for displaying a line and column number</comment>
   </data>
+  <data name="WarningDuplicateSampleName" xml:space="preserve">
+    <value>Duplicate Sample Name ({0}) found.</value>
+    <comment>Warning for when a duplicate sample name is found.</comment>
+  </data>
+  <data name="ErrorSampleNameMissingFileExtension" xml:space="preserve">
+    <value>Sample ({0}) is missing a valid file extension.</value>
+    <comment>Error for when a sample definition is missing a file extension</comment>
+  </data>
+  <data name="ErrorSampleNameHasInvalidFileExtension" xml:space="preserve">
+    <value>The Sample Name ({0}) has an invalid file extension ({1}). Valid file extensions are: {2}.</value>
+  </data>
+  <data name="ErrorInvalidAmkVersionFound" xml:space="preserve">
+    <value>An invalid Amk version ({0}) has been found. Cannot continue.</value>
+    <comment>Error for when an invalid Amk version is found during parsing</comment>
+  </data>
+  <data name="ErrorAmkVersion3Unsupported" xml:space="preserve">
+    <value>Version 3 of the Addmusic parser is unsupported.</value>
+    <comment>Error for when an mml file created for version 3 of the addmusic parser has been used</comment>
+  </data>
+  <data name="ErrorUndefinedInstrument" xml:space="preserve">
+    <value>The specified instrument ({0}) has not been defined</value>
+    <comment>Error for when the given instrument has not been previously defined</comment>
+  </data>
+  <data name="WarningOldAddmusicLowNote" xml:space="preserve">
+    <value>WARNING: This older AddmusicK song outputs an invalid note byte (its pitch is too low)! It may not be audible in the song!</value>
+    <comment>Old message for when Note is lower than the acceptable range</comment>
+  </data>
+  <data name="WarningTempoZeroedByOption" xml:space="preserve">
+    <value>Tempo has been zeroed out by #halvetempo</value>
+    <comment>Warning when the tempo is reset due to being lowered past a threshold</comment>
+  </data>
+  <data name="ErrorNotePitchTooLow" xml:space="preserve">
+    <value>Note's pitch was too low.</value>
+    <comment>Error for when a note's pitch is too low when evaluated</comment>
+  </data>
+  <data name="WarningNspcVelocityTableAlreadyUsed" xml:space="preserve">
+    <value>This song uses the N-SPC V by default. This command is redundant and is wasting two bytes</value>
+    <comment>Warning for when the nspc velocity table is invoked after already being used</comment>
+  </data>
+  <data name="WarningSmwVelocityTableAlreadyUsed" xml:space="preserve">
+    <value>This song is already using the SMW V Table. This command is redundant and is wasting three bytes</value>
+    <comment>Warning for when the smw velocity table is invoked after already being used</comment>
+  </data>
+  <data name="WarningDivideTempoSetTo1" xml:space="preserve">
+    <value>"#option dividetempo 1 has no effect besides printing this warning.</value>
+    <comment>Warning for when divide tempo is set to 1 which yields no result</comment>
+  </data>
+  <data name="ErrorInvalidDivideTempoValue" xml:space="preserve">
+    <value>The value for Divide Tempo must be greater than 0.</value>
+    <comment>Error for when the given value for the divide tempo command is less than zero</comment>
+  </data>
 </root>

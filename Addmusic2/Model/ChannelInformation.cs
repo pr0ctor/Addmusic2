@@ -22,6 +22,7 @@ namespace Addmusic2.Model
         public bool UpdateQuantization { get; set; } = false;
         public int CurrentInstrument { get; set; }
         public bool IgnoreTuning { get; set; } = false;
+        public bool NoMusic { get; set; } = false;
 
         public ChannelInformation() { }
     }

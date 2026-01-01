@@ -94,7 +94,7 @@ namespace Addmusic2.Visitors
             var amkVersionText = context.GetText();
             var amkPayload = new AmkVersionPayload();
             var amkVersion = context.amkVersion();
-            amkPayload.AmkVersionType = AmkVersionPayload.AmkType.Amk;
+            amkPayload.AmkVersionType = AmkType.Amk;
             if(amkVersionText.Contains("="))
             {
                 amkPayload.AmkVersion = "1";
@@ -118,7 +118,7 @@ namespace Addmusic2.Visitors
         {
             var ammVersionText = context.GetText();
             var amkPayload = new AmkVersionPayload();
-            amkPayload.AmkVersionType = AmkVersionPayload.AmkType.Amm;
+            amkPayload.AmkVersionType = AmkType.Amm;
             var amkVersionNode = new DirectiveNode
             {
                 NodeType = SongNodeType.Amk,
@@ -134,7 +134,7 @@ namespace Addmusic2.Visitors
         {
             var am4VersionText = context.GetText();
             var amkPayload = new AmkVersionPayload();
-            amkPayload.AmkVersionType = AmkVersionPayload.AmkType.Amk;
+            amkPayload.AmkVersionType = AmkType.Amk;
             amkPayload.AmkVersion = "4";
             var amkVersionNode = new DirectiveNode
             {
@@ -286,28 +286,28 @@ namespace Addmusic2.Visitors
             var payload = new OptionPayload();
             if (optionItemText.ToLower().Contains("tempoimmunity"))
             {
-                payload.Option = OptionPayload.OptionType.TempoImmunity;
+                payload.Option = OptionType.TempoImmunity;
             }
             else if (optionItemText.ToLower().Contains("dividetempo"))
             {
-                payload.Option = OptionPayload.OptionType.DivideTempo;
+                payload.Option = OptionType.DivideTempo;
                 payload.OptionValue = int.Parse(context.NUMBERS().GetText());
             }
             else if (optionItemText.ToLower().Contains("smwvtable"))
             {
-                payload.Option = OptionPayload.OptionType.Smwvtable;
+                payload.Option = OptionType.Smwvtable;
             }
             else if (optionItemText.ToLower().Contains("nspcvtable"))
             {
-                payload.Option = OptionPayload.OptionType.Nspcvtable;
+                payload.Option = OptionType.Nspcvtable;
             }
             else if (optionItemText.ToLower().Contains("noloop"))
             {
-                payload.Option = OptionPayload.OptionType.Noloop;
+                payload.Option = OptionType.Noloop;
             }
             else if (optionItemText.ToLower().Contains("amk109hotpatch"))
             {
-                payload.Option = OptionPayload.OptionType.Amk109hotpatch;
+                payload.Option = OptionType.Amk109hotpatch;
             }
             else
             {

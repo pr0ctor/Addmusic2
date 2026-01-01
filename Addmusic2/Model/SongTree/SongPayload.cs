@@ -1,4 +1,5 @@
-﻿using Addmusic2.Model.Interfaces;
+﻿using Addmusic2.Model.Constants;
+using Addmusic2.Model.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,7 @@ namespace Addmusic2.Model.SongTree
 
     internal class AmkVersionPayload : ISongNodePayload
     {
-        public enum AmkType
-        {
-            Amk,
-            Amm,
-        }
+        
         public AmkType AmkVersionType { get; set; }
         public string AmkVersion { get; set; }
         public AmkVersionPayload() { }
@@ -174,15 +171,6 @@ namespace Addmusic2.Model.SongTree
 
     internal class OptionPayload : ISongNodePayload
     {
-        public enum OptionType
-        {
-            TempoImmunity,
-            DivideTempo,
-            Smwvtable,
-            Nspcvtable,
-            Noloop,
-            Amk109hotpatch,
-        }
 
         public OptionType Option { get; set; }
         public object OptionValue { get; set; }

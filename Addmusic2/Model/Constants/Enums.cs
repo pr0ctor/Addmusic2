@@ -86,4 +86,37 @@ namespace Addmusic2.Model.Constants
         Error,
         Skip,
     }
+
+    public enum AmkType
+    {
+        Amk,
+        Amm,
+    }
+
+    public enum AddmusicKVersion
+    {
+        Undefined,
+        Version1,
+        Version2,
+        Version3, // unused
+        Version4,
+        AMM,
+        AM4,
+    }
+
+    public enum OptionType
+    {
+        TempoImmunity,
+        DivideTempo,
+        Smwvtable,
+        Nspcvtable,
+        Noloop,
+        Amk109hotpatch,
+    }
+
+    public enum VelocityTable
+    {
+        SmwVTable,
+        NspcVTable,
+    }
 }

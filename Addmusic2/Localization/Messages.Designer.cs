@@ -421,6 +421,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Version 3 of the Addmusic parser is unsupported..
+        /// </summary>
+        internal static string ErrorAmkVersion3Unsupported {
+            get {
+                return ResourceManager.GetString("ErrorAmkVersion3Unsupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An Asar Error occurred. For more information check the log file..
         /// </summary>
         internal static string ErrorAsarErrorOccurred {
@@ -574,6 +583,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An invalid Amk version ({0}) has been found. Cannot continue..
+        /// </summary>
+        internal static string ErrorInvalidAmkVersionFound {
+            get {
+                return ResourceManager.GetString("ErrorInvalidAmkVersionFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid Command Line Argument &quot;{0}&quot;. See --help for available arguments..
         /// </summary>
         internal static string ErrorInvalidCommandLineArgument {
@@ -588,6 +606,15 @@ namespace Addmusic2.Localization {
         internal static string ErrorInvalidCustomInstrumentBase {
             get {
                 return ResourceManager.GetString("ErrorInvalidCustomInstrumentBase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value for Divide Tempo must be greater than 0..
+        /// </summary>
+        internal static string ErrorInvalidDivideTempoValue {
+            get {
+                return ResourceManager.GetString("ErrorInvalidDivideTempoValue", resourceCulture);
             }
         }
         
@@ -745,6 +772,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Note&apos;s pitch was too low..
+        /// </summary>
+        internal static string ErrorNotePitchTooLow {
+            get {
+                return ResourceManager.GetString("ErrorNotePitchTooLow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Illegal Pan Command (&quot;y&quot;) direction value ({0:D}) found. Value must be between {1:D} and {2:D} ..
         /// </summary>
         internal static string ErrorPanDirectionOutOfRange {
@@ -844,6 +880,24 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Sample Name ({0}) has an invalid file extension ({1}). Valid file extensions are: {2}..
+        /// </summary>
+        internal static string ErrorSampleNameHasInvalidFileExtension {
+            get {
+                return ResourceManager.GetString("ErrorSampleNameHasInvalidFileExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sample ({0}) is missing a valid file extension..
+        /// </summary>
+        internal static string ErrorSampleNameMissingFileExtension {
+            get {
+                return ResourceManager.GetString("ErrorSampleNameMissingFileExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Sample Name ({0}) for this command has not been previously defined.
         /// </summary>
         internal static string ErrorSampleNameNotPreviouslyDefined {
@@ -939,6 +993,15 @@ namespace Addmusic2.Localization {
         internal static string ErrorTempoTempoValueOutOfRange {
             get {
                 return ResourceManager.GetString("ErrorTempoTempoValueOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified instrument ({0}) has not been defined.
+        /// </summary>
+        internal static string ErrorUndefinedInstrument {
+            get {
+                return ResourceManager.GetString("ErrorUndefinedInstrument", resourceCulture);
             }
         }
         
@@ -1141,6 +1204,24 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &quot;#option dividetempo 1 has no effect besides printing this warning..
+        /// </summary>
+        internal static string WarningDivideTempoSetTo1 {
+            get {
+                return ResourceManager.GetString("WarningDivideTempoSetTo1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate Sample Name ({0}) found..
+        /// </summary>
+        internal static string WarningDuplicateSampleName {
+            get {
+                return ResourceManager.GetString("WarningDuplicateSampleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The tempo ratio resulted in a fractional value. Song - {0) , Line - {1:D} , Column - {2:D}.
         /// </summary>
         internal static string WarningFactionalTempoRatioValue {
@@ -1195,6 +1276,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This song uses the N-SPC V by default. This command is redundant and is wasting two bytes.
+        /// </summary>
+        internal static string WarningNspcVelocityTableAlreadyUsed {
+            get {
+                return ResourceManager.GetString("WarningNspcVelocityTableAlreadyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The octave has been dropped too low..
         /// </summary>
         internal static string WarningOctaveDroppedTooLow1 {
@@ -1213,11 +1303,38 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to WARNING: This older AddmusicK song outputs an invalid note byte (its pitch is too low)! It may not be audible in the song!.
+        /// </summary>
+        internal static string WarningOldAddmusicLowNote {
+            get {
+                return ResourceManager.GetString("WarningOldAddmusicLowNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This song is already using the SMW V Table. This command is redundant and is wasting three bytes.
+        /// </summary>
+        internal static string WarningSmwVelocityTableAlreadyUsed {
+            get {
+                return ResourceManager.GetString("WarningSmwVelocityTableAlreadyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; field was longer than the maximum length ({1}). Truncating to &quot;{2}&quot;..
         /// </summary>
         internal static string WarningSpcTextValueTooLong {
             get {
                 return ResourceManager.GetString("WarningSpcTextValueTooLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tempo has been zeroed out by #halvetempo.
+        /// </summary>
+        internal static string WarningTempoZeroedByOption {
+            get {
+                return ResourceManager.GetString("WarningTempoZeroedByOption", resourceCulture);
             }
         }
         

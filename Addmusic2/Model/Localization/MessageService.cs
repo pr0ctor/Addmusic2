@@ -513,6 +513,54 @@ namespace Addmusic2.Model.Localization
             return localizedString ?? "";
         }
 
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetWarningDuplicateSampleNameMessage(string sampleName)
+        {
+            LocalizedString localizedString = _localizer["WarningDuplicateSampleName", sampleName];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetWarningOldAddmusicLowNoteMessage()
+        {
+            LocalizedString localizedString = _localizer["WarningOldAddmusicLowNote"];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetWarningTempoZeroedByOptionMessage()
+        {
+            LocalizedString localizedString = _localizer["WarningTempoZeroedByOption"];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetWarningNspcVelocityTableAlreadyUsedMessage()
+        {
+            LocalizedString localizedString = _localizer["WarningNspcVelocityTableAlreadyUsed"];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetWarningSmwVelocityTableAlreadyUsedMessage()
+        {
+            LocalizedString localizedString = _localizer["WarningSmwVelocityTableAlreadyUsed"];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetWarningDivideTempoSetTo1Message()
+        {
+            LocalizedString localizedString = _localizer["WarningDivideTempoSetTo1"];
+
+            return localizedString ?? "";
+        }
+
 
         #endregion
 
@@ -1095,6 +1143,61 @@ namespace Addmusic2.Model.Localization
             return localizedString ?? "";
         }
 
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorSampleNameMissingFileExtensionMessage(string sampleName)
+        {
+            LocalizedString localizedString = _localizer["ErrorSampleNameMissingFileExtension", sampleName];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorSampleNameHasInvalidFileExtensionMessage(string sampleName, string fileExtension, string listOfValidExtensions)
+        {
+            LocalizedString localizedString = _localizer["ErrorSampleNameHasInvalidFileExtension", sampleName, fileExtension, listOfValidExtensions];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorInvalidAmkVersionFoundMessage(string foundAmkVersion)
+        {
+            LocalizedString localizedString = _localizer["ErrorInvalidAmkVersionFound", foundAmkVersion];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorAmkVersion3UnsupportedMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorAmkVersion3Unsupported"];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorUndefinedInstrumentMessage(string instrument)
+        {
+            LocalizedString localizedString = _localizer["ErrorUndefinedInstrument", instrument];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorNotePitchTooLowMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorNotePitchTooLow"];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorInvalidDivideTempoValueMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorInvalidDivideTempoValue"];
+
+            return localizedString ?? "";
+        }
 
         #endregion
 

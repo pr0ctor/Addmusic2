@@ -18,6 +18,7 @@ namespace Addmusic2.Model
         public List<byte> FinalData { get; set; } = new();
         
         public List<(double ChannelTick, int TempoChange)> TempoChanges { get; set; } = new();
+        public int[] TransposeMap = MagicNumbers.TempTrans;
         public int Seconds { get; set; }
         public int IntroSeconds { get; set; }
         public int MainSeconds { get; set; }
@@ -54,7 +55,7 @@ namespace Addmusic2.Model
         public int EchoBufferAllocVCMDIChannel { get; set; }
 
         public string StatString { get; set; } = "";
-        public string Title { get; set; } = "Super Mario World (custom)";
+        public string Title { get; set; } = MagicNumbers.StringValues.DefaultSpcTitleName;
         public string Author { get; set; } = "";
         public string Game { get; set; } = "";
         public string Comment { get; set; } = "";
@@ -64,6 +65,8 @@ namespace Addmusic2.Model
 
         public bool GuessLength { get; set; }
         public bool DoesntLoop { get; set; }
+
+        public VelocityTable VelocityTable { get; set; }
 
         public SongData()
         {
