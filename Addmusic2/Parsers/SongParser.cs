@@ -2568,7 +2568,7 @@ namespace Addmusic2.Parsers
 
             if (game.Length == 0)
             {
-                SongData.Game = Model.Constants.Messages.DefaultSpcGameName;
+                SongData.Game = MagicNumbers.StringValues.DefaultSpcTitleName;
             }
 
             if (length == "auto")
