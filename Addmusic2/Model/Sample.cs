@@ -8,8 +8,8 @@ namespace Addmusic2.Model
 {
     internal class Sample
     {
-        public string Name { get; set; }
-        public byte[] Data { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public byte[] Data { get; set; } = [];
         public ushort LoopPoint { get; set; }
         public bool Exists { get; set; }
         public bool Important { get; set; }

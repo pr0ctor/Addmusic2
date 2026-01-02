@@ -16,12 +16,12 @@ namespace Addmusic2.Model
             Noise,
         }
 
-        public string SampleName { get; set; }
+        public string SampleName { get; set; } = string.Empty;
         public ISongNode InstrumentNumber { get; set; }
         public ISongNode NoiseData { get; set; }
         public InstrumentType Type { get; set; }
 
-        public List<string> HexSettings { get; set; }
+        public List<string> HexSettings { get; set; } = new();
 
         public InstrumentDefinition() { }
     }

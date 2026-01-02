@@ -122,7 +122,17 @@ logger.LogInformation(LogLevel.Information, messageService.GetIntroParserVersion
 logger.LogInformation(LogLevel.Information, messageService.GetIntroReadTheReadMeMessage(), true);
 logger.LogInformation(LogLevel.Information, $"Asar Version: {Asar.version()}", true);
 
-addmusicLogic.Run();
+try
+{
+    addmusicLogic.Run();
 
-// unload Asar here; might have to do some Disposable stuff due to unmanged memory stuff
-Asar.close();
+}
+catch(Exception ex)
+{
+
+}
+finally
+{
+    // unload Asar here; might have to do some Disposable stuff due to unmanged memory stuff
+    Asar.close();
+}

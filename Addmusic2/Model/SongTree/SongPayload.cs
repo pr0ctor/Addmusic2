@@ -84,14 +84,10 @@ namespace Addmusic2.Model.SongTree
 
     internal class SamplesPayload : ISongNodePayload
     {
-        public List<string> SampleGroupPaths { get; set; }
-        public List<string> Samples { get; set; }
+        public List<string> SampleGroupPaths { get; set; } = new();
+        public List<string> Samples { get; set; } = new();
 
-        public SamplesPayload()
-        {
-            Samples = new List<string>();
-            SampleGroupPaths = new List<string>();
-        }
+        public SamplesPayload() { }
 
         public SamplesPayload(List<string> sampleGroupPath, List<string> samples)
         {
@@ -119,15 +115,12 @@ namespace Addmusic2.Model.SongTree
 
     internal class InstrumentsPayload : ISongNodePayload
     {
-        public List<InstrumentDefinition> Instruments { get; set; }
+        public List<InstrumentDefinition> Instruments { get; set; } = new();
 
-        public InstrumentsPayload()
-        {
-            Instruments = new List<InstrumentDefinition>();
-        }
+        public InstrumentsPayload() { }
         public InstrumentsPayload(List<InstrumentDefinition> instruments)
         {
-            Instruments = instruments ?? new List<InstrumentDefinition>();
+            Instruments = instruments ?? new();
         }
 
         public override string ToString()
@@ -249,7 +242,7 @@ namespace Addmusic2.Model.SongTree
         public Accidentals Accidental { get; set; } = Accidentals.None;
         public int Duration { get; set; } = -1;
         public int DotCount { get; set; } = -1;
-        public List<SongNode> ConnectedTies { get; set; } = new List<SongNode>();
+        public List<SongNode> ConnectedTies { get; set; } = new();
 
         public NotePayload() { }
 
@@ -314,8 +307,8 @@ namespace Addmusic2.Model.SongTree
     internal class QuantizationPayload : ISongNodePayload
     {
         public int DelayValue { get; set; }
-        public string VolumeValue { get; set; }
-        public SongNode VolumeNode { get; set; }
+        public string VolumeValue { get; set; } = string.Empty;
+        public SongNode VolumeNode { get; set; } = new();
 
         public QuantizationPayload() { }
 
@@ -498,10 +491,10 @@ namespace Addmusic2.Model.SongTree
 
     internal class RemoteCodeDefinitionPayload : ISongNodePayload
     {
-        public string DefinitionName { get; set; }
+        public string DefinitionName { get; set; } = string.Empty;
         public int EventType { get; set; }
         public int IntArgument { get; set; } = -1;
-        public string HexArgument { get; set; }
+        public string HexArgument { get; set; } = string.Empty;
 
         public RemoteCodeDefinitionPayload() { }
 
@@ -521,7 +514,7 @@ namespace Addmusic2.Model.SongTree
 
     internal class HexNumberPayload : ISongNodePayload
     {
-        public string HexValue { get; set; }
+        public string HexValue { get; set; } = string.Empty;
 
         public HexNumberPayload() { }
         public override string ToString()
@@ -534,15 +527,15 @@ namespace Addmusic2.Model.SongTree
 
     internal class PitchSlidePayload : ISongNodePayload
     {
-        public List<ISongNode> Nodes { get; set; } = new List<ISongNode>();
+        public List<ISongNode> Nodes { get; set; } = new();
         public PitchSlidePayload() { }
     }
 
     internal class SampleLoadPayload : ISongNodePayload
     {
         public bool HexSourced { get; set; } = false;
-        public string SampleName { get; set; }
-        public string TuningValue { get; set; }
+        public string SampleName { get; set; } = string.Empty;
+        public string TuningValue { get; set; } = string.Empty;
         public int SampleNumber { get; set; } = -1;
 
         public SampleLoadPayload() { }
@@ -562,7 +555,7 @@ namespace Addmusic2.Model.SongTree
 
     internal class SfxJsrPayload : ISongNodePayload
     {
-        public string JsrLabelName{ get; set; }
+        public string JsrLabelName { get; set; } = string.Empty;
         public SfxJsrPayload() { }
 
         public override string ToString()
@@ -573,8 +566,8 @@ namespace Addmusic2.Model.SongTree
 
     internal class SfxAsmPayload : ISongNodePayload
     {
-        public string JsrLabelName { get; set; }
-        public string AsmContentText { get; set; }
+        public string JsrLabelName { get; set; } = string.Empty;
+        public string AsmContentText { get; set; } = string.Empty;
         public SfxAsmPayload() { }
 
         public override string ToString()
@@ -592,7 +585,7 @@ namespace Addmusic2.Model.SongTree
     internal class SfxInstrumentPayload : ISongNodePayload
     {
         public int InstrumentNumber { get; set; }
-        public string NoiseHexValue { get; set; }
+        public string NoiseHexValue { get; set; } = string.Empty;
         public SfxInstrumentPayload() { }
 
         public override string ToString()

@@ -10,7 +10,7 @@ namespace Addmusic2.Model.SongTree
     internal class HexNode : SongNode
     {
         public HexCommands CommandType { get; set; }
-        public string HexCommand { get; set; }
+        public string HexCommand { get; set; } = string.Empty;
         public List<string> HexValues { get; set; } = new();
         public HexNode() { }
     }

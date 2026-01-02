@@ -12,11 +12,11 @@ namespace Addmusic2.Model.SongTree
     {
         public SongNodeType NodeType { get; set; }
 
-        public string NodeSource { get; set; }
+        public string NodeSource { get; set; } = string.Empty;
 
         public ISongNodePayload Payload { get; set; }
 
-        public List<ISongNode> Children { get; set; }
+        public List<ISongNode> Children { get; set; } = new();
 
         public int LineNumber { get; set; }
         public int ColumnNumber { get; set; }

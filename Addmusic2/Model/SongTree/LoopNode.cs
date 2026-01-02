@@ -12,7 +12,7 @@ namespace Addmusic2.Model.SongTree
     {
 
         public List<ISongNode> LoopContents { get; set; } = new List<ISongNode>();
-        public string LoopName { get; set; }
+        public string LoopName { get; set; } = string.Empty;
         public int Iterations { get; set; }
 
         public object Clone()
