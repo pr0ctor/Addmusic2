@@ -11,7 +11,8 @@ namespace Addmusic2.Model
 
         public int ChannelNumber { get; set; }
         public List<byte> ChannelData { get; set; } = new();
-        public List<byte> LoopLocations { get; set; } = new();
+        //public List<byte> LoopLocations { get; set; } = new();
+        public List<ushort> LoopLocations { get; set; } = new();
         public double ChannelLength { get; set; }
         public bool HasIntro { get; set; } = false;
         public byte PhraseLocation { get; set; } = 0;

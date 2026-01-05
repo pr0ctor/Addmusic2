@@ -21,10 +21,9 @@ namespace Addmusic2.Model.SongTree
         public int LineNumber { get; set; }
         public int ColumnNumber { get; set; }
 
-        public SongNode()
-        {
-
-        }
+#pragma warning disable 8618
+        public SongNode() { }
+#pragma warning restore 8618
 
         public override string ToString()
         {

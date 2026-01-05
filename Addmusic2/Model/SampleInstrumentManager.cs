@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Addmusic2.Model.Constants;
 
 namespace Addmusic2.Model
 {
@@ -12,9 +13,30 @@ namespace Addmusic2.Model
         public List<AddmusicSample> Samples { get; set; } = new();
         public List<AddmusicSample> UsedSamples { get; set; } = new();
         public List<InstrumentInformation> Instruments { get; set; } = new();
+        public List<InstrumentInformation> DefaultInstruments { get; set; } = new();
         public Dictionary<int, InstrumentInformation> UsedInstruments { get; set; } = new();
 
-        public SampleInstrumentManager() { }
+        public SampleInstrumentManager()
+        {
+            InitializeDefaultInstruments();
+        }
+
+        public void InitializeDefaultInstruments()
+        {
+            int[] removeableInstruments = { 19, 20 };
+            var range = Enumerable.Range(0, MagicNumbers.StartingCustomInstrumentNumber)
+                .Except(removeableInstruments);
+            foreach (var number in range)
+            {
+                var defaultInstrumentInfo = new InstrumentInformation
+                {
+                    InstrumentNumber = number,
+                    InstrumentData = MagicNumbers.InstrumentsToSample[number]
+                };
+
+                DefaultInstruments.Add(defaultInstrumentInfo);
+            }
+        }
 
         #region Sample Manger
 
@@ -87,12 +109,14 @@ namespace Addmusic2.Model
 
         public bool ContainsInstrument(int instrumentNumber)
         {
-            return Instruments.Any(i => i.InstrumentNumber == instrumentNumber);
+            return DefaultInstruments.Any(i => i.InstrumentNumber == instrumentNumber)
+                || Instruments.Any(i => i.InstrumentNumber == instrumentNumber);
         }
 
         public bool ContainsInstrument(InstrumentInformation instrumentInformation)
         {
-            return Instruments.Contains(instrumentInformation);
+            return DefaultInstruments.Contains(instrumentInformation)
+                || Instruments.Contains(instrumentInformation);
         }
 
         public bool UseInstrument(int instrumentNumber)

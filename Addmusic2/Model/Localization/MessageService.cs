@@ -1199,6 +1199,30 @@ namespace Addmusic2.Model.Localization
             return localizedString ?? "";
         }
 
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorInvalidPanSurroundSoundValueMessage(string panSurroundSoundValue)
+        {
+            LocalizedString localizedString = _localizer["ErrorInvalidPanSurroundSoundValue", panSurroundSoundValue];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorPanDurationOutOfRangeMessage(string panDurationValue, string minimumValue, string maximumValue)
+        {
+            LocalizedString localizedString = _localizer["ErrorPanDurationOutOfRange", panDurationValue, minimumValue, maximumValue];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorPanFinalValueOutOfRangeMessage(string finalPanningValue, string minimumValue, string maximumValue)
+        {
+            LocalizedString localizedString = _localizer["ErrorPanFinalValueOutOfRange", finalPanningValue, minimumValue, maximumValue];
+
+            return localizedString ?? "";
+        }
+
         #endregion
 
         #endregion

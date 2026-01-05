@@ -46,7 +46,7 @@ namespace Addmusic2.Model.SongTree
                     Comment = value;
                     break;
                 case "#length":
-                    Length = value;
+                    Length = value.Replace("\"", "");
                     break;
                 default:
                     break;
@@ -280,6 +280,7 @@ namespace Addmusic2.Model.SongTree
     internal class PanPayload : ISongNodePayload
     {
         public bool HexSourced { get; set; } = false;
+        public bool HasSurroundSound { get; set; } = false;
         public int PanPosition { get; set; }
         public int SurroundSoundLeft { get; set; } = -1;
         public int SurroundSoundRight { get; set; } = -1;
@@ -308,9 +309,11 @@ namespace Addmusic2.Model.SongTree
     {
         public int DelayValue { get; set; }
         public string VolumeValue { get; set; } = string.Empty;
-        public SongNode VolumeNode { get; set; } = new();
+        public SongNode VolumeNode { get; set; }
 
+#pragma warning disable 8618
         public QuantizationPayload() { }
+#pragma warning restore 8618
 
         public override string ToString()
         {
@@ -520,7 +523,7 @@ namespace Addmusic2.Model.SongTree
         public override string ToString()
         {
             var builder = new StringBuilder();
-            builder = builder.Append(HexValue);
+            builder = builder.Append($"${HexValue}");
             return builder.ToString();
         }
     }

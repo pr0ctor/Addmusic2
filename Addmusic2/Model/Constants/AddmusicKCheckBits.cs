@@ -11,7 +11,7 @@ namespace Addmusic2.Model.Constants
     {
         public readonly int CleanRomFirstCheckBitLocation = 0x70000;
         public readonly int CleanRomFirstCheckBitValue = 0x3E;
-        public readonly int CleanRomSecondCheckBitLocation = 0x70000;
+        public readonly int CleanRomSecondCheckBitLocation = 0x70001;
         public readonly int CleanRomSecondCheckBitValue = 0x0E;
         public readonly int AmkCheckValueLocation = 0x0E8000;
         public readonly int AmkCheckValueLength = 4;

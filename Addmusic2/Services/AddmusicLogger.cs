@@ -12,7 +12,7 @@ namespace Addmusic2.Services
 {
     internal class AddmusicLogger : IAddmusicLogger, IDisposable
     {
-        private readonly AddmusicLoggerOptions _options;
+        public readonly AddmusicLoggerOptions _options;
         private FileStream? _logFile;
         private StreamWriter? _logFileWriter;
 
@@ -165,6 +165,10 @@ namespace Addmusic2.Services
             }
         }
 
+        public LogLevel GetCurrentLogLevel()
+        {
+            return _LogLevel;
+        }
         
     }
 }

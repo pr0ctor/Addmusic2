@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Addmusic2.Parsers
 {
@@ -32,16 +31,19 @@ namespace Addmusic2.Parsers
         private SampleInstrumentManager SampleInstrumentManager { get; set; } = new();
 
         private List<ChannelInformation> Channels { get; set; } = new();
+        private ChannelInformation LoopChannel { get; set; } = new();
         private List<byte> CurrentLoopData = new();
         private List<byte> CurrentSubLoopData = new();
         private Dictionary<string, LoopInformation> RemoteCodeDefinitions = new();
         private Dictionary<string, LoopInformation> NamedLoopDefinitions = new();
+        private Dictionary<ushort, LoopInformation> UnnamedLoopDefinitions = new();
         private List<(double ChannelTick, int TempoChange)> TempoChanges = new();
 
         private ChannelInformation CurrentChannel { get; set; } = new();
         private List<byte> PreChannelData { get; set; } = new();
 
         private LoopNode PreviousLoop { get; set; } = new();
+        private int PreviousLoopIndex { get; set; }
         private int PreviousNoteLength { get; set; }
 
         private int DefaultNoteLength { get; set; } = MagicNumbers.DefaultValues.InitialDefaultNoteLength;
@@ -151,6 +153,7 @@ namespace Addmusic2.Parsers
             }
 
             // Finish by transferring required information to the songdata object
+            Channels.Add(LoopChannel);
 
             SongData.ChannelData = Channels;
             SongData.SampleInstrumentManager = SampleInstrumentManager;
@@ -201,14 +204,14 @@ namespace Addmusic2.Parsers
 
             if (validationResult.Type == ResultType.Skip)
             {
-                _logger.LogError(LogLevel.Trace, _messageService.GetInfoLineAndColumnStringMessage(node.LineNumber.ToString(), node.ColumnNumber.ToString()) + _messageService.GetErrorNodeValidationResultSkipMessage(node.NodeType.ToString(), node.ToString()));
+                _logger.LogWarning(LogLevel.Trace, _messageService.GetInfoLineAndColumnStringMessage(node.LineNumber.ToString(), node.ColumnNumber.ToString()) + " " + _messageService.GetErrorNodeValidationResultSkipMessage(node.NodeType.ToString(), node.ToString()));
                 return;
             }
             else if (validationResult.Type == ResultType.Failure)
             {
                 // Handles a case where a failure is returned by the validator
 
-                _logger.LogError(LogLevel.Trace, _messageService.GetInfoLineAndColumnStringMessage(node.LineNumber.ToString(), node.ColumnNumber.ToString()) + _messageService.GetErrorNodeValidationResultFailureMessage(node.NodeType.ToString(), node.ToString()));
+                _logger.LogError(LogLevel.Trace, _messageService.GetInfoLineAndColumnStringMessage(node.LineNumber.ToString(), node.ColumnNumber.ToString()) + " " + _messageService.GetErrorNodeValidationResultFailureMessage(node.NodeType.ToString(), node.ToString()));
 
                 foreach (var message in validationResult.Message)
                 {
@@ -220,18 +223,18 @@ namespace Addmusic2.Parsers
             {
                 // Handles a case where a warning is returned by the validator
 
-                _logger.LogError(LogLevel.Trace, _messageService.GetInfoLineAndColumnStringMessage(node.LineNumber.ToString(), node.ColumnNumber.ToString()) + _messageService.GetErrorNodeValidationResultWarningMessage(node.NodeType.ToString(), node.ToString()));
+                _logger.LogWarning(LogLevel.Trace, _messageService.GetInfoLineAndColumnStringMessage(node.LineNumber.ToString(), node.ColumnNumber.ToString()) + " " + _messageService.GetErrorNodeValidationResultWarningMessage(node.NodeType.ToString(), node.ToString()));
 
                 foreach (var message in validationResult.Message)
                 {
-                    _logger.LogError(LogLevel.Warning, message, true);
+                    _logger.LogWarning(LogLevel.Warning, message, true);
                 }
             }
             else if (validationResult.Type == ResultType.Error)
             {
                 // Handles a case where an error is returned by the validator
 
-                _logger.LogError(LogLevel.Trace, _messageService.GetInfoLineAndColumnStringMessage(node.LineNumber.ToString(), node.ColumnNumber.ToString()) + _messageService.GetErrorNodeValidationResultErrorMessage(node.NodeType.ToString(), node.ToString()));
+                _logger.LogError(LogLevel.Trace, _messageService.GetInfoLineAndColumnStringMessage(node.LineNumber.ToString(), node.ColumnNumber.ToString()) + " " + _messageService.GetErrorNodeValidationResultErrorMessage(node.NodeType.ToString(), node.ToString()));
 
                 foreach (var message in validationResult.Message)
                 {
@@ -286,14 +289,14 @@ namespace Addmusic2.Parsers
             }
         }
 
+        private ushort _loopPointer = 0x0000;
         public void CatalogueUserDefinedInformation(List<ISongNode> nodes)
         {
             // Get the names and associate loops of the named loops in the tree
             // Get the definition names of the remote code definitions in the tree
-            ushort loopPointer = 0x0000;
             foreach (SongNode node in nodes)
             {
-                if (loopPointer >= MagicNumbers.SixteenBitMaximum)
+                if (_loopPointer >= MagicNumbers.SixteenBitMaximum)
                 {
                     _logger.LogError(LogLevel.Error, _messageService.GetErrorMaximumAllowedNumberOfLoopsReachedMessage(), true);
                     throw new AddmusicParserException(_messageService.GetErrorMaximumAllowedNumberOfLoopsReachedMessage());
@@ -314,11 +317,20 @@ namespace Addmusic2.Parsers
                             }
                             NamedLoopDefinitions.Add(loopName, new LoopInformation
                             {
-                                LoopId = loopPointer++,
+                                LoopId = _loopPointer,
+                                LoopNode = (LoopNode)node,
+                            });
+                        }
+                        else
+                        {
+                            UnnamedLoopDefinitions.Add(_loopPointer, new LoopInformation
+                            {
+                                LoopId = _loopPointer,
                                 LoopNode = (LoopNode)node,
                             });
                         }
 
+                        _loopPointer = (ushort)(_loopPointer + 1);
                         CatalogueUserDefinedInformation(((LoopNode)node).LoopContents);
                     }
                     else if (node.NodeType == SongNodeType.RemoteCode)
@@ -332,9 +344,17 @@ namespace Addmusic2.Parsers
                         }
                         RemoteCodeDefinitions.Add(definitionName, new LoopInformation
                         {
-                            LoopId = loopPointer++,
+                            LoopId = _loopPointer,
                             LoopNode = (LoopNode)node,
                         });
+                        _loopPointer = (ushort)(_loopPointer + 1);
+                    }
+                }
+                else
+                {
+                    if(node.Children != null && node.Children.Count > 0)
+                    {
+                        CatalogueUserDefinedInformation(node.Children);
                     }
                 }
             }
@@ -959,23 +979,38 @@ namespace Addmusic2.Parsers
         {
             var panPayload = panNode.Payload as PanPayload ?? throw new AddmusicParserException("Null Payload found");
 
-            var panValue = panPayload.PanPosition;
-            var panRight = panPayload.SurroundSoundRight;
-            var panLeft = panPayload.SurroundSoundLeft;
-
-            if (panLeft != -1)
+            if(panPayload.HexSourced == false)
             {
-                panValue |= panLeft << 7;
-            }
+                var panValue = panPayload.PanPosition;
 
-            if (panRight != -1)
+                if(panPayload.HasSurroundSound == true)
+                {
+                    var panRight = panPayload.SurroundSoundRight;
+                    var panLeft = panPayload.SurroundSoundLeft;
+
+                    if (panLeft != -1)
+                    {
+                        panValue |= panLeft << 7;
+                    }
+
+                    if (panRight != -1)
+                    {
+                        panValue |= panRight << 6;
+                    }
+                }
+
+                AddDataToChannel(MagicNumbers.CommandValues.Pan);
+                AddDataToChannel(Convert.ToByte(panValue));
+            }
+            else
             {
-                panValue |= panRight << 6;
+                AddDataToChannel(MagicNumbers.CommandValues.Pan);
+                if(panPayload.PanDuration != -1)
+                {
+                    AddDataToChannel(Convert.ToByte(panPayload.PanDuration));
+                }
+                AddDataToChannel(Convert.ToByte(panPayload.PanPosition));
             }
-
-            AddDataToChannel(MagicNumbers.CommandValues.Pan);
-            AddDataToChannel(Convert.ToByte(panValue));
-
         }
 
         public void EvaluateQuantizationNode(AtomicNode quantizationNode)
@@ -1355,7 +1390,7 @@ namespace Addmusic2.Parsers
             {
                 if (remoteCodePayload.IntArgument == -1)
                 {
-                    databyte = byte.Parse(remoteCodePayload.HexArgument);
+                    databyte = Convert.ToByte(remoteCodePayload.HexArgument, 16);
                 }
                 else
                 {
@@ -1374,7 +1409,8 @@ namespace Addmusic2.Parsers
 
             var remoteCodeLocation = loopValue.LoopId;
             AddDataToChannel(MagicNumbers.CommandValues.RemoteCode);
-            CurrentChannel.LoopLocations.Add(Convert.ToByte(CurrentChannel.ChannelData.Count));
+            //CurrentChannel.LoopLocations.Add(Convert.ToByte(CurrentChannel.ChannelData.Count));
+            CurrentChannel.LoopLocations.Add((ushort)CurrentChannel.ChannelData.Count);
             AddDataToChannel((byte)(remoteCodeLocation & MagicNumbers.HexCommandMaximum));
             AddDataToChannel((byte)(remoteCodeLocation >> 8));
             AddDataToChannel(Convert.ToByte(eventNumber));
@@ -1387,19 +1423,44 @@ namespace Addmusic2.Parsers
             var previousNode = (LoopNode)PreviousLoop.Clone();
             previousNode.Iterations = callPreviousLoopNode.Iterations;
 
-            EvaluateSimpleLoopNode(previousNode);
+            //EvaluateSimpleLoopNode(previousNode);
+
+            var loopInformation = NamedLoopDefinitions[previousNode.LoopName];
+
+            var loopLocation = loopInformation.LoopId;
+            AddDataToChannel(MagicNumbers.CommandValues.Loop);
+            //CurrentChannel.LoopLocations.Add(Convert.ToByte(CurrentChannel.ChannelData.Count));
+            CurrentChannel.LoopLocations.Add((ushort)CurrentChannel.ChannelData.Count);
+            AddDataToChannel((byte)(loopLocation & MagicNumbers.HexCommandMaximum));
+            AddDataToChannel((byte)(loopLocation >> 8));
+            AddDataToChannel((byte)(previousNode.Iterations - 1));
         }
 
         public void EvaluateSimpleLoopNode(LoopNode simpleLoopNode)
         {
             // Begin Simple Loop
-            var loopName = simpleLoopNode.LoopName;
             if (InActiveLoop == true)
             {
                 InActiveSubLoop = true;
             }
             InActiveLoop = true;
             InActiveSimpleLoop = true;
+
+            // get the current LoopInformation that corresponds to this LoopNode
+
+            var loopName = simpleLoopNode.LoopName;
+            var loopInformation = (loopName.Length > 0)
+                ? NamedLoopDefinitions[loopName]
+                : UnnamedLoopDefinitions.Values.Where(d => d.LoopNode == simpleLoopNode).FirstOrDefault() ?? throw new AddmusicParserException("Uncatalogued LoopNode");
+            
+            if (InActiveSubLoop == true)
+            {
+                ActiveSubLoopInformation = loopInformation;
+            }
+            else
+            {
+                ActiveLoopInformation = loopInformation;
+            }
 
             // Evaluate the contents of the loop
 
@@ -1409,9 +1470,11 @@ namespace Addmusic2.Parsers
             }
 
             // Finish loop
-            var loopLocation = NamedLoopDefinitions[loopName].LoopId;
+            var loopLocation = loopInformation.LoopId;
             AddDataToChannel(MagicNumbers.CommandValues.Loop);
-            CurrentChannel.LoopLocations.Add(Convert.ToByte(CurrentChannel.ChannelData.Count));
+            //CurrentChannel.LoopLocations.Add(Convert.ToByte(CurrentChannel.ChannelData.Count));
+            //CurrentChannel.LoopLocations.Add(Convert.ToByte(LoopChannel.ChannelData.Count));
+            CurrentChannel.LoopLocations.Add((ushort)LoopChannel.ChannelData.Count);
             AddDataToChannel((byte)(loopLocation & MagicNumbers.HexCommandMaximum));
             AddDataToChannel((byte)(loopLocation >> 8));
             AddDataToChannel((byte)(simpleLoopNode.Iterations - 1));
@@ -1421,14 +1484,17 @@ namespace Addmusic2.Parsers
             {
                 InActiveSubLoop = false;
                 ActiveSubLoopLength = 0;
+                LoopChannel.ChannelData.AddRange(CurrentSubLoopData);
             }
             else
             {
                 InActiveLoop = false;
                 ActiveLoopLength = 0;
+                LoopChannel.ChannelData.AddRange(CurrentLoopData);
             }
             InActiveSimpleLoop = false;
             PreviousLoop = simpleLoopNode;
+            PreviousLoopIndex = LoopChannel.ChannelData.Count;
         }
 
         public void EvaluateSuperLoopNode(LoopNode superLoopNode)
@@ -1440,6 +1506,19 @@ namespace Addmusic2.Parsers
             }
             InActiveLoop = true;
             InActiveSuperLoop = true;
+
+            var loopInformation = new LoopInformation
+            {
+                LoopNode = superLoopNode,
+            };
+            if (InActiveSubLoop == true)
+            {
+                ActiveSubLoopInformation = loopInformation;
+            }
+            else
+            {
+                ActiveLoopInformation = loopInformation;
+            }
 
             AddDataToChannel(MagicNumbers.CommandValues.SuperLoop);
             AddDataToChannel(0x00);
@@ -1467,25 +1546,34 @@ namespace Addmusic2.Parsers
                 ActiveLoopLength = 0;
             }
             InActiveSuperLoop = false;
-            PreviousLoop = superLoopNode;
+            //PreviousLoop = superLoopNode;
+            //PreviousLoopIndex = LoopChannel.ChannelData.Count;
         }
 
         public void EvaluateCallLoopDefinitionNode(LoopNode callLoopNode)
         {
-            var calledLoopData = (LoopNode)NamedLoopDefinitions[callLoopNode.LoopName].LoopNode.Clone();
+            var calledLoopInformation = NamedLoopDefinitions[callLoopNode.LoopName];
+            var calledLoopNode = (LoopNode)calledLoopInformation.LoopNode.Clone();
 
             // This loop invocation may have a different number of iterations than the original definition
             //      Potentially none at all, if so then it only needs to be called once
             if (callLoopNode.Iterations <= 1)
             {
-                calledLoopData.Iterations = 1;
+                calledLoopNode.Iterations = 1;
             }
             else
             {
-                calledLoopData.Iterations = callLoopNode.Iterations;
+                calledLoopNode.Iterations = callLoopNode.Iterations;
             }
 
-            EvaluateLoopNode(calledLoopData);
+            //EvaluateLoopNode(calledLoopData);
+            var loopLocation = calledLoopInformation.LoopId;
+            AddDataToChannel(MagicNumbers.CommandValues.Loop);
+            //CurrentChannel.LoopLocations.Add(Convert.ToByte(CurrentChannel.ChannelData.Count));
+            CurrentChannel.LoopLocations.Add((ushort)CurrentChannel.ChannelData.Count);
+            AddDataToChannel((byte)(loopLocation & MagicNumbers.HexCommandMaximum));
+            AddDataToChannel((byte)(loopLocation >> 8));
+            AddDataToChannel((byte)(calledLoopNode.Iterations - 1));
         }
 
         public void EvaluateRemoteCodeDefinitionNode(LoopNode remoteCodeDefinitionNode)
@@ -1601,17 +1689,17 @@ namespace Addmusic2.Parsers
 
         public void EvaluateTempoImmunityNode(DirectiveNode tempoImmunityNode)
         {
-            PreChannelData.Add(MagicNumbers.CommandValues.TempoImmunity);
-            PreChannelData.Add(MagicNumbers.CommandValues.SecondaryValues.TempoImmunitySecondary);
+            AddDataToChannel(MagicNumbers.CommandValues.TempoImmunity);
+            AddDataToChannel(MagicNumbers.CommandValues.SecondaryValues.TempoImmunitySecondary);
         }
 
         public void EvaluateSMWVTableNode(DirectiveNode smwvTableNode)
         {
             if(SongData.VelocityTable != VelocityTable.SmwVTable)
             {
-                PreChannelData.Add(MagicNumbers.CommandValues.FAOption);
-                PreChannelData.Add(MagicNumbers.CommandValues.FAValues.TableType);
-                PreChannelData.Add(MagicNumbers.CommandValues.FAValues.SmwVTable);
+                AddDataToChannel(MagicNumbers.CommandValues.FAOption);
+                AddDataToChannel(MagicNumbers.CommandValues.FAValues.TableType);
+                AddDataToChannel(MagicNumbers.CommandValues.FAValues.SmwVTable);
                 SongData.VelocityTable = VelocityTable.SmwVTable;
             }
             else
@@ -1622,9 +1710,9 @@ namespace Addmusic2.Parsers
 
         public void EvaluateNSPCVTableNode(DirectiveNode nspcvTableNode)
         {
-            PreChannelData.Add(MagicNumbers.CommandValues.FAOption);
-            PreChannelData.Add(MagicNumbers.CommandValues.FAValues.TableType);
-            PreChannelData.Add(MagicNumbers.CommandValues.FAValues.NspcVTable);
+            AddDataToChannel(MagicNumbers.CommandValues.FAOption);
+            AddDataToChannel(MagicNumbers.CommandValues.FAValues.TableType);
+            AddDataToChannel(MagicNumbers.CommandValues.FAValues.NspcVTable);
             SongData.VelocityTable = VelocityTable.NspcVTable;
 
             _logger.LogWarning(LogLevel.Warning, _messageService.GetWarningNspcVelocityTableAlreadyUsedMessage(), true);
@@ -1637,9 +1725,9 @@ namespace Addmusic2.Parsers
 
         public void EvaluateAmk109HotPatchNode(DirectiveNode amk109HotPatchNode)
         {
-            PreChannelData.Add(MagicNumbers.CommandValues.FAOption);
-            PreChannelData.Add(MagicNumbers.CommandValues.FAValues.Amk109HotPatch);
-            PreChannelData.Add(0x01);
+            AddDataToChannel(MagicNumbers.CommandValues.FAOption);
+            AddDataToChannel(MagicNumbers.CommandValues.FAValues.Amk109HotPatch);
+            AddDataToChannel(0x01);
 
             MarkEchoBufferAllocVCMD();
             
@@ -1833,25 +1921,54 @@ namespace Addmusic2.Parsers
                 };
         }
 
-        public IValidationResult ValidatePanNode(AtomicNode pan)
+        public IValidationResult ValidatePanNode(AtomicNode panNode)
         {
-            var panPayload = pan.Payload as PanPayload ?? throw new AddmusicParserException("Null Payload found");
+            var panPayload = panNode.Payload as PanPayload ?? throw new AddmusicParserException("Null Payload found");
 
-            if (panPayload.PanPosition < 0 || panPayload.PanPosition > MagicNumbers.PanDirectionMaximum)
+            var messages = new List<string>();
+
+            if (panPayload.HexSourced == true)
             {
-                return new ValidationResult
+
+                if(panPayload.PanPosition < 0 || panPayload.PanPosition > MagicNumbers.EightBitMaximum)
                 {
-                    Type = ResultType.Error,
-                    Message = new List<string>() {
-                        _messageService.GetErrorPanDirectionOutOfRangeMessage(0, MagicNumbers.PanDirectionMaximum, panPayload.PanPosition)
-                    },
-                };
+                    messages.Add(_messageService.GetErrorPanFinalValueOutOfRangeMessage(panPayload.PanPosition.ToString(), 0.ToString(), MagicNumbers.EightBitMaximum.ToString()));
+                }
+                if(panPayload.PanDuration != -1 && (panPayload.PanDuration < 0 || panPayload.PanDuration > MagicNumbers.EightBitMaximum))
+                {
+                    messages.Add(_messageService.GetErrorPanDurationOutOfRangeMessage(panPayload.PanDuration.ToString(), 0.ToString(), MagicNumbers.EightBitMaximum.ToString()));
+                }
+            }
+            else
+            {
+                if (panPayload.PanPosition < 0 || panPayload.PanPosition > MagicNumbers.PanDirectionMaximum)
+                {
+                    messages.Add(_messageService.GetErrorPanDirectionOutOfRangeMessage(0, MagicNumbers.PanDirectionMaximum, panPayload.PanPosition));
+                }
+
+                if (panPayload.HasSurroundSound == true)
+                {
+                    if (panPayload.SurroundSoundLeft < 0 || panPayload.SurroundSoundLeft > 1)
+                    {
+                        messages.Add(_messageService.GetErrorInvalidPanSurroundSoundValueMessage(panPayload.SurroundSoundLeft.ToString()));
+                    }
+                    if (panPayload.SurroundSoundRight < 0 || panPayload.SurroundSoundRight > 1)
+                    {
+                        messages.Add(_messageService.GetErrorInvalidPanSurroundSoundValueMessage(panPayload.SurroundSoundRight.ToString()));
+                    }
+                }
             }
 
-            return new ValidationResult
-            {
-                Type = ResultType.Success,
-            };
+            return messages.Count > 0
+                ? new ValidationResult
+                {
+                    Type = ResultType.Error,
+                    Message = messages,
+                }
+                : new ValidationResult
+                {
+                    Type = ResultType.Success
+                };
         }
 
         public IValidationResult ValidateVibratoNode(AtomicNode vibrato)
@@ -1950,7 +2067,7 @@ namespace Addmusic2.Parsers
 
             if (quantizationPayload.VolumeNode != null)
             {
-                var volumeNodeValidation = (ValidationResult)ValidateVolumeNode((AtomicNode)quantizationPayload.VolumeNode);
+                var volumeNodeValidation = (ValidationResult)ValidateVolumeNode((AtomicNode)(quantizationPayload.VolumeNode));
                 if (volumeNodeValidation.Type != ResultType.Success)
                 {
                     var messages = new List<string>();
@@ -2112,7 +2229,7 @@ namespace Addmusic2.Parsers
         {
             var hexPayload = hexCommand.Payload as HexNumberPayload ?? throw new AddmusicParserException("Null Payload found");
 
-            var hexByte = byte.Parse(hexPayload.HexValue);
+            var hexByte = Convert.ToByte(hexPayload.HexValue, 16);
 
             if (hexByte >= MagicNumbers.HexCommandMaximum)
             {
@@ -2593,8 +2710,9 @@ namespace Addmusic2.Parsers
                     SongData.GuessLength = false;
 
                     var lengthTime = length.Split(":").ToList();
-                    var mins = int.Parse(lengthTime[0]);
-                    var secs = int.Parse(lengthTime[1]);
+                    // The " should be parsed out by now, but just in case they aren't
+                    var mins = int.Parse(lengthTime[0].Replace("\"", ""));
+                    var secs = int.Parse(lengthTime[1].Replace("\"", ""));
                     var totalSeconds = mins * 60 + secs;
 
                     if (totalSeconds > 999)
@@ -2670,7 +2788,10 @@ namespace Addmusic2.Parsers
             var customInstrumentCount = MagicNumbers.StartingCustomInstrumentNumber;
             foreach (var instrument in instrumentPayload.Instruments)
             {
-                var instrumentInformation = new InstrumentInformation();
+                var instrumentInformation = new InstrumentInformation()
+                {
+                    InstrumentNumber = customInstrumentCount
+                };
 
                 if (instrument.Type == InstrumentDefinition.InstrumentType.Noise)
                 {
@@ -2689,7 +2810,6 @@ namespace Addmusic2.Parsers
                     var noiseValue = Convert.ToByte(((NoisePayload)((AtomicNode)instrument.NoiseData).Payload).NoiseValue);
                     var finalInstrumentValue = noiseValue | 0x80;
 
-                    instrumentInformation.InstrumentNumber = customInstrumentCount;
                     instrumentInformation.InstrumentData = finalInstrumentValue;
                 }
                 else if (instrument.Type == InstrumentDefinition.InstrumentType.Number)
@@ -2715,10 +2835,7 @@ namespace Addmusic2.Parsers
                         continue;
                     }
 
-                    var instrumentToSample = MagicNumbers.InstrumentsToSample[instrumentNumber];
-
-                    instrumentInformation.InstrumentNumber = instrumentNumber;
-                    instrumentInformation.InstrumentData = instrumentToSample;
+                    instrumentInformation.InstrumentData = MagicNumbers.InstrumentsToSample[instrumentNumber];
 
                 }
                 else if (instrument.Type == InstrumentDefinition.InstrumentType.Sample)
@@ -2738,7 +2855,6 @@ namespace Addmusic2.Parsers
                     // this doesn't need to be validated due to the previous check
                     SampleInstrumentManager.UseSampleName(sampleName);
 
-                    instrumentInformation.InstrumentNumber = customInstrumentCount;
                     instrumentInformation.InstrumentSample = sampleName;
 
                 }
@@ -2752,7 +2868,7 @@ namespace Addmusic2.Parsers
                 var intHexes = new List<int>();
                 foreach (var setting in instrument.HexSettings)
                 {
-                    var hexValue = Convert.ToByte(setting);
+                    var hexValue = Convert.ToByte(setting.Replace("$", ""), 16);
 
                     if (!Helpers.Helpers.IsHexInRange(hexValue))
                     {
@@ -3050,7 +3166,7 @@ namespace Addmusic2.Parsers
 
             foreach (var hexNumber in hex.HexValues)
             {
-                var byteValue = Convert.ToByte(hexNumber.Replace("$", ""));
+                var byteValue = Convert.ToByte(hexNumber.Replace("$", ""), 16);
                 if (!Helpers.Helpers.IsHexInRange(byteValue))
                 {
                     messages.Add(_messageService.GetErrorHexCommandSuppliedValueOutOfRangeMessage(hexNumber, hex.HexCommand, 0, MagicNumbers.HexCommandMaximum));
@@ -3111,7 +3227,6 @@ namespace Addmusic2.Parsers
 
         private void AddDataToChannel(byte dataToAdd)
         {
-            var currentChannel = Channels.Where(c => c.ChannelNumber == CurrentChannel.ChannelNumber).First();
             if (InActiveLoop)
             {
                 if (InActiveSubLoop)
@@ -3123,15 +3238,19 @@ namespace Addmusic2.Parsers
                     CurrentLoopData.Add(dataToAdd);
                 }
             }
+            else if (Channels.Count == 0)
+            {
+                PreChannelData.Add(dataToAdd);
+            }
             else
             {
+                var currentChannel = Channels.Where(c => c.ChannelNumber == CurrentChannel.ChannelNumber).First();
                 currentChannel.ChannelData.Add(dataToAdd);
             }
         }
 
         private void AddDataToChannel(List<byte> dataToAdd)
         {
-            var currentChannel = Channels.Where(c => c.ChannelNumber == CurrentChannel.ChannelNumber).First();
             if (InActiveLoop)
             {
                 if (InActiveSubLoop)
@@ -3143,8 +3262,13 @@ namespace Addmusic2.Parsers
                     CurrentLoopData.AddRange(dataToAdd);
                 }
             }
+            else if (Channels.Count == 0)
+            {
+                PreChannelData.AddRange(dataToAdd);
+            }
             else
             {
+                var currentChannel = Channels.Where(c => c.ChannelNumber == CurrentChannel.ChannelNumber).First();
                 currentChannel.ChannelData.AddRange(dataToAdd);
             }
         }
@@ -3179,11 +3303,12 @@ namespace Addmusic2.Parsers
             {
                 if (isFractionalError)
                 {
-                    _messageService.GetErrorFractionalTempoRatioMessage(SongData.Name, node.LineNumber, node.ColumnNumber);
+                    _logger.LogWarning(LogLevel.Error, _messageService.GetErrorFractionalTempoRatioMessage(SongData.Name, node.LineNumber, node.ColumnNumber), true);
+                    throw new AddmusicParserException(_messageService.GetErrorFractionalTempoRatioMessage(SongData.Name, node.LineNumber, node.ColumnNumber));
                 }
                 else
                 {
-                    _messageService.GetWarningFactionalTempoRatioValueMessage(SongData.Name, node.LineNumber, node.ColumnNumber);
+                    _logger.LogWarning(LogLevel.Warning, _messageService.GetWarningFactionalTempoRatioValueMessage(SongData.Name, node.LineNumber, node.ColumnNumber));
                 }
             }
 
@@ -3195,7 +3320,8 @@ namespace Addmusic2.Parsers
             var result = value * TempoRatio;
             if (TempoRatio >= MagicNumbers.EightBitMaximum)
             {
-                _messageService.GetErrorTempoRatioValueOverflowMessage(SongData.Name, node.LineNumber, node.ColumnNumber);
+                _logger.LogError(LogLevel.Error, _messageService.GetErrorTempoRatioValueOverflowMessage(SongData.Name, node.LineNumber, node.ColumnNumber), true);
+                throw new AddmusicParserException(_messageService.GetErrorTempoRatioValueOverflowMessage(SongData.Name, node.LineNumber, node.ColumnNumber));
             }
             return result;
         }
@@ -3233,7 +3359,7 @@ namespace Addmusic2.Parsers
             {
                 if (MagicNumbers.NoteLengthMaximum % noteLength == 0)
                 {
-                    _messageService.GetWarningNoteLengthFractionalTickValueMessage(MagicNumbers.NoteLengthMaximum, SongData.Name, node.LineNumber, node.ColumnNumber);
+                    _logger.LogWarning(LogLevel.Warning, _messageService.GetWarningNoteLengthFractionalTickValueMessage(MagicNumbers.NoteLengthMaximum, SongData.Name, node.LineNumber, node.ColumnNumber));
                 }
                 length = MagicNumbers.NoteLengthMaximum / noteLength;
             }
@@ -3252,11 +3378,11 @@ namespace Addmusic2.Parsers
                 {
                     if (i != 0)
                     {
-                        _messageService.GetWarningFractionalTickValueFromDotsMessage(i + 1, SongData.Name, node.LineNumber, node.ColumnNumber);
+                        _logger.LogWarning(LogLevel.Warning, _messageService.GetWarningFractionalTickValueFromDotsMessage(i + 1, SongData.Name, node.LineNumber, node.ColumnNumber));
                     }
                     else
                     {
-                        _messageService.GetWarningFractionalTickValueFromDotsMessage(1, SongData.Name, node.LineNumber, node.ColumnNumber);
+                        _logger.LogWarning(LogLevel.Warning, _messageService.GetWarningFractionalTickValueFromDotsMessage(1, SongData.Name, node.LineNumber, node.ColumnNumber));
                     }
                 }
 
@@ -3268,7 +3394,7 @@ namespace Addmusic2.Parsers
             {
                 if (fraction % 3 != 0)
                 {
-                    _messageService.GetWarningTripletFractionalTickValueFromDotsMessage(SongData.Name, node.LineNumber, node.ColumnNumber);
+                    _logger.LogWarning(LogLevel.Warning, _messageService.GetWarningTripletFractionalTickValueFromDotsMessage(SongData.Name, node.LineNumber, node.ColumnNumber));
                 }
                 result = (int)Math.Floor(result * 2.0 / 3.0 + 0.5);
             }

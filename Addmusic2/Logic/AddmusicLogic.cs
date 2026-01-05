@@ -106,6 +106,7 @@ namespace Addmusic2.Logic
             // load global songs
             foreach (var globalSong in _globalSettings.ResourceList.Songs.GlobalSongs)
             {
+                _logger.LogInformation(LogLevel.Trace, $"Processing Song {globalSong.Name}");
                 var fileData = File.ReadAllText(Path.Combine(FileNames.FolderNames.MusicBase, globalSong.Path));
 
                 var preprocessedFileData = PreProcessSong(fileData);
@@ -116,6 +117,7 @@ namespace Addmusic2.Logic
                 PostProcessSong();
 
                 Songs.Add(songData);
+                _logger.LogInformation(LogLevel.Trace, $"Finished Processing Song {globalSong.Name}");
             }
 
             _logger.LogInformation(LogLevel.Debug, $"Processing {_globalSettings.ResourceList.Songs.LocalSongs.Count} Local Songs");
@@ -123,6 +125,7 @@ namespace Addmusic2.Logic
             // load local songs
             foreach (var localSong in _globalSettings.ResourceList.Songs.LocalSongs)
             {
+                _logger.LogInformation(LogLevel.Trace, $"Processing Song {localSong.Name}");
                 var fileData = File.ReadAllText(Path.Combine(FileNames.FolderNames.MusicBase, localSong.Path));
 
                 var preprocessedFileData = PreProcessSong(fileData);
@@ -133,6 +136,7 @@ namespace Addmusic2.Logic
                 PostProcessSong();
 
                 Songs.Add(songData);
+                _logger.LogInformation(LogLevel.Trace, $"Finished Processing Song {localSong.Name}");
             }
 
             _logger.LogInformation(LogLevel.Debug, $"Processed {Songs.Count} Songs");
@@ -157,7 +161,7 @@ namespace Addmusic2.Logic
                 var searchValue = match.Groups[1].Value;
                 var replaceValue = match.Groups[2].Value;
 
-                _logger.LogInformation(LogLevel.Trace, $"Found search value {searchValue} // Replacing with {replaceValue}");
+                _logger.LogInformation(LogLevel.Trace, $"Found search value [ {searchValue} ] => Replacing with [ {replaceValue} ]");
 
                 fileData = fileData.Replace(searchValue, replaceValue);
             }

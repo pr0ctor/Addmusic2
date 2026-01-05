@@ -619,6 +619,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The given value ({}) for the Pan Command Surround Sound is invalid. Valid values are 0 and 1..
+        /// </summary>
+        internal static string ErrorInvalidPanSurroundSoundValue {
+            get {
+                return ResourceManager.GetString("ErrorInvalidPanSurroundSoundValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The provided Rom ({0}) either has an no file extension or invalid file extension. Valid extensions are {1}..
         /// </summary>
         internal static string ErrorInvalidRomFileExtension {
@@ -786,6 +795,24 @@ namespace Addmusic2.Localization {
         internal static string ErrorPanDirectionOutOfRange {
             get {
                 return ResourceManager.GetString("ErrorPanDirectionOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given duration value ({0}) for the Pan Command is out of range. The value should be between {1} and {2}..
+        /// </summary>
+        internal static string ErrorPanDurationOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorPanDurationOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given final panning value ({0}) for the Pan Command is out of range. The value should be between {1} and {2}..
+        /// </summary>
+        internal static string ErrorPanFinalValueOutOfRange {
+            get {
+                return ResourceManager.GetString("ErrorPanFinalValueOutOfRange", resourceCulture);
             }
         }
         
@@ -1267,7 +1294,7 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: A note length was used that is not divisible by {0:D} ticks, and thus results in a fractional tick value. Song - {1) , Line - {2:D} , Column - {3:D}.
+        ///   Looks up a localized string similar to WARNING: A note length was used that is not divisible by {0:D} ticks, and thus results in a fractional tick value. Song - {1} , Line - {2:D} , Column - {3:D}.
         /// </summary>
         internal static string WarningNoteLengthFractionalTickValue {
             get {

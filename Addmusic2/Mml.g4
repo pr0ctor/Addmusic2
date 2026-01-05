@@ -145,6 +145,7 @@ atomics: pitchslide
     | noiseNote
     | triplet
     | volumeCommand
+    | globalVolumeCommand
     | tuneCommand
     | instrumentCommand
     | quantization

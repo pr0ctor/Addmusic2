@@ -129,7 +129,14 @@ try
 }
 catch(Exception ex)
 {
-
+    //if(logger.GetCurrentLogLevel() == LogLevel.Information)
+    //{
+    //    logger.LogError(LogLevel.Error, "Exception: " + ex.Message, true);
+    //}
+    //else
+    //{
+        logger.LogError(LogLevel.Error, "Unhandled Exception: " + ex.ToString(), true);
+    //}
 }
 finally
 {

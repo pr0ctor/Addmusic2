@@ -139,19 +139,21 @@ namespace Addmusic2.Model
 
             if(romData.Count <= MagicNumbers.RomMinimumSize)
             {
+                _logger.LogError(LogLevel.Error, _messageService.GetErrorRomLessThanMinimumSizeMessage(fileName, romData.Count.ToString(), MagicNumbers.RomMinimumSize.ToString()), true);
                 throw new InvalidConfigurationException(_messageService.GetErrorRomLessThanMinimumSizeMessage(fileName, romData.Count.ToString(), MagicNumbers.RomMinimumSize.ToString()));
             }
 
             // validate that the rom is of an expected size
-            if(romData.Count % MagicNumbers.RomSizeMultiple == 0)
+            if(romData.Count % MagicNumbers.RomSizeMultiple != 0)
             {
                 // Get the Header Bytes of the Rom
                 RomHeader = romData.GetRange(0, MagicNumbers.RomHeaderLength);
                 // Get the rest of the bytes that aren't the header
-                RomData = romData.GetRange(MagicNumbers.RomHeaderLength + 1, romData.Count - MagicNumbers.RomHeaderLength);
+                RomData = romData.GetRange(MagicNumbers.RomHeaderLength, romData.Count - MagicNumbers.RomHeaderLength);
             }
             else
             {
+                _logger.LogError(LogLevel.Error, _messageService.GetErrorRomUnexpectedFileSizeMessage(fileName), true);
                 throw new InvalidConfigurationException(_messageService.GetErrorRomUnexpectedFileSizeMessage(fileName));
             }
 

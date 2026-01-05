@@ -1,4 +1,5 @@
 ﻿using Addmusic2.Model.Constants;
+using Addmusic2.Services;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,6 @@ namespace Addmusic2.Model.Interfaces
         public void LogToFile(LogLevel level, string message);
         public void LogToConsole(LogLevel level, string message);
         public string GenerateLogMessage(LogLevel level, string message, string severity);
+        public LogLevel GetCurrentLogLevel();
     }
 }

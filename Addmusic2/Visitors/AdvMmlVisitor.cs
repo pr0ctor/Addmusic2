@@ -769,6 +769,7 @@ namespace Addmusic2.Visitors
             }
             if(panValues.Length > 1)
             {
+                panPayload.HasSurroundSound = true;
                 if(panValues[1].Length > 0)
                 {
                     panPayload.SurroundSoundLeft = int.Parse(panValues[1]);
@@ -776,6 +777,7 @@ namespace Addmusic2.Visitors
             }
             if(panValues.Length > 2)
             {
+                panPayload.HasSurroundSound = true;
                 if (panValues[2].Length > 0)
                 {
                     panPayload.SurroundSoundRight = int.Parse(panValues[2]);
@@ -1274,8 +1276,7 @@ namespace Addmusic2.Visitors
             var remoteCodeContentNodes = new List<ISongNode>();
             foreach( var content in remoteCodeContents )
             {
-                var node = Visit(content);
-                remoteCodeContentNodes.Add(node);
+                remoteCodeContentNodes.Add(Visit(content));
             }
             var remoteCodeDefinitionNode = new LoopNode 
             {
@@ -1313,13 +1314,14 @@ namespace Addmusic2.Visitors
             var iterationsText = context.NUMBERS();
             var iterations = (iterationsText == null) ? 0 : int.Parse(iterationsText.GetText());
 
-            // Remove loopname (if exists) and start bracket
-            var rangeLowerBound = (loopName.Length > 0) ? 2 : 1 ;
-            // remove end bracket and iteration count (if exists) and get length wrt start
-            var rangeUpperBound = (iterationsText == null) ? context.ChildCount - (rangeLowerBound + 2) : context.ChildCount - (rangeLowerBound + 1);
-            var childrenRange = new Range(rangeLowerBound, rangeUpperBound);
+            var simpleLoopContents = context.simpleLoopContents();
 
-            var childrenNodes = VisitChildren(context, childrenRange);
+            var loopContents = new List<ISongNode>();
+            // Visit the contents of the loop and store them in the LoopContents field
+            foreach ( var child in simpleLoopContents )
+            {
+                loopContents.Add(Visit(child));
+            }
 
             var simpleLoopNode = new LoopNode
             {
@@ -1329,7 +1331,7 @@ namespace Addmusic2.Visitors
                 ColumnNumber = context.Start.Column,
                 LoopName = loopName,
                 Iterations = iterations,
-                LoopContents = childrenNodes,
+                LoopContents = loopContents,
             };
 
             return simpleLoopNode;
@@ -1366,13 +1368,14 @@ namespace Addmusic2.Visitors
             var iterationsText = context.NUMBERS();
             var iterations = (iterationsText == null) ? 0 : int.Parse(iterationsText.GetText());
 
-            // Remove loopname (if exists) and start bracket
-            var rangeLowerBound = 1;
-            // remove end bracket and iteration count (if exists) and get length wrt start
-            var rangeUpperBound = (iterationsText == null) ? context.ChildCount - (rangeLowerBound + 2) : context.ChildCount - (rangeLowerBound + 1);
-            var childrenRange = new Range(rangeLowerBound, rangeUpperBound);
+            var superLoopContents = context.superLoopContents();
 
-            var childrenNodes = VisitChildren(context, childrenRange);
+            var loopContents = new List<ISongNode>();
+            // Visit the contents of the loop and store them in the LoopContents field
+            foreach (var child in superLoopContents)
+            {
+                loopContents.Add(Visit(child));
+            }
 
             var superLoopNode = new LoopNode
             {
@@ -1381,7 +1384,7 @@ namespace Addmusic2.Visitors
                 LineNumber = context.Start.Line,
                 ColumnNumber = context.Start.Column,
                 Iterations = iterations,
-                LoopContents = childrenNodes,
+                LoopContents = loopContents,
             };
 
             return superLoopNode;
@@ -1406,13 +1409,14 @@ namespace Addmusic2.Visitors
             var iterationsText = context.NUMBERS();
             var iterations = (iterationsText == null) ? 0 : int.Parse(iterationsText.GetText());
 
-            // Remove loopname (if exists) and start bracket
-            var rangeLowerBound = (loopName.Length > 0) ? 2 : 1;
-            // remove end bracket and iteration count (if exists) and get length wrt start
-            var rangeUpperBound = (iterationsText == null) ? context.ChildCount - (rangeLowerBound + 2) : context.ChildCount - (rangeLowerBound + 1);
-            var childrenRange = new Range(rangeLowerBound, rangeUpperBound);
+            var superLoopContents = context.terminalSimpleLoopContents();
 
-            var childrenNodes = VisitChildren(context, childrenRange);
+            var loopContents = new List<ISongNode>();
+            // Visit the contents of the loop and store them in the LoopContents field
+            foreach (var child in superLoopContents)
+            {
+                loopContents.Add(Visit(child));
+            }
 
             var simpleLoopNode = new LoopNode
             {
@@ -1422,7 +1426,7 @@ namespace Addmusic2.Visitors
                 ColumnNumber = context.Start.Column,
                 LoopName = loopName,
                 Iterations = iterations,
-                LoopContents = childrenNodes,
+                LoopContents = loopContents,
             };
 
             return simpleLoopNode;
@@ -1445,13 +1449,14 @@ namespace Addmusic2.Visitors
             var iterationsText = context.NUMBERS();
             var iterations = (iterationsText == null) ? 0 : int.Parse(iterationsText.GetText());
 
-            // Remove loopname (if exists) and start bracket
-            var rangeLowerBound = 1;
-            // remove end bracket and iteration count (if exists) and get length wrt start
-            var rangeUpperBound = (iterationsText == null) ? context.ChildCount - (rangeLowerBound + 2) : context.ChildCount - (rangeLowerBound + 1);
-            var childrenRange = new Range(rangeLowerBound, rangeUpperBound);
+            var superLoopContents = context.terminalSuperLoopContents();
 
-            var childrenNodes = VisitChildren(context, childrenRange);
+            var loopContents = new List<ISongNode>();
+            // Visit the contents of the loop and store them in the LoopContents field
+            foreach (var child in superLoopContents)
+            {
+                loopContents.Add(Visit(child));
+            }
 
             var superLoopNode = new LoopNode
             {
@@ -1460,7 +1465,7 @@ namespace Addmusic2.Visitors
                 LineNumber = context.Start.Line,
                 ColumnNumber = context.Start.Column,
                 Iterations = iterations,
-                LoopContents = childrenNodes,
+                LoopContents = loopContents,
             };
 
             return superLoopNode;
@@ -1485,9 +1490,10 @@ namespace Addmusic2.Visitors
         public override ISongNode VisitHexNumber([NotNull] MmlParser.HexNumberContext context)
         {
             var hexNumberText = context.GetText();
+            var hexNumber = hexNumberText.Replace("$", "");
             var hexNumberPayload = new HexNumberPayload
             {
-                HexValue = hexNumberText,
+                HexValue = hexNumber,
             };
 
             var hexNumberNode = new CompositeNode

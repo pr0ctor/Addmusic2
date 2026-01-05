@@ -125,6 +125,7 @@ namespace Addmusic2.Model.Constants
             public static readonly byte Rest = 0xC7;
             public static readonly byte Instrument = 0xDA;
             public static readonly byte Pan = 0xDB;
+            public static readonly byte PanFade = 0xDC;
             public static readonly byte PitchSlide = 0xDD;
             public static readonly byte Vibrato = 0xDE;
             public static readonly byte GlobalVolume = 0xE0;

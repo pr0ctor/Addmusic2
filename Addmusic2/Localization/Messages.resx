@@ -426,7 +426,7 @@
     <comment>Warning for when the number of iterations for a loop is out of the range</comment>
   </data>
   <data name="WarningNoteLengthFractionalTickValue" xml:space="preserve">
-    <value>WARNING: A note length was used that is not divisible by {0:D} ticks, and thus results in a fractional tick value. Song - {1) , Line - {2:D} , Column - {3:D}</value>
+    <value>WARNING: A note length was used that is not divisible by {0:D} ticks, and thus results in a fractional tick value. Song - {1} , Line - {2:D} , Column - {3:D}</value>
     <comment>Warning for when a note length is not divisible by the given amount and will yield a fractional tick value</comment>
   </data>
   <data name="InfoSoundEffectsNotIncluded" xml:space="preserve">
@@ -687,5 +687,17 @@
   <data name="ErrorInvalidDivideTempoValue" xml:space="preserve">
     <value>The value for Divide Tempo must be greater than 0.</value>
     <comment>Error for when the given value for the divide tempo command is less than zero</comment>
+  </data>
+  <data name="ErrorInvalidPanSurroundSoundValue" xml:space="preserve">
+    <value>The given value ({}) for the Pan Command Surround Sound is invalid. Valid values are 0 and 1.</value>
+    <comment>Error for when the provided pan surround sound values are invalid</comment>
+  </data>
+  <data name="ErrorPanDurationOutOfRange" xml:space="preserve">
+    <value>The given duration value ({0}) for the Pan Command is out of range. The value should be between {1} and {2}.</value>
+    <comment>Error for when the Pan Duration value is out of acceptable range</comment>
+  </data>
+  <data name="ErrorPanFinalValueOutOfRange" xml:space="preserve">
+    <value>The given final panning value ({0}) for the Pan Command is out of range. The value should be between {1} and {2}.</value>
+    <comment>Error for when the Pan final panning value is out of acceptable range</comment>
   </data>
 </root>
