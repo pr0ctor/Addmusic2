@@ -1223,6 +1223,14 @@ namespace Addmusic2.Model.Localization
             return localizedString ?? "";
         }
 
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorInvalidLoopNodeFoundInSoundEffectMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorInvalidLoopNodeFoundInSoundEffect"];
+
+            return localizedString ?? "";
+        }
+
         #endregion
 
         #endregion

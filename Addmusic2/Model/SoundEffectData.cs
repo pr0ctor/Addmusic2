@@ -9,8 +9,8 @@ namespace Addmusic2.Model
     internal class SoundEffectData
     {
 
-        public string Name { get; set; }
-        public string PatchData { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string PatchData { get; set; } = string.Empty;
 
         public int AramPosition { get; set; }
 
@@ -21,12 +21,5 @@ namespace Addmusic2.Model
         public List<JsrInformation> JsrInformation = new();
 
         public SoundEffectData() { }
-    }
-
-    internal class JsrInformation
-    {
-        public string JsrName { get; set; } = string.Empty;
-        public byte[] JsrData { get; set; }
-        public int SequencePosition { get; set; }
     }
 }

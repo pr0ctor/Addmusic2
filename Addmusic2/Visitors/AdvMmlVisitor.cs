@@ -193,7 +193,7 @@ namespace Addmusic2.Visitors
 
                 if (instrument.GetType().Name == nameof(MmlParser.InstrumentListItemContext))
                 {
-                    var instr = instrument as MmlParser.InstrumentListItemContext;
+                    var instr = (MmlParser.InstrumentListItemContext)instrument;
                     var instrumentNode = VisitInstrumentCommand(instr.instrumentCommand());
                     instrumentDefinition.Type = InstrumentDefinition.InstrumentType.Number;
                     instrumentDefinition.InstrumentNumber = instrumentNode;
@@ -201,14 +201,14 @@ namespace Addmusic2.Visitors
                 }
                 else if(instrument.GetType().Name == nameof(MmlParser.NamedInstrumentListItemContext))
                 {
-                    var instr = instrument as MmlParser.NamedInstrumentListItemContext;
+                    var instr = (MmlParser.NamedInstrumentListItemContext)instrument;
                     instrumentDefinition.Type = InstrumentDefinition.InstrumentType.Sample;
                     instrumentDefinition.SampleName = instr.StringLiteral().GetText();
                     instrumentDefinition.HexSettings = instr.hexNumber().Select(h => h.GetText()).ToList();
                 }
                 else if(instrument.GetType().Name == nameof(MmlParser.NoiseInstrumentListItemContext))
                 {
-                    var instr = instrument as MmlParser.NoiseInstrumentListItemContext;
+                    var instr = (MmlParser.NoiseInstrumentListItemContext)instrument;
                     var noiseNode = VisitNoiseNote(instr.noiseNote());
                     instrumentDefinition.Type = InstrumentDefinition.InstrumentType.Noise;
                     instrumentDefinition.NoiseData = noiseNode;

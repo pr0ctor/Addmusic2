@@ -178,9 +178,33 @@ namespace Addmusic2.Visitors
             return defaultLengthNode;
         }
 
-        public ISongNode VisitInstrument([NotNull] SfxParser.InstrumentContext context)
+        public override ISongNode VisitInstrument([NotNull] SfxParser.InstrumentContext context)
         {
-            throw new NotImplementedException();
+            var instrumentText = context.GetText();
+            var instrumentNumberText = instrumentText[1..];
+
+            var splitData = instrumentNumberText.Split(",");
+
+            var instrumentPayload = new SfxInstrumentPayload
+            {
+                InstrumentNumber = int.Parse(splitData[0]),
+            };
+
+            if(splitData.Length > 1 )
+            {
+                instrumentPayload.NoiseHexValue = splitData[1];
+            }
+
+            var instrumentNode = new AtomicNode
+            {
+                NodeType = SongNodeType.Instrument,
+                NodeSource = instrumentText,
+                Payload = instrumentPayload,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+            };
+
+            return instrumentNode;
         }
 
         public override ISongNode VisitLowerOctave([NotNull] SfxParser.LowerOctaveContext context)
@@ -216,7 +240,7 @@ namespace Addmusic2.Visitors
             return tieNode;
         }
 
-        public ISongNode VisitNote([NotNull] SfxParser.NoteContext context)
+        public override ISongNode VisitNote([NotNull] SfxParser.NoteContext context)
         {
             var noteText = context.GetText();
             var notePayload = new NotePayload();
@@ -308,7 +332,7 @@ namespace Addmusic2.Visitors
             };
         }
 
-        public ISongNode VisitRest([NotNull] SfxParser.RestContext context)
+        public override ISongNode VisitRest([NotNull] SfxParser.RestContext context)
         {
             var restText = context.GetText();
             var restPayload = new NotePayload();

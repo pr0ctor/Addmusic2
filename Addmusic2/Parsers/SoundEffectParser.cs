@@ -1,4 +1,5 @@
-﻿using Addmusic2.Helpers;
+﻿using Addmusic2.Exceptions;
+using Addmusic2.Helpers;
 using Addmusic2.Model;
 using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
@@ -141,20 +142,47 @@ namespace Addmusic2.Parsers
 
         public void ParseNode(SongNode node)
         {
-            var validationResult = (ValidationResult)ValidateNode(node);
+            var validationResult = ValidateNode(node);
 
             if (validationResult.Type == ResultType.Skip)
             {
+                _logger.LogWarning(LogLevel.Trace, _messageService.GetInfoLineAndColumnStringMessage(node.LineNumber.ToString(), node.ColumnNumber.ToString()) + " " + _messageService.GetErrorNodeValidationResultSkipMessage(node.NodeType.ToString(), node.ToString()));
                 return;
             }
             else if (validationResult.Type == ResultType.Failure)
             {
-                // todo handle failure cases
+                // Handles a case where a failure is returned by the validator
+
+                _logger.LogError(LogLevel.Trace, _messageService.GetInfoLineAndColumnStringMessage(node.LineNumber.ToString(), node.ColumnNumber.ToString()) + " " + _messageService.GetErrorNodeValidationResultFailureMessage(node.NodeType.ToString(), node.ToString()));
+
+                foreach (var message in validationResult.Message)
+                {
+                    _logger.LogError(LogLevel.Error, message, true);
+                }
+                return;
             }
-            else if (validationResult.Type == ResultType.Warning ||
-                validationResult.Type == ResultType.Error)
+            else if (validationResult.Type == ResultType.Warning)
             {
-                // todo handle error cases
+                // Handles a case where a warning is returned by the validator
+
+                _logger.LogWarning(LogLevel.Trace, _messageService.GetInfoLineAndColumnStringMessage(node.LineNumber.ToString(), node.ColumnNumber.ToString()) + " " + _messageService.GetErrorNodeValidationResultWarningMessage(node.NodeType.ToString(), node.ToString()));
+
+                foreach (var message in validationResult.Message)
+                {
+                    _logger.LogWarning(LogLevel.Warning, message, true);
+                }
+            }
+            else if (validationResult.Type == ResultType.Error)
+            {
+                // Handles a case where an error is returned by the validator
+
+                _logger.LogError(LogLevel.Trace, _messageService.GetInfoLineAndColumnStringMessage(node.LineNumber.ToString(), node.ColumnNumber.ToString()) + " " + _messageService.GetErrorNodeValidationResultErrorMessage(node.NodeType.ToString(), node.ToString()));
+
+                foreach (var message in validationResult.Message)
+                {
+                    _logger.LogError(LogLevel.Error, message, true);
+                }
+                return;
             }
 
             EvaluateNode(node);
@@ -165,11 +193,11 @@ namespace Addmusic2.Parsers
             return songNode switch
             {
                 null => throw new ArgumentNullException(nameof(songNode)),
-                DirectiveNode => ValidateSpecialDirective(songNode as DirectiveNode),
-                AtomicNode => ValidateAtomicNode(songNode as AtomicNode),
-                CompositeNode => ValidateCompositeNode(songNode as CompositeNode),
-                LoopNode => throw new Exception(),
-                HexNode => ValidateHexNode(songNode as HexNode),
+                DirectiveNode => ValidateSpecialDirective((DirectiveNode)songNode),
+                AtomicNode => ValidateAtomicNode((AtomicNode)songNode),
+                CompositeNode => ValidateCompositeNode((CompositeNode)songNode),
+                LoopNode => throw new AddmusicParserException(_messageService.GetErrorInvalidLoopNodeFoundInSoundEffectMessage()),
+                HexNode => ValidateHexNode((HexNode)songNode),
                 _ => new ValidationResult
                 {
                     Type = ResultType.Skip,
@@ -184,22 +212,21 @@ namespace Addmusic2.Parsers
                 case null:
                     throw new ArgumentNullException(nameof(songNode));
                 case DirectiveNode:
-                    EvaluateSpecialDirective(songNode as DirectiveNode);
+                    EvaluateSpecialDirective((DirectiveNode)songNode);
                     break;
                 case AtomicNode:
-                    EvaluateAtomicNode(songNode as AtomicNode);
+                    EvaluateAtomicNode((AtomicNode)songNode);
                     break;
                 case CompositeNode:
-                    EvaluateCompositeNode(songNode as CompositeNode);
+                    EvaluateCompositeNode((CompositeNode)songNode);
                     break;
                 case LoopNode:
-                    throw new Exception();
-                    break;
+                    throw new AddmusicParserException(_messageService.GetErrorInvalidLoopNodeFoundInSoundEffectMessage());
                 case HexNode:
-                    EvaluateHexNode(songNode as HexNode);
+                    EvaluateHexNode((HexNode)songNode);
                     break;
                 default:
-                    throw new Exception();
+                    throw new AddmusicParserException("Unknown SongNode found");
             }
         }
 
@@ -242,17 +269,18 @@ namespace Addmusic2.Parsers
                     // currently not implemented
                     return;
                 default:
-                    throw new Exception();
+                    throw new AddmusicParserException("Invalid Atomic Node Type found");
             }
         }
 
         public void EvaluateNoteNode(AtomicNode noteNode, bool inTriplet = false, bool inPitchSlide = false, bool isNextForDDPitchSlide = false)
         {
 
-            var notePayload = noteNode.Payload as NotePayload;
+            var notePayload = noteNode.Payload as NotePayload ?? throw new AddmusicParserException("Null Payload found");
+
             var currentInstrument = CurrentInstrument;
 
-            var tempLength = GetNoteLength(noteNode, notePayload!.Duration, notePayload.DotCount, inTriplet, true);
+            var tempLength = GetNoteLength(noteNode, notePayload.Duration, notePayload.DotCount, inTriplet, true);
 
             var noteValueChar = (int)notePayload.NoteValue[0];
             var note = GetPitchValue(noteValueChar, notePayload.Accidental);
@@ -284,7 +312,7 @@ namespace Addmusic2.Parsers
                         AddDataToChannel(MagicNumbers.CommandValues.PitchSlide);
                         AddDataToChannel((byte)PreviousNote);
                         AddDataToChannel(0x00);
-                        AddDataToChannel(((byte)PreviousNoteLength));
+                        AddDataToChannel((byte)PreviousNoteLength);
                         AddDataToChannel((byte)note);
                         FirstNote = false;
                     }
@@ -301,7 +329,7 @@ namespace Addmusic2.Parsers
 
                     AddDataToChannel(MagicNumbers.CommandValues.SfxPitchSlide);
                     AddDataToChannel(0x00);
-                    AddDataToChannel(((byte)PreviousNoteLength));
+                    AddDataToChannel((byte)PreviousNoteLength);
                     AddDataToChannel((byte)note);
                 }
 
@@ -418,10 +446,11 @@ namespace Addmusic2.Parsers
 
         public void EvaluateRestNode(AtomicNode restNode, bool inTriplet = false, bool inPitchSlide = false, bool isNextForDDPitchSlide = false)
         {
-            var restPayload = restNode.Payload as TiePayload;
+            var restPayload = restNode.Payload as TiePayload ?? throw new AddmusicParserException("Null Payload found");
+            
             var currentInstrument = CurrentInstrument;
 
-            var tempLength = GetNoteLength(restNode, restPayload!.Duration, restPayload.DotCount, inTriplet, true);
+            var tempLength = GetNoteLength(restNode, restPayload.Duration, restPayload.DotCount, inTriplet, true);
 
             var note = MagicNumbers.CommandValues.Rest;
 
@@ -475,29 +504,19 @@ namespace Addmusic2.Parsers
 
         public void EvaluateDefaultLengthNode(AtomicNode defaultLengthNode)
         {
-            var defaultLengthPayload = defaultLengthNode.Payload as DefaultLengthPayload;
-
-            if (defaultLengthPayload == null)
-            {
-                throw new Exception();
-            }
+            var defaultLengthPayload = defaultLengthNode.Payload as DefaultLengthPayload ?? throw new AddmusicParserException("Null Payload found");
 
             DefaultNoteLength = defaultLengthPayload.Length;
         }
 
         public void EvaluateSfxInstrumentNode(AtomicNode instrumentNode)
         {
-            var sfxInstrumentPayload = instrumentNode.Payload as SfxInstrumentPayload;
-
-            if (sfxInstrumentPayload == null)
-            {
-                throw new Exception();
-            }
+            var sfxInstrumentPayload = instrumentNode.Payload as SfxInstrumentPayload ?? throw new AddmusicParserException("Null Payload found");
 
             AddDataToChannel(MagicNumbers.CommandValues.Instrument);
             if(sfxInstrumentPayload.NoiseHexValue.Length > 0)
             {
-                var noiseValue = Convert.ToByte(sfxInstrumentPayload.NoiseHexValue, 16);
+                var noiseValue = Convert.ToByte(sfxInstrumentPayload.NoiseHexValue.Replace("$", ""), 16);
                 AddDataToChannel((byte)(0x80 | noiseValue));
             }
             AddDataToChannel((byte)sfxInstrumentPayload.InstrumentNumber);
@@ -511,18 +530,13 @@ namespace Addmusic2.Parsers
             if (CurrentOctave < MagicNumbers.OctaveMinimum)
             {
                 CurrentOctave = 0;
-                var message = _messageService.GetWarningOctaveDroppedTooLowMessage();
+                _logger.LogWarning(LogLevel.Warning, _messageService.GetWarningOctaveDroppedTooLowMessage());
             }
         }
 
         public void EvaluateOctaveNode(AtomicNode octaveNode)
         {
-            var octavePayload = octaveNode.Payload as OctavePayload;
-
-            if (octavePayload == null)
-            {
-                throw new Exception();
-            }
+            var octavePayload = octaveNode.Payload as OctavePayload ?? throw new AddmusicParserException("Null Payload found");
 
             CurrentOctave = octavePayload.OctaveNumber;
         }
@@ -533,20 +547,15 @@ namespace Addmusic2.Parsers
             if (CurrentOctave > MagicNumbers.OctaveMaximum)
             {
                 CurrentOctave = MagicNumbers.OctaveMaximum;
-                var message = _messageService.GetWarningOctaveRaisedTooHighMessage();
+                _logger.LogWarning(LogLevel.Warning, _messageService.GetWarningOctaveRaisedTooHighMessage());
             }
         }
 
         public void EvaluateVolumeNode(AtomicNode sfxVolumeNode)
         {
-            var sfxVolumePayload = sfxVolumeNode.Payload as SfxVolumePayload;
+            var sfxVolumePayload = sfxVolumeNode.Payload as SfxVolumePayload ?? throw new AddmusicParserException("Null Payload found");
 
-            if (sfxVolumePayload == null)
-            {
-                throw new Exception();
-            }
-
-            if(sfxVolumePayload.Volume == -1)
+            if (sfxVolumePayload.Volume == -1)
             {
                 LeftVolume = sfxVolumePayload.LeftVolumeValue;
                 RightVolume = sfxVolumePayload.RightVolumeValue;
@@ -579,24 +588,24 @@ namespace Addmusic2.Parsers
                     EvaluateHexCommand(compositeNode);
                     break;
                 default:
-                    throw new Exception();
-                    break;
+                    throw new AddmusicParserException("Invalid Composite Node Type found");
             }
         }
 
         public void EvaluateHexCommand(CompositeNode node)
         {
-            var payload = node.Payload as HexNumberPayload;
-            var byteData = Convert.ToByte(payload.HexValue, 16);
+            var payload = node.Payload as HexNumberPayload ?? throw new AddmusicParserException("Null Payload found");
+
+            var byteData = Convert.ToByte(payload.HexValue.Replace("$", ""), 16);
 
             AddDataToChannel(byteData);
         }
 
         public void EvaluatePitchSlideNode(CompositeNode node)
         {
-            var payload = node.Payload as PitchSlidePayload;
+            var payload = node.Payload as PitchSlidePayload ?? throw new AddmusicParserException("Null Payload found");
 
-            foreach (SongNode songNode in payload!.Nodes)
+            foreach (SongNode songNode in payload.Nodes)
             {
                 if (songNode.NodeType == SongNodeType.Empty)
                 {
@@ -660,7 +669,7 @@ namespace Addmusic2.Parsers
                     EvaluateJsrNode(specialDirective);
                     break;
                 default:
-                    throw new Exception();
+                    throw new AddmusicParserException("Invalid Special Directive Node Type found");
             }
         }
 
@@ -668,7 +677,7 @@ namespace Addmusic2.Parsers
         {
             // todo add logic to catch duplicates
 
-            var sfxAsmPayload = asmNode.Payload as SfxAsmPayload;
+            var sfxAsmPayload = asmNode.Payload as SfxAsmPayload ?? throw new AddmusicParserException("Null Payload found");
 
             NamedAsmBlocks.Add(sfxAsmPayload.JsrLabelName, sfxAsmPayload.AsmContentText);
 
@@ -678,7 +687,7 @@ namespace Addmusic2.Parsers
         {
             // todo add logic to catch duplicates
 
-            var sfxJsrPayload = jsrNode.Payload as SfxJsrPayload;
+            var sfxJsrPayload = jsrNode.Payload as SfxJsrPayload ?? throw new AddmusicParserException("Null Payload found");
 
             AddDataToChannel(MagicNumbers.CommandValues.SfxJsrCommand);
             JsrPositionsAndNames.Add(DataChannel.Count, sfxJsrPayload.JsrLabelName);
@@ -754,18 +763,13 @@ namespace Addmusic2.Parsers
                 SongNodeType.SfxVolume => ValidateSfxVolumeNode(atomic),
                 SongNodeType.Volume => throw new Exception(),
                 SongNodeType.Instrument => throw new Exception(),
-                _ => throw new Exception()
+                _ => throw new AddmusicParserException("Invalid Atomic Node Type Found")
             };
         }
 
         public IValidationResult ValidateDefaultLengthNode(AtomicNode defaultLength)
         {
-            var defaultLengthPayload = defaultLength.Payload as DefaultLengthPayload;
-
-            if (defaultLengthPayload == null)
-            {
-                throw new Exception();
-            }
+            var defaultLengthPayload = defaultLength.Payload as DefaultLengthPayload ?? throw new AddmusicParserException("Null Payload found");
 
             if (defaultLengthPayload.Length < 1 || defaultLengthPayload.Length > MagicNumbers.NoteLengthMaximum)
             {
@@ -801,12 +805,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateSfxInstrumentNode(AtomicNode instrument)
         {
-            var sfxInstrumentPayload = instrument.Payload as SfxInstrumentPayload;
-
-            if (sfxInstrumentPayload == null)
-            {
-                throw new Exception();
-            }
+            var sfxInstrumentPayload = instrument.Payload as SfxInstrumentPayload ?? throw new AddmusicParserException("Null Payload found");
 
             var messages = new List<string>();
             var instrumentNumber = sfxInstrumentPayload.InstrumentNumber;
@@ -839,12 +838,7 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateSfxVolumeNode(AtomicNode volume)
         {
-            var sfxVolumePayload = volume.Payload as SfxVolumePayload;
-
-            if (sfxVolumePayload == null)
-            {
-                throw new Exception();
-            }
+            var sfxVolumePayload = volume.Payload as SfxVolumePayload ?? throw new AddmusicParserException("Null Payload found");
 
             var volumeValue = sfxVolumePayload.Volume;
             var leftVolumeValue = sfxVolumePayload.LeftVolumeValue;
@@ -893,7 +887,7 @@ namespace Addmusic2.Parsers
                 SongNodeType.Triplet => ValidateTripletNode(composite),
                 SongNodeType.PitchSlide => ValidatePitchSlideNode(composite),
                 SongNodeType.HexCommand => ValidateHexCommand(composite),
-                _ => throw new Exception()
+                _ => throw new AddmusicParserException("Invalid Composite Node Type Found")
             }; ;
         }
 
@@ -927,16 +921,11 @@ namespace Addmusic2.Parsers
 
         public IValidationResult ValidateHexCommand(CompositeNode hexCommand)
         {
-            var hexPayload = hexCommand.Payload as HexNumberPayload;
+            var hexPayload = hexCommand.Payload as HexNumberPayload ?? throw new AddmusicParserException("Null Payload found");
 
-            if (hexPayload == null)
-            {
-                throw new Exception();
-            }
+            var hexByte = Convert.ToByte(hexPayload.HexValue.Replace("$", ""), 16);
 
-            var hexByte = byte.Parse(hexPayload.HexValue);
-
-            if (hexByte >= MagicNumbers.HexCommandMaximum)
+            if (hexByte > MagicNumbers.HexCommandMaximum)
             {
                 return new ValidationResult
                 {
@@ -1004,7 +993,7 @@ namespace Addmusic2.Parsers
                 {
                     Type = ResultType.Success
                 },
-                _ => throw new Exception()
+                _ => throw new AddmusicParserException("Invalid Special Directive Node Type found")
             };
         }
 
@@ -1027,7 +1016,7 @@ namespace Addmusic2.Parsers
 
             foreach (var hexNumber in hex.HexValues)
             {
-                var byteValue = Convert.ToByte(hexNumber.Replace("$", ""));
+                var byteValue = Convert.ToByte(hexNumber.Replace("$", ""), 16);
                 if (!Helpers.Helpers.IsHexInRange(byteValue))
                 {
                     messages.Add(_messageService.GetErrorHexCommandSuppliedValueOutOfRangeMessage(hexNumber, hex.HexCommand, 0, MagicNumbers.HexCommandMaximum));
@@ -1089,7 +1078,7 @@ namespace Addmusic2.Parsers
             {
                 if (MagicNumbers.NoteLengthMaximum % noteLength == 0)
                 {
-                    _messageService.GetWarningNoteLengthFractionalTickValueMessage(MagicNumbers.NoteLengthMaximum, SoundEffectData.Name, node.LineNumber, node.ColumnNumber);
+                    _logger.LogWarning(LogLevel.Warning, _messageService.GetWarningNoteLengthFractionalTickValueMessage(MagicNumbers.NoteLengthMaximum, SoundEffectData.Name, node.LineNumber, node.ColumnNumber));
                 }
                 length = MagicNumbers.NoteLengthMaximum / noteLength;
             }
@@ -1108,11 +1097,11 @@ namespace Addmusic2.Parsers
                 {
                     if (i != 0)
                     {
-                        _messageService.GetWarningFractionalTickValueFromDotsMessage(i + 1, SoundEffectData.Name, node.LineNumber, node.ColumnNumber);
+                        _logger.LogWarning(LogLevel.Warning, _messageService.GetWarningFractionalTickValueFromDotsMessage(i + 1, SoundEffectData.Name, node.LineNumber, node.ColumnNumber));
                     }
                     else
                     {
-                        _messageService.GetWarningFractionalTickValueFromDotsMessage(1, SoundEffectData.Name, node.LineNumber, node.ColumnNumber);
+                        _logger.LogWarning(LogLevel.Warning, _messageService.GetWarningFractionalTickValueFromDotsMessage(1, SoundEffectData.Name, node.LineNumber, node.ColumnNumber));
                     }
                 }
 
@@ -1124,7 +1113,7 @@ namespace Addmusic2.Parsers
             {
                 if (fraction % 3 != 0)
                 {
-                    _messageService.GetWarningTripletFractionalTickValueFromDotsMessage(SoundEffectData.Name, node.LineNumber, node.ColumnNumber);
+                    _logger.LogWarning(LogLevel.Warning, _messageService.GetWarningTripletFractionalTickValueFromDotsMessage(SoundEffectData.Name, node.LineNumber, node.ColumnNumber));
                 }
                 result = (int)Math.Floor(result * 2.0 / 3.0 + 0.5);
             }

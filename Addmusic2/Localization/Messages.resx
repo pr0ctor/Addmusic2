@@ -700,4 +700,8 @@
     <value>The given final panning value ({0}) for the Pan Command is out of range. The value should be between {1} and {2}.</value>
     <comment>Error for when the Pan final panning value is out of acceptable range</comment>
   </data>
+  <data name="ErrorInvalidLoopNodeFoundInSoundEffect" xml:space="preserve">
+    <value>Loop Nodes cannot be used in Sound Effects.</value>
+    <comment>Error for when a Loop is attempted to be used within a sound effect definition</comment>
+  </data>
 </root>

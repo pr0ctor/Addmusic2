@@ -16,7 +16,8 @@ namespace Addmusic2.Model
         public byte CurrentQuantization { get; set; }
         public bool UpdateQuantization { get; set; } = false;
         public int CurrentInstrument { get; set; }
-
+#pragma warning disable 8618
         public LoopInformation() { }
+#pragma warning restore 8618
     }
 }

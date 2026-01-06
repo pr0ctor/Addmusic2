@@ -22,7 +22,8 @@ namespace Addmusic2.Model
         public InstrumentType Type { get; set; }
 
         public List<string> HexSettings { get; set; } = new();
-
+#pragma warning disable 8618
         public InstrumentDefinition() { }
+#pragma warning restore 8618
     }
 }

@@ -619,6 +619,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loop Nodes cannot be used in Sound Effects..
+        /// </summary>
+        internal static string ErrorInvalidLoopNodeFoundInSoundEffect {
+            get {
+                return ResourceManager.GetString("ErrorInvalidLoopNodeFoundInSoundEffect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The given value ({}) for the Pan Command Surround Sound is invalid. Valid values are 0 and 1..
         /// </summary>
         internal static string ErrorInvalidPanSurroundSoundValue {
