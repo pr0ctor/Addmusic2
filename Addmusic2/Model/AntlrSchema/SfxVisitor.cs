@@ -142,6 +142,18 @@ public interface ISfxVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitHexCommands([NotNull] SfxParser.HexCommandsContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="SfxParser.ddPitchBlendCommand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDdPitchBlendCommand([NotNull] SfxParser.DdPitchBlendCommandContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="SfxParser.ddPitchBlendItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDdPitchBlendItems([NotNull] SfxParser.DdPitchBlendItemsContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="SfxParser.e0SfxPriority"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

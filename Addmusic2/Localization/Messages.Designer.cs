@@ -439,6 +439,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Supplied Filename ( {0} ) at Filepath ( {1} ) is not found..
+        /// </summary>
+        internal static string ErrorCacheCannotLoadFileData {
+            get {
+                return ResourceManager.GetString("ErrorCacheCannotLoadFileData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rom({0}) not found in either the Execution, Install, or given locations. Please make sure that a Rom file with the specified name is at one of those locations or provide an absolute uri..
         /// </summary>
         internal static string ErrorCannotFindRomInLocations {
@@ -826,6 +835,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The tag for the Program Base Position &quot;{0}&quot; was not found in file &quot;{1}&quot;..
+        /// </summary>
+        internal static string ErrorProgramBasePositionTextMissing {
+            get {
+                return ResourceManager.GetString("ErrorProgramBasePositionTextMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The tag for the Program Upload Position &quot;{0}&quot; was not found in file &quot;{1}&quot;..
         /// </summary>
         internal static string ErrorProgramUploadPositionTextMissing {
@@ -867,6 +885,15 @@ namespace Addmusic2.Localization {
         internal static string ErrorRecallLoopUsedBeforeDefinition {
             get {
                 return ResourceManager.GetString("ErrorRecallLoopUsedBeforeDefinition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The required file ({0}) at path ({1}) was not found..
+        /// </summary>
+        internal static string ErrorRequiredFileNotFound {
+            get {
+                return ResourceManager.GetString("ErrorRequiredFileNotFound", resourceCulture);
             }
         }
         

@@ -215,6 +215,26 @@ public interface ISfxListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitHexCommands([NotNull] SfxParser.HexCommandsContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="SfxParser.ddPitchBlendCommand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterDdPitchBlendCommand([NotNull] SfxParser.DdPitchBlendCommandContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SfxParser.ddPitchBlendCommand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitDdPitchBlendCommand([NotNull] SfxParser.DdPitchBlendCommandContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="SfxParser.ddPitchBlendItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterDdPitchBlendItems([NotNull] SfxParser.DdPitchBlendItemsContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="SfxParser.ddPitchBlendItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitDdPitchBlendItems([NotNull] SfxParser.DdPitchBlendItemsContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="SfxParser.e0SfxPriority"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

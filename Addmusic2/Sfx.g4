@@ -62,7 +62,12 @@ nakedTie : Tie ;
 
 // Hex Commands
 
-hexCommands : hexNumber ;
+hexCommands : ddPitchBlendCommand
+    | hexNumber
+    ;
+
+ddPitchBlendCommand : NDD hexNumber ( hexNumber | ddPitchBlendItems ) ;
+ddPitchBlendItems :  ( octave | raiseOctave | lowerOctave )* note ;
 
 e0SfxPriority : NE0 HexNumber ;
 
@@ -120,9 +125,10 @@ fragment JSR : ('jsr') ;
 Asm : POUND ASM ;
 Jsr : POUND JSR ;
 
-
+fragment NFDD : ('$DD') ;
 fragment NFE0 : ('$E0') ;
 
+NDD : NFDD ;
 NE0 : NFE0 ;
 
 

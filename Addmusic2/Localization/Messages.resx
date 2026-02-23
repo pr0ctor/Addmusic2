@@ -517,6 +517,10 @@
     <value>The tag for the Main Loop Position "{0}" was not found in file "{1}".</value>
     <comment>Error for when the Main Loop Position text cannot be found in the specified file</comment>
   </data>
+  <data name="ErrorProgramBasePositionTextMissing" xml:space="preserve">
+    <value>The tag for the Program Base Position "{0}" was not found in file "{1}".</value>
+    <comment>Error for when the Program Base Position text cannot be found in the specified file</comment>
+  </data>
   <data name="ErrorReuploadPositionTextMissing" xml:space="preserve">
     <value>The tag for the Reupload Position "{0}" was not found in file "{1}".</value>
     <comment>Error for when the Reupload Position text cannot be found in the specified file</comment>
@@ -703,5 +707,13 @@
   <data name="ErrorInvalidLoopNodeFoundInSoundEffect" xml:space="preserve">
     <value>Loop Nodes cannot be used in Sound Effects.</value>
     <comment>Error for when a Loop is attempted to be used within a sound effect definition</comment>
+  </data>
+  <data name="ErrorCacheCannotLoadFileData" xml:space="preserve">
+    <value>Supplied Filename ( {0} ) at Filepath ( {1} ) is not found.</value>
+    <comment>Error for when file data at a filepath cannot load the data for the file</comment>
+  </data>
+  <data name="ErrorRequiredFileNotFound" xml:space="preserve">
+    <value>The required file ({0}) at path ({1}) was not found.</value>
+    <comment>Error for when a required file was requested by not found</comment>
   </data>
 </root>
