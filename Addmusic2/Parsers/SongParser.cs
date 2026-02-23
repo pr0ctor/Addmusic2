@@ -61,7 +61,7 @@ namespace Addmusic2.Parsers
         private double ActiveSubLoopLength { get; set; } = 0;
         private bool InActiveSimpleLoop { get; set; } = false;
         private bool InActiveSuperLoop { get; set; } = false;
-
+        private bool InPitchSlide { get; set; } = false;
         private bool ToggleLowNoteWarning { get; set; } = true;
 
 
@@ -90,12 +90,16 @@ namespace Addmusic2.Parsers
             var amkVersion = nodes
                 .Where(n => n.NodeType == SongNodeType.Amk)
                 .ToList();
+            var sampleNode = nodes
+                .Where(n => n.NodeType == SongNodeType.Samples)
+                .ToList();
             var channels = nodes
                 .Where(n => n.NodeType == SongNodeType.Channel)
                 .ToList();
             var specialDirectives = nodes
                 .Where(n => n.NodeType != SongNodeType.Channel &&
                     n.NodeType != SongNodeType.Amk &&
+                    n.NodeType != SongNodeType.Samples &&
                     n.GetType() == typeof(DirectiveNode)
                 ).ToList();
 
@@ -116,6 +120,28 @@ namespace Addmusic2.Parsers
             {
                 AddmusicKVersion = AddmusicKVersion.Version4;
                 SongData.VelocityTable = VelocityTable.NspcVTable;
+            }
+
+            if(sampleNode.Count == 0)
+            {
+                var samplesNode = new DirectiveNode
+                {
+                    NodeType = SongNodeType.Samples,
+                    Payload = new SamplesPayload
+                    {
+                        SampleGroupPaths = ["#default"]
+                    },
+                };
+                ValidateAndProcessSamplesDirectiveNode(samplesNode);
+            }
+            else if(sampleNode.Count > 1)
+            {
+                // todo throw error
+                throw new AddmusicParserException();
+            }
+            else
+            {
+                ValidateAndProcessSamplesDirectiveNode((DirectiveNode)(sampleNode.First()));
             }
 
 
@@ -454,7 +480,7 @@ namespace Addmusic2.Parsers
             // handle an offset for proper indexing of data
             var offset = (songData.HasIntro ? 2 : 0) + (songData.DoesntLoop ? 0 : 2) + 4;
 
-            var combinedData = new List<byte>();
+            var combinedData = Enumerable.Repeat((byte)0, offset).Cast<byte>().ToList();
 
             // handle first <8 indices of data
 
@@ -468,7 +494,7 @@ namespace Addmusic2.Parsers
             }
             else
             {
-                combinedData[offset - 4] = MagicNumbers.ByteHexMaximum;
+                combinedData[offset - 4] = (byte)(MagicNumbers.ByteHexMaximum - 1);
                 combinedData[offset - 3] = MagicNumbers.ByteHexMaximum;
                 combinedData[offset - 2] = (byte)((songData.HasIntro) ? 0xFD : 0xFC);
                 combinedData[offset - 1] = MagicNumbers.ByteHexMaximum;
@@ -534,7 +560,7 @@ namespace Addmusic2.Parsers
 
             // Sum all used samples' datasize and add in the SCRN Table size for each sample
             songData.SpaceUsedBySamples = songData.SampleInstrumentManager.UsedSamples
-                .Select(s => ( MagicNumbers.SampleSCRNTableSize + s.SampleDataSize ))
+                .Select(s => ( MagicNumbers.SampleSCRNTableSize + s.Data.Count ))
                 .Sum();
             
             // todo Generate statistics file
@@ -1156,7 +1182,7 @@ namespace Addmusic2.Parsers
             switch (compositeNode.NodeType)
             {
                 case SongNodeType.Triplet:
-                    EvaluateTriplet(compositeNode);
+                    EvaluateTripletNode(compositeNode);
                     break;
                 case SongNodeType.PitchSlide:
                     EvaluatePitchSlideNode(compositeNode);
@@ -1251,16 +1277,17 @@ namespace Addmusic2.Parsers
                 var samplePath = Path.Combine(SongData.SongPath, sampleName);
 
                 SampleInstrumentManager.AddNewSampleName(sampleName);
-                var sampleData = new AddmusicSample
+                var sampleData = new Sample
                 {
                     Name = sampleName,
                     Path = samplePath,
                     IsImportant = false,
                     IsLooping = false,
                 };
+                Helpers.Helpers.LoadSampleToCache(_logger, _fileCachingService, sampleData);
+                var data = _fileCachingService.GetFromCache(sampleName);
                 SampleInstrumentManager.AddNewSample(sampleData);
                 SampleInstrumentManager.UseSample(sampleData);
-                Helpers.Helpers.LoadSampleToCache(_logger, _fileCachingService, sampleData);
 
                 var sampleIndex = SampleInstrumentManager.Samples.FindIndex(s => s.Name == sampleName);
 
@@ -1285,7 +1312,7 @@ namespace Addmusic2.Parsers
             AddDataToChannel(tuningValue);
         }
 
-        public void EvaluateTriplet(CompositeNode node)
+        public void EvaluateTripletNode(CompositeNode node)
         {
             foreach(SongNode songNode in node.Children)
             {
@@ -1754,7 +1781,7 @@ namespace Addmusic2.Parsers
             switch (hexNode.CommandType)
             {
                 case HexCommands.DDPitchBlend:
-                    EvaluateDDPitchBlend(hexNode);
+                    EvaluateDDPitchBlendNode(hexNode);
                     break;
                 case HexCommands.FAHotPatchPreset:
                     break;
@@ -1783,7 +1810,7 @@ namespace Addmusic2.Parsers
             }
         }
 
-        public void EvaluateDDPitchBlend(HexNode pitchBlendNode)
+        public void EvaluateDDPitchBlendNode(HexNode pitchBlendNode)
         {
             AddDataToChannel(Convert.ToByte(pitchBlendNode.HexCommand.Replace("$", ""), 16));
 
@@ -1792,9 +1819,24 @@ namespace Addmusic2.Parsers
                 AddDataToChannel(Convert.ToByte(commandValue.Replace("$", ""), 16));
             }
 
+            var inTriplet = false;
             foreach (var child in pitchBlendNode.Children)
             {
-                EvaluateNode(child);
+                switch (child.NodeType)
+                {
+                    case SongNodeType.Note:
+                        EvaluateNoteNode((AtomicNode)child, inTriplet, true);
+                        break;
+                    case SongNodeType.Rest:
+                        EvaluateRestNode((AtomicNode)child, inTriplet, true);
+                        break;
+                    case SongNodeType.Tie:
+                        EvaluateTieNode((AtomicNode)child, inTriplet, true);
+                        break;
+                    default:
+                        EvaluateNode(child);
+                        break;
+                }
             }
         }
 
@@ -2941,7 +2983,7 @@ namespace Addmusic2.Parsers
                 {
                     var standardizedPath = Helpers.Helpers.StandardizeFileDirectoryDelimiters(sample.Path);
                     var lastDirectorySeparator = Helpers.Helpers.GetLastDirectorySeparatorIndex(standardizedPath);
-                    var sampleName = standardizedPath[lastDirectorySeparator..];
+                    var sampleName = standardizedPath[(lastDirectorySeparator != 0 ? lastDirectorySeparator + 1 : 0 )..];
 
                     if (SampleInstrumentManager.ContainsSampleName(sampleName))
                     {
@@ -2953,8 +2995,8 @@ namespace Addmusic2.Parsers
                         SampleInstrumentManager.AddNewSampleName(sampleName);
                     }
 
-                    SampleInstrumentManager.AddNewSample(sample);
-                    Helpers.Helpers.LoadSampleToCache(_logger, _fileCachingService, sample);
+                    SampleInstrumentManager.AddNewSample(FileConverters.ConvertAddmusicSampleToSample(_messageService, sample));
+                    //Helpers.Helpers.LoadSampleToCache(_logger, _fileCachingService, sample);
                 }
             }
 
@@ -3003,8 +3045,8 @@ namespace Addmusic2.Parsers
                         IsImportant = false,
                         IsLooping = false,
                     };
-                    SampleInstrumentManager.AddNewSample(sampleData);
-                    Helpers.Helpers.LoadSampleToCache(_logger, _fileCachingService, sampleData);
+                    SampleInstrumentManager.AddNewSample(FileConverters.ConvertAddmusicSampleToSample(_messageService, sampleData));
+                    //Helpers.Helpers.LoadSampleToCache(_logger, _fileCachingService, sampleData);
                 }
             }
 
@@ -3513,18 +3555,15 @@ namespace Addmusic2.Parsers
 
         private int GetPitchValue(int value, NotePayload.Accidentals accidental)
         {
-            value = MagicNumbers.ValidPitches[value - MagicNumbers.PitchOffset] + (CurrentOctave - 1) * 12 + 0x80;
+            var pitchValue = MagicNumbers.ValidPitches[value - MagicNumbers.PitchOffset] + (CurrentOctave - 1) * 12 + 0x80;
 
-            if (accidental == NotePayload.Accidentals.Sharp)
+            return accidental switch
             {
-                value++;
-            }
-            else
-            {
-                value--;
-            }
-
-            return value;
+                NotePayload.Accidentals.Sharp => ++pitchValue,
+                NotePayload.Accidentals.Flat => --pitchValue,
+                NotePayload.Accidentals.None => pitchValue,
+                _ => pitchValue
+            };
         }
 
         private int GetCurrentInstrument()

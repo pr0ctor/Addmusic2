@@ -1,6 +1,7 @@
 ﻿using Addmusic2.Model;
 using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
+using Addmusic2.Model.Localization;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,12 @@ namespace Addmusic2.Services
     internal class FileCachingService : IFileCachingService
     {
         private IAddmusicLogger _logger;
+        private MessageService _messageService;
 
         // Dict(FileName, FileData>)
         // FileHash is needed for collisions due to samples with identical names but different data contents
-        private Dictionary<string, MemoryStream> _cache = new();
+        private Dictionary<string, byte[]> _cache = new();
+        //private Dictionary<string, MemoryStream> _cache = new();
 
         // Dict(MD5 Hash, FileName)
         // MD5 hashes of all of the files in the Cache with their associated filename
@@ -28,9 +31,10 @@ namespace Addmusic2.Services
         //      Only stores duplicates, does not store singletons
         private Dictionary<string, List<string>> _duplicateAliases = new();
 
-        public FileCachingService(IAddmusicLogger logger) 
+        public FileCachingService(IAddmusicLogger logger, MessageService messageService) 
         {
             _logger = logger;
+            _messageService = messageService;
         }
 
         public void InitializeCache()
@@ -88,7 +92,7 @@ namespace Addmusic2.Services
             }
             else
             {
-                throw new InvalidOperationException($"Supplied Filename ( {fileName} ) at Filepath ( {filePath} ) is not found.");
+                throw new InvalidOperationException(_messageService.GetErrorCacheCannotLoadFileDataMessage(fileName, filePath));
             }
         }
 
@@ -139,7 +143,8 @@ namespace Addmusic2.Services
                 var newStream = new MemoryStream();
                 fileData.Seek(0, SeekOrigin.Begin);
                 fileData.CopyTo(newStream);
-                _cache.Add(fileName, newStream);
+                _cache.Add(fileName, newStream.ToArray());
+                //_cache.Add(fileName, newStream);
                 return (int)fileData.Length;
             }
         }
@@ -157,17 +162,17 @@ namespace Addmusic2.Services
             {
                 var originalName = _duplicateAliases[fileName].First();
 
-                var stream = new MemoryStream();
-                _cache[originalName].CopyTo(stream);
-
+                //var stream = new MemoryStream();
+                //_cache[originalName].CopyTo(stream);
+                var stream = new MemoryStream(_cache[originalName]);
                 return stream;
             }
 
             if(_cache.ContainsKey(fileName))
             {
-                var stream = new MemoryStream();
-                _cache[fileName].CopyTo(stream);
-
+                //var stream = new MemoryStream();
+                //_cache[fileName].CopyTo(stream);
+                var stream = new MemoryStream(_cache[fileName]);
                 return stream;
             }
 

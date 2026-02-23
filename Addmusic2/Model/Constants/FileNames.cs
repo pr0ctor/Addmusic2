@@ -16,19 +16,28 @@ namespace Addmusic2.Model.Constants
 
         public static class AsmFiles
         {
-            public static readonly string PatchAsm = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "patch" + FileExtensions.Asm);
-            public static readonly string Patch2Asm = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "patch2" + FileExtensions.Asm);
-            public static readonly string MainAsm = Path.Combine(FolderNames.AsmBase, "main" + FileExtensions.Asm);
-            public static readonly string TempMainAsm = Path.Combine(FolderNames.AsmBase, "tempmain" + FileExtensions.Asm);
-            public static readonly string SongSampleListAsm = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "SongSampleList" + FileExtensions.Asm);
-            public static readonly string AMUndoAsm = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "AMUndo" + FileExtensions.Asm);
-            public static readonly string TempFinalPatch = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, "temppatch" + FileExtensions.Asm);
+            public static readonly string PatchAsmName = "patch" + FileExtensions.Asm;
+            public static readonly string PatchAsmPath = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, PatchAsmName);
+            public static readonly string Patch2AsmName = "patch2" + FileExtensions.Asm;
+            public static readonly string Patch2AsmPath = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, Patch2AsmName);
+            public static readonly string MainAsmName = "main" + FileExtensions.Asm;
+            public static readonly string MainAsmPath = Path.Combine(FolderNames.AsmBase, MainAsmName);
+            public static readonly string TempMainAsmName = "tempmain" + FileExtensions.Asm;
+            public static readonly string TempMainAsmPath = Path.Combine(FolderNames.AsmBase, TempMainAsmName);
+            public static readonly string SongSampleListAsmName = "SongSampleList" + FileExtensions.Asm;
+            public static readonly string SongSampleListAsmPath = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, SongSampleListAsmName);
+            public static readonly string AMUndoAsmName = "AMUndo" + FileExtensions.Asm;
+            public static readonly string AMUndoAsmPath = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, AMUndoAsmName);
+            public static readonly string TempFinalPatchName = "temppatch" + FileExtensions.Asm;
+            public static readonly string TempFinalPatchPath = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, TempFinalPatchName);
         }
 
         public static class BinFiles
         {
             public static readonly string MainBin = Path.Combine(FolderNames.AsmBase, "main" + FileExtensions.BinPatchData);
             public static readonly string SfxDataBin = Path.Combine(FolderNames.AsmBase, "SFXData" + FileExtensions.BinPatchData);
+            public static readonly string Sfx1DF9TableBin = Path.Combine(FolderNames.AsmBase, "SFX1DF9Table" + FileExtensions.BinPatchData);
+            public static readonly string Sfx1DFCTableBin = Path.Combine(FolderNames.AsmBase, "SFX1DFCTable" + FileExtensions.BinPatchData);
             public static readonly string MainSongDataBin = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, FolderNames.AsmSNESBin, "main" + FileExtensions.BinPatchData);
             public static string FinalMusicDataBin(string filename) => Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, FolderNames.AsmSNESBin, filename);
             public static string FinalSampleBrrDataBin(string filename) => Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, FolderNames.AsmSNESBin, filename);
@@ -50,6 +59,7 @@ namespace Addmusic2.Model.Constants
 
             // New Files
             public static readonly string AddmusicOptionsJson = "AddmusicOptions.json";
+            public static readonly string AddmusicResourceListJson = "AddmusicResourceList.json";
             public static readonly string AddmusicSongListJson = "AddmusicSongSfxList.json";
             public static readonly string AddmusicSampleGroupsJson = "AddmusicSampleGroups.json";
             public static readonly string AddmusicSoundEffectsJson = "AddmusicSoundEffects.json";

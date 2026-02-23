@@ -642,6 +642,14 @@ namespace Addmusic2.Model.Localization
         }
 
         [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorProgramBasePositionTextMissingMessage(string tagName, string fileName)
+        {
+            LocalizedString localizedString = _localizer["ErrorProgramBasePositionTextMissing", tagName, fileName];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
         public string GetErrorReuploadPositionTextMissingMessage(string tagName, string fileName)
         {
             LocalizedString localizedString = _localizer["ErrorReuploadPositionTextMissing", tagName, fileName];
@@ -733,6 +741,22 @@ namespace Addmusic2.Model.Localization
         public string GetErrorNoSongChannelDataToExportMessage(string songName)
         {
             LocalizedString localizedString = _localizer["ErrorNoSongChannelDataToExport", songName];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorCacheCannotLoadFileDataMessage(string fileName, string filePath)
+        {
+            LocalizedString localizedString = _localizer["ErrorCacheCannotLoadFileData", fileName, filePath];
+
+            return localizedString ?? "";
+        }
+
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorRequiredFileNotFoundMessage(string fileName, string filePath)
+        {
+            LocalizedString localizedString = _localizer["ErrorRequiredFileNotFound", fileName, filePath];
 
             return localizedString ?? "";
         }

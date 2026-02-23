@@ -16,7 +16,7 @@ namespace Addmusic2.Model
         public int EchoBufferStartPosition { get; set; }
         public int EchoBufferEndPosition { get; set; }
 
-        public Dictionary<AddmusicSample, (int StartPosition, int EndPosition)> SamplePositions { get; set; } = new();
+        public Dictionary<Sample, (int StartPosition, int EndPosition)> SamplePositions { get; set; } = [];
 
     }
 }

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Channels;
@@ -22,7 +23,7 @@ namespace Addmusic2.Parsers
     {
         private readonly IAddmusicLogger _logger;
         private readonly MessageService _messageService;
-        //private readonly SongListItem _songListItem;
+        private readonly SfxListItem _sfxListItem;
         private readonly GlobalSettings _globalSettings;
         private readonly IFileCachingService _fileCachingService;
         private readonly RomOperations _romOperations;
@@ -50,14 +51,14 @@ namespace Addmusic2.Parsers
             MessageService messageService,
             GlobalSettings globalSettings,
             IFileCachingService fileCachingService,
-            RomOperations romOperations
-            //SongListItem songItem,
+            RomOperations romOperations,
+            SfxListItem sfxItem
             //SongScope songScope
         )
         {
             _logger = logger;
             _messageService = messageService;
-            //_songListItem = songItem;
+            _sfxListItem = sfxItem;
             _globalSettings = globalSettings;
             _fileCachingService = fileCachingService;
             _romOperations = romOperations;
@@ -71,6 +72,10 @@ namespace Addmusic2.Parsers
                 ParseNode(node);
             }
 
+            if(_sfxListItem.Settings.Loop == false)
+            {
+                DataChannel.Add(0x00);
+            }
 
             SoundEffectData.ChannelData = DataChannel;
             SoundEffectData.JsrPositionsAndNames = JsrPositionsAndNames;
@@ -85,6 +90,7 @@ namespace Addmusic2.Parsers
         {
             var tempAsmPath = Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempAsmFile);
             var tempBinPath = Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempBinFile);
+            new FileInfo(tempAsmPath).Directory?.Create();
             using var tempAsmWriter = new StreamWriter(tempAsmPath, false);
 
             // Compile the asm blocks
@@ -93,28 +99,37 @@ namespace Addmusic2.Parsers
             {
                 var channelDataSize = soundEffectData.ChannelData.Count;
 
-                var aramPosition = soundEffectData.AramPosition + soundEffectData.CompiledAsmCodeBlocks.Count + soundEffectData.ChannelData.Count;
+                //var aramPosition = soundEffectData.AramPosition + soundEffectData.CompiledAsmCodeBlocks.Count + soundEffectData.ChannelData.Count;
+                var aramPosition = soundEffectData.AramPosition + soundEffectData.CompiledAsmCodeBlocks.Values.Sum(v => v.Length) + channelDataSize;
                 var sfxPatchString = PatchBuilders.BuildSoundEffectAsmPatch(aramPosition, block.Value);
 
                 tempAsmWriter.Write(sfxPatchString.ToCharArray());
-                var isCompileSuccessful = _romOperations.CompileAsmToBin(FileNames.StaticFiles.TempAsmFile, FileNames.StaticFiles.TempBinFile);
+                var isCompileSuccessful = _romOperations.CompileAsmToBin(
+                    Path.Combine(FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempAsmFile),
+                    Path.Combine(FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempBinFile)
+                );
 
-                if(!isCompileSuccessful)
+                if (!isCompileSuccessful)
                 {
-                    // todo fix exception
-                    throw new Exception();
+                    _logger.LogError(LogLevel.Critical, _messageService.GetErrorAsarErrorOccurredMessage(), true);
+                    throw new AsarExecutionException(_messageService.GetErrorAsarErrorOccurredMessage());
                 }
-                using var tempBinFile = File.Open(tempBinPath, FileMode.OpenOrCreate);
-                var data = new byte[tempBinFile.Length - MagicNumbers.SfxCompiledBinCodeLocation];
-                tempBinFile.Read(data, MagicNumbers.SfxCompiledBinCodeLocation, data.Length);
+
+                //using var tempBinFile = File.Open(tempBinPath, FileMode.OpenOrCreate);
+                var tempBinFileData = File.ReadAllBytes(tempBinPath);
+                var data = new byte[tempBinFileData.Length - MagicNumbers.SfxCompiledBinCodeLocation];
+                Array.Copy(tempBinFileData, MagicNumbers.SfxCompiledBinCodeLocation, data, 0, tempBinFileData.Length - MagicNumbers.SfxCompiledBinCodeLocation);
+                //tempBinFileData.CopyTo(data, MagicNumbers.SfxCompiledBinCodeLocation);
+                //tempBinFile.Read(data, MagicNumbers.SfxCompiledBinCodeLocation-1, data.Length - 1);
                 var jsrInformation = new JsrInformation
                 {
                     JsrName = block.Key,
                     JsrData = data,
                     SequencePosition = soundEffectData.CompiledAsmCodeBlocks.Count,
+                    ChannelPosition = channelDataSize
                 };
                 soundEffectData.JsrInformation.Add(jsrInformation);
-                soundEffectData.CompiledAsmCodeBlocks.Add(block.Key, data);
+                soundEffectData.CompiledAsmCodeBlocks.Add(jsrInformation.JsrName, data);
 
             }
 
@@ -122,13 +137,7 @@ namespace Addmusic2.Parsers
 
             foreach ( var jsr in soundEffectData.JsrPositionsAndNames)
             {
-                var jsrInformation = soundEffectData.JsrInformation.Find(j => j.JsrName == jsr.Value);
-
-                if (jsrInformation == null)
-                {
-                    // todo fix exception
-                    throw new Exception();
-                }
+                var jsrInformation = soundEffectData.JsrInformation.Find(j => j.JsrName == jsr.Value) ?? throw new Exception();
 
                 var jsrDataPosition = jsr.Key;
                 var adjustmentValue = (byte)(soundEffectData.AramPosition + soundEffectData.ChannelData.Count + jsrInformation.SequencePosition);
@@ -292,7 +301,7 @@ namespace Addmusic2.Parsers
                 note = 0;
             }
 
-            if(InPitchSlide == true)
+            if(note != MagicNumbers.CommandValues.Rest || inPitchSlide == true)
             {
                 if(FirstNote == true)
                 {
@@ -341,8 +350,13 @@ namespace Addmusic2.Parsers
                 // Exit early is resolving a pitch slide
                 return;
             }
+            else
+            {
+                InPitchSlide = false;
+                FirstNote = true;
+            }
 
-            if(tempLength >= 0x80)
+            if (tempLength >= MagicNumbers.NoteLengthMaxBeforeSplit)
             {
                 AddDataToChannel(0x7F);
 
@@ -352,15 +366,15 @@ namespace Addmusic2.Parsers
 
                 tempLength -= 0x7F;
 
-                while(tempLength > 0x7F)
+                while (tempLength > 0x7F)
                 {
                     tempLength -= 0x7F;
                     AddDataToChannel(MagicNumbers.CommandValues.Tie);
                 }
 
-                if(tempLength > 0)
+                if (tempLength > 0)
                 {
-                    if(tempLength != 0x7F)
+                    if (tempLength != 0x7F)
                     {
                         AddDataToChannel((byte)tempLength);
                     }
@@ -370,7 +384,7 @@ namespace Addmusic2.Parsers
 
                 PreviousNoteLength = tempLength;
             }
-            else if(tempLength > 0)
+            else if (tempLength > 0)
             {
                 AddDataToChannel((byte)tempLength);
                 PreviousNoteLength = tempLength;
@@ -386,10 +400,10 @@ namespace Addmusic2.Parsers
 
         public void EvaluateTieNode(AtomicNode tieNode, bool inTriplet = false, bool inPitchSlide = false, bool isNextForDDPitchSlide = false)
         {
-            var tiePayload = tieNode.Payload as TiePayload;
+            var tiePayload = tieNode.Payload as TiePayload ?? throw new AddmusicParserException("Null Payload found");
             var currentInstrument = CurrentInstrument;
 
-            var tempLength = GetNoteLength(tieNode, tiePayload!.Duration, tiePayload.DotCount, inTriplet, true);
+            var tempLength = GetNoteLength(tieNode, tiePayload.Duration, tiePayload.DotCount, inTriplet, true);
 
             var note = MagicNumbers.CommandValues.Tie;
 
@@ -403,7 +417,7 @@ namespace Addmusic2.Parsers
             FirstNote = true;
             InPitchSlide = false;
 
-            if (tempLength >= 0x80)
+            if (tempLength >= MagicNumbers.NoteLengthMaxBeforeSplit)
             {
                 AddDataToChannel(0x7F);
 
@@ -461,7 +475,10 @@ namespace Addmusic2.Parsers
                 note = 0;
             }
 
-            if (tempLength >= 0x80)
+            FirstNote = true;
+            InPitchSlide = false;
+
+            if (tempLength >= MagicNumbers.NoteLengthMaxBeforeSplit)
             {
                 AddDataToChannel(0x7F);
 
@@ -579,7 +596,7 @@ namespace Addmusic2.Parsers
             switch (compositeNode.NodeType)
             {
                 case SongNodeType.Triplet:
-                    EvaluateTriplet(compositeNode);
+                    EvaluateTripletNode(compositeNode);
                     break;
                 case SongNodeType.PitchSlide:
                     EvaluatePitchSlideNode(compositeNode);
@@ -613,15 +630,15 @@ namespace Addmusic2.Parsers
                 }
                 else if (songNode.NodeType == SongNodeType.Note)
                 {
-                    EvaluateNoteNode((AtomicNode)songNode, default, true);
+                    EvaluateNoteNode((AtomicNode)songNode, default, InPitchSlide);
                 }
                 else if (songNode.NodeType == SongNodeType.Rest)
                 {
-                    EvaluateRestNode((AtomicNode)songNode, default, true);
+                    EvaluateRestNode((AtomicNode)songNode, default, InPitchSlide);
                 }
                 else if (songNode.NodeType == SongNodeType.Tie)
                 {
-                    EvaluateTieNode((AtomicNode)songNode, default, true);
+                    EvaluateTieNode((AtomicNode)songNode, default, InPitchSlide);
                 }
                 else
                 {
@@ -630,7 +647,7 @@ namespace Addmusic2.Parsers
             }
         }
 
-        public void EvaluateTriplet(CompositeNode node)
+        public void EvaluateTripletNode(CompositeNode node)
         {
             foreach (SongNode songNode in node.Children)
             {
@@ -706,6 +723,9 @@ namespace Addmusic2.Parsers
                 case HexCommands.E0SfxPriority:
                     EvaluateE0SfxPriorityNode(hexNode);
                     break;
+                case HexCommands.DDPitchBlend:
+                    EvaluateDDPitchBlendNode(hexNode);
+                    break;
                 default:
                     EvaluateGenericHexCommandNode(hexNode);
                     break;
@@ -719,6 +739,36 @@ namespace Addmusic2.Parsers
             foreach (var commandValue in node.HexValues)
             {
                 AddDataToChannel(Convert.ToByte(commandValue.Replace("$", ""), 16));
+            }
+        }
+
+        public void EvaluateDDPitchBlendNode(HexNode pitchBlendNode)
+        {
+            AddDataToChannel(Convert.ToByte(pitchBlendNode.HexCommand.Replace("$", ""), 16));
+
+            foreach (var commandValue in pitchBlendNode.HexValues)
+            {
+                AddDataToChannel(Convert.ToByte(commandValue.Replace("$", ""), 16));
+            }
+
+            var inTriplet = false;
+            foreach (var child in pitchBlendNode.Children)
+            {
+                switch(child.NodeType)
+                {
+                    case SongNodeType.Note:
+                        EvaluateNoteNode((AtomicNode)child, inTriplet, InPitchSlide);
+                        break;
+                    case SongNodeType.Rest:
+                        EvaluateRestNode((AtomicNode)child, inTriplet, InPitchSlide);
+                        break;
+                    case SongNodeType.Tie:
+                        EvaluateTieNode((AtomicNode)child, inTriplet, InPitchSlide);
+                        break;
+                    default:
+                        EvaluateNode(child);
+                        break;
+                }
             }
         }
 
@@ -761,8 +811,8 @@ namespace Addmusic2.Parsers
                 SongNodeType.DefaultLength => ValidateDefaultLengthNode(atomic),
                 SongNodeType.SfxInstrument => ValidateSfxInstrumentNode(atomic),
                 SongNodeType.SfxVolume => ValidateSfxVolumeNode(atomic),
-                SongNodeType.Volume => throw new Exception(),
-                SongNodeType.Instrument => throw new Exception(),
+                SongNodeType.Volume => throw new AddmusicParserException("Cannot use Song Volume in Sound Effect"),
+                SongNodeType.Instrument => throw new AddmusicParserException("Cannot use Song Instrument in Sound Effect"),
                 _ => throw new AddmusicParserException("Invalid Atomic Node Type Found")
             };
         }
@@ -1006,6 +1056,7 @@ namespace Addmusic2.Parsers
             return hex.CommandType switch
             {
                 HexCommands.E0SfxPriority => ValidateGenericHexCommand(hex),
+                HexCommands.DDPitchBlend => ValidateDDPitchBlend(hex),
                 _ => ValidateGenericHexCommand(hex)
             };
         }
@@ -1020,6 +1071,40 @@ namespace Addmusic2.Parsers
                 if (!Helpers.Helpers.IsHexInRange(byteValue))
                 {
                     messages.Add(_messageService.GetErrorHexCommandSuppliedValueOutOfRangeMessage(hexNumber, hex.HexCommand, 0, MagicNumbers.HexCommandMaximum));
+                }
+            }
+
+            return messages.Count > 0
+                ? new ValidationResult
+                {
+                    Type = ResultType.Error,
+                    Message = messages,
+                }
+                : new ValidationResult
+                {
+                    Type = ResultType.Success,
+                };
+        }
+
+        public IValidationResult ValidateDDPitchBlend(HexNode pitchBlend)
+        {
+            var messages = new List<string>();
+
+            foreach (var hexNumber in pitchBlend.HexValues)
+            {
+                if (!Helpers.Helpers.IsHexInRange(Convert.ToByte(hexNumber.Replace("$", ""), 16)))
+                {
+                    messages.Add(_messageService.GetErrorHexCommandSuppliedValueOutOfRangeMessage(hexNumber, pitchBlend.HexCommand, 0, MagicNumbers.ByteHexMaximum));
+                }
+            }
+
+            foreach (var node in pitchBlend.Children)
+            {
+                var validation = (ValidationResult)ValidateNode(node);
+                if (validation.Type == ResultType.Error ||
+                    validation.Type == ResultType.Warning)
+                {
+                    messages.AddRange(validation.Message);
                 }
             }
 
@@ -1115,7 +1200,7 @@ namespace Addmusic2.Parsers
                 {
                     _logger.LogWarning(LogLevel.Warning, _messageService.GetWarningTripletFractionalTickValueFromDotsMessage(SoundEffectData.Name, node.LineNumber, node.ColumnNumber));
                 }
-                result = (int)Math.Floor(result * 2.0 / 3.0 + 0.5);
+                result = (int)Math.Floor(((double)result * 2.0 / 3.0) + 0.5);
             }
             return result;
         }
@@ -1133,7 +1218,11 @@ namespace Addmusic2.Parsers
                 value--;
             }
 
-            return value;
+            return (value < 0x80) 
+                ? -1 
+                : (value >= MagicNumbers.CommandValues.Tie)
+                    ? -2
+                    :value;
         }
 
         #endregion

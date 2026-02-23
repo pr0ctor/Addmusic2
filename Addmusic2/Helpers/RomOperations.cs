@@ -278,10 +278,11 @@ namespace Addmusic2.Helpers
             return address;
         }
 
-        public bool CompileAsmToBin(string sourceFileName, string binToWrite)
+        public bool CompileAsmToBin(string sourceFileName, string binToWrite, string tempFileName = "")
         {
             _logger.LogInformation(LogLevel.Debug, $"Compiling Asm({sourceFileName}) to .bin({binToWrite})");
-            using var tempTextFileWriter = new StreamWriter(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempTextFile), true);
+            var tempFile = (tempFileName.Length > 0) ? tempFileName : FileNames.StaticFiles.TempTextFile;
+            using var tempTextFileWriter = new StreamWriter(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, tempFile), false);
             using var tempLogFileWriter = new StreamWriter(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempLogFile), true);
 
             var dataOutArray = new byte[MagicNumbers.AsmToBinBufferLength];
@@ -305,6 +306,14 @@ namespace Addmusic2.Helpers
             var warnings = Asar.getwarnings();
             var errors = Asar.geterrors();
 
+            if(notifications.Length > 0)
+            {
+                foreach( var notification in notifications )
+                {
+                    tempTextFileWriter.WriteLine( notification );
+                }
+            }
+
 			var messageBuilder = LogAsarMessages(notifications, warnings, errors);
 
 			if (warnings.Length > 0 || errors.Length > 0)
@@ -312,9 +321,11 @@ namespace Addmusic2.Helpers
                 tempLogFileWriter.WriteLine(messageBuilder.ToString());
                 return false;
             }
-            using var binFile = File.Open(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempBinFile), FileMode.OpenOrCreate);
+            //using var binFile = File.Open(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempBinFile), FileMode.OpenOrCreate);
+            using var binFile = File.Open(binToWrite, FileMode.OpenOrCreate);
             binFile.Write(dataOutArray);
             binFile.Flush();
+            binFile.Close();
             return true;
         }
 
@@ -358,6 +369,7 @@ namespace Addmusic2.Helpers
 			using var sfcFile = File.Open(FileNames.SfcFiles.TempPatchSfc, FileMode.OpenOrCreate);
             sfcFile.Write(romBytes);
             sfcFile.Flush();
+            sfcFile.Close();
             return true;
         }
 

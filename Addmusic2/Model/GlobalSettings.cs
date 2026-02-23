@@ -52,10 +52,11 @@ namespace Addmusic2.Model
         #region Extracted Asm Data
 
         public int ProgramSize { get; set; }
+        public int ProgramBasePosition { get; set; }
         public int ProgramUploadPosition { get; set; }
-        public string ProgramReuploadPosition { get; set; } = string.Empty;
+        public int ProgramReuploadPosition { get; set; }
         public string MusicPointersPosition { get; set; } = string.Empty;
-        public string MainLoopPosition { get; set; } = string.Empty;
+        public int MainLoopPosition { get; set; }
         public int ExARAMRet { get; set; }
         public int DefARAMRet { get; set; }
         public int SongCount { get; set; }

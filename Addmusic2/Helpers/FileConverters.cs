@@ -262,5 +262,29 @@ namespace Addmusic2.Helpers
             return sampleGroups;
         }
 
+        public static Sample ConvertAddmusicSampleToSample(MessageService _messageService, AddmusicSample addmusicSample)
+        {
+            var sample = new Sample()
+            {
+                Name = (addmusicSample.Name.EndsWith(FileNames.FileExtensions.SampleBrr))
+                    ? addmusicSample.Name
+                    : addmusicSample.Name + FileNames.FileExtensions.SampleBrr,
+                Path = Helpers.StandardizeFileDirectoryDelimiters(addmusicSample.Path),
+                IsLooping = addmusicSample.IsLooping,
+                IsImportant = addmusicSample.IsImportant,
+            };
+
+            if(!File.Exists(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.SamplesBase, sample.Path)))
+            {
+                throw new FileNotFoundException(_messageService.GetErrorRequiredFileNotFoundMessage(sample.Name, sample.Path));
+            }
+
+            var sampleFile = File.ReadAllBytes(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.SamplesBase, sample.Path));
+
+            sample.Data = [.. sampleFile];
+
+            return sample;
+        }
+
     }
 }

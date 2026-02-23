@@ -18,6 +18,11 @@ using AsarCLR.Asar191;
 
 //[assembly: RootNamespace("Addmusic2")]
 
+if(File.Exists("asm/main.bin"))
+{
+    File.Delete("asm/main.bin");
+}
+
 // bad and dirty way to get early localization
 var tempService = new ServiceCollection();
 tempService.AddLogging(builder => builder.AddConsole());

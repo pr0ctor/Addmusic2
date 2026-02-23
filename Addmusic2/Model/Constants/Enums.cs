@@ -3,6 +3,7 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -58,18 +59,26 @@ namespace Addmusic2.Model.Constants
     [JsonConverter(typeof(StringEnumConverter))]
     public enum SongListItemType
     {
+        [EnumMember(Value = "NA")]
         NA,
+        [EnumMember(Value = "Original")]
         Original,
+        [EnumMember(Value = "Custom")]
         Custom,
+        [EnumMember(Value = "UserDefined")]
         UserDefined,
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
     public enum SfxListItemType
     {
+        [EnumMember(Value = "NA")]
         NA,
+        [EnumMember(Value = "1DF9")]
         Sfx1DF9,
+        [EnumMember(Value = "1DFC")]
         Sfx1DFC,
+        [EnumMember(Value = "UserDefined")]
         UserDefined,
     }
     public enum SongScope

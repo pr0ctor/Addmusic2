@@ -26,7 +26,7 @@ namespace Addmusic2.Visitors
         public List<ISongNode> VisitChildren(ParserRuleContext context)
         {
             var nodes = new List<ISongNode>();
-            for (int i = 1; i < context.ChildCount; i++)
+            for (int i = 0; i < context.ChildCount; i++)
             {
                 var child = context.GetChild(i);
                 var childNode = Visit(child);
@@ -49,7 +49,15 @@ namespace Addmusic2.Visitors
 
         public override ISongNode VisitSoundEffect([NotNull] SfxParser.SoundEffectContext context)
         {
-            var children = VisitChildren(context);
+            var children = new List<ISongNode>();
+
+            for (int i = 0; i < context.ChildCount; i++)
+            {
+                var child = context.GetChild(i);
+                var childNode = Visit(child);
+                children.Add(childNode);
+            }
+
             var songNode = new SongNode
             {
                 NodeType = SongNodeType.Root,
@@ -504,6 +512,33 @@ namespace Addmusic2.Visitors
             };
 
             return hexNumberNode;
+        }
+
+        public override ISongNode VisitDdPitchBlendCommand([NotNull] SfxParser.DdPitchBlendCommandContext context)
+        {
+            var dbPitchBlendText = context.GetText();
+            var hexCommandValue = context.NDD().GetText();
+            var values = context.hexNumber().Select(h => h.GetText()).ToList();
+            var noteData = new List<ISongNode>();
+            var blendItems = context.ddPitchBlendItems();
+            if(blendItems != null)
+            {
+                foreach (var index in Enumerable.Range(0, blendItems.ChildCount))
+                {
+                    noteData.Add(Visit(blendItems.GetChild(index)));
+                }
+            }
+            return new HexNode
+            {
+                NodeType = SongNodeType.Hex,
+                NodeSource = dbPitchBlendText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                CommandType = HexCommands.DDPitchBlend,
+                HexCommand = hexCommandValue,
+                HexValues = values,
+                Children = noteData,
+            };
         }
 
         public override ISongNode VisitE0SfxPriority([NotNull] SfxParser.E0SfxPriorityContext context)

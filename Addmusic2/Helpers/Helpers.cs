@@ -88,7 +88,7 @@ namespace Addmusic2.Helpers
             }
         }
 
-        public static void LoadSampleToCache(IAddmusicLogger logger, IFileCachingService fileCache, AddmusicSample sample, string subDirectory = "")
+        public static void LoadSampleToCache(IAddmusicLogger logger, IFileCachingService fileCache, Sample sample, string subDirectory = "")
         {
             var intermediaryDirectory = StandardizeFileDirectoryDelimiters(subDirectory);
             var fullPath = "";
@@ -112,12 +112,12 @@ namespace Addmusic2.Helpers
             fileCache.AddToCache(sample.Path, fullPath);
         }
 
-        public static byte[] GetSampleDataFromCache(IAddmusicLogger logger, IFileCachingService fileCache, AddmusicSample sample)
+        public static byte[] GetSampleDataFromCache(IAddmusicLogger logger, IFileCachingService fileCache, Sample sample)
         {
-            var cacheContains = fileCache.CheckCacheContains(sample.Path);
-            if(cacheContains.IsFound == true)
+            var (IsFound, Filename) = fileCache.CheckCacheContains(sample.Path);
+            if(IsFound == true)
             {
-                var dataStream = fileCache.GetFromCache(cacheContains.Filename);
+                var dataStream = fileCache.GetFromCache(Filename);
                 return dataStream!.ToArray();
             }
             else
@@ -127,12 +127,12 @@ namespace Addmusic2.Helpers
             }
         }
 
-        public static int GetSampleDataLengthFromCache(IAddmusicLogger logger, IFileCachingService fileCache, AddmusicSample sample)
+        public static int GetSampleDataLengthFromCache(IAddmusicLogger logger, IFileCachingService fileCache, Sample sample)
         {
-            var cacheContains = fileCache.CheckCacheContains(sample.Path);
-            if (cacheContains.IsFound == true)
+            var (IsFound, Filename) = fileCache.CheckCacheContains(sample.Path);
+            if (IsFound == true)
             {
-                var dataStream = fileCache.GetFromCache(cacheContains.Filename);
+                var dataStream = fileCache.GetFromCache(Filename);
                 return dataStream!.ToArray().Length;
             }
             else

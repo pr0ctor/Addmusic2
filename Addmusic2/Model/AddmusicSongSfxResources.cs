@@ -42,31 +42,8 @@ namespace Addmusic2.Model
         public string Name { get; set; } = string.Empty;
         [JsonProperty("path", Required = Required.Always)]
         public string Path { get; set; } = string.Empty;
-        [JsonProperty("type")]
-        private string ItemType { get; set; } = string.Empty;
-        [JsonIgnore]
-        private SongListItemType TypeTemp { get; set; }
-        [JsonIgnore]
-        public SongListItemType Type
-        {
-            get
-            {
-                if (Enum.TryParse(ItemType, out SongListItemType result))
-                {
-                    return result;
-                }
-                else
-                {
-
-                    return TypeTemp;
-                }
-            }
-            set
-            {
-                ItemType = Helpers.Helpers.ParseSongListItemTypeToString(value);
-                TypeTemp = value;
-            }
-        }
+        [JsonProperty("type", Required = Required.Always)]
+        public SongListItemType Type { get; set; }
     }
 
     internal class AddmusicSfxList
@@ -93,31 +70,8 @@ namespace Addmusic2.Model
         public string Name { get; set; } = string.Empty;
         [JsonProperty("path", Required = Required.Always)]
         public string Path { get; set; } = string.Empty;
-        [JsonProperty("type")]
-        private string ItemType { get; set; } = string.Empty;
-        [JsonIgnore]
-        private SfxListItemType TypeTemp { get; set; }
-        [JsonIgnore]
-        public SfxListItemType Type
-        {
-            get
-            {
-                if (Enum.TryParse(ItemType, out SfxListItemType result))
-                {
-                    return result;
-                }
-                else
-                {
-
-                    return TypeTemp;
-                }
-            }
-            set
-            {
-                ItemType = Helpers.Helpers.ParseSfxListItemTypeToString(value);
-                TypeTemp = value;
-            }
-        }
+        [JsonProperty("type", Required = Required.Always)]
+        public SfxListItemType Type { get; set; }
         [JsonProperty("settings", Required = Required.DisallowNull)]
         public SfxSettings Settings { get; set; } = new();
     }
@@ -147,11 +101,7 @@ namespace Addmusic2.Model
             get => NameValue;
             set
             {
-                var lastDirectorySeparator = (value.Contains(@"\"))
-                        ? value.LastIndexOf(@"\")
-                        : (value.Contains(@"/"))
-                            ? value.LastIndexOf(@"/")
-                            : 0;
+                var lastDirectorySeparator = Helpers.Helpers.GetLastDirectorySeparatorIndex(value);
                 var lastPeriod = value.LastIndexOf('.');
                 var fileName = (lastPeriod == -1)
                     ? value[lastDirectorySeparator..]
@@ -167,11 +117,7 @@ namespace Addmusic2.Model
             get => PathValue;
             set
             {
-                var lastDirectorySeparator = (value.Contains(@"\"))
-                        ? value.LastIndexOf(@"\") +1
-                        : (value.Contains(@"/"))
-                            ? value.LastIndexOf(@"/") +1
-                            : 0;
+                var lastDirectorySeparator = Helpers.Helpers.GetLastDirectorySeparatorIndex(value);
                 var lastPeriod = value.LastIndexOf('.');
                 var fileName = (lastPeriod == -1)
                     ? value[lastDirectorySeparator..]

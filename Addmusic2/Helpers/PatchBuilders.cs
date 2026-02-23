@@ -37,5 +37,23 @@ org $008000
         public static string MusicIncBinBuilder(int freespace, int musicNumber) => $"org ${freespace:X6}\nmusic{musicNumber:X2}: incbin \"bin/music{musicNumber:X2}.bin\"\n";
         public static string SampleBrrIncBinBuilder(int freespace, int brrNumber) => $"org ${freespace:X6}\nbrr{brrNumber:X2}: incbin \"bin/brr{brrNumber:X2}.bin\"\n";
 
+        public static void WriteDataToBinFile(ushort[] data, string path)
+        {
+            using var fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write);
+            using var bw = new BinaryWriter(fs);
+            foreach (ushort value in data)
+            {
+                bw.Write(value);
+            }
+        }
+        public static void WriteDataToBinFile(byte[] data, string path)
+        {
+            using var fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write);
+            using var bw = new BinaryWriter(fs);
+            foreach (byte value in data)
+            {
+                bw.Write(value);
+            }
+        }
     }
 }

@@ -523,7 +523,7 @@ namespace Addmusic2.Model.SongTree
         public override string ToString()
         {
             var builder = new StringBuilder();
-            builder = builder.Append($"${HexValue}");
+            builder = builder.Append($"{ (HexValue.StartsWith("$") ? HexValue : "$") }");
             return builder.ToString();
         }
     }

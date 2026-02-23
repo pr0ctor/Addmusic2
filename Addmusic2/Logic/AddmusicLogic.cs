@@ -77,6 +77,8 @@ namespace Addmusic2.Logic
 
             GetProgramUploadPosition();
 
+            AssembleSPCDriver();
+
             _logger.LogInformation(LogLevel.Information, "Compiling Songs and Sound Effects");
 
             CompileAllSoundEffects(SoundEffects);
@@ -228,11 +230,13 @@ namespace Addmusic2.Logic
                     continue;
                 }
 
-                var filedata = File.ReadAllText(Path.Combine(FileNames.FolderNames.Sfx1DF9, sfx1DF9.Path));
+                //var filedata = File.ReadAllText(Path.Combine(FileNames.FolderNames.Sfx1DF9, sfx1DF9.Path));
+                var filedata = File.ReadAllText(Path.Combine(sfx1DF9.Path));
+                filedata = filedata.Trim();
 
                 var preprocessedSfxFileData = PreprocessSoundEffect(filedata);
 
-                var soundEffectData = ProcessSoundEffect(preprocessedSfxFileData);
+                var soundEffectData = ProcessSoundEffect(sfx1DF9, preprocessedSfxFileData);
                 soundEffectData.Configuration = sfx1DF9;
 
                 PostProcessSoundEffect();
@@ -254,11 +258,12 @@ namespace Addmusic2.Logic
                     continue;
                 }
 
-                var filedata = File.ReadAllText(Path.Combine(FileNames.FolderNames.Sfx1DFC, sfx1DFC.Path));
+                //var filedata = File.ReadAllText(Path.Combine(FileNames.FolderNames.Sfx1DFC, sfx1DFC.Path));
+                var filedata = File.ReadAllText(Path.Combine(sfx1DFC.Path));
 
                 var preprocessedSfxFileData = PreprocessSoundEffect(filedata);
 
-                var soundEffectData = ProcessSoundEffect(preprocessedSfxFileData);
+                var soundEffectData = ProcessSoundEffect(sfx1DFC, preprocessedSfxFileData);
                 soundEffectData.Configuration = sfx1DFC;
 
                 PostProcessSoundEffect();
@@ -273,7 +278,7 @@ namespace Addmusic2.Logic
             return fileData;
         }
 
-        public SoundEffect ProcessSoundEffect(string fileData)
+        public SoundEffect ProcessSoundEffect(SfxListItem sfxItem, string fileData)
         {
             var stream = CharStreams.fromString(fileData);
 
@@ -291,7 +296,8 @@ namespace Addmusic2.Logic
                 _messageService,
                 _globalSettings,
                 _fileCachingService,
-                _romOperations
+                _romOperations,
+                sfxItem
             );
 
             var soundEffect = new SoundEffect(soundEffectParser, rootNode)
@@ -394,15 +400,17 @@ namespace Addmusic2.Logic
 
         public void GetProgramUploadPosition()
         {
-            var patchAsm = _fileCachingService.GetFromCache(FileNames.AsmFiles.PatchAsm);
-            var patchAsmStream = Encoding.Unicode.GetString(patchAsm.ToArray());
+            var patchAsm = _fileCachingService.GetFromCache(FileNames.AsmFiles.PatchAsmName) 
+                ?? throw new FileNotFoundException(_messageService.GetErrorRequiredFileNotFoundMessage(FileNames.AsmFiles.PatchAsmName, FileNames.AsmFiles.PatchAsmPath));
+            var patchAsmStream = Encoding.UTF8.GetString(patchAsm.ToArray());
+            //var patchAsmStream = Encoding.Unicode.GetString(patchAsm.ToArray());
             var programUploadPositionRegex = Helpers.Helpers.GetHexValueAfterText(ExtractedAsmDataNames.PatchAsmLocationNames.ProgramUploadPositionText);
             var matches = programUploadPositionRegex.Matches(patchAsmStream);
             // If no matches are found, then that value is missing from the expected file
             if (matches.Count == 0)
             {
-                _logger.LogError(LogLevel.Critical, _messageService.GetErrorProgramUploadPositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.ProgramUploadPositionText, FileNames.AsmFiles.PatchAsm), true);
-                throw new MissingFileDataException(_messageService.GetErrorProgramUploadPositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.ProgramUploadPositionText, FileNames.AsmFiles.PatchAsm));
+                _logger.LogError(LogLevel.Critical, _messageService.GetErrorProgramUploadPositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.ProgramUploadPositionText, FileNames.AsmFiles.PatchAsmPath), true);
+                throw new MissingFileDataException(_messageService.GetErrorProgramUploadPositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.ProgramUploadPositionText, FileNames.AsmFiles.PatchAsmPath));
             }
 
             // get the base16 value for the position
@@ -415,19 +423,17 @@ namespace Addmusic2.Logic
 
         public void AssembleSPCDriver()
         {
-            using var tempLogFileWriter = new StreamWriter(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempLogFile), true);
-
             if (File.Exists(FileNames.BinFiles.MainBin))
             {
                 File.Delete(FileNames.BinFiles.MainBin);
             }
 
-            var mainAsm = _fileCachingService.GetFromCache(FileNames.AsmFiles.MainAsm);
+            var mainAsm = _fileCachingService.GetFromCache(FileNames.AsmFiles.MainAsmName)
+                ?? throw new FileNotFoundException(_messageService.GetErrorRequiredFileNotFoundMessage(FileNames.AsmFiles.MainAsmName, FileNames.AsmFiles.MainAsmPath));
 
-            var mainAsmText = Encoding.Unicode.GetString(mainAsm.ToArray());
-            var programPostion = Helpers.Helpers.GetHexValueAfterText(ExtractedAsmDataNames.PatchAsmLocationNames.ProgramBasePositionText);
+            var mainAsmText = Encoding.UTF8.GetString(mainAsm.ToArray());
 
-            var complied = _romOperations.CompileAsmToBin(FileNames.AsmFiles.MainAsm, FileNames.BinFiles.MainBin);
+            var complied = _romOperations.CompileAsmToBin(FileNames.AsmFiles.MainAsmPath, FileNames.BinFiles.MainBin);
 
             if (!complied)
             {
@@ -435,13 +441,22 @@ namespace Addmusic2.Logic
                 throw new AsarExecutionException(_messageService.GetErrorAsarErrorOccurredMessage());
             }
 
-            var tempTextFile = File.ReadAllText(FileNames.StaticFiles.TempTextFile);
+            var tempTextFile = File.ReadAllText(Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempTextFile));
 
+            var programPostionRegex = Helpers.Helpers.GetHexValueAfterText(ExtractedAsmDataNames.PatchAsmLocationNames.ProgramBasePositionText);
             var mainLoopPositionRegex = Helpers.Helpers.GetHexValueAfterText(ExtractedAsmDataNames.PatchAsmLocationNames.MainLoopPositionText);
             var reuploadPositionRegex = Helpers.Helpers.GetHexValueAfterText(ExtractedAsmDataNames.PatchAsmLocationNames.ReuploadPositionText);
 
+            var mainBaseMatches = programPostionRegex.Matches(mainAsmText);
             var mainLoopMatches = mainLoopPositionRegex.Matches(tempTextFile);
             var reuploadMatches = reuploadPositionRegex.Matches(tempTextFile);
+
+            // Cannot find Program Base Position from the file
+            if (mainBaseMatches.Count == 0)
+            {
+                _logger.LogError(LogLevel.Critical, _messageService.GetErrorProgramBasePositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.MainLoopPositionText, FileNames.StaticFiles.TempTextFile), true);
+                throw new MissingFileDataException(_messageService.GetErrorProgramBasePositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.MainLoopPositionText, FileNames.StaticFiles.TempTextFile));
+            }
 
             // Cannot find Main Loop Position from the file
             if (mainLoopMatches.Count == 0)
@@ -456,7 +471,7 @@ namespace Addmusic2.Logic
                 throw new MissingFileDataException(_messageService.GetErrorReuploadPositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.ReuploadPositionText, FileNames.StaticFiles.TempTextFile));
             }
 
-            var noSFXIsFound = tempTextFile.IndexOf(ExtractedAsmDataNames.AdditionalValues.NoSFXIsEnabled) != -1;
+            var noSFXIsFound = tempTextFile.Contains(ExtractedAsmDataNames.AdditionalValues.NoSFXIsEnabled, StringComparison.CurrentCulture);
 
             if (_globalSettings.ExportSfx == true && noSFXIsFound == false)
             {
@@ -466,6 +481,9 @@ namespace Addmusic2.Logic
 
             var fileInfo = new FileInfo(FileNames.BinFiles.MainBin).Length;
             _globalSettings.ProgramSize = (int)fileInfo;
+            _globalSettings.ProgramBasePosition = Convert.ToInt32(mainBaseMatches.First().Groups[1].Value.Replace("$", ""), 16);
+            _globalSettings.MainLoopPosition = Convert.ToInt32(mainLoopMatches.First().Groups[1].Value.Replace("$", ""), 16);
+            _globalSettings.ProgramReuploadPosition = Convert.ToInt32(reuploadMatches.First().Groups[1].Value.Replace("$", ""), 16);
 
         }
 
@@ -514,8 +532,8 @@ namespace Addmusic2.Logic
                         throw new Exception();
                     }
 
-                    // readd the pointer for this sound effect
-                    df9Pointers.Add(df9Pointers[copyOf.Configuration.IntNumber]);
+                    // read the pointer for this sound effect
+                    df9Pointers.Add(df9Pointers[copyOf.Configuration.IntNumber - 1]);
 
                 }
                 else
@@ -523,7 +541,7 @@ namespace Addmusic2.Logic
                     // Calculate AramPosition because that was not done during the Parsing of the Sound Effect
                     sfx.SoundEffectData.AramPosition = sfx1DF9Max * 2
                         + sfx1DFCMax * 2
-                        + _globalSettings.ProgramUploadPosition
+                        + _globalSettings.ProgramBasePosition
                         + _globalSettings.ProgramSize
                         + df9DataTotal;
                     // Compile the Asm Elements now that there is a defined AramPosition
@@ -533,11 +551,12 @@ namespace Addmusic2.Logic
                     var pointer = dfcDataTotal
                         + df9DataTotal
                         + (sfx1DF9Max + sfx1DFCMax) * 2
-                        + _globalSettings.ProgramUploadPosition
+                        + _globalSettings.ProgramBasePosition
                         + _globalSettings.ProgramSize;
 
                     df9Pointers.Add((ushort)pointer);
-                    df9DataTotal += sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Count;
+                    //df9DataTotal += (sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Values.Sum(v => v.Length));
+                    df9DataTotal += (sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Count);
 
                     allSfxData.AddRange(sfx.SoundEffectData.ChannelData);
                     foreach (var item in sfx.SoundEffectData.CompiledAsmCodeBlocks.Values)
@@ -576,8 +595,8 @@ namespace Addmusic2.Logic
                         throw new Exception();
                     }
 
-                    // readd the pointer for this sound effect
-                    dfcPointers.Add(dfcPointers[copyOf.Configuration.IntNumber]);
+                    // read the pointer for this sound effect
+                    dfcPointers.Add(dfcPointers[copyOf.Configuration.IntNumber - 1]);
 
                 }
                 else
@@ -585,7 +604,7 @@ namespace Addmusic2.Logic
                     // Calculate AramPosition because that was not done during the Parsing of the Sound Effect
                     sfx.SoundEffectData.AramPosition = sfx1DF9Max * 2
                         + sfx1DFCMax * 2
-                        + _globalSettings.ProgramUploadPosition
+                        + _globalSettings.ProgramBasePosition
                         + _globalSettings.ProgramSize
                         + dfcDataTotal;
                     // Compile the Asm Elements now that there is a defined AramPosition
@@ -595,11 +614,12 @@ namespace Addmusic2.Logic
                     var pointer = dfcDataTotal
                         + df9DataTotal
                         + (sfx1DF9Max + sfx1DFCMax) * 2
-                        + _globalSettings.ProgramUploadPosition
+                        + _globalSettings.ProgramBasePosition
                         + _globalSettings.ProgramSize;
 
                     dfcPointers.Add((ushort)pointer);
-                    dfcDataTotal += sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Count;
+                    //dfcDataTotal += (sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Values.Sum(v => v.Length));
+                    dfcDataTotal += (sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Count);
 
                     allSfxData.AddRange(sfx.SoundEffectData.ChannelData);
                     foreach (var item in sfx.SoundEffectData.CompiledAsmCodeBlocks.Values)
@@ -614,15 +634,19 @@ namespace Addmusic2.Logic
             var df9Size = (df9DataTotal + (sfx1DF9Max * 2));
             var dfcSize = (dfcDataTotal + (sfx1DFCMax * 2));
             var allSize = df9Size + dfcSize;
-            _logger.LogInformation(LogLevel.Information, _messageService.GetInfoTotalSpaceUsedBy1DF9SfxMessage($"0x{PatchBuilders.HexWidthFormat(df9DataTotal.ToString(), 4)}"));
-            _logger.LogInformation(LogLevel.Information, _messageService.GetInfoTotalSpaceUsedBy1DFCSfxMessage($"0x{PatchBuilders.HexWidthFormat(df9DataTotal.ToString(), 4)}"));
-            _logger.LogInformation(LogLevel.Information, _messageService.GetInfoTotalSpaceUsedByAllSoundEffectsMessage($"0x{PatchBuilders.HexWidthFormat(allSize.ToString(), 4)}"));
+            _logger.LogInformation(LogLevel.Information, _messageService.GetInfoTotalSpaceUsedBy1DF9SfxMessage($"0x{df9Size:X4}"));
+            _logger.LogInformation(LogLevel.Information, _messageService.GetInfoTotalSpaceUsedBy1DFCSfxMessage($"0x{dfcSize:X4}"));
+            _logger.LogInformation(LogLevel.Information, _messageService.GetInfoTotalSpaceUsedByAllSoundEffectsMessage($"0x{allSize:X4}"));
 
 
+            PatchBuilders.WriteDataToBinFile(df9Pointers.ToArray(), FileNames.BinFiles.Sfx1DF9TableBin);
+            PatchBuilders.WriteDataToBinFile(dfcPointers.ToArray(), FileNames.BinFiles.Sfx1DFCTableBin);
+            PatchBuilders.WriteDataToBinFile(allSfxData.ToArray(), FileNames.BinFiles.SfxDataBin);
+            //File.WriteAllBytes(FileNames.BinFiles.SfxDataBin, allSfxData.ToArray());
 
-            File.WriteAllBytes(FileNames.BinFiles.SfxDataBin, allSfxData.ToArray());
+            var mainAsm = _fileCachingService.GetFromCache(FileNames.AsmFiles.MainAsmName)
+                ?? throw new FileNotFoundException(_messageService.GetErrorRequiredFileNotFoundMessage(FileNames.AsmFiles.MainAsmName, FileNames.AsmFiles.MainAsmPath));
 
-            var mainAsm = _fileCachingService.GetFromCache(FileNames.AsmFiles.MainAsm);
             mainAsm.Seek(index, SeekOrigin.Begin);
 
             var mainAsmText = Encoding.UTF8.GetString(mainAsm.ToArray());
@@ -634,15 +658,15 @@ namespace Addmusic2.Logic
 
             var sfxTable1Position = mainAsmText.IndexOf(ExtractedAsmDataNames.PatchAsmLocationNames.SFXTable1Text);
             mainAsmText = mainAsmText.Insert(
-                sfxTable0Position + ExtractedAsmDataNames.PatchAsmLocationNames.SFXTable1Text.Length,
+                sfxTable1Position + ExtractedAsmDataNames.PatchAsmLocationNames.SFXTable1Text.Length,
                 PatchBuilders.SfxTable1Contents
             );
 
-            File.WriteAllText(FileNames.AsmFiles.TempMainAsm, mainAsmText);
+            File.WriteAllText(FileNames.AsmFiles.TempMainAsmPath, mainAsmText);
 
             File.Delete(FileNames.BinFiles.MainBin);
 
-            var isCompiled = _romOperations.CompileAsmToBin(FileNames.AsmFiles.TempMainAsm, FileNames.BinFiles.MainBin);
+            var isCompiled = _romOperations.CompileAsmToBin(FileNames.AsmFiles.TempMainAsmPath, FileNames.BinFiles.MainBin);
 
             if (!isCompiled)
             {
@@ -656,11 +680,11 @@ namespace Addmusic2.Logic
             if (_globalSettings.ExportSfx == true)
             {
                 _messageService.GetInfoSoundEffectsNotIncludedMessage();
-                _messageService.GetInfoTotalSizeOfProgramMessage($"0x{PatchBuilders.HexWidthFormat(newProgramSize.ToString(), 4)}");
+                _messageService.GetInfoTotalSizeOfProgramMessage($"0x{newProgramSize:X4}");
             }
             else
             {
-                _messageService.GetInfoTotalSizeOfProgramWithSfxMessage($"0x{PatchBuilders.HexWidthFormat(newProgramSize.ToString(), 4)}");
+                _messageService.GetInfoTotalSizeOfProgramWithSfxMessage($"0x{newProgramSize:X4}");
             }
 
             _globalSettings.ProgramSize = newProgramSize;
@@ -753,7 +777,7 @@ namespace Addmusic2.Logic
 
                 var sampleLengths = song.SongData.SampleInstrumentManager.UsedSamples.Select(s =>
                 {
-                    return $"${Helpers.Helpers.GetSampleDataLengthFromCache(_logger, _fileCachingService, s):X4}";
+                    return $"${s.Data.Count:X4}";
                 });
 
                 samplePointerListBuilder.Append($"{string.Join(",", sampleLengths)}\n");
@@ -768,7 +792,7 @@ namespace Addmusic2.Logic
             songSampleListAsmBuilder.Append(samplePointerListBuilder.ToString());
             songSampleListAsmBuilder.Append($"\n{PatchBuilders.SongSampleListEndLabel}");
 
-            File.WriteAllText(FileNames.AsmFiles.SongSampleListAsm, songSampleListAsmBuilder.ToString());
+            File.WriteAllText(FileNames.AsmFiles.SongSampleListAsmPath, songSampleListAsmBuilder.ToString());
         }
 
         public void FixMusicPointers(List<Song> songs)
@@ -939,10 +963,10 @@ namespace Addmusic2.Logic
                         if (!duplicate)
                         {
                             var startPosition = checkPosition;
-                            var endPosition = checkPosition + sample.SampleDataSize;
+                            var endPosition = checkPosition + sample.Data.Count;
                             spaceInfo.SamplePositions.Add(sample, (startPosition, endPosition));
 
-                            checkPosition += sample.SampleDataSize;
+                            checkPosition += sample.Data.Count;
                         }
 
                     }
@@ -979,7 +1003,7 @@ namespace Addmusic2.Logic
             }
 
             var finalTempAsmBuilder = new StringBuilder();
-            var tempAsm = File.ReadAllText(FileNames.AsmFiles.TempMainAsm);
+            var tempAsm = File.ReadAllText(FileNames.AsmFiles.TempMainAsmPath);
 
             finalTempAsmBuilder.Append(tempAsm);
             finalTempAsmBuilder.Append('\n');
@@ -989,9 +1013,9 @@ namespace Addmusic2.Logic
             finalTempAsmBuilder.Append('\n');
             finalTempAsmBuilder.Append(incbinsBuilder.ToString());
 
-            File.WriteAllText(FileNames.AsmFiles.TempMainAsm, finalTempAsmBuilder.ToString());
+            File.WriteAllText(FileNames.AsmFiles.TempMainAsmPath, finalTempAsmBuilder.ToString());
 
-            var isCompiled = _romOperations.CompileAsmToBin(FileNames.AsmFiles.TempMainAsm, FileNames.BinFiles.MainSongDataBin);
+            var isCompiled = _romOperations.CompileAsmToBin(FileNames.AsmFiles.TempMainAsmPath, FileNames.BinFiles.MainSongDataBin);
 
             if (!isCompiled)
             {
@@ -1025,7 +1049,7 @@ namespace Addmusic2.Logic
         public void AssembleFinalPatch(Rom rom, List<Song> songs)
         {
 
-            var patchData = File.ReadAllText(FileNames.AsmFiles.PatchAsm);
+            var patchData = File.ReadAllText(FileNames.AsmFiles.PatchAsmPath);
             var replacePatchData = Helpers.Helpers.SetHexValueAfterText(patchData, ExtractedAsmDataNames.PatchAsmLocationNames.ExpARAMRetText, $"{_globalSettings.ProgramReuploadPosition:X4}");
             replacePatchData = Helpers.Helpers.SetHexValueAfterText(replacePatchData, ExtractedAsmDataNames.PatchAsmLocationNames.DefARAMRetText, $"{_globalSettings.MainLoopPosition:X4}");
             replacePatchData = Helpers.Helpers.SetHexValueAfterText(replacePatchData, ExtractedAsmDataNames.PatchAsmLocationNames.SongCountText, $"{songs.Count:X2}");
@@ -1034,8 +1058,8 @@ namespace Addmusic2.Logic
             // Cannot find MusicPointersText from the file
             if (musicPointersLocation == -1)
             {
-                _logger.LogError(LogLevel.Critical, _messageService.GetErrorMusicPointersTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.MusicPointersText, FileNames.AsmFiles.PatchAsm), true);
-                throw new MissingFileDataException(_messageService.GetErrorMainLoopPositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.MainLoopPositionText, FileNames.AsmFiles.PatchAsm));
+                _logger.LogError(LogLevel.Critical, _messageService.GetErrorMusicPointersTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.MusicPointersText, FileNames.AsmFiles.PatchAsmPath), true);
+                throw new MissingFileDataException(_messageService.GetErrorMainLoopPositionTextMissingMessage(ExtractedAsmDataNames.PatchAsmLocationNames.MainLoopPositionText, FileNames.AsmFiles.PatchAsmPath));
             }
             var subPatchBuilder = new StringBuilder();
             subPatchBuilder.Append(replacePatchData[..musicPointersLocation]);
@@ -1052,7 +1076,7 @@ namespace Addmusic2.Logic
             sampleIncBinsPointerBuilder.Append("\n\n");
 
             var songCount = 0;
-            var usedSamples = new List<AddmusicSample>();
+            var usedSamples = new List<Sample>();
             foreach (var song in songs)
             {
                 if (song.SongData.SongScope == SongScope.Local)
@@ -1096,12 +1120,12 @@ namespace Addmusic2.Logic
             {
                 var sampleData = new List<byte>();
                 sampleData.AddRange(MagicNumbers.StarTag);
-                sampleData.Add((byte)((sample.SampleDataSize + 1) & 0xFF));
-                sampleData.Add((byte)((sample.SampleDataSize + 1) >> 8));
-                sampleData.Add((byte)(~(sample.SampleDataSize + 1) & 0xFF));
-                sampleData.Add((byte)(~(sample.SampleDataSize + 1) >> 8));
-                sampleData.Add((byte)(sample.SampleDataSize & 0xFF));
-                sampleData.Add((byte)(sample.SampleDataSize >> 8));
+                sampleData.Add((byte)((sample.Data.Count + 1) & 0xFF));
+                sampleData.Add((byte)((sample.Data.Count + 1) >> 8));
+                sampleData.Add((byte)(~(sample.Data.Count + 1) & 0xFF));
+                sampleData.Add((byte)(~(sample.Data.Count + 1) >> 8));
+                sampleData.Add((byte)(sample.Data.Count & 0xFF));
+                sampleData.Add((byte)(sample.Data.Count >> 8));
 
                 var sampleDataStream = _fileCachingService.GetFromCache(sample.Name);
                 sampleData.AddRange(sampleData.ToArray());
@@ -1161,9 +1185,9 @@ namespace Addmusic2.Logic
                 File.Delete(FileNames.SfcFiles.TempPatchSfc);
             }
 
-            var amUndo = File.ReadAllText(FileNames.AsmFiles.AMUndoAsm);
+            var amUndo = File.ReadAllText(FileNames.AsmFiles.AMUndoAsmPath);
 
-            File.WriteAllText(FileNames.AsmFiles.TempFinalPatch, amUndo + finalSubPatch.ToString());
+            File.WriteAllText(FileNames.AsmFiles.TempFinalPatchName, amUndo + finalSubPatch.ToString());
 
             if (_globalSettings.Verbose)
             {
@@ -1172,7 +1196,7 @@ namespace Addmusic2.Logic
 
             if (_globalSettings.GeneratePatches == false)
             {
-                var isPatched = _romOperations.PatchAsmToRom(FileNames.AsmFiles.TempFinalPatch, FileNames.SfcFiles.TempPatchSfc);
+                var isPatched = _romOperations.PatchAsmToRom(FileNames.AsmFiles.TempFinalPatchName, FileNames.SfcFiles.TempPatchSfc);
 
                 if (!isPatched)
                 {

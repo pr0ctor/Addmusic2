@@ -27,7 +27,7 @@ namespace Addmusic2.Visitors
         public List<ISongNode> VisitChildren(ParserRuleContext context)
         {
             var nodes = new List<ISongNode>();
-            for (int i = 1; i < context.ChildCount; i++)
+            for (int i = 0; i < context.ChildCount; i++)
             {
                 var child = context.GetChild(i);
                 var childNode = Visit(child);
@@ -55,7 +55,16 @@ namespace Addmusic2.Visitors
 
         public override ISongNode VisitSong([NotNull] MmlParser.SongContext context)
         {
-            var children = VisitChildren(context);
+            //var children = VisitChildren(context);
+            var children = new List<ISongNode>();
+
+            for (int i = 0; i < context.ChildCount; i++)
+            {
+                var child = context.GetChild(i);
+                var childNode = Visit(child);
+                children.Add(childNode);
+            }
+            
             var songNode = new SongNode
             {
                 NodeType = SongNodeType.Root,
@@ -409,7 +418,16 @@ namespace Addmusic2.Visitors
             {
                 ChannelNumber = soundChannelNumber,
             };
-            var childNodes = VisitChildren(context);
+
+            var children = new List<ISongNode>();
+
+            for (int i = 1; i < context.ChildCount; i++)
+            {
+                var child = context.GetChild(i);
+                var childNode = Visit(child);
+                children.Add(childNode);
+            }
+
             var channelNode = new DirectiveNode
             {
                 NodeType = SongNodeType.Channel,
@@ -417,7 +435,7 @@ namespace Addmusic2.Visitors
                 Payload = channelPayload,
                 LineNumber = context.Start.Line,
                 ColumnNumber = context.Start.Column,
-                Children = childNodes,
+                Children = children,
             };
             return channelNode;
         }
@@ -1657,9 +1675,12 @@ namespace Addmusic2.Visitors
             var values = context.hexNumber().Select(h => h.GetText()).ToList();
             var noteData = new List<ISongNode>();
             var blendItems = context.ddPitchBlendItems();
-            foreach ( var index in Enumerable.Range(0, blendItems.ChildCount))
+            if(blendItems != null)
             {
-                noteData.Add(Visit(blendItems.GetChild(index)));
+                foreach (var index in Enumerable.Range(0, blendItems.ChildCount))
+                {
+                    noteData.Add(Visit(blendItems.GetChild(index)));
+                }
             }
             return new HexNode
             {

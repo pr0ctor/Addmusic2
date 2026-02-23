@@ -10,8 +10,8 @@ namespace Addmusic2.Model
     internal class SampleInstrumentManager
     {
         public List<string> SampleNames { get; set; } = new();
-        public List<AddmusicSample> Samples { get; set; } = new();
-        public List<AddmusicSample> UsedSamples { get; set; } = new();
+        public List<Sample> Samples { get; set; } = new();
+        public List<Sample> UsedSamples { get; set; } = new();
         public List<InstrumentInformation> Instruments { get; set; } = new();
         public List<InstrumentInformation> DefaultInstruments { get; set; } = new();
         public Dictionary<int, InstrumentInformation> UsedInstruments { get; set; } = new();
@@ -47,7 +47,7 @@ namespace Addmusic2.Model
                 SampleNames.Add(sampleName);
             }
         }
-        public void AddNewSample(AddmusicSample addmusicSample)
+        public void AddNewSample(Sample addmusicSample)
         {
             if(!ContainsSample(addmusicSample))
             {
@@ -60,7 +60,7 @@ namespace Addmusic2.Model
             return SampleNames.Contains(sampleName);
         }
 
-        public bool ContainsSample(AddmusicSample addmusicSample)
+        public bool ContainsSample(Sample addmusicSample)
         {
             return Samples.Contains(addmusicSample);
         }
@@ -81,7 +81,7 @@ namespace Addmusic2.Model
             return UseSample(foundSample);
         }
 
-        public bool UseSample(AddmusicSample addmusicSample)
+        public bool UseSample(Sample addmusicSample)
         {
             if(!ContainsSample(addmusicSample))
             {
