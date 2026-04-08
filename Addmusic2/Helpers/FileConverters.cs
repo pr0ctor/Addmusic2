@@ -172,22 +172,32 @@ namespace Addmusic2.Helpers
 
                 if (toggleSymbolGroup != null && toggleSymbolGroup.Value.Length > 0)
                 {
-                    var settings = new SfxSettings();
+                    var settings = new SfxSettings
+                    {
+                        Loop = toggleSymbolGroup.Value.Contains('?', StringComparison.CurrentCulture),
+                        Pointer = toggleSymbolGroup.Value.Contains('*', StringComparison.CurrentCulture)
+                    };
 
-                    settings.Loop = (toggleSymbolGroup.Value.IndexOf("?") != -1)
-                        ? true
-                        : false;
-
-                    settings.Pointer = (toggleSymbolGroup.Value.IndexOf("*") != -1)
-                        ? true
-                        : false;
-
-                    if(settings.Pointer == true)
+                    if (settings.Pointer == true)
                     {
                         settings.CopyOf = sfxListItem.Name;
                     }
 
                     sfxListItem.Settings = settings;
+                }
+
+                if (sfxListItem.Settings.Pointer == true)
+                {
+                    var copyNumber = 0;
+                    if(inSFX1DF9)
+                    {
+                        copyNumber = FindPointedCopySfx(_messageService, addmusicSfxList.Sfx1DF9, sfxListItem) ?? throw new Exception();
+                    }
+                    else
+                    {
+                        copyNumber = FindPointedCopySfx(_messageService, addmusicSfxList.Sfx1DFC, sfxListItem) ?? throw new Exception();
+                    }
+                    sfxListItem.Settings.CopyOfIntNumber = copyNumber;
                 }
 
                 if (inSFX1DF9)
@@ -203,6 +213,34 @@ namespace Addmusic2.Helpers
             }
 
             return addmusicSfxList;
+        }
+
+        private static int? FindPointedCopySfx(MessageService messageService, List<SfxListItem> soundEffects, SfxListItem item)
+        {
+            var copy = soundEffects.FirstOrDefault(s => s.Name == item.Settings.CopyOf);
+
+            // Validate that the sound effect that is referenced exists
+            if(copy == null)
+            {
+                // todo add error message here for missing sound effect
+                return null;
+            }
+
+            // Validate that the sound effect that is found is not the current one that is being searched for
+            if(copy.Number == item.Number || copy.IntNumber == item.IntNumber)
+            {
+                // todo add error message for the copy being itself
+                return null;
+            }
+
+            // Validate that the sound effect that is found is not in a slot higher than the current one that is being searched for
+            if(copy.IntNumber >= item.IntNumber)
+            {
+                // todo add error message for the copy being in a slot higher than the current sound effect
+                return null;
+            }
+
+            return copy.IntNumber;
         }
 
         // Converts the "Addmusic_saqmple groups.txt" to the new json format

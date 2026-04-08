@@ -84,6 +84,8 @@ namespace Addmusic2.Model
         public bool Pointer { get; set; }
         [JsonProperty("copyOf")]
         public string CopyOf { get; set; } = string.Empty;
+        [JsonProperty("copyOfNumber")]
+        public int CopyOfIntNumber = -1;
     }
 
     internal class AddmusicSampleGroup

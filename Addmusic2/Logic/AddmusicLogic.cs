@@ -505,7 +505,7 @@ namespace Addmusic2.Logic
 
             var allSfxData = new List<byte>();
 
-            var index = 1;
+            var index = 0;
             foreach (var sfx in sfx1DF9)
             {
                 // fill in blanks between items
@@ -518,23 +518,24 @@ namespace Addmusic2.Logic
                 if (sfx.Configuration.Settings.Pointer == true)
                 {
                     // get the first occurance of sound effect that the current one is pointing to
-                    var copyOf = sfx1DF9
-                        .FindAll(s => s.Configuration.Name == sfx.Configuration.Settings.CopyOf && s.Configuration.Settings.Pointer == false)
-                        .MinBy(s => s.Configuration.IntNumber);
-                    if (copyOf == null)
-                    {
-                        // todo fix error when theres no match
-                        throw new Exception();
-                    }
-                    else if (copyOf.Configuration.IntNumber > sfx.Configuration.IntNumber)
-                    {
-                        // todo handle error when the pointer points to a sound effect that hasnt been compiled yet
-                        throw new Exception();
-                    }
+                    //var copyOf = sfx1DF9
+                    //    .FindAll(s => s.Configuration.Name == sfx.Configuration.Settings.CopyOf && s.Configuration.Settings.Pointer == false)
+                    //    .MinBy(s => s.Configuration.IntNumber);
+                    //if (copyOf == null)
+                    //{
+                    //    // todo fix error when theres no match
+                    //    throw new Exception();
+                    //}
+                    //else if (copyOf.Configuration.IntNumber > sfx.Configuration.IntNumber)
+                    //{
+                    //    // todo handle error when the pointer points to a sound effect that hasnt been compiled yet
+                    //    throw new Exception();
+                    //}
 
-                    // read the pointer for this sound effect
-                    df9Pointers.Add(df9Pointers[copyOf.Configuration.IntNumber - 1]);
+                    //// read the pointer for this sound effect
+                    //df9Pointers.Add(df9Pointers[copyOf.Configuration.IntNumber - 1]);
 
+                    df9Pointers.Add(df9Pointers[sfx.Configuration.Settings.CopyOfIntNumber - 1]);
                 }
                 else
                 {
@@ -568,7 +569,7 @@ namespace Addmusic2.Logic
                 index++;
             }
 
-            index = 1;
+            index = 0;
             foreach (var sfx in sfx1DFC)
             {
                 // fill in blanks between items
@@ -581,23 +582,24 @@ namespace Addmusic2.Logic
                 if (sfx.Configuration.Settings.Pointer == true)
                 {
                     // get the first occurance of sound effect that the current one is pointing to
-                    var copyOf = sfx1DFC
-                        .FindAll(s => s.Configuration.Name == sfx.Configuration.Settings.CopyOf && s.Configuration.Settings.Pointer == false)
-                        .MinBy(s => s.Configuration.IntNumber);
-                    if (copyOf == null)
-                    {
-                        // todo fix error when theres no match
-                        throw new Exception();
-                    }
-                    else if (copyOf.Configuration.IntNumber > sfx.Configuration.IntNumber)
-                    {
-                        // todo handle error when the pointer points to a sound effect that hasnt been compiled yet
-                        throw new Exception();
-                    }
+                    //var copyOf = sfx1DFC
+                    //    .FindAll(s => s.Configuration.Name == sfx.Configuration.Settings.CopyOf && s.Configuration.Settings.Pointer == false)
+                    //    .MinBy(s => s.Configuration.IntNumber);
+                    //if (copyOf == null)
+                    //{
+                    //    // todo fix error when theres no match
+                    //    throw new Exception();
+                    //}
+                    //else if (copyOf.Configuration.IntNumber > sfx.Configuration.IntNumber)
+                    //{
+                    //    // todo handle error when the pointer points to a sound effect that hasnt been compiled yet
+                    //    throw new Exception();
+                    //}
 
-                    // read the pointer for this sound effect
-                    dfcPointers.Add(dfcPointers[copyOf.Configuration.IntNumber - 1]);
+                    //// read the pointer for this sound effect
+                    //dfcPointers.Add(dfcPointers[copyOf.Configuration.IntNumber - 1]);
 
+                    dfcPointers.Add(dfcPointers[sfx.Configuration.Settings.CopyOfIntNumber - 1]);
                 }
                 else
                 {

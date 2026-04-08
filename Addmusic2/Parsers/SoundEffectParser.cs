@@ -1207,22 +1207,22 @@ namespace Addmusic2.Parsers
 
         private int GetPitchValue(int value, NotePayload.Accidentals accidental)
         {
-            value = MagicNumbers.ValidPitches[value - MagicNumbers.PitchOffset] + (CurrentOctave - 1) * 12 + 0x80;
+            var pitchValue = MagicNumbers.ValidPitches[value - MagicNumbers.PitchOffset] + (CurrentOctave - 1) * 12 + 0x80;
 
             if (accidental == NotePayload.Accidentals.Sharp)
             {
-                value++;
+                pitchValue++;
             }
-            else
+            else if (accidental == NotePayload.Accidentals.Flat)
             {
-                value--;
+                pitchValue--;
             }
 
-            return (value < 0x80) 
+            return (pitchValue < 0x80) 
                 ? -1 
-                : (value >= MagicNumbers.CommandValues.Tie)
+                : (pitchValue >= MagicNumbers.CommandValues.Tie)
                     ? -2
-                    :value;
+                    : pitchValue;
         }
 
         #endregion

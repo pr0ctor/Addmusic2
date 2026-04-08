@@ -916,7 +916,7 @@ namespace Addmusic2.Parsers
                 tempLength += GetNoteLength(tie, tiePayload.Duration, tiePayload.DotCount, inTriplet, true);
             }
 
-            tempLength = DivideByTempoRatio(restNode, tempLength, true);
+            tempLength = DivideByTempoRatio(restNode, restPayload.Duration, true);
 
             AddNoteLength(tempLength);
 
