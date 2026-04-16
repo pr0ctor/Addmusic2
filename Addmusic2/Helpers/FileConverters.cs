@@ -108,7 +108,7 @@ namespace Addmusic2.Helpers
             var oldsfxList = fileData.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
                 .ToList();
 
-            var sfxLineRegex = new Regex(@"([a-fA-f0-9]{1,2})\s*([\*\?]{0,2})\s*(.*)");
+            var sfxLineRegex = Regexes.SfxListFileLine();
             var inSFX1DF9 = true;
             // slightly more robust but can likely be condensed
             var sfx1DF9NumberSet = new HashSet<string>();

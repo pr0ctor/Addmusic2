@@ -252,7 +252,7 @@ namespace Addmusic2.Visitors
         {
             var noteText = context.GetText();
             var notePayload = new NotePayload();
-            var noteRegex = new Regex(@"([a-gA-G])(\+|\-)?\=?([0-9]*)(\.*)(\^[0-9]+\.*)*");
+            var noteRegex = Regexes.NoteRegex();
             var matches = noteRegex.Match(noteText);
 
             // skip the first group since its the full match value
@@ -344,7 +344,7 @@ namespace Addmusic2.Visitors
         {
             var restText = context.GetText();
             var restPayload = new NotePayload();
-            var restRegex = new Regex(@"([rR])\=?([0-9]*)(\.*)(\^[0-9]+\.*)*");
+            var restRegex = Regexes.RestRegex();
             var matches = restRegex.Match(restText);
 
             // skip the first group since its the full match value

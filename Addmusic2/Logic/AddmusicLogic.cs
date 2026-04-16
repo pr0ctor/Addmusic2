@@ -152,9 +152,7 @@ namespace Addmusic2.Logic
 
         public string PreProcessSong(string fileData)
         {
-            var replacementsRegex = new Regex(@$"""([^\s=""]+)\s*=\s*([^""]+)""");
-
-            var matches = replacementsRegex.Matches(fileData);
+            var matches = Regexes.ReplacemntParameterRegex().Matches(fileData);
 
             _logger.LogInformation(LogLevel.Trace, $"Found {matches.Count} matches");
 
@@ -515,26 +513,11 @@ namespace Addmusic2.Logic
                     index++;
                 }
 
+                // if the current sound effect points to another existing sound effect
+                //      get the pointer for that sound effect
+                //      otherwise calculate and store the data for the sound effect
                 if (sfx.Configuration.Settings.Pointer == true)
                 {
-                    // get the first occurance of sound effect that the current one is pointing to
-                    //var copyOf = sfx1DF9
-                    //    .FindAll(s => s.Configuration.Name == sfx.Configuration.Settings.CopyOf && s.Configuration.Settings.Pointer == false)
-                    //    .MinBy(s => s.Configuration.IntNumber);
-                    //if (copyOf == null)
-                    //{
-                    //    // todo fix error when theres no match
-                    //    throw new Exception();
-                    //}
-                    //else if (copyOf.Configuration.IntNumber > sfx.Configuration.IntNumber)
-                    //{
-                    //    // todo handle error when the pointer points to a sound effect that hasnt been compiled yet
-                    //    throw new Exception();
-                    //}
-
-                    //// read the pointer for this sound effect
-                    //df9Pointers.Add(df9Pointers[copyOf.Configuration.IntNumber - 1]);
-
                     df9Pointers.Add(df9Pointers[sfx.Configuration.Settings.CopyOfIntNumber - 1]);
                 }
                 else
@@ -556,7 +539,6 @@ namespace Addmusic2.Logic
                         + _globalSettings.ProgramSize;
 
                     df9Pointers.Add((ushort)pointer);
-                    //df9DataTotal += (sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Values.Sum(v => v.Length));
                     df9DataTotal += (sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Count);
 
                     allSfxData.AddRange(sfx.SoundEffectData.ChannelData);
@@ -579,26 +561,11 @@ namespace Addmusic2.Logic
                     index++;
                 }
 
+                // if the current sound effect points to another existing sound effect
+                //      get the pointer for that sound effect
+                //      otherwise calculate and store the data for the sound effect
                 if (sfx.Configuration.Settings.Pointer == true)
                 {
-                    // get the first occurance of sound effect that the current one is pointing to
-                    //var copyOf = sfx1DFC
-                    //    .FindAll(s => s.Configuration.Name == sfx.Configuration.Settings.CopyOf && s.Configuration.Settings.Pointer == false)
-                    //    .MinBy(s => s.Configuration.IntNumber);
-                    //if (copyOf == null)
-                    //{
-                    //    // todo fix error when theres no match
-                    //    throw new Exception();
-                    //}
-                    //else if (copyOf.Configuration.IntNumber > sfx.Configuration.IntNumber)
-                    //{
-                    //    // todo handle error when the pointer points to a sound effect that hasnt been compiled yet
-                    //    throw new Exception();
-                    //}
-
-                    //// read the pointer for this sound effect
-                    //dfcPointers.Add(dfcPointers[copyOf.Configuration.IntNumber - 1]);
-
                     dfcPointers.Add(dfcPointers[sfx.Configuration.Settings.CopyOfIntNumber - 1]);
                 }
                 else
@@ -620,7 +587,6 @@ namespace Addmusic2.Logic
                         + _globalSettings.ProgramSize;
 
                     dfcPointers.Add((ushort)pointer);
-                    //dfcDataTotal += (sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Values.Sum(v => v.Length));
                     dfcDataTotal += (sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Count);
 
                     allSfxData.AddRange(sfx.SoundEffectData.ChannelData);
