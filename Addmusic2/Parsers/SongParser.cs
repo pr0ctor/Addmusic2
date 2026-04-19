@@ -800,7 +800,7 @@ namespace Addmusic2.Parsers
             }
             else
             {
-                if(CurrentChannel.IgnoreTuning == false)
+                if(CurrentChannel.IgnoreTuning != true)
                 {
                     note -= SongData.TransposeMap[currentInstrument];
                 }
@@ -1050,16 +1050,19 @@ namespace Addmusic2.Parsers
                 : Convert.ToByte(quantizationPayload.DelayValue);
 
             CurrentChannel.CurrentQuantization = quantizationValue;
+            CurrentChannel.UpdateQuantization = true;
 
             if (InActiveLoop)
             {
                 if (InActiveSubLoop)
                 {
                     ActiveSubLoopInformation.CurrentQuantization = quantizationValue;
+                    ActiveSubLoopInformation.UpdateQuantization = true;
                 }
                 else
                 {
                     ActiveLoopInformation.CurrentQuantization = quantizationValue;
+                    ActiveLoopInformation.UpdateQuantization = true;
                 }
             }
         }
@@ -3387,15 +3390,15 @@ namespace Addmusic2.Parsers
 
         private int GetNoteLength(SongNode node, int noteLength, int dotCount, bool inTriplet, bool allowTriplet)
         {
-            var version = false;
+
             var length = noteLength;
-            if (version == true)
-            {
-                return noteLength;
-            }
-            else if (noteLength < 1 || noteLength > MagicNumbers.NoteLengthMaximum)
+            if (noteLength < 1 || noteLength > MagicNumbers.NoteLengthMaximum)
             {
                 length = DefaultNoteLength;
+            }
+            else if (AddmusicKVersion < AddmusicKVersion.Version4)
+            {
+                return noteLength;
             }
             else
             {
@@ -3510,12 +3513,13 @@ namespace Addmusic2.Parsers
                 {
                     if (InActiveSubLoop)
                     {
-                        if (ActiveSubLoopInformation.UpdateQuantization)
+                        if (noteLength != PreviousNoteLength || ActiveSubLoopInformation.UpdateQuantization)
                         {
-                            if (noteLength != PreviousNoteLength)
-                            {
-                                AddDataToChannel(Convert.ToByte(noteLength));
-                            }
+                            AddDataToChannel(Convert.ToByte(noteLength));
+                        }
+
+                        if (ActiveSubLoopInformation.UpdateQuantization)
+                        {   
                             AddDataToChannel(ActiveSubLoopInformation.CurrentQuantization);
                             ActiveSubLoopInformation.UpdateQuantization = false;
                             SongData.NoteParameterByteCount++;
@@ -3523,12 +3527,13 @@ namespace Addmusic2.Parsers
                     }
                     else
                     {
+                        if (noteLength != PreviousNoteLength || ActiveLoopInformation.UpdateQuantization)
+                        {
+                            AddDataToChannel(Convert.ToByte(noteLength));
+                        }
+
                         if (ActiveLoopInformation.UpdateQuantization)
                         {
-                            if (noteLength != PreviousNoteLength)
-                            {
-                                AddDataToChannel(Convert.ToByte(noteLength));
-                            }
                             AddDataToChannel(ActiveLoopInformation.CurrentQuantization);
                             ActiveLoopInformation.UpdateQuantization = false;
                             SongData.NoteParameterByteCount++;
@@ -3537,18 +3542,20 @@ namespace Addmusic2.Parsers
                 }
                 else
                 {
+                    if (noteLength != PreviousNoteLength || CurrentChannel.UpdateQuantization)
+                    {
+                        AddDataToChannel(Convert.ToByte(noteLength));
+                    }
+
                     if (CurrentChannel.UpdateQuantization)
                     {
-                        if (noteLength != PreviousNoteLength)
-                        {
-                            AddDataToChannel(Convert.ToByte(noteLength));
-                        }
                         AddDataToChannel(CurrentChannel.CurrentQuantization);
                         CurrentChannel.UpdateQuantization = false;
                         SongData.NoteParameterByteCount++;
                     }
                 }
 
+                PreviousNoteLength = noteLength;
                 AddDataToChannel(noteType);
             }
         }

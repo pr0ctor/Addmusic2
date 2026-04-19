@@ -241,7 +241,7 @@ namespace Addmusic2.Model.SongTree
         public string NoteValue { get; set; } = string.Empty;
         public Accidentals Accidental { get; set; } = Accidentals.None;
         public int Duration { get; set; } = -1;
-        public int DotCount { get; set; } = -1;
+        public int DotCount { get; set; } = 0;
         public List<SongNode> ConnectedTies { get; set; } = new();
 
         public NotePayload() { }
