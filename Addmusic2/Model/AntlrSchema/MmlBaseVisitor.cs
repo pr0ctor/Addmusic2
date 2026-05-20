@@ -323,7 +323,8 @@ public partial class MmlBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// <return>The visitor result.</return>
 	public virtual Result VisitNote([NotNull] MmlParser.NoteContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.rest"/>.
+	/// Visit a parse tree produced by the <c>SingleRest</c>
+	/// labeled alternative in <see cref="MmlParser.rest"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -331,7 +332,18 @@ public partial class MmlBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitRest([NotNull] MmlParser.RestContext context) { return VisitChildren(context); }
+	public virtual Result VisitSingleRest([NotNull] MmlParser.SingleRestContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>ChainRest</c>
+	/// labeled alternative in <see cref="MmlParser.rest"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitChainRest([NotNull] MmlParser.ChainRestContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.octave"/>.
 	/// <para>

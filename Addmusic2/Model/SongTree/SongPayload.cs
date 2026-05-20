@@ -1,5 +1,6 @@
 ﻿using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
+using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -242,7 +243,10 @@ namespace Addmusic2.Model.SongTree
         public Accidentals Accidental { get; set; } = Accidentals.None;
         public int Duration { get; set; } = -1;
         public int DotCount { get; set; } = 0;
+        public bool HasEquals { get; set; } = false;
+        public bool UseDefaultLength { get; set; } = false;
         public List<SongNode> ConnectedTies { get; set; } = new();
+        public List<SongNode> ConnectedRests { get; set; } = new();
 
         public NotePayload() { }
 
@@ -251,12 +255,14 @@ namespace Addmusic2.Model.SongTree
             var builder = new StringBuilder();
             builder.Append(NoteValue);
             builder.Append(Helpers.Helpers.ParseAccidentalToString(Accidental));
-            builder.Append((Duration == -1) ? "" : Duration);
+            builder.Append((HasEquals) ? "=" : "");
+            builder.Append((UseDefaultLength) ? "" : Duration);
             builder.Append(new string('.', DotCount));
             builder.Append(string.Join("", ConnectedTies));
             return builder.ToString();
         }
     }
+
 
     internal class OctavePayload : ISongNodePayload
     {
@@ -348,6 +354,29 @@ namespace Addmusic2.Model.SongTree
         }
     }
 
+    internal class RestPayload : NotePayload, ISongNodePayload
+    {
+        public RestPayload() { }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            if (ConnectedRests.Count > 0)
+            {
+                builder.Append(string.Join("", ConnectedRests));
+            }
+            else
+            {
+                builder.Append("d");
+                builder.Append((HasEquals) ? "=" : "");
+                builder.Append((UseDefaultLength) ? "" : Duration);
+                builder.Append(new string('.', DotCount));
+                builder.Append(string.Join("", ConnectedTies));
+            }
+            return builder.ToString();
+        }
+    }
+
     internal class TempoPayload : ISongNodePayload
     {
         public int Tempo { get; set; }
@@ -376,6 +405,9 @@ namespace Addmusic2.Model.SongTree
     {
         public int Duration { get; set; }
         public int DotCount { get; set; } = 0;
+        public bool UseDefaultNoteLength { get; set; } = false;
+        public bool HasEquals { get; set; } = false;
+        public List<TiePayload> TieList { get; set; } = [];
 
         public TiePayload() { }
         public TiePayload(int duration)
@@ -386,11 +418,25 @@ namespace Addmusic2.Model.SongTree
         public override string ToString()
         {
             var builder = new StringBuilder();
-            builder.Append('t');
-            builder.Append(Duration);
-            if (DotCount > -1)
+            if(TieList.Count > 0)
             {
-                builder.Append($",{DotCount}");
+                foreach (var tie in TieList)
+                {
+                    builder.Append(tie.ToString());
+                }
+            }
+            else
+            {
+                builder.Append('^');
+                builder.Append((HasEquals) ? "=" : "");
+                if(UseDefaultNoteLength == false)
+                {
+                    builder.Append(Duration);
+                }
+                if (DotCount > -1)
+                {
+                    builder.Append(string.Join("", Enumerable.Repeat('.', DotCount)));
+                }
             }
             return builder.ToString();
         }

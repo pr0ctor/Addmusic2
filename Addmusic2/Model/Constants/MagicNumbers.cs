@@ -38,6 +38,7 @@ namespace Addmusic2.Model.Constants
             public static readonly int InitialSfxRightVolume = 0x7F;
             public static readonly int InitialSfxNoteLength = 8;
             public static readonly int InitialSongSampleListLength = 8;
+            public static readonly byte InitialChannelQuantizationValue = 0x7F;
         }
 
         public static readonly int ExpectedInstrumentHexByteCount = 5;

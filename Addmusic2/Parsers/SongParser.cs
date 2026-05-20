@@ -216,12 +216,15 @@ namespace Addmusic2.Parsers
             Channels.Add(CurrentChannel);
             // Reset Octave as previous versions of Addmusic would carry over the octave
             //      from the previous channel
-            CurrentOctave = MagicNumbers.DefaultValues.StartingOctave;
+            // CurrentOctave = MagicNumbers.DefaultValues.StartingOctave;
 
             foreach (SongNode node in channel.Children)
             {
                 ParseNode(node);
             }
+
+            // add final 0byte to channel to indicate end
+            AddDataToChannel(0);
         }
 
         public void ParseNode(SongNode node)
@@ -789,8 +792,6 @@ namespace Addmusic2.Parsers
             CurrentChannel.HasNoteData = true;
             var notePayload = noteNode.Payload as NotePayload ?? throw new AddmusicParserException("Null Payload found");
 
-            var tempLength = GetNoteLength(noteNode, notePayload.Duration, notePayload.DotCount, inTriplet, true);
-
             var noteValueChar = (int)notePayload.NoteValue[0];
             var note = GetPitchValue(noteValueChar, notePayload.Accidental);
             var currentInstrument = GetCurrentInstrument();
@@ -852,11 +853,27 @@ namespace Addmusic2.Parsers
 
             // todo optimize group of connected rests
 
-            foreach (var tie in notePayload.ConnectedTies)
-            {
-                var tiePayload = tie.Payload as TiePayload ?? throw new AddmusicParserException("Null Payload found");
+            // get the starting Note Length of the current note
 
-                tempLength += GetNoteLength(tie, tiePayload.Duration, tiePayload.DotCount, inTriplet, true);
+            var tempLength = GetNoteLength(noteNode, notePayload.Duration, notePayload.DotCount, inTriplet, true, notePayload.HasEquals, notePayload.UseDefaultLength);
+
+            foreach (var tieNode in notePayload.ConnectedTies)
+            {
+                var tiePayload = tieNode.Payload as TiePayload ?? throw new AddmusicParserException("Null Payload found");
+
+                if(tiePayload.TieList.Count > 0)
+                {
+                    foreach (var tie in tiePayload.TieList)
+                    {
+                        var tieDuration = (tie.UseDefaultNoteLength == true) ? DefaultNoteLength : tie.Duration;
+                        tempLength += GetNoteLength(tieNode, tieDuration, tie.DotCount, inTriplet, true, tie.HasEquals, tie.UseDefaultNoteLength);
+                    }
+                }
+                else
+                {
+                    var tieDuration = (tiePayload.UseDefaultNoteLength == true) ? DefaultNoteLength : tiePayload.Duration;
+                    tempLength += GetNoteLength(tieNode, tieDuration, tiePayload.DotCount, inTriplet, true, tiePayload.HasEquals, tiePayload.UseDefaultNoteLength);
+                }
             }
 
             tempLength = DivideByTempoRatio(noteNode, tempLength, true);
@@ -870,8 +887,20 @@ namespace Addmusic2.Parsers
         {
             CurrentChannel.HasNoteData = true;
             var tiePayload = tieNode.Payload as TiePayload ?? throw new AddmusicParserException("Null Payload found");
-
-            var tempLength = GetNoteLength(tieNode, tiePayload.Duration, tiePayload.DotCount, inTriplet, true);
+            var tempLength = 0;
+            if (tiePayload.TieList.Count > 0)
+            {
+                foreach (var tie in tiePayload.TieList)
+                {
+                    var tieDuration = (tie.UseDefaultNoteLength == true) ? DefaultNoteLength : tie.Duration;
+                    tempLength += GetNoteLength(tieNode, tieDuration, tie.DotCount, inTriplet, true, tie.HasEquals, tie.UseDefaultNoteLength);
+                }
+            }
+            else
+            {
+                var tieDuration = (tiePayload.UseDefaultNoteLength == true) ? DefaultNoteLength : tiePayload.Duration;
+                tempLength += GetNoteLength(tieNode, tieDuration, tiePayload.DotCount, inTriplet, true, tiePayload.HasEquals, tiePayload.UseDefaultNoteLength);
+            }
 
             if (inPitchSlide)
             {
@@ -885,15 +914,17 @@ namespace Addmusic2.Parsers
                 return; // no more logic for this node
             }
 
+            tempLength = DivideByTempoRatio(tieNode, tempLength, true);
+
+            AddNoteLength(tempLength);
+
             ApplyTempoRateAdjustmentAndQuantization(tieNode, MagicNumbers.CommandValues.Tie, tempLength);
         }
 
         public void EvaluateRestNode(AtomicNode restNode, bool inTriplet = false, bool inPitchSlide = false, bool isNextForDDPitchSlide = false)
         {
             CurrentChannel.HasNoteData = true;
-            var restPayload = restNode.Payload as NotePayload ?? throw new AddmusicParserException("Null Payload found");
-
-            var tempLength = GetNoteLength(restNode, restPayload.Duration, restPayload.DotCount, inTriplet, true);
+            var restPayload = restNode.Payload as RestPayload ?? throw new AddmusicParserException("Null Payload found");
 
             if (inPitchSlide)
             {
@@ -909,14 +940,66 @@ namespace Addmusic2.Parsers
 
             // todo optimize group of connected rests
 
-            foreach (var tie in restPayload.ConnectedTies)
-            {
-                var tiePayload = tie.Payload as TiePayload ?? throw new AddmusicParserException("Null Payload found");
+            var tempLength = 0;
 
-                tempLength += GetNoteLength(tie, tiePayload.Duration, tiePayload.DotCount, inTriplet, true);
+            if(restPayload.ConnectedRests.Count == 0)
+            {
+                // get the starting Note Length of the current note
+                tempLength += GetNoteLength(restNode, restPayload.Duration, restPayload.DotCount, inTriplet, true, restPayload.HasEquals, restPayload.UseDefaultLength);
+
+                foreach (var tieNode in restPayload.ConnectedTies)
+                {
+                    var tiePayload = tieNode.Payload as TiePayload ?? throw new AddmusicParserException("Null Payload found");
+
+                    if (tiePayload.TieList.Count > 0)
+                    {
+                        foreach (var tie in tiePayload.TieList)
+                        {
+                            var tieDuration = (tie.UseDefaultNoteLength == true) ? DefaultNoteLength : tie.Duration;
+                            tempLength += GetNoteLength(tieNode, tieDuration, tie.DotCount, inTriplet, true, tie.HasEquals, tie.UseDefaultNoteLength);
+                        }
+                    }
+                    else
+                    {
+                        var tieDuration = (tiePayload.UseDefaultNoteLength == true) ? DefaultNoteLength : tiePayload.Duration;
+                        tempLength += GetNoteLength(tieNode, tieDuration, tiePayload.DotCount, inTriplet, true, tiePayload.HasEquals, tiePayload.UseDefaultNoteLength);
+                    }
+                }
+
+                //tempLength = DivideByTempoRatio(restNode, tempLength, true);
+            }
+            else
+            {
+                foreach (var connectedRest in  restPayload.ConnectedRests)
+                {
+                    var connectedRestPayload = connectedRest.Payload as RestPayload ?? throw new AddmusicParserException("Null Payload found");
+
+                    tempLength += GetNoteLength(connectedRest, connectedRestPayload.Duration, connectedRestPayload.DotCount, inTriplet, true, connectedRestPayload.HasEquals, connectedRestPayload.UseDefaultLength);
+
+                    foreach (var tieNode in connectedRestPayload.ConnectedTies)
+                    {
+                        var tiePayload = tieNode.Payload as TiePayload ?? throw new AddmusicParserException("Null Payload found");
+
+                        if (tiePayload.TieList.Count > 0)
+                        {
+                            foreach (var tie in tiePayload.TieList)
+                            {
+                                var tieDuration = (tie.UseDefaultNoteLength == true) ? DefaultNoteLength : tie.Duration;
+                                tempLength += GetNoteLength(tieNode, tieDuration, tie.DotCount, inTriplet, true, tie.HasEquals, tie.UseDefaultNoteLength);
+                            }
+                        }
+                        else
+                        {
+                            var tieDuration = (tiePayload.UseDefaultNoteLength == true) ? DefaultNoteLength : tiePayload.Duration;
+                            tempLength += GetNoteLength(tieNode, tieDuration, tiePayload.DotCount, inTriplet, true, tiePayload.HasEquals, tiePayload.UseDefaultNoteLength);
+                        }
+                    }
+
+                    //tempLength = DivideByTempoRatio(connectedRest, tempLength, true);
+                }
             }
 
-            tempLength = DivideByTempoRatio(restNode, restPayload.Duration, true);
+            tempLength = DivideByTempoRatio(restNode, tempLength, true);
 
             AddNoteLength(tempLength);
 
@@ -927,7 +1010,7 @@ namespace Addmusic2.Parsers
         {
             var defaultLengthPayload = defaultLengthNode.Payload as DefaultLengthPayload ?? throw new AddmusicParserException("Null Payload found");
 
-            if (defaultLengthPayload.UsedEquals)
+            if (defaultLengthPayload.UsedEquals && AddmusicKVersion >= AddmusicKVersion.Version4)
             {
                 DefaultNoteLength = defaultLengthPayload.Length;
             }
@@ -3388,15 +3471,15 @@ namespace Addmusic2.Parsers
             return true;
         }
 
-        private int GetNoteLength(SongNode node, int noteLength, int dotCount, bool inTriplet, bool allowTriplet)
+        private int GetNoteLength(SongNode node, int noteLength, int dotCount, bool inTriplet, bool allowTriplet, bool hasEquals, bool useDefaultNoteLength)
         {
 
             var length = noteLength;
-            if (noteLength < 1 || noteLength > MagicNumbers.NoteLengthMaximum)
+            if (useDefaultNoteLength == true || noteLength < 1 || noteLength > MagicNumbers.NoteLengthMaximum)
             {
                 length = DefaultNoteLength;
             }
-            else if (AddmusicKVersion < AddmusicKVersion.Version4)
+            else if (hasEquals == true && AddmusicKVersion < AddmusicKVersion.Version4)
             {
                 return noteLength;
             }
@@ -3431,7 +3514,7 @@ namespace Addmusic2.Parsers
                     }
                 }
 
-                fraction /= 2;
+                fraction = fraction / 2;
                 result += fraction;
             }
 
@@ -3441,7 +3524,7 @@ namespace Addmusic2.Parsers
                 {
                     _logger.LogWarning(LogLevel.Warning, _messageService.GetWarningTripletFractionalTickValueFromDotsMessage(SongData.Name, node.LineNumber, node.ColumnNumber));
                 }
-                result = (int)Math.Floor(result * 2.0 / 3.0 + 0.5);
+                result = (int)Math.Floor(((double)result * 2.0 / 3.0) + 0.5);
             }
             return result;
         }

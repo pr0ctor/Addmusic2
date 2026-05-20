@@ -152,7 +152,7 @@ namespace Addmusic2.Logic
 
         public string PreProcessSong(string fileData)
         {
-            var matches = Regexes.ReplacemntParameterRegex().Matches(fileData);
+            var matches = Regexes.ReplacementParameterRegex().Matches(fileData);
 
             _logger.LogInformation(LogLevel.Trace, $"Found {matches.Count} matches");
 

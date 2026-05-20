@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Addmusic2.Model.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,8 +20,8 @@ namespace Addmusic2.Model
         public byte IntroLocation { get; set; } = 0;
         public int IntroLength { get; set; } = 0;
         public bool HasNoteData { get; set; } = false;
-        public byte CurrentQuantization { get; set; }
-        public bool UpdateQuantization { get; set; } = false;
+        public byte CurrentQuantization { get; set; } = MagicNumbers.DefaultValues.InitialChannelQuantizationValue;
+        public bool UpdateQuantization { get; set; } = true;
         public int CurrentInstrument { get; set; }
         public bool IgnoreTuning { get; set; } = false;
         public bool NoMusic { get; set; } = false;

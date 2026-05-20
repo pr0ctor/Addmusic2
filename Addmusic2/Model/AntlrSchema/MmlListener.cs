@@ -327,15 +327,29 @@ public interface IMmlListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitNote([NotNull] MmlParser.NoteContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.rest"/>.
+	/// Enter a parse tree produced by the <c>SingleRest</c>
+	/// labeled alternative in <see cref="MmlParser.rest"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterRest([NotNull] MmlParser.RestContext context);
+	void EnterSingleRest([NotNull] MmlParser.SingleRestContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.rest"/>.
+	/// Exit a parse tree produced by the <c>SingleRest</c>
+	/// labeled alternative in <see cref="MmlParser.rest"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitRest([NotNull] MmlParser.RestContext context);
+	void ExitSingleRest([NotNull] MmlParser.SingleRestContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>ChainRest</c>
+	/// labeled alternative in <see cref="MmlParser.rest"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterChainRest([NotNull] MmlParser.ChainRestContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>ChainRest</c>
+	/// labeled alternative in <see cref="MmlParser.rest"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitChainRest([NotNull] MmlParser.ChainRestContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.octave"/>.
 	/// </summary>

@@ -388,17 +388,33 @@ public partial class MmlBaseListener : IMmlListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitNote([NotNull] MmlParser.NoteContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.rest"/>.
+	/// Enter a parse tree produced by the <c>SingleRest</c>
+	/// labeled alternative in <see cref="MmlParser.rest"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterRest([NotNull] MmlParser.RestContext context) { }
+	public virtual void EnterSingleRest([NotNull] MmlParser.SingleRestContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.rest"/>.
+	/// Exit a parse tree produced by the <c>SingleRest</c>
+	/// labeled alternative in <see cref="MmlParser.rest"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitRest([NotNull] MmlParser.RestContext context) { }
+	public virtual void ExitSingleRest([NotNull] MmlParser.SingleRestContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>ChainRest</c>
+	/// labeled alternative in <see cref="MmlParser.rest"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterChainRest([NotNull] MmlParser.ChainRestContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>ChainRest</c>
+	/// labeled alternative in <see cref="MmlParser.rest"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitChainRest([NotNull] MmlParser.ChainRestContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.octave"/>.
 	/// <para>The default implementation does nothing.</para>

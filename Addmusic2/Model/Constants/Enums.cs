@@ -105,12 +105,12 @@ namespace Addmusic2.Model.Constants
     public enum AddmusicKVersion
     {
         Undefined,
+        AMM,
+        AM4,
         Version1,
         Version2,
         Version3, // unused
         Version4,
-        AMM,
-        AM4,
     }
 
     public enum OptionType

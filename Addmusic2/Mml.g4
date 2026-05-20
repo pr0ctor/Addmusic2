@@ -3,7 +3,7 @@ options { caseInsensitive=true; }
 /*
  * Parser Rules
  */
-song: songElement+
+song: songElement+ 
     | EOF
     ;
 
@@ -139,6 +139,7 @@ channelContents: atomics
 atomics: pitchslide
     | note
     | rest
+    | nakedTie
     | octave
     | lowerOctave
     | raiseOctave
@@ -153,9 +154,9 @@ atomics: pitchslide
     | vibratoCommand
     | tempoCommand
     | introEnd
-    | nakedTie
     | qmark
     | pipe
+    | defaultLength
     ;
 
 // note : BasicNote ( SHARP | FLAT )? NOTEDURATIONS? DOT* ( TIE NUMBERS )*
@@ -166,7 +167,9 @@ note : Note
 // rest : Rest NOTEDURATIONS? DOT* ( TIE NUMBERS )*
 //     | Rest NOTEDURATIONS? ( TIE NUMBERS DOT* )*
 //     ;
-rest : Rest ;
+rest : Rest # SingleRest
+    | RestChain # ChainRest
+    ;
 octave : Octave ;
 lowerOctave : LT ;
 raiseOctave : GT ;
@@ -228,7 +231,7 @@ instrumentCommand : Instrument # Instrument
     | daInstrument # HexInstrument
     ;
 
-nakedTie : Tie ;
+nakedTie : NakedTie ;
 
 qmark : Question ;
 
@@ -562,7 +565,7 @@ SQUOTE : '\'' ;
 SHARP : '+' ;
 FLAT : '-' ;
 DOT : '.' ;
-TIE : '^' ;
+fragment TIE : '^' ;
 GT : '>' ;
 LT : '<' ;
 COMMA : ',' ;
@@ -622,8 +625,9 @@ fragment SIXTYFOUR : ('64') ;
 fragment AMKV1 : ('=1') ;
 
 fragment BasicNote : A | B | C | D | E | F | G ;
-Note : BasicNote ( SHARP | FLAT )? EQUAL? NUMBERS? DOT* ( Tie )* ;
-Rest : R EQUAL? NUMBERS? DOT* ( Tie )* ;
+Note : BasicNote ( SHARP | FLAT )? EQUAL? NUMBERS? DOT* ( WHITESPACE* Tie )* ;
+Rest : R EQUAL? NUMBERS? DOT* ( WHITESPACE* Tie )* ;
+RestChain : Rest ( WHITESPACE* Rest )* ;
 Octave : O OCTAVES ;
 Noise : N HexDigits ;
 Tempo : T NUMBERS ( COMMA NUMBERS )? ;
@@ -634,7 +638,8 @@ Quantization : Q QUANTIZATION ( HexDigit | Volume ) ;
 GlobalVolume : W NUMBERS ( COMMA NUMBERS )? ;
 Pan : Y ( NUMBERS | NUMBERS COMMA ( ZERO | ONE ) COMMA ( ZERO | ONE ) ) ;
 Vibrato : P NUMBERS COMMA NUMBERS ( COMMA NUMBERS )? ;
-Tie : TIE EQUAL? NUMBERS DOT* ;
+fragment Tie : TIE EQUAL? NUMBERS? DOT* ;
+NakedTie : PIPE? ( WHITESPACE* Tie )+ ;
 Question : QMARK QMARKVALUES ;
 // Pitchslide : ( Note | Rest ) ( AMPER ( Note | Rest ) )+ ;
 Instrument : COMMAT NUMBERS ;

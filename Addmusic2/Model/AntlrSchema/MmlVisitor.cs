@@ -208,11 +208,19 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitNote([NotNull] MmlParser.NoteContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.rest"/>.
+	/// Visit a parse tree produced by the <c>SingleRest</c>
+	/// labeled alternative in <see cref="MmlParser.rest"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitRest([NotNull] MmlParser.RestContext context);
+	Result VisitSingleRest([NotNull] MmlParser.SingleRestContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>ChainRest</c>
+	/// labeled alternative in <see cref="MmlParser.rest"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitChainRest([NotNull] MmlParser.ChainRestContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.octave"/>.
 	/// </summary>

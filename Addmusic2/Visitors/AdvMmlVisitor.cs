@@ -648,15 +648,55 @@ namespace Addmusic2.Visitors
 
         public override ISongNode VisitNakedTie([NotNull] MmlParser.NakedTieContext context)
         {
-            var tieText = context.GetText();
-            var hasEquals = (tieText.IndexOf('=') != -1) ? true : false;
-            var dotCount = tieText.Count(t => t == '.');
-            var duration = tieText.Replace(".","")[((hasEquals) ? 2 : 1)..];
+            var tieText = context.GetText().Replace(" ", "");
+            //var hasEquals = tieText.Contains('=');
+            //var dotCount = tieText.Count(t => t == '.');
+            //var duration = tieText.Replace(".","")[((hasEquals) ? 2 : 1)..];
+
+            var tieRegex = Regexes.TieRegex();
+            var matches = tieRegex.Matches(tieText).ToList();
+
+            var payloads = new List<TiePayload>();
+
+            // there can potentially be multiple ties grouped together
+            foreach (var match in matches)
+            {
+                var matchPayload = new TiePayload();
+                var groups = match.Groups;
+                // get the first value which is the entire match
+                var groupValue = groups[0];
+                // determine if an '=' was used to define the duration
+                matchPayload.HasEquals = groupValue.Value.Contains('=');
+                // get the number of dots that occur in the matched tie
+                var matchDotCount = groupValue.Value.Count(t => t == '.');
+                matchPayload.DotCount = matchDotCount;
+                // get the capture group for the duration, if found
+                var durationGroup = groups[1];
+                // set the found duration to the parsed duration from the capture group, if found
+                if(durationGroup.Success && durationGroup.Value.Length > 0)
+                {
+                    matchPayload.Duration = int.Parse(durationGroup.Value);
+                }
+                // else, this tie uses the default note length as it does not have a duration specified
+                else
+                {
+                    matchPayload.UseDefaultNoteLength = true;
+                }
+                payloads.Add(matchPayload);
+            }
+
             var tiePayload = new TiePayload
             {
-                Duration = int.Parse(duration),
-                DotCount = dotCount,
+                TieList = payloads,
             };
+            //var tiePayload = new TiePayload
+            //{
+            //    DotCount = dotCount,
+            //};
+            //if(duration.Length > 0)
+            //{
+            //    tiePayload.Duration = int.Parse(duration);
+            //}
             var tieNode = new AtomicNode
             {
                 NodeType = SongNodeType.Tie,
@@ -697,56 +737,164 @@ namespace Addmusic2.Visitors
 
         public override ISongNode VisitNote([NotNull] MmlParser.NoteContext context)
         {
-            var noteText = context.GetText();
+            var noteText = context.GetText().Replace(" ", "");
             var notePayload = new NotePayload();
             var noteRegex = Regexes.NoteRegex();
             var matches = noteRegex.Match(noteText);
 
             // skip the first group since its the full match value
-            var groups = matches.Groups.Values.ToList().Skip(1);
-            notePayload.NoteValue = groups.First().Value;
-            foreach (var group in groups.Skip(1))
+            var groups = matches.Groups.Values.ToList();
+            var tiePayloads = new List<TiePayload>();
+
+            var noteValueGroup = groups[1];
+            var accidentalGroup = groups[2];
+            var durationGroup = groups[3];
+            var dotGroup = groups[4];
+            var tieGroup = groups[5];
+
+            // set the note value (required)
+            notePayload.NoteValue = noteValueGroup.Value;
+            // determine if an '=' was used for the duration
+            if(noteText.Length > 2)
             {
-                var groupValue = group.Value;
-                if (groupValue.Length == 0)
+                var equalsIndex = (accidentalGroup.Success && accidentalGroup.Value.Length > 0) ? 2 : 1 ;
+                notePayload.HasEquals = noteText[equalsIndex].Equals('=');
+            }
+            // set the accidental, if found
+            if(accidentalGroup.Success && accidentalGroup.Value.Length > 0)
+            {
+                notePayload.Accidental = (accidentalGroup.Value.Contains('+')) ? NotePayload.Accidentals.Sharp : NotePayload.Accidentals.Flat;
+            }
+            // set the duration, if found
+            if(durationGroup.Success && durationGroup.Value.Length > 0)
+            {
+                var durationValue = durationGroup.Value.Replace("=", "");
+                notePayload.Duration = int.Parse(durationValue);
+            }
+            else
+            {
+                notePayload.UseDefaultLength = true;
+            }
+            // set the dot count, if any are found
+            if (dotGroup.Success && dotGroup.Value.Length > 0)
+            {
+                var dotCount = dotGroup.Value.Count(t => t == '.');
+                notePayload.DotCount = dotCount;
+            }
+            // set the tie information, if any are found
+            var tieMatches = Regexes.TieRegex().Matches(noteText).ToList();
+            // there can potentially be multiple ties grouped together
+            if(tieMatches.Count > 0)
+            {
+                foreach (var match in tieMatches)
                 {
-                    continue;
-                }
-                if(groupValue == "+" || groupValue == "-")
-                {
-                    notePayload.Accidental = (groupValue.Contains("+")) ? NotePayload.Accidentals.Sharp : NotePayload.Accidentals.Flat;
-                }
-                else if(groupValue.Contains("^"))
-                {
-                    var ties = groupValue.Split("^").Where(v => v.Length > 0).ToList();
-                    foreach(var tie in ties)
+                    var matchPayload = new TiePayload();
+                    var tiegroups = match.Groups;
+                    // get the first value which is the entire match
+                    var tiegroupValue = tiegroups[0];
+                    // determine if an '=' was used to define the duration
+                    matchPayload.HasEquals = tiegroupValue.Value.Contains('=');
+                    // get the number of dots that occur in the matched tie
+                    var matchDotCount = tiegroupValue.Value.Count(t => t == '.');
+                    matchPayload.DotCount = matchDotCount;
+                    // get the capture group for the duration, if found
+                    var tieDurationGroup = tiegroups[1];
+                    // set the found duration to the parsed duration from the capture group, if found
+                    if (tieDurationGroup.Success)
                     {
-                        var duration = tie.Replace(".", "");
-                        var dotCount = tie.Count(t => t == '.');
-                        notePayload.ConnectedTies.Add(new AtomicNode
-                        {
-                            NodeType = SongNodeType.Tie,
-                            NodeSource = tie,
-                            Payload = new TiePayload
-                            {
-                                Duration = int.Parse(duration),
-                                DotCount = dotCount
-                            },
-                            LineNumber = context.Start.Line,
-                            ColumnNumber = context.Start.Column,
-                        });
+                        matchPayload.Duration = int.Parse(tieDurationGroup.Value);
                     }
+                    // else, this tie uses the default note length as it does not have a duration specified
+                    else
+                    {
+                        matchPayload.UseDefaultNoteLength = true;
+                    }
+                    tiePayloads.Add(matchPayload);
                 }
-                else if(groupValue.Contains(".") && !groupValue.Contains("^"))
+            }
+
+
+            //foreach (var group in groups.Skip(1))
+            //{
+            //    var groupValue = group.Value;
+            //    if (groupValue.Length == 0)
+            //    {
+            //        continue;
+            //    }
+            //    if(groupValue == "+" || groupValue == "-")
+            //    {
+            //        notePayload.Accidental = (groupValue.Contains("+")) ? NotePayload.Accidentals.Sharp : NotePayload.Accidentals.Flat;
+            //    }
+            //    else if(groupValue.Contains("^"))
+            //    {
+            //        var tieMatches = Regexes.TieRegex().Matches(groupValue).ToList();
+            //        // there can potentially be multiple ties grouped together
+            //        foreach (var match in tieMatches)
+            //        {
+            //            var matchPayload = new TiePayload();
+            //            var tiegroups = match.Groups;
+            //            // get the first value which is the entire match
+            //            var tiegroupValue = tiegroups[0];
+            //            // get the number of dots that occur in the matched tie
+            //            var matchDotCount = tiegroupValue.Value.Count(t => t == '.');
+            //            // get the capture group for the duration, if found
+            //            var durationGroup = tiegroups[1];
+            //            // set the found duration to the parsed duration from the capture group, if found
+            //            if (durationGroup != null && durationGroup.Value.Length > 0)
+            //            {
+            //                matchPayload.Duration = int.Parse(durationGroup.Value);
+            //            }
+            //            // else, this tie uses the default note length as it does not have a duration specified
+            //            else
+            //            {
+            //                matchPayload.UseDefaultNoteLength = true;
+            //            }
+            //            tiePayloads.Add(matchPayload);
+            //        }
+            //        //var ties = groupValue.Split("^").Where(v => v.Length > 0).ToList();
+            //        //foreach(var tie in ties)
+            //        //{
+            //        //    var duration = tie.Replace("=", "").Replace(".", "");
+            //        //    var dotCount = tie.Count(t => t == '.');
+            //        //    notePayload.ConnectedTies.Add(new AtomicNode
+            //        //    {
+            //        //        NodeType = SongNodeType.Tie,
+            //        //        NodeSource = tie,
+            //        //        Payload = new TiePayload
+            //        //        {
+            //        //            Duration = int.Parse(duration),
+            //        //            DotCount = dotCount
+            //        //        },
+            //        //        LineNumber = context.Start.Line,
+            //        //        ColumnNumber = context.Start.Column,
+            //        //    });
+            //        //}
+            //    }
+            //    else if(groupValue.Contains(".") && !groupValue.Contains("^"))
+            //    {
+            //        var dotCount = groupValue.Count(t => t == '.');
+            //        notePayload.DotCount = dotCount;
+            //    }
+            //    else
+            //    {
+            //        var durationValue = groupValue.Replace("=", "");
+            //        notePayload.Duration = int.Parse(durationValue);
+            //    }
+            //}
+
+            if(tiePayloads.Count > 0)
+            {
+                notePayload.ConnectedTies.Add(new AtomicNode
                 {
-                    var dotCount = groupValue.Count(t => t == '.');
-                    notePayload.DotCount = dotCount;
-                }
-                else
-                {
-                    var durationValue = groupValue.Replace("=", "");
-                    notePayload.Duration = int.Parse(durationValue);
-                }
+                    NodeType = SongNodeType.Tie,
+                    NodeSource = string.Join("", tiePayloads),
+                    Payload = new TiePayload
+                    {
+                        TieList = tiePayloads
+                    },
+                    LineNumber = context.Start.Line,
+                    ColumnNumber = context.Start.Column,
+                });
             }
 
             var noteNode = new AtomicNode
@@ -911,55 +1059,88 @@ namespace Addmusic2.Visitors
             };
         }
 
-        public override ISongNode VisitRest([NotNull] MmlParser.RestContext context)
+        public override ISongNode VisitSingleRest([NotNull] MmlParser.SingleRestContext context)
         {
-            var restText = context.GetText();
-            var restPayload = new NotePayload();
+            var restText = context.GetText().Replace(" ", "");
+            var restPayload = new RestPayload();
             var restRegex = Regexes.RestRegex();
             var matches = restRegex.Match(restText);
 
             // skip the first group since its the full match value
-            var groups = matches.Groups.Values.ToList().Skip(1);
-            restPayload.NoteValue = groups.First().Value;
-            foreach (var group in groups.Skip(1))
+            var groups = matches.Groups.Values.ToList();
+            var tiePayloads = new List<TiePayload>();
+
+            var restValueGroup = groups[1];
+            var durationGroup = groups[2];
+            var dotGroup = groups[3];
+            var tieGroup = groups[4];
+
+            // determine if an '=' was used for the duration
+            if (restText.Length > 1)
             {
-                var groupValue = group.Value;
-                if(groupValue.Length == 0)
+                restPayload.HasEquals = restText[1].Equals('=');
+            }
+            // set the duration, if found
+            if (durationGroup.Success && durationGroup.Value.Length > 0)
+            {
+                var durationValue = durationGroup.Value.Replace("=", "");
+                restPayload.Duration = int.Parse(durationValue);
+            }
+            else
+            {
+                restPayload.UseDefaultLength = true;
+            }
+            // set the dot count, if any are found
+            if (dotGroup.Success && dotGroup.Value.Length > 0)
+            {
+                var dotCount = dotGroup.Value.Count(t => t == '.');
+                restPayload.DotCount = dotCount;
+            }
+            // set the tie information, if any are found
+            var tieMatches = Regexes.TieRegex().Matches(restText).ToList();
+            // there can potentially be multiple ties grouped together
+            if (tieMatches.Count > 0)
+            {
+                foreach (var match in tieMatches)
                 {
-                    continue;
-                }
-                
-                if (groupValue.Contains("^"))
-                {
-                    var ties = groupValue.Split("^").Where(v => v.Length > 0).ToList();
-                    foreach (var tie in ties)
+                    var matchPayload = new TiePayload();
+                    var tiegroups = match.Groups;
+                    // get the first value which is the entire match
+                    var tiegroupValue = tiegroups[0];
+                    // determine if an '=' was used to define the duration
+                    matchPayload.HasEquals = tiegroupValue.Value.Contains('=');
+                    // get the number of dots that occur in the matched tie
+                    var matchDotCount = tiegroupValue.Value.Count(t => t == '.');
+                    matchPayload.DotCount = matchDotCount;
+                    // get the capture group for the duration, if found
+                    var tieDurationGroup = tiegroups[1];
+                    // set the found duration to the parsed duration from the capture group, if found
+                    if (tieDurationGroup.Success)
                     {
-                        var duration = tie.Replace(".", "");
-                        var dotCount = tie.Count(t => t == '.');
-                        restPayload.ConnectedTies.Add(new AtomicNode
-                        {
-                            NodeType = SongNodeType.Tie,
-                            NodeSource = tie,
-                            Payload = new TiePayload
-                            {
-                                Duration = int.Parse(duration),
-                                DotCount = dotCount
-                            },
-                            LineNumber = context.Start.Line,
-                            ColumnNumber = context.Start.Column,
-                        });
+                        matchPayload.Duration = int.Parse(tieDurationGroup.Value);
                     }
+                    // else, this tie uses the default note length as it does not have a duration specified
+                    else
+                    {
+                        matchPayload.UseDefaultNoteLength = true;
+                    }
+                    tiePayloads.Add(matchPayload);
                 }
-                else if (groupValue.Contains(".") && !groupValue.Contains("^"))
+            }
+
+            if (tiePayloads.Count > 0)
+            {
+                restPayload.ConnectedTies.Add(new AtomicNode
                 {
-                    var dotCount = groupValue.Count(t => t == '.');
-                    restPayload.DotCount = dotCount;
-                }
-                else
-                {
-                    var durationValue = groupValue.Replace("=", "");
-                    restPayload.Duration = int.Parse(durationValue);
-                }
+                    NodeType = SongNodeType.Tie,
+                    NodeSource = string.Join("", tiePayloads),
+                    Payload = new TiePayload
+                    {
+                        TieList = tiePayloads
+                    },
+                    LineNumber = context.Start.Line,
+                    ColumnNumber = context.Start.Column,
+                });
             }
 
             var noteNode = new AtomicNode
@@ -971,6 +1152,121 @@ namespace Addmusic2.Visitors
                 ColumnNumber = context.Start.Column,
             };
             return noteNode;
+        }
+
+        public override ISongNode VisitChainRest([NotNull] MmlParser.ChainRestContext context)
+        {
+            var restText = context.GetText().Replace(" ", "");
+            
+            var restRegex = Regexes.RestRegex();
+            var matches = restRegex.Matches(restText);
+
+            var subRests = new List<SongNode>();
+
+            foreach (var match in matches.ToList())
+            {
+                var restPayload = new RestPayload();
+                // skip the first group since its the full match value
+                var groups = match.Groups.Values.ToList();
+                var tiePayloads = new List<TiePayload>();
+
+                var restValueGroup = groups[1];
+                var durationGroup = groups[2];
+                var dotGroup = groups[3];
+                var tieGroup = groups[4];
+
+                // determine if an '=' was used for the duration
+                if (restText.Length > 1)
+                {
+                    restPayload.HasEquals = restText[1].Equals('=');
+                }
+                // set the duration, if found
+                if (durationGroup.Success && durationGroup.Value.Length > 0)
+                {
+                    var durationValue = durationGroup.Value.Replace("=", "");
+                    restPayload.Duration = int.Parse(durationValue);
+                }
+                else
+                {
+                    restPayload.UseDefaultLength = true;
+                }
+                // set the dot count, if any are found
+                if (dotGroup.Success && dotGroup.Value.Length > 0)
+                {
+                    var dotCount = dotGroup.Value.Count(t => t == '.');
+                    restPayload.DotCount = dotCount;
+                }
+                // set the tie information, if any are found
+                var tieMatches = Regexes.TieRegex().Matches(restText).ToList();
+                // there can potentially be multiple ties grouped together
+                if (tieMatches.Count > 0)
+                {
+                    foreach (var tieMatch in tieMatches)
+                    {
+                        var matchPayload = new TiePayload();
+                        var tiegroups = tieMatch.Groups;
+                        // get the first value which is the entire match
+                        var tiegroupValue = tiegroups[0];
+                        // determine if an '=' was used to define the duration
+                        matchPayload.HasEquals = tiegroupValue.Value.Contains('=');
+                        // get the number of dots that occur in the matched tie
+                        var matchDotCount = tiegroupValue.Value.Count(t => t == '.');
+                        matchPayload.DotCount = matchDotCount;
+                        // get the capture group for the duration, if found
+                        var tieDurationGroup = tiegroups[1];
+                        // set the found duration to the parsed duration from the capture group, if found
+                        if (tieDurationGroup.Success)
+                        {
+                            matchPayload.Duration = int.Parse(tieDurationGroup.Value);
+                        }
+                        // else, this tie uses the default note length as it does not have a duration specified
+                        else
+                        {
+                            matchPayload.UseDefaultNoteLength = true;
+                        }
+                        tiePayloads.Add(matchPayload);
+                    }
+                }
+
+                if (tiePayloads.Count > 0)
+                {
+                    restPayload.ConnectedTies.Add(new AtomicNode
+                    {
+                        NodeType = SongNodeType.Tie,
+                        NodeSource = string.Join("", tiePayloads),
+                        Payload = new TiePayload
+                        {
+                            TieList = tiePayloads
+                        },
+                        LineNumber = context.Start.Line,
+                        ColumnNumber = context.Start.Column,
+                    });
+                }
+
+                var noteNode = new AtomicNode
+                {
+                    NodeType = SongNodeType.Rest,
+                    NodeSource = restText,
+                    Payload = restPayload,
+                    LineNumber = context.Start.Line,
+                    ColumnNumber = context.Start.Column,
+                };
+                subRests.Add(noteNode);
+            }
+            var parentRestPayload = new RestPayload
+            {
+                ConnectedRests = subRests,
+            };
+            var parentNoteNode = new AtomicNode
+            {
+                NodeType = SongNodeType.Rest,
+                NodeSource = restText,
+                Payload = parentRestPayload,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+            };
+
+            return parentNoteNode;
         }
 
         public override ISongNode VisitTempo([NotNull] MmlParser.TempoContext context)
