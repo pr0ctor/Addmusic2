@@ -128,4 +128,14 @@ namespace Addmusic2.Model.Constants
         SmwVTable,
         NspcVTable,
     }
+
+    public enum ComparisonOperators
+    {
+        EqualTo,
+        NotEqualTo,
+        GreaterThan,
+        GreaterThanEqualTo,
+        LessThan,
+        LessThanEqualTo,
+    }
 }

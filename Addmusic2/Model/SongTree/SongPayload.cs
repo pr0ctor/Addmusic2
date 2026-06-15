@@ -675,4 +675,77 @@ namespace Addmusic2.Model.SongTree
     #endregion
 
 
+    #region Preprocessor Payloads
+
+    internal class DefinePayload : ISongNodePayload
+    {
+        public string DefineName { get; set; } = string.Empty;
+        public string DefineValue { get; set; } = string.Empty;
+
+        public DefinePayload() { }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            builder.Append($"#DEFINE {DefineName}{((DefineValue.Length > 0) ? DefineValue : "")}");
+            return builder.ToString();
+        }
+    }
+
+    internal class UndefinePayload : ISongNodePayload
+    {
+        public string DefineName { get; set; } = string.Empty;
+
+        public UndefinePayload() { }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            builder.Append($"#UNDEF {DefineName}");
+            return builder.ToString();
+        }
+    }
+
+    internal class DefineComparisonPayload : ISongNodePayload
+    {
+        public SongNodeType NodeType { get; set; }
+        public string LeftValue { get; set; } = string.Empty;
+        public ComparisonOperators Operator { get; set; }
+        public string RightValue { get; set; } = string.Empty;
+
+        public DefineComparisonPayload() { }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+
+            var nodeType = (NodeType == SongNodeType.If)
+                ? "#IF"
+                : (NodeType == SongNodeType.ElseIf)
+                    ? "#ELSEIF"
+                    : throw new Exception("Unexpected Comparison");
+
+            builder.Append($"{nodeType} {LeftValue} {Helpers.Helpers.ParseComparisonOperatorToString(Operator)} {RightValue}");
+            return builder.ToString();
+        }
+    }
+
+    internal class IfDefinedPayload : ISongNodePayload
+    {
+        public bool IsDefined { get; set; }
+        public string DefineName { get; set; } = string.Empty;
+
+        public IfDefinedPayload() { }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            builder.Append($"{((IsDefined) ? "#IFDEF" : "#IFNDEF")} {DefineName}");
+            return builder.ToString();
+        }
+
+    }
+
+    #endregion
+
 }

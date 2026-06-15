@@ -1,0 +1,17 @@
+Amk=1
+Amm=2
+Am4=3
+AmkV1=4
+DEFINE=5
+IFDEF=6
+IFNDEF=7
+UNDEF=8
+IF=9
+ELSE=10
+ELSEIF=11
+ENDIF=12
+ERROR=13
+ReplacementText=14
+WHITESPACE=15
+Comment=16
+ArbitraryText=17

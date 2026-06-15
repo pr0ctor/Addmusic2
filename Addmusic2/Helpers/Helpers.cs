@@ -142,6 +142,18 @@ namespace Addmusic2.Helpers
             }
         }
 
+        public static string ParseComparisonOperatorToString(ComparisonOperators comparisonOperator) => comparisonOperator switch
+        {
+            ComparisonOperators.EqualTo => "=",
+            ComparisonOperators.NotEqualTo => "!=",
+            ComparisonOperators.GreaterThan => ">",
+            ComparisonOperators.GreaterThanEqualTo => ">=",
+            ComparisonOperators.LessThan => "<",
+            ComparisonOperators.LessThanEqualTo => "<=",
+            _ => throw new ArgumentOutOfRangeException("Invalid Comparison Operator.")
+
+        };
+
         public static string ParseAccidentalToString(Accidentals accidental) => accidental switch
         {
             Accidentals.None => "",

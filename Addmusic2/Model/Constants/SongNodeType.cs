@@ -15,6 +15,7 @@ namespace Addmusic2.Model.Constants
         Directive,
         Loop,
         Hex,
+        Preprocessor,
         Empty,
         // Atomic
         Note,
@@ -68,5 +69,15 @@ namespace Addmusic2.Model.Constants
         SfxVolume,
         Asm,
         Jsr,
+        // Preprocessor Specific Values
+        Define,
+        UnDefine,
+        If,
+        Else,
+        ElseIf,
+        IfDef,
+        IfNDef,
+        Error,
+        ArbitraryText,
     }
 }
