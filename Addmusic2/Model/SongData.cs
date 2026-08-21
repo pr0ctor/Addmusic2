@@ -13,6 +13,8 @@ namespace Addmusic2.Model
         public string SongPath { get; set; } = string.Empty;
         public SongScope SongScope { get; set; }
         public SampleInstrumentManager SampleInstrumentManager { get; set; } = new();
+        public AddmusicKVersion AmkVersion { get; set; } = AddmusicKVersion.Version2;
+        public AddmusicKParserVersion AmkParserVersion { get; set; } = AddmusicKParserVersion.Version0;
 
         public List<byte> RatsData { get; set; } = new();
         public List<byte> FinalData { get; set; } = new();

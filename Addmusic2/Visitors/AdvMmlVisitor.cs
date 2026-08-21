@@ -143,8 +143,7 @@ namespace Addmusic2.Visitors
         {
             var am4VersionText = context.GetText();
             var amkPayload = new AmkVersionPayload();
-            amkPayload.AmkVersionType = AmkType.Amk;
-            amkPayload.AmkVersion = "4";
+            amkPayload.AmkVersionType = AmkType.Am4;
             var amkVersionNode = new DirectiveNode
             {
                 NodeType = SongNodeType.Amk,
@@ -967,27 +966,23 @@ namespace Addmusic2.Visitors
             {
                 HexSourced = true,
             };
-            var padContext = context.dbPan();
-            var padFadeContext = context.dcPanFade();
+            var panContext = context.dbPan();
+            var panFadeContext = context.dcPanFade();
 
-            var nodes = (padContext != null)
-                ? new List<MmlParser.HexNumberContext>
-                    {
-                        padContext.hexNumber()
-                    }
-                : padFadeContext.hexNumber().ToList();
-            if (nodes.Count == 1)
+            if(panContext != null)
             {
-                var panValue = Convert.ToInt32(nodes[0].GetText()[1..], 16);
-                panPayload.PanPosition = panValue;
+                var hexNumber = panContext.hexNumber();
+                panPayload.HexDuration = Convert.ToInt32(hexNumber.GetText()[1..], 16);
+                panPayload.IsHexPanFade = false;
             }
             else
             {
-                var duration = Convert.ToInt32(nodes[0].GetText()[1..], 16);
-                var panValue = Convert.ToInt32(nodes[1].GetText()[1..], 16);
-                panPayload.PanPosition = panValue;
-                panPayload.PanDuration = duration;
+                var hexNumbers = panFadeContext.hexNumber().ToList();
+                panPayload.HexDuration = Convert.ToInt32(hexNumbers[0].GetText()[1..], 16);
+                panPayload.HexFinalPanValue = Convert.ToInt32(hexNumbers[1].GetText()[1..], 16);
+                panPayload.IsHexPanFade = true;
             }
+
             var panNode = new AtomicNode
             {
                 NodeType = SongNodeType.Pan,
@@ -1170,15 +1165,16 @@ namespace Addmusic2.Visitors
                 var groups = match.Groups.Values.ToList();
                 var tiePayloads = new List<TiePayload>();
 
+                var currentRestText = groups[0];
                 var restValueGroup = groups[1];
                 var durationGroup = groups[2];
                 var dotGroup = groups[3];
                 var tieGroup = groups[4];
 
                 // determine if an '=' was used for the duration
-                if (restText.Length > 1)
+                if (currentRestText.Length > 1)
                 {
-                    restPayload.HasEquals = restText[1].Equals('=');
+                    restPayload.HasEquals = currentRestText.Value[1].Equals('=');
                 }
                 // set the duration, if found
                 if (durationGroup.Success && durationGroup.Value.Length > 0)
@@ -1197,7 +1193,7 @@ namespace Addmusic2.Visitors
                     restPayload.DotCount = dotCount;
                 }
                 // set the tie information, if any are found
-                var tieMatches = Regexes.TieRegex().Matches(restText).ToList();
+                var tieMatches = Regexes.TieRegex().Matches(currentRestText.Value).ToList();
                 // there can potentially be multiple ties grouped together
                 if (tieMatches.Count > 0)
                 {
@@ -1246,7 +1242,7 @@ namespace Addmusic2.Visitors
                 var noteNode = new AtomicNode
                 {
                     NodeType = SongNodeType.Rest,
-                    NodeSource = restText,
+                    NodeSource = currentRestText.Value,
                     Payload = restPayload,
                     LineNumber = context.Start.Line,
                     ColumnNumber = context.Start.Column,
@@ -1493,11 +1489,12 @@ namespace Addmusic2.Visitors
         public override ISongNode VisitCallPreviousLoop([NotNull] MmlParser.CallPreviousLoopContext context)
         {
             var callPreviousLoopText = context.GetText();
-            var iterationsToken = context.NUMBERS();
+            var iterationsToken = context.CallPreviousLoop();
+            var iterationsText = iterationsToken.GetText().Replace("*", "");
             int iterations = 0;
-            if (iterationsToken != null && iterationsToken.GetText() != "")
+            if (iterationsToken != null && iterationsText != "")
             {
-                iterations = int.Parse(iterationsToken.GetText());
+                iterations = int.Parse(iterationsText);
             }
 
             return new LoopNode
@@ -1676,7 +1673,7 @@ namespace Addmusic2.Visitors
             };
         }
 
-        public override ISongNode VisitSuperLoop([NotNull] MmlParser.SuperLoopContext context)
+        public override ISongNode VisitBracketSuperLoop([NotNull] MmlParser.BracketSuperLoopContext context)
         {
             var simpleLoopText = context.GetText();
             var iterationsText = context.NUMBERS();
@@ -1690,7 +1687,10 @@ namespace Addmusic2.Visitors
             {
                 loopContents.Add(Visit(child));
             }
-
+            var superLoopPayload = new SuperLoopPayload
+            {
+                FromHex = false,
+            };
             var superLoopNode = new LoopNode
             {
                 NodeType = SongNodeType.SuperLoop,
@@ -1699,6 +1699,39 @@ namespace Addmusic2.Visitors
                 ColumnNumber = context.Start.Column,
                 Iterations = iterations,
                 LoopContents = loopContents,
+                Payload = superLoopPayload,
+            };
+
+            return superLoopNode;
+        }
+
+        public override ISongNode VisitE6SuperLoop([NotNull] MmlParser.E6SuperLoopContext context)
+        {
+            var simpleLoopText = context.GetText();
+            var iterationsText = context.e6SuperLoopEnd().hexNumber();
+            var iterations = (iterationsText == null) ? 0 : Convert.ToByte(iterationsText.GetText().Replace("$", ""), 16);
+
+            var superLoopContents = context.superLoopContents();
+
+            var loopContents = new List<ISongNode>();
+            // Visit the contents of the loop and store them in the LoopContents field
+            foreach (var child in superLoopContents)
+            {
+                loopContents.Add(Visit(child));
+            }
+            var superLoopPayload = new SuperLoopPayload
+            {
+                FromHex = true,
+            };
+            var superLoopNode = new LoopNode
+            {
+                NodeType = SongNodeType.SuperLoop,
+                NodeSource = simpleLoopText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                Iterations = iterations,
+                LoopContents = loopContents,
+                Payload = superLoopPayload,
             };
 
             return superLoopNode;
@@ -1757,7 +1790,7 @@ namespace Addmusic2.Visitors
             return Visit(context.GetChild(0));
         }
 
-        public override ISongNode VisitTerminalSuperLoop([NotNull] MmlParser.TerminalSuperLoopContext context)
+        public override ISongNode VisitBracketTerminalSuperLoop([NotNull] MmlParser.BracketTerminalSuperLoopContext context)
         {
             var simpleLoopText = context.GetText();
             var iterationsText = context.NUMBERS();
@@ -1771,7 +1804,10 @@ namespace Addmusic2.Visitors
             {
                 loopContents.Add(Visit(child));
             }
-
+            var superLoopPayload = new SuperLoopPayload
+            {
+                FromHex = false,
+            };
             var superLoopNode = new LoopNode
             {
                 NodeType = SongNodeType.SuperLoop,
@@ -1780,6 +1816,39 @@ namespace Addmusic2.Visitors
                 ColumnNumber = context.Start.Column,
                 Iterations = iterations,
                 LoopContents = loopContents,
+                Payload = superLoopPayload,
+            };
+
+            return superLoopNode;
+        }
+
+        public override ISongNode VisitE6TerminalSuperLoop([NotNull] MmlParser.E6TerminalSuperLoopContext context)
+        {
+            var simpleLoopText = context.GetText();
+            var iterationsText = context.e6SuperLoopEnd().hexNumber();
+            var iterations = (iterationsText == null) ? 0 : Convert.ToByte(iterationsText.GetText().Replace("$", ""), 16);
+
+            var superLoopContents = context.terminalSuperLoopContents();
+
+            var loopContents = new List<ISongNode>();
+            // Visit the contents of the loop and store them in the LoopContents field
+            foreach (var child in superLoopContents)
+            {
+                loopContents.Add(Visit(child));
+            }
+            var superLoopPayload = new SuperLoopPayload
+            {
+                FromHex = true,
+            };
+            var superLoopNode = new LoopNode
+            {
+                NodeType = SongNodeType.SuperLoop,
+                NodeSource = simpleLoopText,
+                LineNumber = context.Start.Line,
+                ColumnNumber = context.Start.Column,
+                Iterations = iterations,
+                LoopContents = loopContents,
+                Payload = superLoopPayload,
             };
 
             return superLoopNode;
@@ -1969,15 +2038,61 @@ namespace Addmusic2.Visitors
             var dbPitchBlendText = context.GetText();
             var hexCommandValue = context.NDD().GetText();
             var values = context.hexNumber().Select(h => h.GetText()).ToList();
-            var noteData = new List<ISongNode>();
+            // Get the note that appears before the blend command
+            //      Separate out the last tie (if any) from the note as that will be
+            //          parsed indenpendantly from its base note
+            var preNoteData = new List<ISongNode>();
+            var preNotes = context.ddPitchBlendPreItems();
+            if(preNotes != null)
+            {
+                foreach (var index in Enumerable.Range(0, preNotes.ChildCount))
+                {
+                    var preNotesNode = Visit(preNotes.GetChild(index));
+                    preNoteData.Add(preNotesNode);
+                    if(preNotesNode.NodeType == SongNodeType.Tie)
+                    {
+                        var preNotePayload = (TiePayload)preNotesNode.Payload;
+                        if (preNotePayload != null && preNotePayload.TieList.Count > 0)
+                        {
+                            var lastTiePayload = preNotePayload.TieList.Last();
+                            preNoteData.Add(new AtomicNode
+                            {
+                                NodeType = SongNodeType.Tie,
+                                Payload = lastTiePayload
+                            });
+                            preNotePayload.TieList = preNotePayload.TieList.SkipLast(1).ToList();
+                        }
+                    }
+                    else if(preNotesNode.NodeType == SongNodeType.Note)
+                    {
+                        var preNotePayload = (NotePayload)preNotesNode.Payload;
+                        if (preNotePayload != null && preNotePayload.ConnectedTies.Count > 0)
+                        {
+                            var lastTieNode = preNotePayload.ConnectedTies.Last();
+                            preNoteData.Add(lastTieNode);
+                            preNotePayload.ConnectedTies = preNotePayload.ConnectedTies.SkipLast(1).ToList();
+                        }
+                    }
+                    
+                }
+            }
+            
+            // Get the note (if any) and any other commands used that appears after the command has been used
+            var parameterNoteData = new List<ISongNode>();
             var blendItems = context.ddPitchBlendItems();
             if(blendItems != null)
             {
                 foreach (var index in Enumerable.Range(0, blendItems.ChildCount))
                 {
-                    noteData.Add(Visit(blendItems.GetChild(index)));
+                    parameterNoteData.Add(Visit(blendItems.GetChild(index)));
                 }
             }
+            var ddPitchBlendPayload = new DdPitchBlendPayload
+            {
+                StartNoteNodeItems = preNoteData,
+                HexValues = values,
+                BlendItems = parameterNoteData
+            };
             return new HexNode
             {
                 NodeType = SongNodeType.Hex,
@@ -1987,7 +2102,8 @@ namespace Addmusic2.Visitors
                 CommandType = HexCommands.DDPitchBlend,
                 HexCommand = hexCommandValue,
                 HexValues = values,
-                Children = noteData,
+                Children = parameterNoteData,
+                Payload = ddPitchBlendPayload,
             };
         }
 
@@ -2093,15 +2209,15 @@ namespace Addmusic2.Visitors
             };
         }
 
-        public ISongNode VisitE6SubloopStart([NotNull] MmlParser.E6SubloopStartContext context)
+        /*public ISongNode VisitE6SubloopStart([NotNull] MmlParser.E6SubloopStartContext context)
         {
             throw new NotImplementedException();
-        }
+        }*/
 
-        public ISongNode VisitE6SubloopEnd([NotNull] MmlParser.E6SubloopEndContext context)
+        /*public ISongNode VisitE6SubloopEnd([NotNull] MmlParser.E6SubloopEndContext context)
         {
             throw new NotImplementedException();
-        }
+        }*/
 
         /*public ISongNode VisitE7Volume([NotNull] MmlParser.E7VolumeContext context)
         {

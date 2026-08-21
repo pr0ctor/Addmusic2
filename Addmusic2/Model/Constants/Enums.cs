@@ -100,6 +100,7 @@ namespace Addmusic2.Model.Constants
     {
         Amk,
         Amm,
+        Am4,
     }
 
     public enum AddmusicKVersion
@@ -110,6 +111,16 @@ namespace Addmusic2.Model.Constants
         Version1,
         Version2,
         Version3, // unused
+        Version4,
+    }
+
+    public enum AddmusicKParserVersion
+    {
+        Undefined,
+        Version0, // Catch all for Unknown and Amk
+        Version1, // AM4
+        Version2, // AMM
+        Version3,
         Version4,
     }
 

@@ -286,27 +286,46 @@ namespace Addmusic2.Model.SongTree
     internal class PanPayload : ISongNodePayload
     {
         public bool HexSourced { get; set; } = false;
+        public bool IsHexPanFade { get; set; } = false;
+
         public bool HasSurroundSound { get; set; } = false;
         public int PanPosition { get; set; }
         public int SurroundSoundLeft { get; set; } = -1;
         public int SurroundSoundRight { get; set; } = -1;
         public int PanDuration { get; set; } = -1;
+        public int HexDuration { get; set; } = -1;
+        public int HexFinalPanValue { get; set; } = -1;
 
         public PanPayload() { }
 
         public override string ToString()
         {
             var builder = new StringBuilder();
-            builder.Append("y");
-            builder.Append(PanPosition);
-            if(SurroundSoundLeft > -1)
+            if(!HexSourced)
             {
-                builder.Append($",{SurroundSoundLeft}");
+                builder.Append("y");
+                builder.Append(PanPosition);
+                if (SurroundSoundLeft > -1)
+                {
+                    builder.Append($",{SurroundSoundLeft}");
+                }
+                if (SurroundSoundRight > -1)
+                {
+                    builder.Append($",{SurroundSoundRight}");
+                }
             }
-            if(SurroundSoundRight > -1)
+            else if(HexSourced && !IsHexPanFade)
             {
-                builder.Append($",{SurroundSoundRight}");
+                builder.Append($"${ Convert.ToHexString([MagicNumbers.CommandValues.Pan]) }");
+                builder.Append($"${ Convert.ToHexString([(byte)HexDuration]) }");
             }
+            else if(HexSourced && IsHexPanFade)
+            {
+                builder.Append($"${ Convert.ToHexString([MagicNumbers.CommandValues.PanFade]) }");
+                builder.Append($"${ Convert.ToHexString([(byte)HexDuration]) }");
+                builder.Append($"${ Convert.ToHexString([(byte)HexFinalPanValue]) }");
+            }
+
             return builder.ToString();
         }
     }
@@ -599,6 +618,48 @@ namespace Addmusic2.Model.SongTree
 
     #endregion
 
+
+    #region Hex Command Payloads
+
+    internal class DdPitchBlendPayload : ISongNodePayload
+    {
+        public List<ISongNode> StartNoteNodeItems { get; set; } = [];
+        public List<string> HexValues { get; set; } = [];
+        public List<ISongNode> BlendItems { get; set; } = [];
+
+        public DdPitchBlendPayload() { }
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            foreach (var item in StartNoteNodeItems)
+            {
+                builder.Append(item.ToString());
+                builder.Append(' ');
+            }
+            builder.Append("$DD ");
+            foreach (var item in HexValues)
+            {
+                builder.Append(item.ToString());
+                builder.Append(' ');
+            }
+            foreach (var item in BlendItems)
+            {
+                builder.Append(item.ToString());
+                builder.Append(' ');
+            }
+            //builder = builder.Append($"{(HexValue.StartsWith("$") ? HexValue : "$")}");
+            return builder.ToString();
+        }
+    }
+
+    internal class SuperLoopPayload : ISongNodePayload
+    {
+        public bool FromHex { get; set; } = false;
+        public SuperLoopPayload() { }
+    }
+
+
+    #endregion
 
     #region Sfx Payloads
 
