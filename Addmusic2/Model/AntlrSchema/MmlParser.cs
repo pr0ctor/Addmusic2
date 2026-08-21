@@ -36,26 +36,26 @@ public partial class MmlParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		POUND=1, DOLLAR=2, COMMAT=3, AMPER=4, BANG=5, PERCENT=6, STAR=7, LBRACE=8, 
-		RBRACE=9, LPAREN=10, RPAREN=11, LBRACK=12, RBRACK=13, L2BRACK=14, R2BRACK=15, 
-		DQUOTE=16, SQUOTE=17, SHARP=18, FLAT=19, DOT=20, GT=21, LT=22, COMMA=23, 
-		FSLASH=24, QMARK=25, EQUAL=26, SEMICOLON=27, ReplacementText=28, StringLiteral=29, 
-		PercentNumber=30, Note=31, Rest=32, RestChain=33, Octave=34, Noise=35, 
-		Tempo=36, Volume=37, Tune=38, Length=39, Quantization=40, GlobalVolume=41, 
-		Pan=42, Vibrato=43, NakedTie=44, Question=45, Instrument=46, Pipe=47, 
-		LoopName=48, RemoteCodeName=49, StopRemoteCode=50, CallRemoteCode=51, 
-		CallPreviousLoop=52, LoadSample=53, AmkV1=54, Amk=55, Amm=56, Am4=57, 
-		Samples=58, Instruments=59, Spc=60, SpcAuthor=61, SpcGame=62, SpcComment=63, 
-		SpcTitle=64, SpcLength=65, Pad=66, Path=67, Halvetempo=68, Option=69, 
-		Louder=70, Tempoimmunity=71, Dividetempo=72, Smwvtable=73, Nspcvtable=74, 
-		Noloop=75, Amk109hotpatch=76, Channel=77, SampleOptimization=78, N00=79, 
-		N01=80, N02=81, N03=82, N04=83, N05=84, N06=85, N07=86, N08=87, N09=88, 
-		N7F=89, N80=90, N81=91, NFE=92, NDA=93, NDB=94, NDC=95, NDD=96, NDE=97, 
-		NDF=98, NE0=99, NE1=100, NE2=101, NE3=102, NE4=103, NE5=104, NE6=105, 
-		NE7=106, NE8=107, NE9=108, NEA=109, NEB=110, NEC=111, NED=112, NEE=113, 
-		NEF=114, NF0=115, NF1=116, NF2=117, NF3=118, NF4=119, NF5=120, NF6=121, 
-		NF7=122, NF8=123, NF9=124, NFA=125, NFB=126, NFC=127, NFD=128, NUMBERS=129, 
-		UNUMBERS=130, HexNumber=131, WHITESPACE=132, Comment=133;
+		POUND=1, DOLLAR=2, COMMAT=3, AMPER=4, BANG=5, PERCENT=6, LBRACE=7, RBRACE=8, 
+		LPAREN=9, RPAREN=10, LBRACK=11, RBRACK=12, L2BRACK=13, R2BRACK=14, DQUOTE=15, 
+		SQUOTE=16, SHARP=17, FLAT=18, DOT=19, GT=20, LT=21, COMMA=22, QMARK=23, 
+		EQUAL=24, SEMICOLON=25, ReplacementText=26, StringLiteral=27, PercentNumber=28, 
+		Note=29, Rest=30, RestChain=31, Octave=32, Noise=33, Tempo=34, Volume=35, 
+		Tune=36, Length=37, Quantization=38, GlobalVolume=39, Pan=40, Vibrato=41, 
+		NakedTie=42, Question=43, Instrument=44, Pipe=45, Intro=46, LoopName=47, 
+		RemoteCodeName=48, StopRemoteCode=49, CallRemoteCode=50, CallPreviousLoop=51, 
+		LoadSample=52, AmkV1=53, Amk=54, Amm=55, Am4=56, Samples=57, Instruments=58, 
+		Spc=59, SpcAuthor=60, SpcGame=61, SpcComment=62, SpcTitle=63, SpcLength=64, 
+		Pad=65, Path=66, Halvetempo=67, Option=68, Louder=69, Tempoimmunity=70, 
+		Dividetempo=71, Smwvtable=72, Nspcvtable=73, Noloop=74, Amk109hotpatch=75, 
+		Channel=76, SampleOptimization=77, N00=78, N01=79, N02=80, N03=81, N04=82, 
+		N05=83, N06=84, N07=85, N08=86, N09=87, N7F=88, N80=89, N81=90, NFE=91, 
+		NDA=92, NDB=93, NDC=94, NDD=95, NDE=96, NDF=97, NE0=98, NE1=99, NE2=100, 
+		NE3=101, NE4=102, NE5=103, NE6=104, NE7=105, NE8=106, NE9=107, NEA=108, 
+		NEB=109, NEC=110, NED=111, NEE=112, NEF=113, NF0=114, NF1=115, NF2=116, 
+		NF3=117, NF4=118, NF5=119, NF6=120, NF7=121, NF8=122, NF9=123, NFA=124, 
+		NFB=125, NFC=126, NFD=127, NUMBERS=128, UNUMBERS=129, HexNumber=130, WHITESPACE=131, 
+		Comment=132;
 	public const int
 		RULE_song = 0, RULE_songElement = 1, RULE_specialDirective = 2, RULE_samples = 3, 
 		RULE_samplesList = 4, RULE_instruments = 5, RULE_instrumentsList = 6, 
@@ -77,18 +77,18 @@ public partial class MmlParser : Parser {
 		RULE_callPreviousLoop = 59, RULE_noloopCommand = 60, RULE_sampleLoadCommand = 61, 
 		RULE_replacements = 62, RULE_globalHexCommands = 63, RULE_channelHexCommands = 64, 
 		RULE_daInstrument = 65, RULE_dbPan = 66, RULE_dcPanFade = 67, RULE_ddPitchBlendCommand = 68, 
-		RULE_ddPitchBlendItems = 69, RULE_deVibratoStart = 70, RULE_eaVibratoFade = 71, 
-		RULE_dfVibratoEnd = 72, RULE_e0GlobalVolume = 73, RULE_e1GlobalVolumeFade = 74, 
-		RULE_e2Tempo = 75, RULE_e3TempoFade = 76, RULE_e4GlobalTranspose = 77, 
-		RULE_e5Tremolo = 78, RULE_e6SubloopStart = 79, RULE_e6SubloopEnd = 80, 
-		RULE_e7Volume = 81, RULE_e8VolumeFade = 82, RULE_ebPitchEnvelopeRelease = 83, 
-		RULE_ecPitchEnvelopeAttack = 84, RULE_edCustomADSROrGain = 85, RULE_eeTuneChannel = 86, 
-		RULE_efEcho1 = 87, RULE_f0EchoOff = 88, RULE_f1Echo2 = 89, RULE_f2EchoFade = 90, 
-		RULE_f3SampleLoad = 91, RULE_f4GlobalItems = 92, RULE_f4ChannelItems = 93, 
-		RULE_f5FIRFilter = 94, RULE_f6DSPWrite = 95, RULE_f8EnableNoise = 96, 
-		RULE_f9DataSend = 97, RULE_faChannelItems = 98, RULE_faGlobalItems = 99, 
-		RULE_fbItems = 100, RULE_fcItems = 101, RULE_fdTremoloOff = 102, RULE_fePitchEnvelopeOff = 103, 
-		RULE_hexNumber = 104;
+		RULE_ddPitchBlendPreItems = 69, RULE_ddPitchBlendItems = 70, RULE_deVibratoStart = 71, 
+		RULE_eaVibratoFade = 72, RULE_dfVibratoEnd = 73, RULE_e0GlobalVolume = 74, 
+		RULE_e1GlobalVolumeFade = 75, RULE_e2Tempo = 76, RULE_e3TempoFade = 77, 
+		RULE_e4GlobalTranspose = 78, RULE_e5Tremolo = 79, RULE_e6SuperLoopStart = 80, 
+		RULE_e6SuperLoopEnd = 81, RULE_e7Volume = 82, RULE_e8VolumeFade = 83, 
+		RULE_ebPitchEnvelopeRelease = 84, RULE_ecPitchEnvelopeAttack = 85, RULE_edCustomADSROrGain = 86, 
+		RULE_eeTuneChannel = 87, RULE_efEcho1 = 88, RULE_f0EchoOff = 89, RULE_f1Echo2 = 90, 
+		RULE_f2EchoFade = 91, RULE_f3SampleLoad = 92, RULE_f4GlobalItems = 93, 
+		RULE_f4ChannelItems = 94, RULE_f5FIRFilter = 95, RULE_f6DSPWrite = 96, 
+		RULE_f8EnableNoise = 97, RULE_f9DataSend = 98, RULE_faChannelItems = 99, 
+		RULE_faGlobalItems = 100, RULE_fbItems = 101, RULE_fcItems = 102, RULE_fdTremoloOff = 103, 
+		RULE_fePitchEnvelopeOff = 104, RULE_hexNumber = 105;
 	public static readonly string[] ruleNames = {
 		"song", "songElement", "specialDirective", "samples", "samplesList", "instruments", 
 		"instrumentsList", "spc", "spcList", "pad", "path", "halvetempo", "option", 
@@ -103,30 +103,30 @@ public partial class MmlParser : Parser {
 		"terminalSimpleLoopContents", "remoteCode", "remoteCodeContents", "callLoop", 
 		"callRemoteCode", "stopRemoteCode", "callPreviousLoop", "noloopCommand", 
 		"sampleLoadCommand", "replacements", "globalHexCommands", "channelHexCommands", 
-		"daInstrument", "dbPan", "dcPanFade", "ddPitchBlendCommand", "ddPitchBlendItems", 
-		"deVibratoStart", "eaVibratoFade", "dfVibratoEnd", "e0GlobalVolume", "e1GlobalVolumeFade", 
-		"e2Tempo", "e3TempoFade", "e4GlobalTranspose", "e5Tremolo", "e6SubloopStart", 
-		"e6SubloopEnd", "e7Volume", "e8VolumeFade", "ebPitchEnvelopeRelease", 
-		"ecPitchEnvelopeAttack", "edCustomADSROrGain", "eeTuneChannel", "efEcho1", 
-		"f0EchoOff", "f1Echo2", "f2EchoFade", "f3SampleLoad", "f4GlobalItems", 
-		"f4ChannelItems", "f5FIRFilter", "f6DSPWrite", "f8EnableNoise", "f9DataSend", 
-		"faChannelItems", "faGlobalItems", "fbItems", "fcItems", "fdTremoloOff", 
-		"fePitchEnvelopeOff", "hexNumber"
+		"daInstrument", "dbPan", "dcPanFade", "ddPitchBlendCommand", "ddPitchBlendPreItems", 
+		"ddPitchBlendItems", "deVibratoStart", "eaVibratoFade", "dfVibratoEnd", 
+		"e0GlobalVolume", "e1GlobalVolumeFade", "e2Tempo", "e3TempoFade", "e4GlobalTranspose", 
+		"e5Tremolo", "e6SuperLoopStart", "e6SuperLoopEnd", "e7Volume", "e8VolumeFade", 
+		"ebPitchEnvelopeRelease", "ecPitchEnvelopeAttack", "edCustomADSROrGain", 
+		"eeTuneChannel", "efEcho1", "f0EchoOff", "f1Echo2", "f2EchoFade", "f3SampleLoad", 
+		"f4GlobalItems", "f4ChannelItems", "f5FIRFilter", "f6DSPWrite", "f8EnableNoise", 
+		"f9DataSend", "faChannelItems", "faGlobalItems", "fbItems", "fcItems", 
+		"fdTremoloOff", "fePitchEnvelopeOff", "hexNumber"
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'#'", "'$'", "'@'", "'&'", "'!'", "'%'", "'*'", "'{'", "'}'", "'('", 
-		"')'", "'['", "']'", "'[['", "']]'", "'\"'", "'''", "'+'", "'-'", "'.'", 
-		"'>'", "'<'", "','", "'/'", "'?'", "'='", "';'"
+		null, "'#'", "'$'", "'@'", "'&'", "'!'", "'%'", "'{'", "'}'", "'('", "')'", 
+		"'['", "']'", "'[['", "']]'", "'\"'", "'''", "'+'", "'-'", "'.'", "'>'", 
+		"'<'", "','", "'?'", "'='", "';'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "POUND", "DOLLAR", "COMMAT", "AMPER", "BANG", "PERCENT", "STAR", 
-		"LBRACE", "RBRACE", "LPAREN", "RPAREN", "LBRACK", "RBRACK", "L2BRACK", 
-		"R2BRACK", "DQUOTE", "SQUOTE", "SHARP", "FLAT", "DOT", "GT", "LT", "COMMA", 
-		"FSLASH", "QMARK", "EQUAL", "SEMICOLON", "ReplacementText", "StringLiteral", 
-		"PercentNumber", "Note", "Rest", "RestChain", "Octave", "Noise", "Tempo", 
-		"Volume", "Tune", "Length", "Quantization", "GlobalVolume", "Pan", "Vibrato", 
-		"NakedTie", "Question", "Instrument", "Pipe", "LoopName", "RemoteCodeName", 
+		null, "POUND", "DOLLAR", "COMMAT", "AMPER", "BANG", "PERCENT", "LBRACE", 
+		"RBRACE", "LPAREN", "RPAREN", "LBRACK", "RBRACK", "L2BRACK", "R2BRACK", 
+		"DQUOTE", "SQUOTE", "SHARP", "FLAT", "DOT", "GT", "LT", "COMMA", "QMARK", 
+		"EQUAL", "SEMICOLON", "ReplacementText", "StringLiteral", "PercentNumber", 
+		"Note", "Rest", "RestChain", "Octave", "Noise", "Tempo", "Volume", "Tune", 
+		"Length", "Quantization", "GlobalVolume", "Pan", "Vibrato", "NakedTie", 
+		"Question", "Instrument", "Pipe", "Intro", "LoopName", "RemoteCodeName", 
 		"StopRemoteCode", "CallRemoteCode", "CallPreviousLoop", "LoadSample", 
 		"AmkV1", "Amk", "Amm", "Am4", "Samples", "Instruments", "Spc", "SpcAuthor", 
 		"SpcGame", "SpcComment", "SpcTitle", "SpcLength", "Pad", "Path", "Halvetempo", 
@@ -208,10 +208,9 @@ public partial class MmlParser : Parser {
 		EnterRule(_localctx, 0, RULE_song);
 		int _la;
 		try {
-			State = 216;
+			State = 218;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
-			case FSLASH:
 			case QMARK:
 			case ReplacementText:
 			case StringLiteral:
@@ -219,6 +218,7 @@ public partial class MmlParser : Parser {
 			case Length:
 			case GlobalVolume:
 			case Question:
+			case Intro:
 			case RemoteCodeName:
 			case Amk:
 			case Amm:
@@ -284,26 +284,26 @@ public partial class MmlParser : Parser {
 			case HexNumber:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 211;
+				State = 213;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				do {
 					{
 					{
-					State = 210;
+					State = 212;
 					songElement();
 					}
 					}
-					State = 213;
+					State = 215;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
-				} while ( ((((_la - 24)) & ~0x3f) == 0 && ((1L << (_la - 24)) & -26955491739267021L) != 0) || ((((_la - 88)) & ~0x3f) == 0 && ((1L << (_la - 88)) & 10995116277759L) != 0) );
+				} while ( ((((_la - 23)) & ~0x3f) == 0 && ((1L << (_la - 23)) & -26955491732010983L) != 0) || ((((_la - 87)) & ~0x3f) == 0 && ((1L << (_la - 87)) & 10995116277759L) != 0) );
 				}
 				break;
 			case Eof:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 215;
+				State = 217;
 				Match(Eof);
 				}
 				break;
@@ -388,104 +388,104 @@ public partial class MmlParser : Parser {
 		SongElementContext _localctx = new SongElementContext(Context, State);
 		EnterRule(_localctx, 2, RULE_songElement);
 		try {
-			State = 232;
+			State = 234;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,2,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 218;
+				State = 220;
 				specialDirective();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 219;
+				State = 221;
 				soundChannel();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 220;
+				State = 222;
 				remoteCode();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 221;
+				State = 223;
 				defaultLength();
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 222;
+				State = 224;
 				globalVolumeCommand();
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 223;
+				State = 225;
 				tempoCommand();
 				}
 				break;
 			case 7:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 224;
+				State = 226;
 				replacements();
 				}
 				break;
 			case 8:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 225;
+				State = 227;
 				noloopCommand();
 				}
 				break;
 			case 9:
 				EnterOuterAlt(_localctx, 9);
 				{
-				State = 226;
+				State = 228;
 				Match(StringLiteral);
 				}
 				break;
 			case 10:
 				EnterOuterAlt(_localctx, 10);
 				{
-				State = 227;
+				State = 229;
 				globalHexCommands();
 				}
 				break;
 			case 11:
 				EnterOuterAlt(_localctx, 11);
 				{
-				State = 228;
+				State = 230;
 				hexNumber();
 				}
 				break;
 			case 12:
 				EnterOuterAlt(_localctx, 12);
 				{
-				State = 229;
+				State = 231;
 				introEnd();
 				}
 				break;
 			case 13:
 				EnterOuterAlt(_localctx, 13);
 				{
-				State = 230;
+				State = 232;
 				remoteCode();
 				}
 				break;
 			case 14:
 				EnterOuterAlt(_localctx, 14);
 				{
-				State = 231;
+				State = 233;
 				qmark();
 				}
 				break;
@@ -555,7 +555,7 @@ public partial class MmlParser : Parser {
 		SpecialDirectiveContext _localctx = new SpecialDirectiveContext(Context, State);
 		EnterRule(_localctx, 4, RULE_specialDirective);
 		try {
-			State = 242;
+			State = 244;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Amk:
@@ -563,56 +563,56 @@ public partial class MmlParser : Parser {
 			case Am4:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 234;
+				State = 236;
 				amk();
 				}
 				break;
 			case Spc:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 235;
+				State = 237;
 				spc();
 				}
 				break;
 			case Samples:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 236;
+				State = 238;
 				samples();
 				}
 				break;
 			case Instruments:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 237;
+				State = 239;
 				instruments();
 				}
 				break;
 			case Path:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 238;
+				State = 240;
 				path();
 				}
 				break;
 			case Pad:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 239;
+				State = 241;
 				pad();
 				}
 				break;
 			case Halvetempo:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 240;
+				State = 242;
 				halvetempo();
 				}
 				break;
 			case Option:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 241;
+				State = 243;
 				option();
 				}
 				break;
@@ -668,13 +668,13 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 244;
-			Match(Samples);
-			State = 245;
-			Match(LBRACE);
 			State = 246;
-			samplesList();
+			Match(Samples);
 			State = 247;
+			Match(LBRACE);
+			State = 248;
+			samplesList();
+			State = 249;
 			Match(RBRACE);
 			}
 		}
@@ -729,31 +729,31 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 252;
+			State = 254;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==SampleOptimization) {
 				{
 				{
-				State = 249;
+				State = 251;
 				Match(SampleOptimization);
 				}
 				}
-				State = 254;
+				State = 256;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 258;
+			State = 260;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==StringLiteral) {
 				{
 				{
-				State = 255;
+				State = 257;
 				Match(StringLiteral);
 				}
 				}
-				State = 260;
+				State = 262;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -811,25 +811,25 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 261;
+			State = 263;
 			Match(Instruments);
-			State = 262;
+			State = 264;
 			Match(LBRACE);
-			State = 266;
+			State = 268;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 70403640786944L) != 0) || _la==NDA) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 17600910196736L) != 0) || _la==NDA) {
 				{
 				{
-				State = 263;
+				State = 265;
 				instrumentsList();
 				}
 				}
-				State = 268;
+				State = 270;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 269;
+			State = 271;
 			Match(RBRACE);
 			}
 		}
@@ -945,16 +945,16 @@ public partial class MmlParser : Parser {
 		EnterRule(_localctx, 12, RULE_instrumentsList);
 		try {
 			int _alt;
-			State = 289;
+			State = 291;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case StringLiteral:
 				_localctx = new NamedInstrumentListItemContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 271;
-				Match(StringLiteral);
 				State = 273;
+				Match(StringLiteral);
+				State = 275;
 				ErrorHandler.Sync(this);
 				_alt = 1;
 				do {
@@ -962,7 +962,7 @@ public partial class MmlParser : Parser {
 					case 1:
 						{
 						{
-						State = 272;
+						State = 274;
 						hexNumber();
 						}
 						}
@@ -970,7 +970,7 @@ public partial class MmlParser : Parser {
 					default:
 						throw new NoViableAltException(this);
 					}
-					State = 275;
+					State = 277;
 					ErrorHandler.Sync(this);
 					_alt = Interpreter.AdaptivePredict(TokenStream,7,Context);
 				} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
@@ -981,9 +981,9 @@ public partial class MmlParser : Parser {
 				_localctx = new InstrumentListItemContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 277;
-				instrumentCommand();
 				State = 279;
+				instrumentCommand();
+				State = 281;
 				ErrorHandler.Sync(this);
 				_alt = 1;
 				do {
@@ -991,7 +991,7 @@ public partial class MmlParser : Parser {
 					case 1:
 						{
 						{
-						State = 278;
+						State = 280;
 						hexNumber();
 						}
 						}
@@ -999,7 +999,7 @@ public partial class MmlParser : Parser {
 					default:
 						throw new NoViableAltException(this);
 					}
-					State = 281;
+					State = 283;
 					ErrorHandler.Sync(this);
 					_alt = Interpreter.AdaptivePredict(TokenStream,8,Context);
 				} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
@@ -1009,9 +1009,9 @@ public partial class MmlParser : Parser {
 				_localctx = new NoiseInstrumentListItemContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 283;
-				noiseNote();
 				State = 285;
+				noiseNote();
+				State = 287;
 				ErrorHandler.Sync(this);
 				_alt = 1;
 				do {
@@ -1019,7 +1019,7 @@ public partial class MmlParser : Parser {
 					case 1:
 						{
 						{
-						State = 284;
+						State = 286;
 						hexNumber();
 						}
 						}
@@ -1027,7 +1027,7 @@ public partial class MmlParser : Parser {
 					default:
 						throw new NoViableAltException(this);
 					}
-					State = 287;
+					State = 289;
 					ErrorHandler.Sync(this);
 					_alt = Interpreter.AdaptivePredict(TokenStream,9,Context);
 				} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
@@ -1089,25 +1089,25 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 291;
+			State = 293;
 			Match(Spc);
-			State = 292;
+			State = 294;
 			Match(LBRACE);
-			State = 296;
+			State = 298;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while (((((_la - 61)) & ~0x3f) == 0 && ((1L << (_la - 61)) & 31L) != 0)) {
+			while (((((_la - 60)) & ~0x3f) == 0 && ((1L << (_la - 60)) & 31L) != 0)) {
 				{
 				{
-				State = 293;
+				State = 295;
 				spcList();
 				}
 				}
-				State = 298;
+				State = 300;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 299;
+			State = 301;
 			Match(RBRACE);
 			}
 		}
@@ -1157,51 +1157,51 @@ public partial class MmlParser : Parser {
 		SpcListContext _localctx = new SpcListContext(Context, State);
 		EnterRule(_localctx, 16, RULE_spcList);
 		try {
-			State = 311;
+			State = 313;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case SpcAuthor:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 301;
+				State = 303;
 				Match(SpcAuthor);
-				State = 302;
+				State = 304;
 				Match(StringLiteral);
 				}
 				break;
 			case SpcGame:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 303;
+				State = 305;
 				Match(SpcGame);
-				State = 304;
+				State = 306;
 				Match(StringLiteral);
 				}
 				break;
 			case SpcComment:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 305;
+				State = 307;
 				Match(SpcComment);
-				State = 306;
+				State = 308;
 				Match(StringLiteral);
 				}
 				break;
 			case SpcTitle:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 307;
+				State = 309;
 				Match(SpcTitle);
-				State = 308;
+				State = 310;
 				Match(StringLiteral);
 				}
 				break;
 			case SpcLength:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 309;
+				State = 311;
 				Match(SpcLength);
-				State = 310;
+				State = 312;
 				Match(StringLiteral);
 				}
 				break;
@@ -1255,9 +1255,9 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 313;
+			State = 315;
 			Match(Pad);
-			State = 314;
+			State = 316;
 			hexNumber();
 			}
 		}
@@ -1305,9 +1305,9 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 316;
+			State = 318;
 			Match(Path);
-			State = 317;
+			State = 319;
 			Match(StringLiteral);
 			}
 		}
@@ -1354,7 +1354,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 319;
+			State = 321;
 			Match(Halvetempo);
 			}
 		}
@@ -1443,34 +1443,34 @@ public partial class MmlParser : Parser {
 		EnterRule(_localctx, 24, RULE_option);
 		int _la;
 		try {
-			State = 333;
+			State = 335;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,14,Context) ) {
 			case 1:
 				_localctx = new OptionGroupContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 321;
+				State = 323;
 				Match(Option);
-				State = 322;
+				State = 324;
 				Match(LBRACE);
-				State = 327;
+				State = 329;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				while (_la==POUND) {
 					{
 					{
-					State = 323;
+					State = 325;
 					Match(POUND);
-					State = 324;
+					State = 326;
 					optionItem();
 					}
 					}
-					State = 329;
+					State = 331;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
-				State = 330;
+				State = 332;
 				Match(RBRACE);
 				}
 				break;
@@ -1478,9 +1478,9 @@ public partial class MmlParser : Parser {
 				_localctx = new SingleOptionContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 331;
+				State = 333;
 				Match(Option);
-				State = 332;
+				State = 334;
 				optionItem();
 				}
 				break;
@@ -1534,66 +1534,66 @@ public partial class MmlParser : Parser {
 		OptionItemContext _localctx = new OptionItemContext(Context, State);
 		EnterRule(_localctx, 26, RULE_optionItem);
 		try {
-			State = 345;
+			State = 347;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,15,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 335;
+				State = 337;
 				Match(Tempoimmunity);
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 336;
+				State = 338;
 				Match(Dividetempo);
-				State = 337;
+				State = 339;
 				Match(NUMBERS);
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 338;
+				State = 340;
 				Match(Smwvtable);
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 339;
+				State = 341;
 				Match(Nspcvtable);
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 340;
+				State = 342;
 				Match(Noloop);
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 341;
+				State = 343;
 				Match(Amk109hotpatch);
 				}
 				break;
 			case 7:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 342;
+				State = 344;
 				Match(StringLiteral);
-				State = 343;
+				State = 345;
 				Match(NUMBERS);
 				}
 				break;
 			case 8:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 344;
+				State = 346;
 				Match(StringLiteral);
 				}
 				break;
@@ -1695,16 +1695,16 @@ public partial class MmlParser : Parser {
 		AmkContext _localctx = new AmkContext(Context, State);
 		EnterRule(_localctx, 28, RULE_amk);
 		try {
-			State = 351;
+			State = 353;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Amk:
 				_localctx = new GeneralAmkVersionContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 347;
+				State = 349;
 				Match(Amk);
-				State = 348;
+				State = 350;
 				amkVersion();
 				}
 				break;
@@ -1712,7 +1712,7 @@ public partial class MmlParser : Parser {
 				_localctx = new AmmVersionContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 349;
+				State = 351;
 				amm();
 				}
 				break;
@@ -1720,7 +1720,7 @@ public partial class MmlParser : Parser {
 				_localctx = new Am4VersionContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 350;
+				State = 352;
 				am4();
 				}
 				break;
@@ -1771,7 +1771,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 353;
+			State = 355;
 			Match(Amm);
 			}
 		}
@@ -1818,7 +1818,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 355;
+			State = 357;
 			Match(Am4);
 			}
 		}
@@ -1867,7 +1867,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 357;
+			State = 359;
 			_la = TokenStream.LA(1);
 			if ( !(_la==AmkV1 || _la==NUMBERS) ) {
 			ErrorHandler.RecoverInline(this);
@@ -1928,21 +1928,21 @@ public partial class MmlParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 359;
+			State = 361;
 			Match(Channel);
-			State = 363;
+			State = 365;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,17,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					State = 360;
+					State = 362;
 					channelContents();
 					}
 					} 
 				}
-				State = 365;
+				State = 367;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,17,Context);
 			}
@@ -1960,7 +1960,7 @@ public partial class MmlParser : Parser {
 	}
 
 	public partial class IntroEndContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode FSLASH() { return GetToken(MmlParser.FSLASH, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Intro() { return GetToken(MmlParser.Intro, 0); }
 		public IntroEndContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -1991,8 +1991,8 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 366;
-			Match(FSLASH);
+			State = 368;
+			Match(Intro);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2050,41 +2050,41 @@ public partial class MmlParser : Parser {
 		ChannelContentsContext _localctx = new ChannelContentsContext(Context, State);
 		EnterRule(_localctx, 40, RULE_channelContents);
 		try {
-			State = 373;
+			State = 375;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,18,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 368;
+				State = 370;
 				atomics();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 369;
+				State = 371;
 				loopers();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 370;
+				State = 372;
 				sampleLoadCommand();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 371;
+				State = 373;
 				channelHexCommands();
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 372;
+				State = 374;
 				hexNumber();
 				}
 				break;
@@ -2104,6 +2104,9 @@ public partial class MmlParser : Parser {
 	public partial class AtomicsContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public PitchslideContext pitchslide() {
 			return GetRuleContext<PitchslideContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public DdPitchBlendCommandContext ddPitchBlendCommand() {
+			return GetRuleContext<DdPitchBlendCommandContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public NoteContext note() {
 			return GetRuleContext<NoteContext>(0);
@@ -2193,153 +2196,160 @@ public partial class MmlParser : Parser {
 		AtomicsContext _localctx = new AtomicsContext(Context, State);
 		EnterRule(_localctx, 42, RULE_atomics);
 		try {
-			State = 396;
+			State = 399;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,19,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 375;
+				State = 377;
 				pitchslide();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 376;
-				note();
+				State = 378;
+				ddPitchBlendCommand();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 377;
-				rest();
+				State = 379;
+				note();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 378;
-				nakedTie();
+				State = 380;
+				rest();
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 379;
-				octave();
+				State = 381;
+				nakedTie();
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 380;
-				lowerOctave();
+				State = 382;
+				octave();
 				}
 				break;
 			case 7:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 381;
-				raiseOctave();
+				State = 383;
+				lowerOctave();
 				}
 				break;
 			case 8:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 382;
-				noiseNote();
+				State = 384;
+				raiseOctave();
 				}
 				break;
 			case 9:
 				EnterOuterAlt(_localctx, 9);
 				{
-				State = 383;
-				triplet();
+				State = 385;
+				noiseNote();
 				}
 				break;
 			case 10:
 				EnterOuterAlt(_localctx, 10);
 				{
-				State = 384;
-				volumeCommand();
+				State = 386;
+				triplet();
 				}
 				break;
 			case 11:
 				EnterOuterAlt(_localctx, 11);
 				{
-				State = 385;
-				globalVolumeCommand();
+				State = 387;
+				volumeCommand();
 				}
 				break;
 			case 12:
 				EnterOuterAlt(_localctx, 12);
 				{
-				State = 386;
-				tuneCommand();
+				State = 388;
+				globalVolumeCommand();
 				}
 				break;
 			case 13:
 				EnterOuterAlt(_localctx, 13);
 				{
-				State = 387;
-				instrumentCommand();
+				State = 389;
+				tuneCommand();
 				}
 				break;
 			case 14:
 				EnterOuterAlt(_localctx, 14);
 				{
-				State = 388;
-				quantization();
+				State = 390;
+				instrumentCommand();
 				}
 				break;
 			case 15:
 				EnterOuterAlt(_localctx, 15);
 				{
-				State = 389;
-				panCommand();
+				State = 391;
+				quantization();
 				}
 				break;
 			case 16:
 				EnterOuterAlt(_localctx, 16);
 				{
-				State = 390;
-				vibratoCommand();
+				State = 392;
+				panCommand();
 				}
 				break;
 			case 17:
 				EnterOuterAlt(_localctx, 17);
 				{
-				State = 391;
-				tempoCommand();
+				State = 393;
+				vibratoCommand();
 				}
 				break;
 			case 18:
 				EnterOuterAlt(_localctx, 18);
 				{
-				State = 392;
-				introEnd();
+				State = 394;
+				tempoCommand();
 				}
 				break;
 			case 19:
 				EnterOuterAlt(_localctx, 19);
 				{
-				State = 393;
-				qmark();
+				State = 395;
+				introEnd();
 				}
 				break;
 			case 20:
 				EnterOuterAlt(_localctx, 20);
 				{
-				State = 394;
-				pipe();
+				State = 396;
+				qmark();
 				}
 				break;
 			case 21:
 				EnterOuterAlt(_localctx, 21);
 				{
-				State = 395;
+				State = 397;
+				pipe();
+				}
+				break;
+			case 22:
+				EnterOuterAlt(_localctx, 22);
+				{
+				State = 398;
 				defaultLength();
 				}
 				break;
@@ -2388,7 +2398,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 398;
+			State = 401;
 			Match(Note);
 			}
 		}
@@ -2461,14 +2471,14 @@ public partial class MmlParser : Parser {
 		RestContext _localctx = new RestContext(Context, State);
 		EnterRule(_localctx, 46, RULE_rest);
 		try {
-			State = 402;
+			State = 405;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Rest:
 				_localctx = new SingleRestContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 400;
+				State = 403;
 				Match(Rest);
 				}
 				break;
@@ -2476,7 +2486,7 @@ public partial class MmlParser : Parser {
 				_localctx = new ChainRestContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 401;
+				State = 404;
 				Match(RestChain);
 				}
 				break;
@@ -2527,7 +2537,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 404;
+			State = 407;
 			Match(Octave);
 			}
 		}
@@ -2574,7 +2584,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 406;
+			State = 409;
 			Match(LT);
 			}
 		}
@@ -2621,7 +2631,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 408;
+			State = 411;
 			Match(GT);
 			}
 		}
@@ -2668,7 +2678,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 410;
+			State = 413;
 			Match(Noise);
 			}
 		}
@@ -2746,14 +2756,14 @@ public partial class MmlParser : Parser {
 		VolumeCommandContext _localctx = new VolumeCommandContext(Context, State);
 		EnterRule(_localctx, 56, RULE_volumeCommand);
 		try {
-			State = 417;
+			State = 420;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Volume:
 				_localctx = new VolumeContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 412;
+				State = 415;
 				Match(Volume);
 				}
 				break;
@@ -2762,18 +2772,18 @@ public partial class MmlParser : Parser {
 				_localctx = new HexVolumeContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 415;
+				State = 418;
 				ErrorHandler.Sync(this);
 				switch (TokenStream.LA(1)) {
 				case NE7:
 					{
-					State = 413;
+					State = 416;
 					e7Volume();
 					}
 					break;
 				case NE8:
 					{
-					State = 414;
+					State = 417;
 					e8VolumeFade();
 					}
 					break;
@@ -2857,14 +2867,14 @@ public partial class MmlParser : Parser {
 		TuneCommandContext _localctx = new TuneCommandContext(Context, State);
 		EnterRule(_localctx, 58, RULE_tuneCommand);
 		try {
-			State = 421;
+			State = 424;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Tune:
 				_localctx = new TuneContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 419;
+				State = 422;
 				Match(Tune);
 				}
 				break;
@@ -2872,7 +2882,7 @@ public partial class MmlParser : Parser {
 				_localctx = new HexTuneContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 420;
+				State = 423;
 				eeTuneChannel();
 				}
 				break;
@@ -2923,7 +2933,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 423;
+			State = 426;
 			Match(Quantization);
 			}
 		}
@@ -3001,14 +3011,14 @@ public partial class MmlParser : Parser {
 		PanCommandContext _localctx = new PanCommandContext(Context, State);
 		EnterRule(_localctx, 62, RULE_panCommand);
 		try {
-			State = 430;
+			State = 433;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Pan:
 				_localctx = new PanContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 425;
+				State = 428;
 				Match(Pan);
 				}
 				break;
@@ -3017,18 +3027,18 @@ public partial class MmlParser : Parser {
 				_localctx = new HexPanContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 428;
+				State = 431;
 				ErrorHandler.Sync(this);
 				switch (TokenStream.LA(1)) {
 				case NDB:
 					{
-					State = 426;
+					State = 429;
 					dbPan();
 					}
 					break;
 				case NDC:
 					{
-					State = 427;
+					State = 430;
 					dcPanFade();
 					}
 					break;
@@ -3112,14 +3122,14 @@ public partial class MmlParser : Parser {
 		VibratoCommandContext _localctx = new VibratoCommandContext(Context, State);
 		EnterRule(_localctx, 64, RULE_vibratoCommand);
 		try {
-			State = 434;
+			State = 437;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Vibrato:
 				_localctx = new VibratoContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 432;
+				State = 435;
 				Match(Vibrato);
 				}
 				break;
@@ -3127,7 +3137,7 @@ public partial class MmlParser : Parser {
 				_localctx = new HexVibratoContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 433;
+				State = 436;
 				deVibratoStart();
 				}
 				break;
@@ -3190,7 +3200,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 436;
+			State = 439;
 			_la = TokenStream.LA(1);
 			if ( !(_la==Note || _la==Rest) ) {
 			ErrorHandler.RecoverInline(this);
@@ -3199,15 +3209,15 @@ public partial class MmlParser : Parser {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			State = 439;
+			State = 442;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 437;
+				State = 440;
 				Match(AMPER);
-				State = 438;
+				State = 441;
 				_la = TokenStream.LA(1);
 				if ( !(_la==Note || _la==Rest) ) {
 				ErrorHandler.RecoverInline(this);
@@ -3218,7 +3228,7 @@ public partial class MmlParser : Parser {
 				}
 				}
 				}
-				State = 441;
+				State = 444;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			} while ( _la==AMPER );
@@ -3280,66 +3290,66 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 443;
-			Match(LBRACE);
 			State = 446;
+			Match(LBRACE);
+			State = 449;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Note:
 				{
-				State = 444;
+				State = 447;
 				note();
 				}
 				break;
 			case Rest:
 			case RestChain:
-				{
-				State = 445;
-				rest();
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
-			State = 450;
-			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case Note:
 				{
 				State = 448;
-				note();
-				}
-				break;
-			case Rest:
-			case RestChain:
-				{
-				State = 449;
 				rest();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
-			State = 454;
+			State = 453;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Note:
 				{
-				State = 452;
+				State = 451;
 				note();
 				}
 				break;
 			case Rest:
 			case RestChain:
 				{
-				State = 453;
+				State = 452;
 				rest();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
-			State = 456;
+			State = 457;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case Note:
+				{
+				State = 455;
+				note();
+				}
+				break;
+			case Rest:
+			case RestChain:
+				{
+				State = 456;
+				rest();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+			State = 459;
 			Match(RBRACE);
 			}
 		}
@@ -3386,7 +3396,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 458;
+			State = 461;
 			Match(Length);
 			}
 		}
@@ -3464,14 +3474,14 @@ public partial class MmlParser : Parser {
 		GlobalVolumeCommandContext _localctx = new GlobalVolumeCommandContext(Context, State);
 		EnterRule(_localctx, 72, RULE_globalVolumeCommand);
 		try {
-			State = 465;
+			State = 468;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case GlobalVolume:
 				_localctx = new GlobalVolumeContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 460;
+				State = 463;
 				Match(GlobalVolume);
 				}
 				break;
@@ -3480,18 +3490,18 @@ public partial class MmlParser : Parser {
 				_localctx = new HexGlobalVolumeContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 463;
+				State = 466;
 				ErrorHandler.Sync(this);
 				switch (TokenStream.LA(1)) {
 				case NE0:
 					{
-					State = 461;
+					State = 464;
 					e0GlobalVolume();
 					}
 					break;
 				case NE1:
 					{
-					State = 462;
+					State = 465;
 					e1GlobalVolumeFade();
 					}
 					break;
@@ -3578,14 +3588,14 @@ public partial class MmlParser : Parser {
 		TempoCommandContext _localctx = new TempoCommandContext(Context, State);
 		EnterRule(_localctx, 74, RULE_tempoCommand);
 		try {
-			State = 472;
+			State = 475;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Tempo:
 				_localctx = new TempoContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 467;
+				State = 470;
 				Match(Tempo);
 				}
 				break;
@@ -3594,18 +3604,18 @@ public partial class MmlParser : Parser {
 				_localctx = new HexTempoContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 470;
+				State = 473;
 				ErrorHandler.Sync(this);
 				switch (TokenStream.LA(1)) {
 				case NE2:
 					{
-					State = 468;
+					State = 471;
 					e2Tempo();
 					}
 					break;
 				case NE3:
 					{
-					State = 469;
+					State = 472;
 					e3TempoFade();
 					}
 					break;
@@ -3689,14 +3699,14 @@ public partial class MmlParser : Parser {
 		InstrumentCommandContext _localctx = new InstrumentCommandContext(Context, State);
 		EnterRule(_localctx, 76, RULE_instrumentCommand);
 		try {
-			State = 476;
+			State = 479;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Instrument:
 				_localctx = new InstrumentContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 474;
+				State = 477;
 				Match(Instrument);
 				}
 				break;
@@ -3704,7 +3714,7 @@ public partial class MmlParser : Parser {
 				_localctx = new HexInstrumentContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 475;
+				State = 478;
 				daInstrument();
 				}
 				break;
@@ -3755,7 +3765,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 478;
+			State = 481;
 			Match(NakedTie);
 			}
 		}
@@ -3802,7 +3812,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 480;
+			State = 483;
 			Match(Question);
 			}
 		}
@@ -3849,7 +3859,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 482;
+			State = 485;
 			Match(Pipe);
 			}
 		}
@@ -3899,20 +3909,20 @@ public partial class MmlParser : Parser {
 		LoopersContext _localctx = new LoopersContext(Context, State);
 		EnterRule(_localctx, 84, RULE_loopers);
 		try {
-			State = 486;
+			State = 489;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,36,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 484;
+				State = 487;
 				logicControls();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 485;
+				State = 488;
 				logicCalls();
 				}
 				break;
@@ -3964,13 +3974,14 @@ public partial class MmlParser : Parser {
 		LogicControlsContext _localctx = new LogicControlsContext(Context, State);
 		EnterRule(_localctx, 86, RULE_logicControls);
 		try {
-			State = 490;
+			State = 493;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case L2BRACK:
+			case NE6:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 488;
+				State = 491;
 				superLoop();
 				}
 				break;
@@ -3978,7 +3989,7 @@ public partial class MmlParser : Parser {
 			case LoopName:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 489;
+				State = 492;
 				simpleLoop();
 				}
 				break;
@@ -4032,22 +4043,22 @@ public partial class MmlParser : Parser {
 		LogicCallsContext _localctx = new LogicCallsContext(Context, State);
 		EnterRule(_localctx, 88, RULE_logicCalls);
 		try {
-			State = 494;
+			State = 497;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case LoopName:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 492;
+				State = 495;
 				callLoop();
 				}
 				break;
-			case STAR:
 			case StopRemoteCode:
 			case CallRemoteCode:
+			case CallPreviousLoop:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 493;
+				State = 496;
 				remoteLogicCalls();
 				}
 				break;
@@ -4104,27 +4115,27 @@ public partial class MmlParser : Parser {
 		RemoteLogicCallsContext _localctx = new RemoteLogicCallsContext(Context, State);
 		EnterRule(_localctx, 90, RULE_remoteLogicCalls);
 		try {
-			State = 499;
+			State = 502;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case CallRemoteCode:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 496;
+				State = 499;
 				callRemoteCode();
 				}
 				break;
-			case STAR:
+			case CallPreviousLoop:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 497;
+				State = 500;
 				callPreviousLoop();
 				}
 				break;
 			case StopRemoteCode:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 498;
+				State = 501;
 				stopRemoteCode();
 				}
 				break;
@@ -4144,6 +4155,49 @@ public partial class MmlParser : Parser {
 	}
 
 	public partial class SuperLoopContext : ParserRuleContext {
+		public SuperLoopContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_superLoop; } }
+	 
+		public SuperLoopContext() { }
+		public virtual void CopyFrom(SuperLoopContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class E6SuperLoopContext : SuperLoopContext {
+		[System.Diagnostics.DebuggerNonUserCode] public E6SuperLoopStartContext e6SuperLoopStart() {
+			return GetRuleContext<E6SuperLoopStartContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public E6SuperLoopEndContext e6SuperLoopEnd() {
+			return GetRuleContext<E6SuperLoopEndContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public SuperLoopContentsContext[] superLoopContents() {
+			return GetRuleContexts<SuperLoopContentsContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public SuperLoopContentsContext superLoopContents(int i) {
+			return GetRuleContext<SuperLoopContentsContext>(i);
+		}
+		public E6SuperLoopContext(SuperLoopContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterE6SuperLoop(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitE6SuperLoop(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitE6SuperLoop(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class BracketSuperLoopContext : SuperLoopContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode L2BRACK() { return GetToken(MmlParser.L2BRACK, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode R2BRACK() { return GetToken(MmlParser.R2BRACK, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public SuperLoopContentsContext[] superLoopContents() {
@@ -4153,25 +4207,21 @@ public partial class MmlParser : Parser {
 			return GetRuleContext<SuperLoopContentsContext>(i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NUMBERS() { return GetToken(MmlParser.NUMBERS, 0); }
-		public SuperLoopContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_superLoop; } }
+		public BracketSuperLoopContext(SuperLoopContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
-			if (typedListener != null) typedListener.EnterSuperLoop(this);
+			if (typedListener != null) typedListener.EnterBracketSuperLoop(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
-			if (typedListener != null) typedListener.ExitSuperLoop(this);
+			if (typedListener != null) typedListener.ExitBracketSuperLoop(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitSuperLoop(this);
+			if (typedVisitor != null) return typedVisitor.VisitBracketSuperLoop(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -4182,36 +4232,72 @@ public partial class MmlParser : Parser {
 		EnterRule(_localctx, 92, RULE_superLoop);
 		int _la;
 		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 501;
-			Match(L2BRACK);
-			State = 505;
+			int _alt;
+			State = 524;
 			ErrorHandler.Sync(this);
-			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3940647549538688L) != 0) || ((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & 5629499534213119L) != 0)) {
+			switch (TokenStream.LA(1)) {
+			case L2BRACK:
+				_localctx = new BracketSuperLoopContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
 				{
-				{
-				State = 502;
-				superLoopContents();
-				}
-				}
-				State = 507;
+				State = 504;
+				Match(L2BRACK);
+				State = 508;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-			}
-			State = 508;
-			Match(R2BRACK);
-			State = 510;
-			ErrorHandler.Sync(this);
-			_la = TokenStream.LA(1);
-			if (_la==NUMBERS) {
-				{
-				State = 509;
-				Match(NUMBERS);
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4222124116936832L) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & 5629499534213119L) != 0)) {
+					{
+					{
+					State = 505;
+					superLoopContents();
+					}
+					}
+					State = 510;
+					ErrorHandler.Sync(this);
+					_la = TokenStream.LA(1);
 				}
-			}
+				State = 511;
+				Match(R2BRACK);
+				State = 513;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==NUMBERS) {
+					{
+					State = 512;
+					Match(NUMBERS);
+					}
+				}
 
+				}
+				break;
+			case NE6:
+				_localctx = new E6SuperLoopContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 515;
+				e6SuperLoopStart();
+				State = 519;
+				ErrorHandler.Sync(this);
+				_alt = Interpreter.AdaptivePredict(TokenStream,42,Context);
+				while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
+					if ( _alt==1 ) {
+						{
+						{
+						State = 516;
+						superLoopContents();
+						}
+						} 
+					}
+					State = 521;
+					ErrorHandler.Sync(this);
+					_alt = Interpreter.AdaptivePredict(TokenStream,42,Context);
+				}
+				State = 522;
+				e6SuperLoopEnd();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -4266,34 +4352,34 @@ public partial class MmlParser : Parser {
 		SuperLoopContentsContext _localctx = new SuperLoopContentsContext(Context, State);
 		EnterRule(_localctx, 94, RULE_superLoopContents);
 		try {
-			State = 516;
+			State = 530;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,42,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,44,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 512;
+				State = 526;
 				atomics();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 513;
+				State = 527;
 				terminalSimpleLoop();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 514;
+				State = 528;
 				logicCalls();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 515;
+				State = 529;
 				hexNumber();
 				}
 				break;
@@ -4352,40 +4438,40 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 519;
+			State = 533;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==LoopName) {
 				{
-				State = 518;
+				State = 532;
 				Match(LoopName);
 				}
 			}
 
-			State = 521;
+			State = 535;
 			Match(LBRACK);
-			State = 525;
+			State = 539;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3659172572840320L) != 0) || ((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & 5629499534213119L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4081386628587648L) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & 5629499534213119L) != 0)) {
 				{
 				{
-				State = 522;
+				State = 536;
 				simpleLoopContents();
 				}
 				}
-				State = 527;
+				State = 541;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 528;
+			State = 542;
 			Match(RBRACK);
-			State = 530;
+			State = 544;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==NUMBERS) {
 				{
-				State = 529;
+				State = 543;
 				Match(NUMBERS);
 				}
 			}
@@ -4444,34 +4530,34 @@ public partial class MmlParser : Parser {
 		SimpleLoopContentsContext _localctx = new SimpleLoopContentsContext(Context, State);
 		EnterRule(_localctx, 98, RULE_simpleLoopContents);
 		try {
-			State = 536;
+			State = 550;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,46,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,48,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 532;
+				State = 546;
 				atomics();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 533;
+				State = 547;
 				terminalSuperLoop();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 534;
+				State = 548;
 				remoteLogicCalls();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 535;
+				State = 549;
 				hexNumber();
 				}
 				break;
@@ -4489,6 +4575,18 @@ public partial class MmlParser : Parser {
 	}
 
 	public partial class TerminalSuperLoopContext : ParserRuleContext {
+		public TerminalSuperLoopContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_terminalSuperLoop; } }
+	 
+		public TerminalSuperLoopContext() { }
+		public virtual void CopyFrom(TerminalSuperLoopContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class BracketTerminalSuperLoopContext : TerminalSuperLoopContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode L2BRACK() { return GetToken(MmlParser.L2BRACK, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode R2BRACK() { return GetToken(MmlParser.R2BRACK, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public TerminalSuperLoopContentsContext[] terminalSuperLoopContents() {
@@ -4498,25 +4596,52 @@ public partial class MmlParser : Parser {
 			return GetRuleContext<TerminalSuperLoopContentsContext>(i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NUMBERS() { return GetToken(MmlParser.NUMBERS, 0); }
-		public TerminalSuperLoopContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_terminalSuperLoop; } }
+		public BracketTerminalSuperLoopContext(TerminalSuperLoopContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
-			if (typedListener != null) typedListener.EnterTerminalSuperLoop(this);
+			if (typedListener != null) typedListener.EnterBracketTerminalSuperLoop(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
-			if (typedListener != null) typedListener.ExitTerminalSuperLoop(this);
+			if (typedListener != null) typedListener.ExitBracketTerminalSuperLoop(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitTerminalSuperLoop(this);
+			if (typedVisitor != null) return typedVisitor.VisitBracketTerminalSuperLoop(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class E6TerminalSuperLoopContext : TerminalSuperLoopContext {
+		[System.Diagnostics.DebuggerNonUserCode] public E6SuperLoopStartContext e6SuperLoopStart() {
+			return GetRuleContext<E6SuperLoopStartContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public E6SuperLoopEndContext e6SuperLoopEnd() {
+			return GetRuleContext<E6SuperLoopEndContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public TerminalSuperLoopContentsContext[] terminalSuperLoopContents() {
+			return GetRuleContexts<TerminalSuperLoopContentsContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public TerminalSuperLoopContentsContext terminalSuperLoopContents(int i) {
+			return GetRuleContext<TerminalSuperLoopContentsContext>(i);
+		}
+		public E6TerminalSuperLoopContext(TerminalSuperLoopContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterE6TerminalSuperLoop(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitE6TerminalSuperLoop(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitE6TerminalSuperLoop(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -4527,36 +4652,72 @@ public partial class MmlParser : Parser {
 		EnterRule(_localctx, 100, RULE_terminalSuperLoop);
 		int _la;
 		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 538;
-			Match(L2BRACK);
-			State = 542;
+			int _alt;
+			State = 572;
 			ErrorHandler.Sync(this);
-			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3940647549534592L) != 0) || ((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & 5629499534213119L) != 0)) {
+			switch (TokenStream.LA(1)) {
+			case L2BRACK:
+				_localctx = new BracketTerminalSuperLoopContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
 				{
-				{
-				State = 539;
-				terminalSuperLoopContents();
-				}
-				}
-				State = 544;
+				State = 552;
+				Match(L2BRACK);
+				State = 556;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-			}
-			State = 545;
-			Match(R2BRACK);
-			State = 547;
-			ErrorHandler.Sync(this);
-			_la = TokenStream.LA(1);
-			if (_la==NUMBERS) {
-				{
-				State = 546;
-				Match(NUMBERS);
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4222124116934784L) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & 5629499534213119L) != 0)) {
+					{
+					{
+					State = 553;
+					terminalSuperLoopContents();
+					}
+					}
+					State = 558;
+					ErrorHandler.Sync(this);
+					_la = TokenStream.LA(1);
 				}
-			}
+				State = 559;
+				Match(R2BRACK);
+				State = 561;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==NUMBERS) {
+					{
+					State = 560;
+					Match(NUMBERS);
+					}
+				}
 
+				}
+				break;
+			case NE6:
+				_localctx = new E6TerminalSuperLoopContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 563;
+				e6SuperLoopStart();
+				State = 567;
+				ErrorHandler.Sync(this);
+				_alt = Interpreter.AdaptivePredict(TokenStream,51,Context);
+				while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
+					if ( _alt==1 ) {
+						{
+						{
+						State = 564;
+						terminalSuperLoopContents();
+						}
+						} 
+					}
+					State = 569;
+					ErrorHandler.Sync(this);
+					_alt = Interpreter.AdaptivePredict(TokenStream,51,Context);
+				}
+				State = 570;
+				e6SuperLoopEnd();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -4608,27 +4769,27 @@ public partial class MmlParser : Parser {
 		TerminalSuperLoopContentsContext _localctx = new TerminalSuperLoopContentsContext(Context, State);
 		EnterRule(_localctx, 102, RULE_terminalSuperLoopContents);
 		try {
-			State = 552;
+			State = 577;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,49,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,53,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 549;
+				State = 574;
 				atomics();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 550;
+				State = 575;
 				logicCalls();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 551;
+				State = 576;
 				hexNumber();
 				}
 				break;
@@ -4687,40 +4848,40 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 555;
+			State = 580;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==LoopName) {
 				{
-				State = 554;
+				State = 579;
 				Match(LoopName);
 				}
 			}
 
-			State = 557;
+			State = 582;
 			Match(LBRACK);
-			State = 561;
+			State = 586;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3659172572823936L) != 0) || ((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & 5629499534213119L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4081386628579456L) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & 5629499534213119L) != 0)) {
 				{
 				{
-				State = 558;
+				State = 583;
 				terminalSimpleLoopContents();
 				}
 				}
-				State = 563;
+				State = 588;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 564;
+			State = 589;
 			Match(RBRACK);
-			State = 566;
+			State = 591;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==NUMBERS) {
 				{
-				State = 565;
+				State = 590;
 				Match(NUMBERS);
 				}
 			}
@@ -4776,27 +4937,27 @@ public partial class MmlParser : Parser {
 		TerminalSimpleLoopContentsContext _localctx = new TerminalSimpleLoopContentsContext(Context, State);
 		EnterRule(_localctx, 106, RULE_terminalSimpleLoopContents);
 		try {
-			State = 571;
+			State = 596;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,53,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,57,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 568;
+				State = 593;
 				atomics();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 569;
+				State = 594;
 				remoteLogicCalls();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 570;
+				State = 595;
 				hexNumber();
 				}
 				break;
@@ -4854,25 +5015,25 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 573;
+			State = 598;
 			Match(RemoteCodeName);
-			State = 574;
+			State = 599;
 			Match(LBRACK);
-			State = 576;
+			State = 601;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 575;
+				State = 600;
 				remoteCodeContents();
 				}
 				}
-				State = 578;
+				State = 603;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 14791873658880L) != 0) || ((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & 5629499534213119L) != 0) );
-			State = 580;
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 3697969987584L) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & 5629499534213119L) != 0) );
+			State = 605;
 			Match(RBRACK);
 			}
 		}
@@ -4946,76 +5107,76 @@ public partial class MmlParser : Parser {
 		RemoteCodeContentsContext _localctx = new RemoteCodeContentsContext(Context, State);
 		EnterRule(_localctx, 110, RULE_remoteCodeContents);
 		try {
-			State = 592;
+			State = 617;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,55,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,59,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 582;
+				State = 607;
 				octave();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 583;
+				State = 608;
 				lowerOctave();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 584;
+				State = 609;
 				raiseOctave();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 585;
+				State = 610;
 				volumeCommand();
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 586;
+				State = 611;
 				tuneCommand();
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 587;
+				State = 612;
 				quantization();
 				}
 				break;
 			case 7:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 588;
+				State = 613;
 				panCommand();
 				}
 				break;
 			case 8:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 589;
+				State = 614;
 				vibratoCommand();
 				}
 				break;
 			case 9:
 				EnterOuterAlt(_localctx, 9);
 				{
-				State = 590;
+				State = 615;
 				tempoCommand();
 				}
 				break;
 			case 10:
 				EnterOuterAlt(_localctx, 10);
 				{
-				State = 591;
+				State = 616;
 				hexNumber();
 				}
 				break;
@@ -5066,14 +5227,14 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 594;
+			State = 619;
 			Match(LoopName);
-			State = 596;
+			State = 621;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==NUMBERS) {
 				{
-				State = 595;
+				State = 620;
 				Match(NUMBERS);
 				}
 			}
@@ -5123,7 +5284,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 598;
+			State = 623;
 			Match(CallRemoteCode);
 			}
 		}
@@ -5170,7 +5331,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 600;
+			State = 625;
 			Match(StopRemoteCode);
 			}
 		}
@@ -5186,8 +5347,7 @@ public partial class MmlParser : Parser {
 	}
 
 	public partial class CallPreviousLoopContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STAR() { return GetToken(MmlParser.STAR, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NUMBERS() { return GetToken(MmlParser.NUMBERS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CallPreviousLoop() { return GetToken(MmlParser.CallPreviousLoop, 0); }
 		public CallPreviousLoopContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -5215,22 +5375,11 @@ public partial class MmlParser : Parser {
 	public CallPreviousLoopContext callPreviousLoop() {
 		CallPreviousLoopContext _localctx = new CallPreviousLoopContext(Context, State);
 		EnterRule(_localctx, 118, RULE_callPreviousLoop);
-		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 602;
-			Match(STAR);
-			State = 604;
-			ErrorHandler.Sync(this);
-			_la = TokenStream.LA(1);
-			if (_la==NUMBERS) {
-				{
-				State = 603;
-				Match(NUMBERS);
-				}
-			}
-
+			State = 627;
+			Match(CallPreviousLoop);
 			}
 		}
 		catch (RecognitionException re) {
@@ -5276,7 +5425,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 606;
+			State = 629;
 			Match(QMARK);
 			}
 		}
@@ -5351,14 +5500,14 @@ public partial class MmlParser : Parser {
 		SampleLoadCommandContext _localctx = new SampleLoadCommandContext(Context, State);
 		EnterRule(_localctx, 122, RULE_sampleLoadCommand);
 		try {
-			State = 610;
+			State = 633;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case LoadSample:
 				_localctx = new SampleLoadContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 608;
+				State = 631;
 				Match(LoadSample);
 				}
 				break;
@@ -5366,7 +5515,7 @@ public partial class MmlParser : Parser {
 				_localctx = new HexSampleLoadContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 609;
+				State = 632;
 				f3SampleLoad();
 				}
 				break;
@@ -5417,7 +5566,7 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 612;
+			State = 635;
 			Match(ReplacementText);
 			}
 		}
@@ -5491,76 +5640,76 @@ public partial class MmlParser : Parser {
 		GlobalHexCommandsContext _localctx = new GlobalHexCommandsContext(Context, State);
 		EnterRule(_localctx, 126, RULE_globalHexCommands);
 		try {
-			State = 624;
+			State = 647;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case NF5:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 614;
+				State = 637;
 				f5FIRFilter();
 				}
 				break;
 			case NE4:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 615;
+				State = 638;
 				e4GlobalTranspose();
 				}
 				break;
 			case NF4:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 616;
+				State = 639;
 				f4GlobalItems();
 				}
 				break;
 			case NEF:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 617;
+				State = 640;
 				efEcho1();
 				}
 				break;
 			case NF1:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 618;
+				State = 641;
 				f1Echo2();
 				}
 				break;
 			case NF0:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 619;
+				State = 642;
 				f0EchoOff();
 				}
 				break;
 			case NF2:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 620;
+				State = 643;
 				f2EchoFade();
 				}
 				break;
 			case NF6:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 621;
+				State = 644;
 				f6DSPWrite();
 				}
 				break;
 			case NF9:
 				EnterOuterAlt(_localctx, 9);
 				{
-				State = 622;
+				State = 645;
 				f9DataSend();
 				}
 				break;
 			case NFA:
 				EnterOuterAlt(_localctx, 10);
 				{
-				State = 623;
+				State = 646;
 				faGlobalItems();
 				}
 				break;
@@ -5659,132 +5808,132 @@ public partial class MmlParser : Parser {
 		ChannelHexCommandsContext _localctx = new ChannelHexCommandsContext(Context, State);
 		EnterRule(_localctx, 128, RULE_channelHexCommands);
 		try {
-			State = 644;
+			State = 667;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,60,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,63,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 626;
+				State = 649;
 				e5Tremolo();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 627;
+				State = 650;
 				fbItems();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 628;
+				State = 651;
 				eaVibratoFade();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 629;
+				State = 652;
 				dfVibratoEnd();
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 630;
+				State = 653;
 				ebPitchEnvelopeRelease();
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 631;
+				State = 654;
 				ecPitchEnvelopeAttack();
 				}
 				break;
 			case 7:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 632;
+				State = 655;
 				edCustomADSROrGain();
 				}
 				break;
 			case 8:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 633;
+				State = 656;
 				f0EchoOff();
 				}
 				break;
 			case 9:
 				EnterOuterAlt(_localctx, 9);
 				{
-				State = 634;
+				State = 657;
 				f2EchoFade();
 				}
 				break;
 			case 10:
 				EnterOuterAlt(_localctx, 10);
 				{
-				State = 635;
+				State = 658;
 				f4ChannelItems();
 				}
 				break;
 			case 11:
 				EnterOuterAlt(_localctx, 11);
 				{
-				State = 636;
+				State = 659;
 				f6DSPWrite();
 				}
 				break;
 			case 12:
 				EnterOuterAlt(_localctx, 12);
 				{
-				State = 637;
+				State = 660;
 				f8EnableNoise();
 				}
 				break;
 			case 13:
 				EnterOuterAlt(_localctx, 13);
 				{
-				State = 638;
+				State = 661;
 				f9DataSend();
 				}
 				break;
 			case 14:
 				EnterOuterAlt(_localctx, 14);
 				{
-				State = 639;
+				State = 662;
 				faChannelItems();
 				}
 				break;
 			case 15:
 				EnterOuterAlt(_localctx, 15);
 				{
-				State = 640;
+				State = 663;
 				fbItems();
 				}
 				break;
 			case 16:
 				EnterOuterAlt(_localctx, 16);
 				{
-				State = 641;
+				State = 664;
 				fcItems();
 				}
 				break;
 			case 17:
 				EnterOuterAlt(_localctx, 17);
 				{
-				State = 642;
+				State = 665;
 				fdTremoloOff();
 				}
 				break;
 			case 18:
 				EnterOuterAlt(_localctx, 18);
 				{
-				State = 643;
+				State = 666;
 				fePitchEnvelopeOff();
 				}
 				break;
@@ -5834,9 +5983,9 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 646;
+			State = 669;
 			Match(NDA);
-			State = 647;
+			State = 670;
 			Match(NUMBERS);
 			}
 		}
@@ -5886,9 +6035,9 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 649;
+			State = 672;
 			Match(NDB);
-			State = 650;
+			State = 673;
 			hexNumber();
 			}
 		}
@@ -5941,11 +6090,11 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 652;
+			State = 675;
 			Match(NDC);
-			State = 653;
+			State = 676;
 			hexNumber();
-			State = 654;
+			State = 677;
 			hexNumber();
 			}
 		}
@@ -5961,6 +6110,9 @@ public partial class MmlParser : Parser {
 	}
 
 	public partial class DdPitchBlendCommandContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public DdPitchBlendPreItemsContext ddPitchBlendPreItems() {
+			return GetRuleContext<DdPitchBlendPreItemsContext>(0);
+		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NDD() { return GetToken(MmlParser.NDD, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext[] hexNumber() {
 			return GetRuleContexts<HexNumberContext>();
@@ -6001,11 +6153,15 @@ public partial class MmlParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 656;
+			State = 679;
+			ddPitchBlendPreItems();
+			State = 680;
 			Match(NDD);
-			State = 657;
+			State = 681;
 			hexNumber();
-			State = 660;
+			State = 682;
+			hexNumber();
+			State = 685;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case N00:
@@ -6060,7 +6216,7 @@ public partial class MmlParser : Parser {
 			case NFD:
 			case HexNumber:
 				{
-				State = 658;
+				State = 683;
 				hexNumber();
 				}
 				break;
@@ -6069,13 +6225,80 @@ public partial class MmlParser : Parser {
 			case Note:
 			case Octave:
 				{
-				State = 659;
+				State = 684;
 				ddPitchBlendItems();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class DdPitchBlendPreItemsContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public NoteContext note() {
+			return GetRuleContext<NoteContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public NakedTieContext nakedTie() {
+			return GetRuleContext<NakedTieContext>(0);
+		}
+		public DdPitchBlendPreItemsContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_ddPitchBlendPreItems; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.EnterDdPitchBlendPreItems(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IMmlListener typedListener = listener as IMmlListener;
+			if (typedListener != null) typedListener.ExitDdPitchBlendPreItems(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDdPitchBlendPreItems(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public DdPitchBlendPreItemsContext ddPitchBlendPreItems() {
+		DdPitchBlendPreItemsContext _localctx = new DdPitchBlendPreItemsContext(Context, State);
+		EnterRule(_localctx, 138, RULE_ddPitchBlendPreItems);
+		try {
+			State = 689;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case Note:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 687;
+				note();
+				}
+				break;
+			case NakedTie:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 688;
+				nakedTie();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -6137,34 +6360,34 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public DdPitchBlendItemsContext ddPitchBlendItems() {
 		DdPitchBlendItemsContext _localctx = new DdPitchBlendItemsContext(Context, State);
-		EnterRule(_localctx, 138, RULE_ddPitchBlendItems);
+		EnterRule(_localctx, 140, RULE_ddPitchBlendItems);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 667;
+			State = 696;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 17186160640L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4298113024L) != 0)) {
 				{
-				State = 665;
+				State = 694;
 				ErrorHandler.Sync(this);
 				switch (TokenStream.LA(1)) {
 				case Octave:
 					{
-					State = 662;
+					State = 691;
 					octave();
 					}
 					break;
 				case GT:
 					{
-					State = 663;
+					State = 692;
 					raiseOctave();
 					}
 					break;
 				case LT:
 					{
-					State = 664;
+					State = 693;
 					lowerOctave();
 					}
 					break;
@@ -6172,11 +6395,11 @@ public partial class MmlParser : Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				State = 669;
+				State = 698;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 670;
+			State = 699;
 			note();
 			}
 		}
@@ -6225,17 +6448,17 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public DeVibratoStartContext deVibratoStart() {
 		DeVibratoStartContext _localctx = new DeVibratoStartContext(Context, State);
-		EnterRule(_localctx, 140, RULE_deVibratoStart);
+		EnterRule(_localctx, 142, RULE_deVibratoStart);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 672;
+			State = 701;
 			Match(NDE);
-			State = 673;
+			State = 702;
 			hexNumber();
-			State = 674;
+			State = 703;
 			hexNumber();
-			State = 675;
+			State = 704;
 			hexNumber();
 			}
 		}
@@ -6281,13 +6504,13 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public EaVibratoFadeContext eaVibratoFade() {
 		EaVibratoFadeContext _localctx = new EaVibratoFadeContext(Context, State);
-		EnterRule(_localctx, 142, RULE_eaVibratoFade);
+		EnterRule(_localctx, 144, RULE_eaVibratoFade);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 677;
+			State = 706;
 			Match(NEA);
-			State = 678;
+			State = 707;
 			hexNumber();
 			}
 		}
@@ -6330,11 +6553,11 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public DfVibratoEndContext dfVibratoEnd() {
 		DfVibratoEndContext _localctx = new DfVibratoEndContext(Context, State);
-		EnterRule(_localctx, 144, RULE_dfVibratoEnd);
+		EnterRule(_localctx, 146, RULE_dfVibratoEnd);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 680;
+			State = 709;
 			Match(NDF);
 			}
 		}
@@ -6380,13 +6603,13 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public E0GlobalVolumeContext e0GlobalVolume() {
 		E0GlobalVolumeContext _localctx = new E0GlobalVolumeContext(Context, State);
-		EnterRule(_localctx, 146, RULE_e0GlobalVolume);
+		EnterRule(_localctx, 148, RULE_e0GlobalVolume);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 682;
+			State = 711;
 			Match(NE0);
-			State = 683;
+			State = 712;
 			hexNumber();
 			}
 		}
@@ -6435,15 +6658,15 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public E1GlobalVolumeFadeContext e1GlobalVolumeFade() {
 		E1GlobalVolumeFadeContext _localctx = new E1GlobalVolumeFadeContext(Context, State);
-		EnterRule(_localctx, 148, RULE_e1GlobalVolumeFade);
+		EnterRule(_localctx, 150, RULE_e1GlobalVolumeFade);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 685;
+			State = 714;
 			Match(NE1);
-			State = 686;
+			State = 715;
 			hexNumber();
-			State = 687;
+			State = 716;
 			hexNumber();
 			}
 		}
@@ -6489,13 +6712,13 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public E2TempoContext e2Tempo() {
 		E2TempoContext _localctx = new E2TempoContext(Context, State);
-		EnterRule(_localctx, 150, RULE_e2Tempo);
+		EnterRule(_localctx, 152, RULE_e2Tempo);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 689;
+			State = 718;
 			Match(NE2);
-			State = 690;
+			State = 719;
 			hexNumber();
 			}
 		}
@@ -6544,15 +6767,15 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public E3TempoFadeContext e3TempoFade() {
 		E3TempoFadeContext _localctx = new E3TempoFadeContext(Context, State);
-		EnterRule(_localctx, 152, RULE_e3TempoFade);
+		EnterRule(_localctx, 154, RULE_e3TempoFade);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 692;
+			State = 721;
 			Match(NE3);
-			State = 693;
+			State = 722;
 			hexNumber();
-			State = 694;
+			State = 723;
 			hexNumber();
 			}
 		}
@@ -6598,13 +6821,13 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public E4GlobalTransposeContext e4GlobalTranspose() {
 		E4GlobalTransposeContext _localctx = new E4GlobalTransposeContext(Context, State);
-		EnterRule(_localctx, 154, RULE_e4GlobalTranspose);
+		EnterRule(_localctx, 156, RULE_e4GlobalTranspose);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 696;
+			State = 725;
 			Match(NE4);
-			State = 697;
+			State = 726;
 			hexNumber();
 			}
 		}
@@ -6653,17 +6876,17 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public E5TremoloContext e5Tremolo() {
 		E5TremoloContext _localctx = new E5TremoloContext(Context, State);
-		EnterRule(_localctx, 156, RULE_e5Tremolo);
+		EnterRule(_localctx, 158, RULE_e5Tremolo);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 699;
+			State = 728;
 			Match(NE5);
-			State = 700;
+			State = 729;
 			hexNumber();
-			State = 701;
+			State = 730;
 			hexNumber();
-			State = 702;
+			State = 731;
 			hexNumber();
 			}
 		}
@@ -6678,42 +6901,42 @@ public partial class MmlParser : Parser {
 		return _localctx;
 	}
 
-	public partial class E6SubloopStartContext : ParserRuleContext {
+	public partial class E6SuperLoopStartContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE6() { return GetToken(MmlParser.NE6, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode N00() { return GetToken(MmlParser.N00, 0); }
-		public E6SubloopStartContext(ParserRuleContext parent, int invokingState)
+		public E6SuperLoopStartContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_e6SubloopStart; } }
+		public override int RuleIndex { get { return RULE_e6SuperLoopStart; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
-			if (typedListener != null) typedListener.EnterE6SubloopStart(this);
+			if (typedListener != null) typedListener.EnterE6SuperLoopStart(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
-			if (typedListener != null) typedListener.ExitE6SubloopStart(this);
+			if (typedListener != null) typedListener.ExitE6SuperLoopStart(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitE6SubloopStart(this);
+			if (typedVisitor != null) return typedVisitor.VisitE6SuperLoopStart(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public E6SubloopStartContext e6SubloopStart() {
-		E6SubloopStartContext _localctx = new E6SubloopStartContext(Context, State);
-		EnterRule(_localctx, 158, RULE_e6SubloopStart);
+	public E6SuperLoopStartContext e6SuperLoopStart() {
+		E6SuperLoopStartContext _localctx = new E6SuperLoopStartContext(Context, State);
+		EnterRule(_localctx, 160, RULE_e6SuperLoopStart);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 704;
+			State = 733;
 			Match(NE6);
-			State = 705;
+			State = 734;
 			Match(N00);
 			}
 		}
@@ -6728,44 +6951,44 @@ public partial class MmlParser : Parser {
 		return _localctx;
 	}
 
-	public partial class E6SubloopEndContext : ParserRuleContext {
+	public partial class E6SuperLoopEndContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NE6() { return GetToken(MmlParser.NE6, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public HexNumberContext hexNumber() {
 			return GetRuleContext<HexNumberContext>(0);
 		}
-		public E6SubloopEndContext(ParserRuleContext parent, int invokingState)
+		public E6SuperLoopEndContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_e6SubloopEnd; } }
+		public override int RuleIndex { get { return RULE_e6SuperLoopEnd; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
-			if (typedListener != null) typedListener.EnterE6SubloopEnd(this);
+			if (typedListener != null) typedListener.EnterE6SuperLoopEnd(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			IMmlListener typedListener = listener as IMmlListener;
-			if (typedListener != null) typedListener.ExitE6SubloopEnd(this);
+			if (typedListener != null) typedListener.ExitE6SuperLoopEnd(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IMmlVisitor<TResult> typedVisitor = visitor as IMmlVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitE6SubloopEnd(this);
+			if (typedVisitor != null) return typedVisitor.VisitE6SuperLoopEnd(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public E6SubloopEndContext e6SubloopEnd() {
-		E6SubloopEndContext _localctx = new E6SubloopEndContext(Context, State);
-		EnterRule(_localctx, 160, RULE_e6SubloopEnd);
+	public E6SuperLoopEndContext e6SuperLoopEnd() {
+		E6SuperLoopEndContext _localctx = new E6SuperLoopEndContext(Context, State);
+		EnterRule(_localctx, 162, RULE_e6SuperLoopEnd);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 707;
+			State = 736;
 			Match(NE6);
-			State = 708;
+			State = 737;
 			hexNumber();
 			}
 		}
@@ -6811,13 +7034,13 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public E7VolumeContext e7Volume() {
 		E7VolumeContext _localctx = new E7VolumeContext(Context, State);
-		EnterRule(_localctx, 162, RULE_e7Volume);
+		EnterRule(_localctx, 164, RULE_e7Volume);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 710;
+			State = 739;
 			Match(NE7);
-			State = 711;
+			State = 740;
 			hexNumber();
 			}
 		}
@@ -6866,15 +7089,15 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public E8VolumeFadeContext e8VolumeFade() {
 		E8VolumeFadeContext _localctx = new E8VolumeFadeContext(Context, State);
-		EnterRule(_localctx, 164, RULE_e8VolumeFade);
+		EnterRule(_localctx, 166, RULE_e8VolumeFade);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 713;
+			State = 742;
 			Match(NE8);
-			State = 714;
+			State = 743;
 			hexNumber();
-			State = 715;
+			State = 744;
 			hexNumber();
 			}
 		}
@@ -6923,17 +7146,17 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public EbPitchEnvelopeReleaseContext ebPitchEnvelopeRelease() {
 		EbPitchEnvelopeReleaseContext _localctx = new EbPitchEnvelopeReleaseContext(Context, State);
-		EnterRule(_localctx, 166, RULE_ebPitchEnvelopeRelease);
+		EnterRule(_localctx, 168, RULE_ebPitchEnvelopeRelease);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 717;
+			State = 746;
 			Match(NEB);
-			State = 718;
+			State = 747;
 			hexNumber();
-			State = 719;
+			State = 748;
 			hexNumber();
-			State = 720;
+			State = 749;
 			hexNumber();
 			}
 		}
@@ -6982,17 +7205,17 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public EcPitchEnvelopeAttackContext ecPitchEnvelopeAttack() {
 		EcPitchEnvelopeAttackContext _localctx = new EcPitchEnvelopeAttackContext(Context, State);
-		EnterRule(_localctx, 168, RULE_ecPitchEnvelopeAttack);
+		EnterRule(_localctx, 170, RULE_ecPitchEnvelopeAttack);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 722;
+			State = 751;
 			Match(NEC);
-			State = 723;
+			State = 752;
 			hexNumber();
-			State = 724;
+			State = 753;
 			hexNumber();
-			State = 725;
+			State = 754;
 			hexNumber();
 			}
 		}
@@ -7073,20 +7296,20 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public EdCustomADSROrGainContext edCustomADSROrGain() {
 		EdCustomADSROrGainContext _localctx = new EdCustomADSROrGainContext(Context, State);
-		EnterRule(_localctx, 170, RULE_edCustomADSROrGain);
+		EnterRule(_localctx, 172, RULE_edCustomADSROrGain);
 		try {
-			State = 734;
+			State = 763;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,64,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,68,Context) ) {
 			case 1:
 				_localctx = new EDCustomGAINContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 727;
+				State = 756;
 				Match(NED);
-				State = 728;
+				State = 757;
 				Match(N80);
-				State = 729;
+				State = 758;
 				hexNumber();
 				}
 				break;
@@ -7094,11 +7317,11 @@ public partial class MmlParser : Parser {
 				_localctx = new EDCustomASDRContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 730;
+				State = 759;
 				Match(NED);
-				State = 731;
+				State = 760;
 				hexNumber();
-				State = 732;
+				State = 761;
 				hexNumber();
 				}
 				break;
@@ -7146,13 +7369,13 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public EeTuneChannelContext eeTuneChannel() {
 		EeTuneChannelContext _localctx = new EeTuneChannelContext(Context, State);
-		EnterRule(_localctx, 172, RULE_eeTuneChannel);
+		EnterRule(_localctx, 174, RULE_eeTuneChannel);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 736;
+			State = 765;
 			Match(NEE);
-			State = 737;
+			State = 766;
 			hexNumber();
 			}
 		}
@@ -7201,17 +7424,17 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public EfEcho1Context efEcho1() {
 		EfEcho1Context _localctx = new EfEcho1Context(Context, State);
-		EnterRule(_localctx, 174, RULE_efEcho1);
+		EnterRule(_localctx, 176, RULE_efEcho1);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 739;
+			State = 768;
 			Match(NEF);
-			State = 740;
+			State = 769;
 			hexNumber();
-			State = 741;
+			State = 770;
 			hexNumber();
-			State = 742;
+			State = 771;
 			hexNumber();
 			}
 		}
@@ -7254,11 +7477,11 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public F0EchoOffContext f0EchoOff() {
 		F0EchoOffContext _localctx = new F0EchoOffContext(Context, State);
-		EnterRule(_localctx, 176, RULE_f0EchoOff);
+		EnterRule(_localctx, 178, RULE_f0EchoOff);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 744;
+			State = 773;
 			Match(NF0);
 			}
 		}
@@ -7307,17 +7530,17 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public F1Echo2Context f1Echo2() {
 		F1Echo2Context _localctx = new F1Echo2Context(Context, State);
-		EnterRule(_localctx, 178, RULE_f1Echo2);
+		EnterRule(_localctx, 180, RULE_f1Echo2);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 746;
+			State = 775;
 			Match(NF1);
-			State = 747;
+			State = 776;
 			hexNumber();
-			State = 748;
+			State = 777;
 			hexNumber();
-			State = 749;
+			State = 778;
 			hexNumber();
 			}
 		}
@@ -7366,15 +7589,15 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public F2EchoFadeContext f2EchoFade() {
 		F2EchoFadeContext _localctx = new F2EchoFadeContext(Context, State);
-		EnterRule(_localctx, 180, RULE_f2EchoFade);
+		EnterRule(_localctx, 182, RULE_f2EchoFade);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 751;
+			State = 780;
 			Match(NF2);
-			State = 752;
+			State = 781;
 			hexNumber();
-			State = 753;
+			State = 782;
 			hexNumber();
 			}
 		}
@@ -7423,15 +7646,15 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public F3SampleLoadContext f3SampleLoad() {
 		F3SampleLoadContext _localctx = new F3SampleLoadContext(Context, State);
-		EnterRule(_localctx, 182, RULE_f3SampleLoad);
+		EnterRule(_localctx, 184, RULE_f3SampleLoad);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 755;
+			State = 784;
 			Match(NF3);
-			State = 756;
+			State = 785;
 			hexNumber();
-			State = 757;
+			State = 786;
 			hexNumber();
 			}
 		}
@@ -7609,18 +7832,18 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public F4GlobalItemsContext f4GlobalItems() {
 		F4GlobalItemsContext _localctx = new F4GlobalItemsContext(Context, State);
-		EnterRule(_localctx, 184, RULE_f4GlobalItems);
+		EnterRule(_localctx, 186, RULE_f4GlobalItems);
 		try {
-			State = 773;
+			State = 802;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,65,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,69,Context) ) {
 			case 1:
 				_localctx = new F4EnableYoshiDrumsChannel5Context(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 759;
+				State = 788;
 				Match(NF4);
-				State = 760;
+				State = 789;
 				Match(N00);
 				}
 				break;
@@ -7628,9 +7851,9 @@ public partial class MmlParser : Parser {
 				_localctx = new F4ToggleLegatoContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 761;
+				State = 790;
 				Match(NF4);
-				State = 762;
+				State = 791;
 				Match(N01);
 				}
 				break;
@@ -7638,9 +7861,9 @@ public partial class MmlParser : Parser {
 				_localctx = new F4LightStaccatoContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 763;
+				State = 792;
 				Match(NF4);
-				State = 764;
+				State = 793;
 				Match(N02);
 				}
 				break;
@@ -7648,9 +7871,9 @@ public partial class MmlParser : Parser {
 				_localctx = new F4SNESSyncContext(_localctx);
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 765;
+				State = 794;
 				Match(NF4);
-				State = 766;
+				State = 795;
 				Match(N05);
 				}
 				break;
@@ -7658,9 +7881,9 @@ public partial class MmlParser : Parser {
 				_localctx = new F4EnableYoshiDrumsContext(_localctx);
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 767;
+				State = 796;
 				Match(NF4);
-				State = 768;
+				State = 797;
 				Match(N06);
 				}
 				break;
@@ -7668,9 +7891,9 @@ public partial class MmlParser : Parser {
 				_localctx = new F4TempoHikeOffContext(_localctx);
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 769;
+				State = 798;
 				Match(NF4);
-				State = 770;
+				State = 799;
 				Match(N07);
 				}
 				break;
@@ -7678,9 +7901,9 @@ public partial class MmlParser : Parser {
 				_localctx = new F4NSPCVelocityTableContext(_localctx);
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 771;
+				State = 800;
 				Match(NF4);
-				State = 772;
+				State = 801;
 				Match(N08);
 				}
 				break;
@@ -7755,18 +7978,18 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public F4ChannelItemsContext f4ChannelItems() {
 		F4ChannelItemsContext _localctx = new F4ChannelItemsContext(Context, State);
-		EnterRule(_localctx, 186, RULE_f4ChannelItems);
+		EnterRule(_localctx, 188, RULE_f4ChannelItems);
 		try {
-			State = 779;
+			State = 808;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,66,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,70,Context) ) {
 			case 1:
 				_localctx = new F4EchoToggleContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 775;
+				State = 804;
 				Match(NF4);
-				State = 776;
+				State = 805;
 				Match(N03);
 				}
 				break;
@@ -7774,9 +7997,9 @@ public partial class MmlParser : Parser {
 				_localctx = new F4RestoreInstrumentContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 777;
+				State = 806;
 				Match(NF4);
-				State = 778;
+				State = 807;
 				Match(N09);
 				}
 				break;
@@ -7827,27 +8050,27 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public F5FIRFilterContext f5FIRFilter() {
 		F5FIRFilterContext _localctx = new F5FIRFilterContext(Context, State);
-		EnterRule(_localctx, 188, RULE_f5FIRFilter);
+		EnterRule(_localctx, 190, RULE_f5FIRFilter);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 781;
+			State = 810;
 			Match(NF5);
-			State = 782;
+			State = 811;
 			hexNumber();
-			State = 783;
+			State = 812;
 			hexNumber();
-			State = 784;
+			State = 813;
 			hexNumber();
-			State = 785;
+			State = 814;
 			hexNumber();
-			State = 786;
+			State = 815;
 			hexNumber();
-			State = 787;
+			State = 816;
 			hexNumber();
-			State = 788;
+			State = 817;
 			hexNumber();
-			State = 789;
+			State = 818;
 			hexNumber();
 			}
 		}
@@ -7896,15 +8119,15 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public F6DSPWriteContext f6DSPWrite() {
 		F6DSPWriteContext _localctx = new F6DSPWriteContext(Context, State);
-		EnterRule(_localctx, 190, RULE_f6DSPWrite);
+		EnterRule(_localctx, 192, RULE_f6DSPWrite);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 791;
+			State = 820;
 			Match(NF6);
-			State = 792;
+			State = 821;
 			hexNumber();
-			State = 793;
+			State = 822;
 			hexNumber();
 			}
 		}
@@ -7950,13 +8173,13 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public F8EnableNoiseContext f8EnableNoise() {
 		F8EnableNoiseContext _localctx = new F8EnableNoiseContext(Context, State);
-		EnterRule(_localctx, 192, RULE_f8EnableNoise);
+		EnterRule(_localctx, 194, RULE_f8EnableNoise);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 795;
+			State = 824;
 			Match(NF8);
-			State = 796;
+			State = 825;
 			hexNumber();
 			}
 		}
@@ -8005,15 +8228,15 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public F9DataSendContext f9DataSend() {
 		F9DataSendContext _localctx = new F9DataSendContext(Context, State);
-		EnterRule(_localctx, 194, RULE_f9DataSend);
+		EnterRule(_localctx, 196, RULE_f9DataSend);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 798;
+			State = 827;
 			Match(NF9);
-			State = 799;
+			State = 828;
 			hexNumber();
-			State = 800;
+			State = 829;
 			hexNumber();
 			}
 		}
@@ -8140,20 +8363,20 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public FaChannelItemsContext faChannelItems() {
 		FaChannelItemsContext _localctx = new FaChannelItemsContext(Context, State);
-		EnterRule(_localctx, 196, RULE_faChannelItems);
+		EnterRule(_localctx, 198, RULE_faChannelItems);
 		try {
-			State = 814;
+			State = 843;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,67,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,71,Context) ) {
 			case 1:
 				_localctx = new FAPitchModulationContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 802;
+				State = 831;
 				Match(NFA);
-				State = 803;
+				State = 832;
 				Match(N00);
-				State = 804;
+				State = 833;
 				hexNumber();
 				}
 				break;
@@ -8161,11 +8384,11 @@ public partial class MmlParser : Parser {
 				_localctx = new FACurrentChannelGainContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 805;
+				State = 834;
 				Match(NFA);
-				State = 806;
+				State = 835;
 				Match(N01);
-				State = 807;
+				State = 836;
 				hexNumber();
 				}
 				break;
@@ -8173,11 +8396,11 @@ public partial class MmlParser : Parser {
 				_localctx = new FASemitoneTuneContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 808;
+				State = 837;
 				Match(NFA);
-				State = 809;
+				State = 838;
 				Match(N02);
-				State = 810;
+				State = 839;
 				hexNumber();
 				}
 				break;
@@ -8185,11 +8408,11 @@ public partial class MmlParser : Parser {
 				_localctx = new FAAmplifyContext(_localctx);
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 811;
+				State = 840;
 				Match(NFA);
-				State = 812;
+				State = 841;
 				Match(N03);
-				State = 813;
+				State = 842;
 				hexNumber();
 				}
 				break;
@@ -8297,21 +8520,21 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public FaGlobalItemsContext faGlobalItems() {
 		FaGlobalItemsContext _localctx = new FaGlobalItemsContext(Context, State);
-		EnterRule(_localctx, 198, RULE_faGlobalItems);
+		EnterRule(_localctx, 200, RULE_faGlobalItems);
 		try {
 			int _alt;
-			State = 831;
+			State = 860;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,69,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,73,Context) ) {
 			case 1:
 				_localctx = new FAEchoBufferReserveContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 816;
+				State = 845;
 				Match(NFA);
-				State = 817;
+				State = 846;
 				Match(N04);
-				State = 818;
+				State = 847;
 				hexNumber();
 				}
 				break;
@@ -8319,11 +8542,11 @@ public partial class MmlParser : Parser {
 				_localctx = new FAHotPatchPresetContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 819;
+				State = 848;
 				Match(NFA);
-				State = 820;
+				State = 849;
 				Match(N7F);
-				State = 821;
+				State = 850;
 				hexNumber();
 				}
 				break;
@@ -8331,27 +8554,27 @@ public partial class MmlParser : Parser {
 				_localctx = new FAHotPatchToggleBitsContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 822;
+				State = 851;
 				Match(NFA);
-				State = 823;
+				State = 852;
 				Match(NFE);
-				State = 824;
+				State = 853;
 				hexNumber();
-				State = 828;
+				State = 857;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,68,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,72,Context);
 				while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						State = 825;
+						State = 854;
 						hexNumber();
 						}
 						} 
 					}
-					State = 830;
+					State = 859;
 					ErrorHandler.Sync(this);
-					_alt = Interpreter.AdaptivePredict(TokenStream,68,Context);
+					_alt = Interpreter.AdaptivePredict(TokenStream,72,Context);
 				}
 				}
 				break;
@@ -8464,22 +8687,22 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public FbItemsContext fbItems() {
 		FbItemsContext _localctx = new FbItemsContext(Context, State);
-		EnterRule(_localctx, 200, RULE_fbItems);
+		EnterRule(_localctx, 202, RULE_fbItems);
 		try {
-			State = 847;
+			State = 876;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,70,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,74,Context) ) {
 			case 1:
 				_localctx = new FBTrillContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 833;
+				State = 862;
 				Match(NFB);
-				State = 834;
+				State = 863;
 				Match(N80);
-				State = 835;
+				State = 864;
 				hexNumber();
-				State = 836;
+				State = 865;
 				hexNumber();
 				}
 				break;
@@ -8487,13 +8710,13 @@ public partial class MmlParser : Parser {
 				_localctx = new FBGlissandoContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 838;
+				State = 867;
 				Match(NFB);
-				State = 839;
+				State = 868;
 				Match(N81);
-				State = 840;
+				State = 869;
 				hexNumber();
-				State = 841;
+				State = 870;
 				hexNumber();
 				}
 				break;
@@ -8501,11 +8724,11 @@ public partial class MmlParser : Parser {
 				_localctx = new FBEnableArgeggioContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 843;
+				State = 872;
 				Match(NFB);
-				State = 844;
+				State = 873;
 				hexNumber();
-				State = 845;
+				State = 874;
 				hexNumber();
 				}
 				break;
@@ -8591,24 +8814,24 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public FcItemsContext fcItems() {
 		FcItemsContext _localctx = new FcItemsContext(Context, State);
-		EnterRule(_localctx, 202, RULE_fcItems);
+		EnterRule(_localctx, 204, RULE_fcItems);
 		try {
-			State = 861;
+			State = 890;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,71,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,75,Context) ) {
 			case 1:
 				_localctx = new FCHexRemoteGainContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 849;
+				State = 878;
 				Match(NFC);
-				State = 850;
+				State = 879;
 				hexNumber();
-				State = 851;
+				State = 880;
 				Match(N01);
-				State = 852;
+				State = 881;
 				hexNumber();
-				State = 853;
+				State = 882;
 				hexNumber();
 				}
 				break;
@@ -8616,15 +8839,15 @@ public partial class MmlParser : Parser {
 				_localctx = new FCHexRemoteCommandContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 855;
+				State = 884;
 				Match(NFC);
-				State = 856;
+				State = 885;
 				hexNumber();
-				State = 857;
+				State = 886;
 				hexNumber();
-				State = 858;
+				State = 887;
 				hexNumber();
-				State = 859;
+				State = 888;
 				hexNumber();
 				}
 				break;
@@ -8669,11 +8892,11 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public FdTremoloOffContext fdTremoloOff() {
 		FdTremoloOffContext _localctx = new FdTremoloOffContext(Context, State);
-		EnterRule(_localctx, 204, RULE_fdTremoloOff);
+		EnterRule(_localctx, 206, RULE_fdTremoloOff);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 863;
+			State = 892;
 			Match(NFD);
 			}
 		}
@@ -8716,11 +8939,11 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public FePitchEnvelopeOffContext fePitchEnvelopeOff() {
 		FePitchEnvelopeOffContext _localctx = new FePitchEnvelopeOffContext(Context, State);
-		EnterRule(_localctx, 206, RULE_fePitchEnvelopeOff);
+		EnterRule(_localctx, 208, RULE_fePitchEnvelopeOff);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 865;
+			State = 894;
 			Match(NFE);
 			}
 		}
@@ -8813,14 +9036,14 @@ public partial class MmlParser : Parser {
 	[RuleVersion(0)]
 	public HexNumberContext hexNumber() {
 		HexNumberContext _localctx = new HexNumberContext(Context, State);
-		EnterRule(_localctx, 208, RULE_hexNumber);
+		EnterRule(_localctx, 210, RULE_hexNumber);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 867;
+			State = 896;
 			_la = TokenStream.LA(1);
-			if ( !(((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & 5629499534213119L) != 0)) ) {
+			if ( !(((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & 5629499534213119L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -8841,7 +9064,7 @@ public partial class MmlParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,133,870,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+		4,1,132,899,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
 		7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,
 		2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,28,
@@ -8856,290 +9079,301 @@ public partial class MmlParser : Parser {
 		2,85,7,85,2,86,7,86,2,87,7,87,2,88,7,88,2,89,7,89,2,90,7,90,2,91,7,91,
 		2,92,7,92,2,93,7,93,2,94,7,94,2,95,7,95,2,96,7,96,2,97,7,97,2,98,7,98,
 		2,99,7,99,2,100,7,100,2,101,7,101,2,102,7,102,2,103,7,103,2,104,7,104,
-		1,0,4,0,212,8,0,11,0,12,0,213,1,0,3,0,217,8,0,1,1,1,1,1,1,1,1,1,1,1,1,
-		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,233,8,1,1,2,1,2,1,2,1,2,1,2,1,2,1,
-		2,1,2,3,2,243,8,2,1,3,1,3,1,3,1,3,1,3,1,4,5,4,251,8,4,10,4,12,4,254,9,
-		4,1,4,5,4,257,8,4,10,4,12,4,260,9,4,1,5,1,5,1,5,5,5,265,8,5,10,5,12,5,
-		268,9,5,1,5,1,5,1,6,1,6,4,6,274,8,6,11,6,12,6,275,1,6,1,6,4,6,280,8,6,
-		11,6,12,6,281,1,6,1,6,4,6,286,8,6,11,6,12,6,287,3,6,290,8,6,1,7,1,7,1,
-		7,5,7,295,8,7,10,7,12,7,298,9,7,1,7,1,7,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,
-		8,1,8,1,8,3,8,312,8,8,1,9,1,9,1,9,1,10,1,10,1,10,1,11,1,11,1,12,1,12,1,
-		12,1,12,5,12,326,8,12,10,12,12,12,329,9,12,1,12,1,12,1,12,3,12,334,8,12,
-		1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,3,13,346,8,13,1,14,1,
-		14,1,14,1,14,3,14,352,8,14,1,15,1,15,1,16,1,16,1,17,1,17,1,18,1,18,5,18,
-		362,8,18,10,18,12,18,365,9,18,1,19,1,19,1,20,1,20,1,20,1,20,1,20,3,20,
-		374,8,20,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,
-		21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,3,21,397,8,21,1,22,1,22,1,23,
-		1,23,3,23,403,8,23,1,24,1,24,1,25,1,25,1,26,1,26,1,27,1,27,1,28,1,28,1,
-		28,3,28,416,8,28,3,28,418,8,28,1,29,1,29,3,29,422,8,29,1,30,1,30,1,31,
-		1,31,1,31,3,31,429,8,31,3,31,431,8,31,1,32,1,32,3,32,435,8,32,1,33,1,33,
-		1,33,4,33,440,8,33,11,33,12,33,441,1,34,1,34,1,34,3,34,447,8,34,1,34,1,
-		34,3,34,451,8,34,1,34,1,34,3,34,455,8,34,1,34,1,34,1,35,1,35,1,36,1,36,
-		1,36,3,36,464,8,36,3,36,466,8,36,1,37,1,37,1,37,3,37,471,8,37,3,37,473,
-		8,37,1,38,1,38,3,38,477,8,38,1,39,1,39,1,40,1,40,1,41,1,41,1,42,1,42,3,
-		42,487,8,42,1,43,1,43,3,43,491,8,43,1,44,1,44,3,44,495,8,44,1,45,1,45,
-		1,45,3,45,500,8,45,1,46,1,46,5,46,504,8,46,10,46,12,46,507,9,46,1,46,1,
-		46,3,46,511,8,46,1,47,1,47,1,47,1,47,3,47,517,8,47,1,48,3,48,520,8,48,
-		1,48,1,48,5,48,524,8,48,10,48,12,48,527,9,48,1,48,1,48,3,48,531,8,48,1,
-		49,1,49,1,49,1,49,3,49,537,8,49,1,50,1,50,5,50,541,8,50,10,50,12,50,544,
-		9,50,1,50,1,50,3,50,548,8,50,1,51,1,51,1,51,3,51,553,8,51,1,52,3,52,556,
-		8,52,1,52,1,52,5,52,560,8,52,10,52,12,52,563,9,52,1,52,1,52,3,52,567,8,
-		52,1,53,1,53,1,53,3,53,572,8,53,1,54,1,54,1,54,4,54,577,8,54,11,54,12,
-		54,578,1,54,1,54,1,55,1,55,1,55,1,55,1,55,1,55,1,55,1,55,1,55,1,55,3,55,
-		593,8,55,1,56,1,56,3,56,597,8,56,1,57,1,57,1,58,1,58,1,59,1,59,3,59,605,
-		8,59,1,60,1,60,1,61,1,61,3,61,611,8,61,1,62,1,62,1,63,1,63,1,63,1,63,1,
-		63,1,63,1,63,1,63,1,63,1,63,3,63,625,8,63,1,64,1,64,1,64,1,64,1,64,1,64,
-		1,64,1,64,1,64,1,64,1,64,1,64,1,64,1,64,1,64,1,64,1,64,1,64,3,64,645,8,
-		64,1,65,1,65,1,65,1,66,1,66,1,66,1,67,1,67,1,67,1,67,1,68,1,68,1,68,1,
-		68,3,68,661,8,68,1,69,1,69,1,69,5,69,666,8,69,10,69,12,69,669,9,69,1,69,
-		1,69,1,70,1,70,1,70,1,70,1,70,1,71,1,71,1,71,1,72,1,72,1,73,1,73,1,73,
-		1,74,1,74,1,74,1,74,1,75,1,75,1,75,1,76,1,76,1,76,1,76,1,77,1,77,1,77,
-		1,78,1,78,1,78,1,78,1,78,1,79,1,79,1,79,1,80,1,80,1,80,1,81,1,81,1,81,
-		1,82,1,82,1,82,1,82,1,83,1,83,1,83,1,83,1,83,1,84,1,84,1,84,1,84,1,84,
-		1,85,1,85,1,85,1,85,1,85,1,85,1,85,3,85,735,8,85,1,86,1,86,1,86,1,87,1,
-		87,1,87,1,87,1,87,1,88,1,88,1,89,1,89,1,89,1,89,1,89,1,90,1,90,1,90,1,
-		90,1,91,1,91,1,91,1,91,1,92,1,92,1,92,1,92,1,92,1,92,1,92,1,92,1,92,1,
-		92,1,92,1,92,1,92,1,92,3,92,774,8,92,1,93,1,93,1,93,1,93,3,93,780,8,93,
-		1,94,1,94,1,94,1,94,1,94,1,94,1,94,1,94,1,94,1,94,1,95,1,95,1,95,1,95,
-		1,96,1,96,1,96,1,97,1,97,1,97,1,97,1,98,1,98,1,98,1,98,1,98,1,98,1,98,
-		1,98,1,98,1,98,1,98,1,98,3,98,815,8,98,1,99,1,99,1,99,1,99,1,99,1,99,1,
-		99,1,99,1,99,1,99,5,99,827,8,99,10,99,12,99,830,9,99,3,99,832,8,99,1,100,
-		1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,
-		1,100,3,100,848,8,100,1,101,1,101,1,101,1,101,1,101,1,101,1,101,1,101,
-		1,101,1,101,1,101,1,101,3,101,862,8,101,1,102,1,102,1,103,1,103,1,104,
-		1,104,1,104,0,0,105,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,
-		38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,
-		86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,
-		126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,
-		162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,194,196,
-		198,200,202,204,206,208,0,3,2,0,54,54,129,129,1,0,31,32,2,0,79,128,131,
-		131,936,0,216,1,0,0,0,2,232,1,0,0,0,4,242,1,0,0,0,6,244,1,0,0,0,8,252,
-		1,0,0,0,10,261,1,0,0,0,12,289,1,0,0,0,14,291,1,0,0,0,16,311,1,0,0,0,18,
-		313,1,0,0,0,20,316,1,0,0,0,22,319,1,0,0,0,24,333,1,0,0,0,26,345,1,0,0,
-		0,28,351,1,0,0,0,30,353,1,0,0,0,32,355,1,0,0,0,34,357,1,0,0,0,36,359,1,
-		0,0,0,38,366,1,0,0,0,40,373,1,0,0,0,42,396,1,0,0,0,44,398,1,0,0,0,46,402,
-		1,0,0,0,48,404,1,0,0,0,50,406,1,0,0,0,52,408,1,0,0,0,54,410,1,0,0,0,56,
-		417,1,0,0,0,58,421,1,0,0,0,60,423,1,0,0,0,62,430,1,0,0,0,64,434,1,0,0,
-		0,66,436,1,0,0,0,68,443,1,0,0,0,70,458,1,0,0,0,72,465,1,0,0,0,74,472,1,
-		0,0,0,76,476,1,0,0,0,78,478,1,0,0,0,80,480,1,0,0,0,82,482,1,0,0,0,84,486,
-		1,0,0,0,86,490,1,0,0,0,88,494,1,0,0,0,90,499,1,0,0,0,92,501,1,0,0,0,94,
-		516,1,0,0,0,96,519,1,0,0,0,98,536,1,0,0,0,100,538,1,0,0,0,102,552,1,0,
-		0,0,104,555,1,0,0,0,106,571,1,0,0,0,108,573,1,0,0,0,110,592,1,0,0,0,112,
-		594,1,0,0,0,114,598,1,0,0,0,116,600,1,0,0,0,118,602,1,0,0,0,120,606,1,
-		0,0,0,122,610,1,0,0,0,124,612,1,0,0,0,126,624,1,0,0,0,128,644,1,0,0,0,
-		130,646,1,0,0,0,132,649,1,0,0,0,134,652,1,0,0,0,136,656,1,0,0,0,138,667,
-		1,0,0,0,140,672,1,0,0,0,142,677,1,0,0,0,144,680,1,0,0,0,146,682,1,0,0,
-		0,148,685,1,0,0,0,150,689,1,0,0,0,152,692,1,0,0,0,154,696,1,0,0,0,156,
-		699,1,0,0,0,158,704,1,0,0,0,160,707,1,0,0,0,162,710,1,0,0,0,164,713,1,
-		0,0,0,166,717,1,0,0,0,168,722,1,0,0,0,170,734,1,0,0,0,172,736,1,0,0,0,
-		174,739,1,0,0,0,176,744,1,0,0,0,178,746,1,0,0,0,180,751,1,0,0,0,182,755,
-		1,0,0,0,184,773,1,0,0,0,186,779,1,0,0,0,188,781,1,0,0,0,190,791,1,0,0,
-		0,192,795,1,0,0,0,194,798,1,0,0,0,196,814,1,0,0,0,198,831,1,0,0,0,200,
-		847,1,0,0,0,202,861,1,0,0,0,204,863,1,0,0,0,206,865,1,0,0,0,208,867,1,
-		0,0,0,210,212,3,2,1,0,211,210,1,0,0,0,212,213,1,0,0,0,213,211,1,0,0,0,
-		213,214,1,0,0,0,214,217,1,0,0,0,215,217,5,0,0,1,216,211,1,0,0,0,216,215,
-		1,0,0,0,217,1,1,0,0,0,218,233,3,4,2,0,219,233,3,36,18,0,220,233,3,108,
-		54,0,221,233,3,70,35,0,222,233,3,72,36,0,223,233,3,74,37,0,224,233,3,124,
-		62,0,225,233,3,120,60,0,226,233,5,29,0,0,227,233,3,126,63,0,228,233,3,
-		208,104,0,229,233,3,38,19,0,230,233,3,108,54,0,231,233,3,80,40,0,232,218,
-		1,0,0,0,232,219,1,0,0,0,232,220,1,0,0,0,232,221,1,0,0,0,232,222,1,0,0,
-		0,232,223,1,0,0,0,232,224,1,0,0,0,232,225,1,0,0,0,232,226,1,0,0,0,232,
-		227,1,0,0,0,232,228,1,0,0,0,232,229,1,0,0,0,232,230,1,0,0,0,232,231,1,
-		0,0,0,233,3,1,0,0,0,234,243,3,28,14,0,235,243,3,14,7,0,236,243,3,6,3,0,
-		237,243,3,10,5,0,238,243,3,20,10,0,239,243,3,18,9,0,240,243,3,22,11,0,
-		241,243,3,24,12,0,242,234,1,0,0,0,242,235,1,0,0,0,242,236,1,0,0,0,242,
-		237,1,0,0,0,242,238,1,0,0,0,242,239,1,0,0,0,242,240,1,0,0,0,242,241,1,
-		0,0,0,243,5,1,0,0,0,244,245,5,58,0,0,245,246,5,8,0,0,246,247,3,8,4,0,247,
-		248,5,9,0,0,248,7,1,0,0,0,249,251,5,78,0,0,250,249,1,0,0,0,251,254,1,0,
-		0,0,252,250,1,0,0,0,252,253,1,0,0,0,253,258,1,0,0,0,254,252,1,0,0,0,255,
-		257,5,29,0,0,256,255,1,0,0,0,257,260,1,0,0,0,258,256,1,0,0,0,258,259,1,
-		0,0,0,259,9,1,0,0,0,260,258,1,0,0,0,261,262,5,59,0,0,262,266,5,8,0,0,263,
-		265,3,12,6,0,264,263,1,0,0,0,265,268,1,0,0,0,266,264,1,0,0,0,266,267,1,
-		0,0,0,267,269,1,0,0,0,268,266,1,0,0,0,269,270,5,9,0,0,270,11,1,0,0,0,271,
-		273,5,29,0,0,272,274,3,208,104,0,273,272,1,0,0,0,274,275,1,0,0,0,275,273,
-		1,0,0,0,275,276,1,0,0,0,276,290,1,0,0,0,277,279,3,76,38,0,278,280,3,208,
-		104,0,279,278,1,0,0,0,280,281,1,0,0,0,281,279,1,0,0,0,281,282,1,0,0,0,
-		282,290,1,0,0,0,283,285,3,54,27,0,284,286,3,208,104,0,285,284,1,0,0,0,
-		286,287,1,0,0,0,287,285,1,0,0,0,287,288,1,0,0,0,288,290,1,0,0,0,289,271,
-		1,0,0,0,289,277,1,0,0,0,289,283,1,0,0,0,290,13,1,0,0,0,291,292,5,60,0,
-		0,292,296,5,8,0,0,293,295,3,16,8,0,294,293,1,0,0,0,295,298,1,0,0,0,296,
-		294,1,0,0,0,296,297,1,0,0,0,297,299,1,0,0,0,298,296,1,0,0,0,299,300,5,
-		9,0,0,300,15,1,0,0,0,301,302,5,61,0,0,302,312,5,29,0,0,303,304,5,62,0,
-		0,304,312,5,29,0,0,305,306,5,63,0,0,306,312,5,29,0,0,307,308,5,64,0,0,
-		308,312,5,29,0,0,309,310,5,65,0,0,310,312,5,29,0,0,311,301,1,0,0,0,311,
-		303,1,0,0,0,311,305,1,0,0,0,311,307,1,0,0,0,311,309,1,0,0,0,312,17,1,0,
-		0,0,313,314,5,66,0,0,314,315,3,208,104,0,315,19,1,0,0,0,316,317,5,67,0,
-		0,317,318,5,29,0,0,318,21,1,0,0,0,319,320,5,68,0,0,320,23,1,0,0,0,321,
-		322,5,69,0,0,322,327,5,8,0,0,323,324,5,1,0,0,324,326,3,26,13,0,325,323,
-		1,0,0,0,326,329,1,0,0,0,327,325,1,0,0,0,327,328,1,0,0,0,328,330,1,0,0,
-		0,329,327,1,0,0,0,330,334,5,9,0,0,331,332,5,69,0,0,332,334,3,26,13,0,333,
-		321,1,0,0,0,333,331,1,0,0,0,334,25,1,0,0,0,335,346,5,71,0,0,336,337,5,
-		72,0,0,337,346,5,129,0,0,338,346,5,73,0,0,339,346,5,74,0,0,340,346,5,75,
-		0,0,341,346,5,76,0,0,342,343,5,29,0,0,343,346,5,129,0,0,344,346,5,29,0,
-		0,345,335,1,0,0,0,345,336,1,0,0,0,345,338,1,0,0,0,345,339,1,0,0,0,345,
-		340,1,0,0,0,345,341,1,0,0,0,345,342,1,0,0,0,345,344,1,0,0,0,346,27,1,0,
-		0,0,347,348,5,55,0,0,348,352,3,34,17,0,349,352,3,30,15,0,350,352,3,32,
-		16,0,351,347,1,0,0,0,351,349,1,0,0,0,351,350,1,0,0,0,352,29,1,0,0,0,353,
-		354,5,56,0,0,354,31,1,0,0,0,355,356,5,57,0,0,356,33,1,0,0,0,357,358,7,
-		0,0,0,358,35,1,0,0,0,359,363,5,77,0,0,360,362,3,40,20,0,361,360,1,0,0,
-		0,362,365,1,0,0,0,363,361,1,0,0,0,363,364,1,0,0,0,364,37,1,0,0,0,365,363,
-		1,0,0,0,366,367,5,24,0,0,367,39,1,0,0,0,368,374,3,42,21,0,369,374,3,84,
-		42,0,370,374,3,122,61,0,371,374,3,128,64,0,372,374,3,208,104,0,373,368,
-		1,0,0,0,373,369,1,0,0,0,373,370,1,0,0,0,373,371,1,0,0,0,373,372,1,0,0,
-		0,374,41,1,0,0,0,375,397,3,66,33,0,376,397,3,44,22,0,377,397,3,46,23,0,
-		378,397,3,78,39,0,379,397,3,48,24,0,380,397,3,50,25,0,381,397,3,52,26,
-		0,382,397,3,54,27,0,383,397,3,68,34,0,384,397,3,56,28,0,385,397,3,72,36,
-		0,386,397,3,58,29,0,387,397,3,76,38,0,388,397,3,60,30,0,389,397,3,62,31,
-		0,390,397,3,64,32,0,391,397,3,74,37,0,392,397,3,38,19,0,393,397,3,80,40,
-		0,394,397,3,82,41,0,395,397,3,70,35,0,396,375,1,0,0,0,396,376,1,0,0,0,
-		396,377,1,0,0,0,396,378,1,0,0,0,396,379,1,0,0,0,396,380,1,0,0,0,396,381,
-		1,0,0,0,396,382,1,0,0,0,396,383,1,0,0,0,396,384,1,0,0,0,396,385,1,0,0,
-		0,396,386,1,0,0,0,396,387,1,0,0,0,396,388,1,0,0,0,396,389,1,0,0,0,396,
-		390,1,0,0,0,396,391,1,0,0,0,396,392,1,0,0,0,396,393,1,0,0,0,396,394,1,
-		0,0,0,396,395,1,0,0,0,397,43,1,0,0,0,398,399,5,31,0,0,399,45,1,0,0,0,400,
-		403,5,32,0,0,401,403,5,33,0,0,402,400,1,0,0,0,402,401,1,0,0,0,403,47,1,
-		0,0,0,404,405,5,34,0,0,405,49,1,0,0,0,406,407,5,22,0,0,407,51,1,0,0,0,
-		408,409,5,21,0,0,409,53,1,0,0,0,410,411,5,35,0,0,411,55,1,0,0,0,412,418,
-		5,37,0,0,413,416,3,162,81,0,414,416,3,164,82,0,415,413,1,0,0,0,415,414,
-		1,0,0,0,416,418,1,0,0,0,417,412,1,0,0,0,417,415,1,0,0,0,418,57,1,0,0,0,
-		419,422,5,38,0,0,420,422,3,172,86,0,421,419,1,0,0,0,421,420,1,0,0,0,422,
-		59,1,0,0,0,423,424,5,40,0,0,424,61,1,0,0,0,425,431,5,42,0,0,426,429,3,
-		132,66,0,427,429,3,134,67,0,428,426,1,0,0,0,428,427,1,0,0,0,429,431,1,
-		0,0,0,430,425,1,0,0,0,430,428,1,0,0,0,431,63,1,0,0,0,432,435,5,43,0,0,
-		433,435,3,140,70,0,434,432,1,0,0,0,434,433,1,0,0,0,435,65,1,0,0,0,436,
-		439,7,1,0,0,437,438,5,4,0,0,438,440,7,1,0,0,439,437,1,0,0,0,440,441,1,
-		0,0,0,441,439,1,0,0,0,441,442,1,0,0,0,442,67,1,0,0,0,443,446,5,8,0,0,444,
-		447,3,44,22,0,445,447,3,46,23,0,446,444,1,0,0,0,446,445,1,0,0,0,447,450,
-		1,0,0,0,448,451,3,44,22,0,449,451,3,46,23,0,450,448,1,0,0,0,450,449,1,
-		0,0,0,451,454,1,0,0,0,452,455,3,44,22,0,453,455,3,46,23,0,454,452,1,0,
-		0,0,454,453,1,0,0,0,455,456,1,0,0,0,456,457,5,9,0,0,457,69,1,0,0,0,458,
-		459,5,39,0,0,459,71,1,0,0,0,460,466,5,41,0,0,461,464,3,146,73,0,462,464,
-		3,148,74,0,463,461,1,0,0,0,463,462,1,0,0,0,464,466,1,0,0,0,465,460,1,0,
-		0,0,465,463,1,0,0,0,466,73,1,0,0,0,467,473,5,36,0,0,468,471,3,150,75,0,
-		469,471,3,152,76,0,470,468,1,0,0,0,470,469,1,0,0,0,471,473,1,0,0,0,472,
-		467,1,0,0,0,472,470,1,0,0,0,473,75,1,0,0,0,474,477,5,46,0,0,475,477,3,
-		130,65,0,476,474,1,0,0,0,476,475,1,0,0,0,477,77,1,0,0,0,478,479,5,44,0,
-		0,479,79,1,0,0,0,480,481,5,45,0,0,481,81,1,0,0,0,482,483,5,47,0,0,483,
-		83,1,0,0,0,484,487,3,86,43,0,485,487,3,88,44,0,486,484,1,0,0,0,486,485,
-		1,0,0,0,487,85,1,0,0,0,488,491,3,92,46,0,489,491,3,96,48,0,490,488,1,0,
-		0,0,490,489,1,0,0,0,491,87,1,0,0,0,492,495,3,112,56,0,493,495,3,90,45,
-		0,494,492,1,0,0,0,494,493,1,0,0,0,495,89,1,0,0,0,496,500,3,114,57,0,497,
-		500,3,118,59,0,498,500,3,116,58,0,499,496,1,0,0,0,499,497,1,0,0,0,499,
-		498,1,0,0,0,500,91,1,0,0,0,501,505,5,14,0,0,502,504,3,94,47,0,503,502,
-		1,0,0,0,504,507,1,0,0,0,505,503,1,0,0,0,505,506,1,0,0,0,506,508,1,0,0,
-		0,507,505,1,0,0,0,508,510,5,15,0,0,509,511,5,129,0,0,510,509,1,0,0,0,510,
-		511,1,0,0,0,511,93,1,0,0,0,512,517,3,42,21,0,513,517,3,104,52,0,514,517,
-		3,88,44,0,515,517,3,208,104,0,516,512,1,0,0,0,516,513,1,0,0,0,516,514,
-		1,0,0,0,516,515,1,0,0,0,517,95,1,0,0,0,518,520,5,48,0,0,519,518,1,0,0,
-		0,519,520,1,0,0,0,520,521,1,0,0,0,521,525,5,12,0,0,522,524,3,98,49,0,523,
-		522,1,0,0,0,524,527,1,0,0,0,525,523,1,0,0,0,525,526,1,0,0,0,526,528,1,
-		0,0,0,527,525,1,0,0,0,528,530,5,13,0,0,529,531,5,129,0,0,530,529,1,0,0,
-		0,530,531,1,0,0,0,531,97,1,0,0,0,532,537,3,42,21,0,533,537,3,100,50,0,
-		534,537,3,90,45,0,535,537,3,208,104,0,536,532,1,0,0,0,536,533,1,0,0,0,
-		536,534,1,0,0,0,536,535,1,0,0,0,537,99,1,0,0,0,538,542,5,14,0,0,539,541,
-		3,102,51,0,540,539,1,0,0,0,541,544,1,0,0,0,542,540,1,0,0,0,542,543,1,0,
-		0,0,543,545,1,0,0,0,544,542,1,0,0,0,545,547,5,15,0,0,546,548,5,129,0,0,
-		547,546,1,0,0,0,547,548,1,0,0,0,548,101,1,0,0,0,549,553,3,42,21,0,550,
-		553,3,88,44,0,551,553,3,208,104,0,552,549,1,0,0,0,552,550,1,0,0,0,552,
-		551,1,0,0,0,553,103,1,0,0,0,554,556,5,48,0,0,555,554,1,0,0,0,555,556,1,
-		0,0,0,556,557,1,0,0,0,557,561,5,12,0,0,558,560,3,106,53,0,559,558,1,0,
-		0,0,560,563,1,0,0,0,561,559,1,0,0,0,561,562,1,0,0,0,562,564,1,0,0,0,563,
-		561,1,0,0,0,564,566,5,13,0,0,565,567,5,129,0,0,566,565,1,0,0,0,566,567,
-		1,0,0,0,567,105,1,0,0,0,568,572,3,42,21,0,569,572,3,90,45,0,570,572,3,
-		208,104,0,571,568,1,0,0,0,571,569,1,0,0,0,571,570,1,0,0,0,572,107,1,0,
-		0,0,573,574,5,49,0,0,574,576,5,12,0,0,575,577,3,110,55,0,576,575,1,0,0,
-		0,577,578,1,0,0,0,578,576,1,0,0,0,578,579,1,0,0,0,579,580,1,0,0,0,580,
-		581,5,13,0,0,581,109,1,0,0,0,582,593,3,48,24,0,583,593,3,50,25,0,584,593,
-		3,52,26,0,585,593,3,56,28,0,586,593,3,58,29,0,587,593,3,60,30,0,588,593,
-		3,62,31,0,589,593,3,64,32,0,590,593,3,74,37,0,591,593,3,208,104,0,592,
-		582,1,0,0,0,592,583,1,0,0,0,592,584,1,0,0,0,592,585,1,0,0,0,592,586,1,
-		0,0,0,592,587,1,0,0,0,592,588,1,0,0,0,592,589,1,0,0,0,592,590,1,0,0,0,
-		592,591,1,0,0,0,593,111,1,0,0,0,594,596,5,48,0,0,595,597,5,129,0,0,596,
-		595,1,0,0,0,596,597,1,0,0,0,597,113,1,0,0,0,598,599,5,51,0,0,599,115,1,
-		0,0,0,600,601,5,50,0,0,601,117,1,0,0,0,602,604,5,7,0,0,603,605,5,129,0,
-		0,604,603,1,0,0,0,604,605,1,0,0,0,605,119,1,0,0,0,606,607,5,25,0,0,607,
-		121,1,0,0,0,608,611,5,53,0,0,609,611,3,182,91,0,610,608,1,0,0,0,610,609,
-		1,0,0,0,611,123,1,0,0,0,612,613,5,28,0,0,613,125,1,0,0,0,614,625,3,188,
-		94,0,615,625,3,154,77,0,616,625,3,184,92,0,617,625,3,174,87,0,618,625,
-		3,178,89,0,619,625,3,176,88,0,620,625,3,180,90,0,621,625,3,190,95,0,622,
-		625,3,194,97,0,623,625,3,198,99,0,624,614,1,0,0,0,624,615,1,0,0,0,624,
-		616,1,0,0,0,624,617,1,0,0,0,624,618,1,0,0,0,624,619,1,0,0,0,624,620,1,
-		0,0,0,624,621,1,0,0,0,624,622,1,0,0,0,624,623,1,0,0,0,625,127,1,0,0,0,
-		626,645,3,156,78,0,627,645,3,200,100,0,628,645,3,142,71,0,629,645,3,144,
-		72,0,630,645,3,166,83,0,631,645,3,168,84,0,632,645,3,170,85,0,633,645,
-		3,176,88,0,634,645,3,180,90,0,635,645,3,186,93,0,636,645,3,190,95,0,637,
-		645,3,192,96,0,638,645,3,194,97,0,639,645,3,196,98,0,640,645,3,200,100,
-		0,641,645,3,202,101,0,642,645,3,204,102,0,643,645,3,206,103,0,644,626,
-		1,0,0,0,644,627,1,0,0,0,644,628,1,0,0,0,644,629,1,0,0,0,644,630,1,0,0,
-		0,644,631,1,0,0,0,644,632,1,0,0,0,644,633,1,0,0,0,644,634,1,0,0,0,644,
-		635,1,0,0,0,644,636,1,0,0,0,644,637,1,0,0,0,644,638,1,0,0,0,644,639,1,
-		0,0,0,644,640,1,0,0,0,644,641,1,0,0,0,644,642,1,0,0,0,644,643,1,0,0,0,
-		645,129,1,0,0,0,646,647,5,93,0,0,647,648,5,129,0,0,648,131,1,0,0,0,649,
-		650,5,94,0,0,650,651,3,208,104,0,651,133,1,0,0,0,652,653,5,95,0,0,653,
-		654,3,208,104,0,654,655,3,208,104,0,655,135,1,0,0,0,656,657,5,96,0,0,657,
-		660,3,208,104,0,658,661,3,208,104,0,659,661,3,138,69,0,660,658,1,0,0,0,
-		660,659,1,0,0,0,661,137,1,0,0,0,662,666,3,48,24,0,663,666,3,52,26,0,664,
-		666,3,50,25,0,665,662,1,0,0,0,665,663,1,0,0,0,665,664,1,0,0,0,666,669,
-		1,0,0,0,667,665,1,0,0,0,667,668,1,0,0,0,668,670,1,0,0,0,669,667,1,0,0,
-		0,670,671,3,44,22,0,671,139,1,0,0,0,672,673,5,97,0,0,673,674,3,208,104,
-		0,674,675,3,208,104,0,675,676,3,208,104,0,676,141,1,0,0,0,677,678,5,109,
-		0,0,678,679,3,208,104,0,679,143,1,0,0,0,680,681,5,98,0,0,681,145,1,0,0,
-		0,682,683,5,99,0,0,683,684,3,208,104,0,684,147,1,0,0,0,685,686,5,100,0,
-		0,686,687,3,208,104,0,687,688,3,208,104,0,688,149,1,0,0,0,689,690,5,101,
-		0,0,690,691,3,208,104,0,691,151,1,0,0,0,692,693,5,102,0,0,693,694,3,208,
-		104,0,694,695,3,208,104,0,695,153,1,0,0,0,696,697,5,103,0,0,697,698,3,
-		208,104,0,698,155,1,0,0,0,699,700,5,104,0,0,700,701,3,208,104,0,701,702,
-		3,208,104,0,702,703,3,208,104,0,703,157,1,0,0,0,704,705,5,105,0,0,705,
-		706,5,79,0,0,706,159,1,0,0,0,707,708,5,105,0,0,708,709,3,208,104,0,709,
-		161,1,0,0,0,710,711,5,106,0,0,711,712,3,208,104,0,712,163,1,0,0,0,713,
-		714,5,107,0,0,714,715,3,208,104,0,715,716,3,208,104,0,716,165,1,0,0,0,
-		717,718,5,110,0,0,718,719,3,208,104,0,719,720,3,208,104,0,720,721,3,208,
-		104,0,721,167,1,0,0,0,722,723,5,111,0,0,723,724,3,208,104,0,724,725,3,
-		208,104,0,725,726,3,208,104,0,726,169,1,0,0,0,727,728,5,112,0,0,728,729,
-		5,90,0,0,729,735,3,208,104,0,730,731,5,112,0,0,731,732,3,208,104,0,732,
-		733,3,208,104,0,733,735,1,0,0,0,734,727,1,0,0,0,734,730,1,0,0,0,735,171,
-		1,0,0,0,736,737,5,113,0,0,737,738,3,208,104,0,738,173,1,0,0,0,739,740,
-		5,114,0,0,740,741,3,208,104,0,741,742,3,208,104,0,742,743,3,208,104,0,
-		743,175,1,0,0,0,744,745,5,115,0,0,745,177,1,0,0,0,746,747,5,116,0,0,747,
-		748,3,208,104,0,748,749,3,208,104,0,749,750,3,208,104,0,750,179,1,0,0,
-		0,751,752,5,117,0,0,752,753,3,208,104,0,753,754,3,208,104,0,754,181,1,
-		0,0,0,755,756,5,118,0,0,756,757,3,208,104,0,757,758,3,208,104,0,758,183,
-		1,0,0,0,759,760,5,119,0,0,760,774,5,79,0,0,761,762,5,119,0,0,762,774,5,
-		80,0,0,763,764,5,119,0,0,764,774,5,81,0,0,765,766,5,119,0,0,766,774,5,
-		84,0,0,767,768,5,119,0,0,768,774,5,85,0,0,769,770,5,119,0,0,770,774,5,
-		86,0,0,771,772,5,119,0,0,772,774,5,87,0,0,773,759,1,0,0,0,773,761,1,0,
-		0,0,773,763,1,0,0,0,773,765,1,0,0,0,773,767,1,0,0,0,773,769,1,0,0,0,773,
-		771,1,0,0,0,774,185,1,0,0,0,775,776,5,119,0,0,776,780,5,82,0,0,777,778,
-		5,119,0,0,778,780,5,88,0,0,779,775,1,0,0,0,779,777,1,0,0,0,780,187,1,0,
-		0,0,781,782,5,120,0,0,782,783,3,208,104,0,783,784,3,208,104,0,784,785,
-		3,208,104,0,785,786,3,208,104,0,786,787,3,208,104,0,787,788,3,208,104,
-		0,788,789,3,208,104,0,789,790,3,208,104,0,790,189,1,0,0,0,791,792,5,121,
-		0,0,792,793,3,208,104,0,793,794,3,208,104,0,794,191,1,0,0,0,795,796,5,
-		123,0,0,796,797,3,208,104,0,797,193,1,0,0,0,798,799,5,124,0,0,799,800,
-		3,208,104,0,800,801,3,208,104,0,801,195,1,0,0,0,802,803,5,125,0,0,803,
-		804,5,79,0,0,804,815,3,208,104,0,805,806,5,125,0,0,806,807,5,80,0,0,807,
-		815,3,208,104,0,808,809,5,125,0,0,809,810,5,81,0,0,810,815,3,208,104,0,
-		811,812,5,125,0,0,812,813,5,82,0,0,813,815,3,208,104,0,814,802,1,0,0,0,
-		814,805,1,0,0,0,814,808,1,0,0,0,814,811,1,0,0,0,815,197,1,0,0,0,816,817,
-		5,125,0,0,817,818,5,83,0,0,818,832,3,208,104,0,819,820,5,125,0,0,820,821,
-		5,89,0,0,821,832,3,208,104,0,822,823,5,125,0,0,823,824,5,92,0,0,824,828,
-		3,208,104,0,825,827,3,208,104,0,826,825,1,0,0,0,827,830,1,0,0,0,828,826,
-		1,0,0,0,828,829,1,0,0,0,829,832,1,0,0,0,830,828,1,0,0,0,831,816,1,0,0,
-		0,831,819,1,0,0,0,831,822,1,0,0,0,832,199,1,0,0,0,833,834,5,126,0,0,834,
-		835,5,90,0,0,835,836,3,208,104,0,836,837,3,208,104,0,837,848,1,0,0,0,838,
-		839,5,126,0,0,839,840,5,91,0,0,840,841,3,208,104,0,841,842,3,208,104,0,
-		842,848,1,0,0,0,843,844,5,126,0,0,844,845,3,208,104,0,845,846,3,208,104,
-		0,846,848,1,0,0,0,847,833,1,0,0,0,847,838,1,0,0,0,847,843,1,0,0,0,848,
-		201,1,0,0,0,849,850,5,127,0,0,850,851,3,208,104,0,851,852,5,80,0,0,852,
-		853,3,208,104,0,853,854,3,208,104,0,854,862,1,0,0,0,855,856,5,127,0,0,
-		856,857,3,208,104,0,857,858,3,208,104,0,858,859,3,208,104,0,859,860,3,
-		208,104,0,860,862,1,0,0,0,861,849,1,0,0,0,861,855,1,0,0,0,862,203,1,0,
-		0,0,863,864,5,128,0,0,864,205,1,0,0,0,865,866,5,92,0,0,866,207,1,0,0,0,
-		867,868,7,2,0,0,868,209,1,0,0,0,72,213,216,232,242,252,258,266,275,281,
-		287,289,296,311,327,333,345,351,363,373,396,402,415,417,421,428,430,434,
-		441,446,450,454,463,465,470,472,476,486,490,494,499,505,510,516,519,525,
-		530,536,542,547,552,555,561,566,571,578,592,596,604,610,624,644,660,665,
-		667,734,773,779,814,828,831,847,861
+		2,105,7,105,1,0,4,0,214,8,0,11,0,12,0,215,1,0,3,0,219,8,0,1,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,235,8,1,1,2,1,2,1,2,1,
+		2,1,2,1,2,1,2,1,2,3,2,245,8,2,1,3,1,3,1,3,1,3,1,3,1,4,5,4,253,8,4,10,4,
+		12,4,256,9,4,1,4,5,4,259,8,4,10,4,12,4,262,9,4,1,5,1,5,1,5,5,5,267,8,5,
+		10,5,12,5,270,9,5,1,5,1,5,1,6,1,6,4,6,276,8,6,11,6,12,6,277,1,6,1,6,4,
+		6,282,8,6,11,6,12,6,283,1,6,1,6,4,6,288,8,6,11,6,12,6,289,3,6,292,8,6,
+		1,7,1,7,1,7,5,7,297,8,7,10,7,12,7,300,9,7,1,7,1,7,1,8,1,8,1,8,1,8,1,8,
+		1,8,1,8,1,8,1,8,1,8,3,8,314,8,8,1,9,1,9,1,9,1,10,1,10,1,10,1,11,1,11,1,
+		12,1,12,1,12,1,12,5,12,328,8,12,10,12,12,12,331,9,12,1,12,1,12,1,12,3,
+		12,336,8,12,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,3,13,348,
+		8,13,1,14,1,14,1,14,1,14,3,14,354,8,14,1,15,1,15,1,16,1,16,1,17,1,17,1,
+		18,1,18,5,18,364,8,18,10,18,12,18,367,9,18,1,19,1,19,1,20,1,20,1,20,1,
+		20,1,20,3,20,376,8,20,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,
+		1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,21,3,21,400,8,
+		21,1,22,1,22,1,23,1,23,3,23,406,8,23,1,24,1,24,1,25,1,25,1,26,1,26,1,27,
+		1,27,1,28,1,28,1,28,3,28,419,8,28,3,28,421,8,28,1,29,1,29,3,29,425,8,29,
+		1,30,1,30,1,31,1,31,1,31,3,31,432,8,31,3,31,434,8,31,1,32,1,32,3,32,438,
+		8,32,1,33,1,33,1,33,4,33,443,8,33,11,33,12,33,444,1,34,1,34,1,34,3,34,
+		450,8,34,1,34,1,34,3,34,454,8,34,1,34,1,34,3,34,458,8,34,1,34,1,34,1,35,
+		1,35,1,36,1,36,1,36,3,36,467,8,36,3,36,469,8,36,1,37,1,37,1,37,3,37,474,
+		8,37,3,37,476,8,37,1,38,1,38,3,38,480,8,38,1,39,1,39,1,40,1,40,1,41,1,
+		41,1,42,1,42,3,42,490,8,42,1,43,1,43,3,43,494,8,43,1,44,1,44,3,44,498,
+		8,44,1,45,1,45,1,45,3,45,503,8,45,1,46,1,46,5,46,507,8,46,10,46,12,46,
+		510,9,46,1,46,1,46,3,46,514,8,46,1,46,1,46,5,46,518,8,46,10,46,12,46,521,
+		9,46,1,46,1,46,3,46,525,8,46,1,47,1,47,1,47,1,47,3,47,531,8,47,1,48,3,
+		48,534,8,48,1,48,1,48,5,48,538,8,48,10,48,12,48,541,9,48,1,48,1,48,3,48,
+		545,8,48,1,49,1,49,1,49,1,49,3,49,551,8,49,1,50,1,50,5,50,555,8,50,10,
+		50,12,50,558,9,50,1,50,1,50,3,50,562,8,50,1,50,1,50,5,50,566,8,50,10,50,
+		12,50,569,9,50,1,50,1,50,3,50,573,8,50,1,51,1,51,1,51,3,51,578,8,51,1,
+		52,3,52,581,8,52,1,52,1,52,5,52,585,8,52,10,52,12,52,588,9,52,1,52,1,52,
+		3,52,592,8,52,1,53,1,53,1,53,3,53,597,8,53,1,54,1,54,1,54,4,54,602,8,54,
+		11,54,12,54,603,1,54,1,54,1,55,1,55,1,55,1,55,1,55,1,55,1,55,1,55,1,55,
+		1,55,3,55,618,8,55,1,56,1,56,3,56,622,8,56,1,57,1,57,1,58,1,58,1,59,1,
+		59,1,60,1,60,1,61,1,61,3,61,634,8,61,1,62,1,62,1,63,1,63,1,63,1,63,1,63,
+		1,63,1,63,1,63,1,63,1,63,3,63,648,8,63,1,64,1,64,1,64,1,64,1,64,1,64,1,
+		64,1,64,1,64,1,64,1,64,1,64,1,64,1,64,1,64,1,64,1,64,1,64,3,64,668,8,64,
+		1,65,1,65,1,65,1,66,1,66,1,66,1,67,1,67,1,67,1,67,1,68,1,68,1,68,1,68,
+		1,68,1,68,3,68,686,8,68,1,69,1,69,3,69,690,8,69,1,70,1,70,1,70,5,70,695,
+		8,70,10,70,12,70,698,9,70,1,70,1,70,1,71,1,71,1,71,1,71,1,71,1,72,1,72,
+		1,72,1,73,1,73,1,74,1,74,1,74,1,75,1,75,1,75,1,75,1,76,1,76,1,76,1,77,
+		1,77,1,77,1,77,1,78,1,78,1,78,1,79,1,79,1,79,1,79,1,79,1,80,1,80,1,80,
+		1,81,1,81,1,81,1,82,1,82,1,82,1,83,1,83,1,83,1,83,1,84,1,84,1,84,1,84,
+		1,84,1,85,1,85,1,85,1,85,1,85,1,86,1,86,1,86,1,86,1,86,1,86,1,86,3,86,
+		764,8,86,1,87,1,87,1,87,1,88,1,88,1,88,1,88,1,88,1,89,1,89,1,90,1,90,1,
+		90,1,90,1,90,1,91,1,91,1,91,1,91,1,92,1,92,1,92,1,92,1,93,1,93,1,93,1,
+		93,1,93,1,93,1,93,1,93,1,93,1,93,1,93,1,93,1,93,1,93,3,93,803,8,93,1,94,
+		1,94,1,94,1,94,3,94,809,8,94,1,95,1,95,1,95,1,95,1,95,1,95,1,95,1,95,1,
+		95,1,95,1,96,1,96,1,96,1,96,1,97,1,97,1,97,1,98,1,98,1,98,1,98,1,99,1,
+		99,1,99,1,99,1,99,1,99,1,99,1,99,1,99,1,99,1,99,1,99,3,99,844,8,99,1,100,
+		1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,5,100,856,8,100,
+		10,100,12,100,859,9,100,3,100,861,8,100,1,101,1,101,1,101,1,101,1,101,
+		1,101,1,101,1,101,1,101,1,101,1,101,1,101,1,101,1,101,3,101,877,8,101,
+		1,102,1,102,1,102,1,102,1,102,1,102,1,102,1,102,1,102,1,102,1,102,1,102,
+		3,102,891,8,102,1,103,1,103,1,104,1,104,1,105,1,105,1,105,0,0,106,0,2,
+		4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,
+		54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,
+		102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,
+		138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,
+		174,176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,206,208,
+		210,0,3,2,0,53,53,128,128,1,0,29,30,2,0,78,127,130,130,969,0,218,1,0,0,
+		0,2,234,1,0,0,0,4,244,1,0,0,0,6,246,1,0,0,0,8,254,1,0,0,0,10,263,1,0,0,
+		0,12,291,1,0,0,0,14,293,1,0,0,0,16,313,1,0,0,0,18,315,1,0,0,0,20,318,1,
+		0,0,0,22,321,1,0,0,0,24,335,1,0,0,0,26,347,1,0,0,0,28,353,1,0,0,0,30,355,
+		1,0,0,0,32,357,1,0,0,0,34,359,1,0,0,0,36,361,1,0,0,0,38,368,1,0,0,0,40,
+		375,1,0,0,0,42,399,1,0,0,0,44,401,1,0,0,0,46,405,1,0,0,0,48,407,1,0,0,
+		0,50,409,1,0,0,0,52,411,1,0,0,0,54,413,1,0,0,0,56,420,1,0,0,0,58,424,1,
+		0,0,0,60,426,1,0,0,0,62,433,1,0,0,0,64,437,1,0,0,0,66,439,1,0,0,0,68,446,
+		1,0,0,0,70,461,1,0,0,0,72,468,1,0,0,0,74,475,1,0,0,0,76,479,1,0,0,0,78,
+		481,1,0,0,0,80,483,1,0,0,0,82,485,1,0,0,0,84,489,1,0,0,0,86,493,1,0,0,
+		0,88,497,1,0,0,0,90,502,1,0,0,0,92,524,1,0,0,0,94,530,1,0,0,0,96,533,1,
+		0,0,0,98,550,1,0,0,0,100,572,1,0,0,0,102,577,1,0,0,0,104,580,1,0,0,0,106,
+		596,1,0,0,0,108,598,1,0,0,0,110,617,1,0,0,0,112,619,1,0,0,0,114,623,1,
+		0,0,0,116,625,1,0,0,0,118,627,1,0,0,0,120,629,1,0,0,0,122,633,1,0,0,0,
+		124,635,1,0,0,0,126,647,1,0,0,0,128,667,1,0,0,0,130,669,1,0,0,0,132,672,
+		1,0,0,0,134,675,1,0,0,0,136,679,1,0,0,0,138,689,1,0,0,0,140,696,1,0,0,
+		0,142,701,1,0,0,0,144,706,1,0,0,0,146,709,1,0,0,0,148,711,1,0,0,0,150,
+		714,1,0,0,0,152,718,1,0,0,0,154,721,1,0,0,0,156,725,1,0,0,0,158,728,1,
+		0,0,0,160,733,1,0,0,0,162,736,1,0,0,0,164,739,1,0,0,0,166,742,1,0,0,0,
+		168,746,1,0,0,0,170,751,1,0,0,0,172,763,1,0,0,0,174,765,1,0,0,0,176,768,
+		1,0,0,0,178,773,1,0,0,0,180,775,1,0,0,0,182,780,1,0,0,0,184,784,1,0,0,
+		0,186,802,1,0,0,0,188,808,1,0,0,0,190,810,1,0,0,0,192,820,1,0,0,0,194,
+		824,1,0,0,0,196,827,1,0,0,0,198,843,1,0,0,0,200,860,1,0,0,0,202,876,1,
+		0,0,0,204,890,1,0,0,0,206,892,1,0,0,0,208,894,1,0,0,0,210,896,1,0,0,0,
+		212,214,3,2,1,0,213,212,1,0,0,0,214,215,1,0,0,0,215,213,1,0,0,0,215,216,
+		1,0,0,0,216,219,1,0,0,0,217,219,5,0,0,1,218,213,1,0,0,0,218,217,1,0,0,
+		0,219,1,1,0,0,0,220,235,3,4,2,0,221,235,3,36,18,0,222,235,3,108,54,0,223,
+		235,3,70,35,0,224,235,3,72,36,0,225,235,3,74,37,0,226,235,3,124,62,0,227,
+		235,3,120,60,0,228,235,5,27,0,0,229,235,3,126,63,0,230,235,3,210,105,0,
+		231,235,3,38,19,0,232,235,3,108,54,0,233,235,3,80,40,0,234,220,1,0,0,0,
+		234,221,1,0,0,0,234,222,1,0,0,0,234,223,1,0,0,0,234,224,1,0,0,0,234,225,
+		1,0,0,0,234,226,1,0,0,0,234,227,1,0,0,0,234,228,1,0,0,0,234,229,1,0,0,
+		0,234,230,1,0,0,0,234,231,1,0,0,0,234,232,1,0,0,0,234,233,1,0,0,0,235,
+		3,1,0,0,0,236,245,3,28,14,0,237,245,3,14,7,0,238,245,3,6,3,0,239,245,3,
+		10,5,0,240,245,3,20,10,0,241,245,3,18,9,0,242,245,3,22,11,0,243,245,3,
+		24,12,0,244,236,1,0,0,0,244,237,1,0,0,0,244,238,1,0,0,0,244,239,1,0,0,
+		0,244,240,1,0,0,0,244,241,1,0,0,0,244,242,1,0,0,0,244,243,1,0,0,0,245,
+		5,1,0,0,0,246,247,5,57,0,0,247,248,5,7,0,0,248,249,3,8,4,0,249,250,5,8,
+		0,0,250,7,1,0,0,0,251,253,5,77,0,0,252,251,1,0,0,0,253,256,1,0,0,0,254,
+		252,1,0,0,0,254,255,1,0,0,0,255,260,1,0,0,0,256,254,1,0,0,0,257,259,5,
+		27,0,0,258,257,1,0,0,0,259,262,1,0,0,0,260,258,1,0,0,0,260,261,1,0,0,0,
+		261,9,1,0,0,0,262,260,1,0,0,0,263,264,5,58,0,0,264,268,5,7,0,0,265,267,
+		3,12,6,0,266,265,1,0,0,0,267,270,1,0,0,0,268,266,1,0,0,0,268,269,1,0,0,
+		0,269,271,1,0,0,0,270,268,1,0,0,0,271,272,5,8,0,0,272,11,1,0,0,0,273,275,
+		5,27,0,0,274,276,3,210,105,0,275,274,1,0,0,0,276,277,1,0,0,0,277,275,1,
+		0,0,0,277,278,1,0,0,0,278,292,1,0,0,0,279,281,3,76,38,0,280,282,3,210,
+		105,0,281,280,1,0,0,0,282,283,1,0,0,0,283,281,1,0,0,0,283,284,1,0,0,0,
+		284,292,1,0,0,0,285,287,3,54,27,0,286,288,3,210,105,0,287,286,1,0,0,0,
+		288,289,1,0,0,0,289,287,1,0,0,0,289,290,1,0,0,0,290,292,1,0,0,0,291,273,
+		1,0,0,0,291,279,1,0,0,0,291,285,1,0,0,0,292,13,1,0,0,0,293,294,5,59,0,
+		0,294,298,5,7,0,0,295,297,3,16,8,0,296,295,1,0,0,0,297,300,1,0,0,0,298,
+		296,1,0,0,0,298,299,1,0,0,0,299,301,1,0,0,0,300,298,1,0,0,0,301,302,5,
+		8,0,0,302,15,1,0,0,0,303,304,5,60,0,0,304,314,5,27,0,0,305,306,5,61,0,
+		0,306,314,5,27,0,0,307,308,5,62,0,0,308,314,5,27,0,0,309,310,5,63,0,0,
+		310,314,5,27,0,0,311,312,5,64,0,0,312,314,5,27,0,0,313,303,1,0,0,0,313,
+		305,1,0,0,0,313,307,1,0,0,0,313,309,1,0,0,0,313,311,1,0,0,0,314,17,1,0,
+		0,0,315,316,5,65,0,0,316,317,3,210,105,0,317,19,1,0,0,0,318,319,5,66,0,
+		0,319,320,5,27,0,0,320,21,1,0,0,0,321,322,5,67,0,0,322,23,1,0,0,0,323,
+		324,5,68,0,0,324,329,5,7,0,0,325,326,5,1,0,0,326,328,3,26,13,0,327,325,
+		1,0,0,0,328,331,1,0,0,0,329,327,1,0,0,0,329,330,1,0,0,0,330,332,1,0,0,
+		0,331,329,1,0,0,0,332,336,5,8,0,0,333,334,5,68,0,0,334,336,3,26,13,0,335,
+		323,1,0,0,0,335,333,1,0,0,0,336,25,1,0,0,0,337,348,5,70,0,0,338,339,5,
+		71,0,0,339,348,5,128,0,0,340,348,5,72,0,0,341,348,5,73,0,0,342,348,5,74,
+		0,0,343,348,5,75,0,0,344,345,5,27,0,0,345,348,5,128,0,0,346,348,5,27,0,
+		0,347,337,1,0,0,0,347,338,1,0,0,0,347,340,1,0,0,0,347,341,1,0,0,0,347,
+		342,1,0,0,0,347,343,1,0,0,0,347,344,1,0,0,0,347,346,1,0,0,0,348,27,1,0,
+		0,0,349,350,5,54,0,0,350,354,3,34,17,0,351,354,3,30,15,0,352,354,3,32,
+		16,0,353,349,1,0,0,0,353,351,1,0,0,0,353,352,1,0,0,0,354,29,1,0,0,0,355,
+		356,5,55,0,0,356,31,1,0,0,0,357,358,5,56,0,0,358,33,1,0,0,0,359,360,7,
+		0,0,0,360,35,1,0,0,0,361,365,5,76,0,0,362,364,3,40,20,0,363,362,1,0,0,
+		0,364,367,1,0,0,0,365,363,1,0,0,0,365,366,1,0,0,0,366,37,1,0,0,0,367,365,
+		1,0,0,0,368,369,5,46,0,0,369,39,1,0,0,0,370,376,3,42,21,0,371,376,3,84,
+		42,0,372,376,3,122,61,0,373,376,3,128,64,0,374,376,3,210,105,0,375,370,
+		1,0,0,0,375,371,1,0,0,0,375,372,1,0,0,0,375,373,1,0,0,0,375,374,1,0,0,
+		0,376,41,1,0,0,0,377,400,3,66,33,0,378,400,3,136,68,0,379,400,3,44,22,
+		0,380,400,3,46,23,0,381,400,3,78,39,0,382,400,3,48,24,0,383,400,3,50,25,
+		0,384,400,3,52,26,0,385,400,3,54,27,0,386,400,3,68,34,0,387,400,3,56,28,
+		0,388,400,3,72,36,0,389,400,3,58,29,0,390,400,3,76,38,0,391,400,3,60,30,
+		0,392,400,3,62,31,0,393,400,3,64,32,0,394,400,3,74,37,0,395,400,3,38,19,
+		0,396,400,3,80,40,0,397,400,3,82,41,0,398,400,3,70,35,0,399,377,1,0,0,
+		0,399,378,1,0,0,0,399,379,1,0,0,0,399,380,1,0,0,0,399,381,1,0,0,0,399,
+		382,1,0,0,0,399,383,1,0,0,0,399,384,1,0,0,0,399,385,1,0,0,0,399,386,1,
+		0,0,0,399,387,1,0,0,0,399,388,1,0,0,0,399,389,1,0,0,0,399,390,1,0,0,0,
+		399,391,1,0,0,0,399,392,1,0,0,0,399,393,1,0,0,0,399,394,1,0,0,0,399,395,
+		1,0,0,0,399,396,1,0,0,0,399,397,1,0,0,0,399,398,1,0,0,0,400,43,1,0,0,0,
+		401,402,5,29,0,0,402,45,1,0,0,0,403,406,5,30,0,0,404,406,5,31,0,0,405,
+		403,1,0,0,0,405,404,1,0,0,0,406,47,1,0,0,0,407,408,5,32,0,0,408,49,1,0,
+		0,0,409,410,5,21,0,0,410,51,1,0,0,0,411,412,5,20,0,0,412,53,1,0,0,0,413,
+		414,5,33,0,0,414,55,1,0,0,0,415,421,5,35,0,0,416,419,3,164,82,0,417,419,
+		3,166,83,0,418,416,1,0,0,0,418,417,1,0,0,0,419,421,1,0,0,0,420,415,1,0,
+		0,0,420,418,1,0,0,0,421,57,1,0,0,0,422,425,5,36,0,0,423,425,3,174,87,0,
+		424,422,1,0,0,0,424,423,1,0,0,0,425,59,1,0,0,0,426,427,5,38,0,0,427,61,
+		1,0,0,0,428,434,5,40,0,0,429,432,3,132,66,0,430,432,3,134,67,0,431,429,
+		1,0,0,0,431,430,1,0,0,0,432,434,1,0,0,0,433,428,1,0,0,0,433,431,1,0,0,
+		0,434,63,1,0,0,0,435,438,5,41,0,0,436,438,3,142,71,0,437,435,1,0,0,0,437,
+		436,1,0,0,0,438,65,1,0,0,0,439,442,7,1,0,0,440,441,5,4,0,0,441,443,7,1,
+		0,0,442,440,1,0,0,0,443,444,1,0,0,0,444,442,1,0,0,0,444,445,1,0,0,0,445,
+		67,1,0,0,0,446,449,5,7,0,0,447,450,3,44,22,0,448,450,3,46,23,0,449,447,
+		1,0,0,0,449,448,1,0,0,0,450,453,1,0,0,0,451,454,3,44,22,0,452,454,3,46,
+		23,0,453,451,1,0,0,0,453,452,1,0,0,0,454,457,1,0,0,0,455,458,3,44,22,0,
+		456,458,3,46,23,0,457,455,1,0,0,0,457,456,1,0,0,0,458,459,1,0,0,0,459,
+		460,5,8,0,0,460,69,1,0,0,0,461,462,5,37,0,0,462,71,1,0,0,0,463,469,5,39,
+		0,0,464,467,3,148,74,0,465,467,3,150,75,0,466,464,1,0,0,0,466,465,1,0,
+		0,0,467,469,1,0,0,0,468,463,1,0,0,0,468,466,1,0,0,0,469,73,1,0,0,0,470,
+		476,5,34,0,0,471,474,3,152,76,0,472,474,3,154,77,0,473,471,1,0,0,0,473,
+		472,1,0,0,0,474,476,1,0,0,0,475,470,1,0,0,0,475,473,1,0,0,0,476,75,1,0,
+		0,0,477,480,5,44,0,0,478,480,3,130,65,0,479,477,1,0,0,0,479,478,1,0,0,
+		0,480,77,1,0,0,0,481,482,5,42,0,0,482,79,1,0,0,0,483,484,5,43,0,0,484,
+		81,1,0,0,0,485,486,5,45,0,0,486,83,1,0,0,0,487,490,3,86,43,0,488,490,3,
+		88,44,0,489,487,1,0,0,0,489,488,1,0,0,0,490,85,1,0,0,0,491,494,3,92,46,
+		0,492,494,3,96,48,0,493,491,1,0,0,0,493,492,1,0,0,0,494,87,1,0,0,0,495,
+		498,3,112,56,0,496,498,3,90,45,0,497,495,1,0,0,0,497,496,1,0,0,0,498,89,
+		1,0,0,0,499,503,3,114,57,0,500,503,3,118,59,0,501,503,3,116,58,0,502,499,
+		1,0,0,0,502,500,1,0,0,0,502,501,1,0,0,0,503,91,1,0,0,0,504,508,5,13,0,
+		0,505,507,3,94,47,0,506,505,1,0,0,0,507,510,1,0,0,0,508,506,1,0,0,0,508,
+		509,1,0,0,0,509,511,1,0,0,0,510,508,1,0,0,0,511,513,5,14,0,0,512,514,5,
+		128,0,0,513,512,1,0,0,0,513,514,1,0,0,0,514,525,1,0,0,0,515,519,3,160,
+		80,0,516,518,3,94,47,0,517,516,1,0,0,0,518,521,1,0,0,0,519,517,1,0,0,0,
+		519,520,1,0,0,0,520,522,1,0,0,0,521,519,1,0,0,0,522,523,3,162,81,0,523,
+		525,1,0,0,0,524,504,1,0,0,0,524,515,1,0,0,0,525,93,1,0,0,0,526,531,3,42,
+		21,0,527,531,3,104,52,0,528,531,3,88,44,0,529,531,3,210,105,0,530,526,
+		1,0,0,0,530,527,1,0,0,0,530,528,1,0,0,0,530,529,1,0,0,0,531,95,1,0,0,0,
+		532,534,5,47,0,0,533,532,1,0,0,0,533,534,1,0,0,0,534,535,1,0,0,0,535,539,
+		5,11,0,0,536,538,3,98,49,0,537,536,1,0,0,0,538,541,1,0,0,0,539,537,1,0,
+		0,0,539,540,1,0,0,0,540,542,1,0,0,0,541,539,1,0,0,0,542,544,5,12,0,0,543,
+		545,5,128,0,0,544,543,1,0,0,0,544,545,1,0,0,0,545,97,1,0,0,0,546,551,3,
+		42,21,0,547,551,3,100,50,0,548,551,3,90,45,0,549,551,3,210,105,0,550,546,
+		1,0,0,0,550,547,1,0,0,0,550,548,1,0,0,0,550,549,1,0,0,0,551,99,1,0,0,0,
+		552,556,5,13,0,0,553,555,3,102,51,0,554,553,1,0,0,0,555,558,1,0,0,0,556,
+		554,1,0,0,0,556,557,1,0,0,0,557,559,1,0,0,0,558,556,1,0,0,0,559,561,5,
+		14,0,0,560,562,5,128,0,0,561,560,1,0,0,0,561,562,1,0,0,0,562,573,1,0,0,
+		0,563,567,3,160,80,0,564,566,3,102,51,0,565,564,1,0,0,0,566,569,1,0,0,
+		0,567,565,1,0,0,0,567,568,1,0,0,0,568,570,1,0,0,0,569,567,1,0,0,0,570,
+		571,3,162,81,0,571,573,1,0,0,0,572,552,1,0,0,0,572,563,1,0,0,0,573,101,
+		1,0,0,0,574,578,3,42,21,0,575,578,3,88,44,0,576,578,3,210,105,0,577,574,
+		1,0,0,0,577,575,1,0,0,0,577,576,1,0,0,0,578,103,1,0,0,0,579,581,5,47,0,
+		0,580,579,1,0,0,0,580,581,1,0,0,0,581,582,1,0,0,0,582,586,5,11,0,0,583,
+		585,3,106,53,0,584,583,1,0,0,0,585,588,1,0,0,0,586,584,1,0,0,0,586,587,
+		1,0,0,0,587,589,1,0,0,0,588,586,1,0,0,0,589,591,5,12,0,0,590,592,5,128,
+		0,0,591,590,1,0,0,0,591,592,1,0,0,0,592,105,1,0,0,0,593,597,3,42,21,0,
+		594,597,3,90,45,0,595,597,3,210,105,0,596,593,1,0,0,0,596,594,1,0,0,0,
+		596,595,1,0,0,0,597,107,1,0,0,0,598,599,5,48,0,0,599,601,5,11,0,0,600,
+		602,3,110,55,0,601,600,1,0,0,0,602,603,1,0,0,0,603,601,1,0,0,0,603,604,
+		1,0,0,0,604,605,1,0,0,0,605,606,5,12,0,0,606,109,1,0,0,0,607,618,3,48,
+		24,0,608,618,3,50,25,0,609,618,3,52,26,0,610,618,3,56,28,0,611,618,3,58,
+		29,0,612,618,3,60,30,0,613,618,3,62,31,0,614,618,3,64,32,0,615,618,3,74,
+		37,0,616,618,3,210,105,0,617,607,1,0,0,0,617,608,1,0,0,0,617,609,1,0,0,
+		0,617,610,1,0,0,0,617,611,1,0,0,0,617,612,1,0,0,0,617,613,1,0,0,0,617,
+		614,1,0,0,0,617,615,1,0,0,0,617,616,1,0,0,0,618,111,1,0,0,0,619,621,5,
+		47,0,0,620,622,5,128,0,0,621,620,1,0,0,0,621,622,1,0,0,0,622,113,1,0,0,
+		0,623,624,5,50,0,0,624,115,1,0,0,0,625,626,5,49,0,0,626,117,1,0,0,0,627,
+		628,5,51,0,0,628,119,1,0,0,0,629,630,5,23,0,0,630,121,1,0,0,0,631,634,
+		5,52,0,0,632,634,3,184,92,0,633,631,1,0,0,0,633,632,1,0,0,0,634,123,1,
+		0,0,0,635,636,5,26,0,0,636,125,1,0,0,0,637,648,3,190,95,0,638,648,3,156,
+		78,0,639,648,3,186,93,0,640,648,3,176,88,0,641,648,3,180,90,0,642,648,
+		3,178,89,0,643,648,3,182,91,0,644,648,3,192,96,0,645,648,3,196,98,0,646,
+		648,3,200,100,0,647,637,1,0,0,0,647,638,1,0,0,0,647,639,1,0,0,0,647,640,
+		1,0,0,0,647,641,1,0,0,0,647,642,1,0,0,0,647,643,1,0,0,0,647,644,1,0,0,
+		0,647,645,1,0,0,0,647,646,1,0,0,0,648,127,1,0,0,0,649,668,3,158,79,0,650,
+		668,3,202,101,0,651,668,3,144,72,0,652,668,3,146,73,0,653,668,3,168,84,
+		0,654,668,3,170,85,0,655,668,3,172,86,0,656,668,3,178,89,0,657,668,3,182,
+		91,0,658,668,3,188,94,0,659,668,3,192,96,0,660,668,3,194,97,0,661,668,
+		3,196,98,0,662,668,3,198,99,0,663,668,3,202,101,0,664,668,3,204,102,0,
+		665,668,3,206,103,0,666,668,3,208,104,0,667,649,1,0,0,0,667,650,1,0,0,
+		0,667,651,1,0,0,0,667,652,1,0,0,0,667,653,1,0,0,0,667,654,1,0,0,0,667,
+		655,1,0,0,0,667,656,1,0,0,0,667,657,1,0,0,0,667,658,1,0,0,0,667,659,1,
+		0,0,0,667,660,1,0,0,0,667,661,1,0,0,0,667,662,1,0,0,0,667,663,1,0,0,0,
+		667,664,1,0,0,0,667,665,1,0,0,0,667,666,1,0,0,0,668,129,1,0,0,0,669,670,
+		5,92,0,0,670,671,5,128,0,0,671,131,1,0,0,0,672,673,5,93,0,0,673,674,3,
+		210,105,0,674,133,1,0,0,0,675,676,5,94,0,0,676,677,3,210,105,0,677,678,
+		3,210,105,0,678,135,1,0,0,0,679,680,3,138,69,0,680,681,5,95,0,0,681,682,
+		3,210,105,0,682,685,3,210,105,0,683,686,3,210,105,0,684,686,3,140,70,0,
+		685,683,1,0,0,0,685,684,1,0,0,0,686,137,1,0,0,0,687,690,3,44,22,0,688,
+		690,3,78,39,0,689,687,1,0,0,0,689,688,1,0,0,0,690,139,1,0,0,0,691,695,
+		3,48,24,0,692,695,3,52,26,0,693,695,3,50,25,0,694,691,1,0,0,0,694,692,
+		1,0,0,0,694,693,1,0,0,0,695,698,1,0,0,0,696,694,1,0,0,0,696,697,1,0,0,
+		0,697,699,1,0,0,0,698,696,1,0,0,0,699,700,3,44,22,0,700,141,1,0,0,0,701,
+		702,5,96,0,0,702,703,3,210,105,0,703,704,3,210,105,0,704,705,3,210,105,
+		0,705,143,1,0,0,0,706,707,5,108,0,0,707,708,3,210,105,0,708,145,1,0,0,
+		0,709,710,5,97,0,0,710,147,1,0,0,0,711,712,5,98,0,0,712,713,3,210,105,
+		0,713,149,1,0,0,0,714,715,5,99,0,0,715,716,3,210,105,0,716,717,3,210,105,
+		0,717,151,1,0,0,0,718,719,5,100,0,0,719,720,3,210,105,0,720,153,1,0,0,
+		0,721,722,5,101,0,0,722,723,3,210,105,0,723,724,3,210,105,0,724,155,1,
+		0,0,0,725,726,5,102,0,0,726,727,3,210,105,0,727,157,1,0,0,0,728,729,5,
+		103,0,0,729,730,3,210,105,0,730,731,3,210,105,0,731,732,3,210,105,0,732,
+		159,1,0,0,0,733,734,5,104,0,0,734,735,5,78,0,0,735,161,1,0,0,0,736,737,
+		5,104,0,0,737,738,3,210,105,0,738,163,1,0,0,0,739,740,5,105,0,0,740,741,
+		3,210,105,0,741,165,1,0,0,0,742,743,5,106,0,0,743,744,3,210,105,0,744,
+		745,3,210,105,0,745,167,1,0,0,0,746,747,5,109,0,0,747,748,3,210,105,0,
+		748,749,3,210,105,0,749,750,3,210,105,0,750,169,1,0,0,0,751,752,5,110,
+		0,0,752,753,3,210,105,0,753,754,3,210,105,0,754,755,3,210,105,0,755,171,
+		1,0,0,0,756,757,5,111,0,0,757,758,5,89,0,0,758,764,3,210,105,0,759,760,
+		5,111,0,0,760,761,3,210,105,0,761,762,3,210,105,0,762,764,1,0,0,0,763,
+		756,1,0,0,0,763,759,1,0,0,0,764,173,1,0,0,0,765,766,5,112,0,0,766,767,
+		3,210,105,0,767,175,1,0,0,0,768,769,5,113,0,0,769,770,3,210,105,0,770,
+		771,3,210,105,0,771,772,3,210,105,0,772,177,1,0,0,0,773,774,5,114,0,0,
+		774,179,1,0,0,0,775,776,5,115,0,0,776,777,3,210,105,0,777,778,3,210,105,
+		0,778,779,3,210,105,0,779,181,1,0,0,0,780,781,5,116,0,0,781,782,3,210,
+		105,0,782,783,3,210,105,0,783,183,1,0,0,0,784,785,5,117,0,0,785,786,3,
+		210,105,0,786,787,3,210,105,0,787,185,1,0,0,0,788,789,5,118,0,0,789,803,
+		5,78,0,0,790,791,5,118,0,0,791,803,5,79,0,0,792,793,5,118,0,0,793,803,
+		5,80,0,0,794,795,5,118,0,0,795,803,5,83,0,0,796,797,5,118,0,0,797,803,
+		5,84,0,0,798,799,5,118,0,0,799,803,5,85,0,0,800,801,5,118,0,0,801,803,
+		5,86,0,0,802,788,1,0,0,0,802,790,1,0,0,0,802,792,1,0,0,0,802,794,1,0,0,
+		0,802,796,1,0,0,0,802,798,1,0,0,0,802,800,1,0,0,0,803,187,1,0,0,0,804,
+		805,5,118,0,0,805,809,5,81,0,0,806,807,5,118,0,0,807,809,5,87,0,0,808,
+		804,1,0,0,0,808,806,1,0,0,0,809,189,1,0,0,0,810,811,5,119,0,0,811,812,
+		3,210,105,0,812,813,3,210,105,0,813,814,3,210,105,0,814,815,3,210,105,
+		0,815,816,3,210,105,0,816,817,3,210,105,0,817,818,3,210,105,0,818,819,
+		3,210,105,0,819,191,1,0,0,0,820,821,5,120,0,0,821,822,3,210,105,0,822,
+		823,3,210,105,0,823,193,1,0,0,0,824,825,5,122,0,0,825,826,3,210,105,0,
+		826,195,1,0,0,0,827,828,5,123,0,0,828,829,3,210,105,0,829,830,3,210,105,
+		0,830,197,1,0,0,0,831,832,5,124,0,0,832,833,5,78,0,0,833,844,3,210,105,
+		0,834,835,5,124,0,0,835,836,5,79,0,0,836,844,3,210,105,0,837,838,5,124,
+		0,0,838,839,5,80,0,0,839,844,3,210,105,0,840,841,5,124,0,0,841,842,5,81,
+		0,0,842,844,3,210,105,0,843,831,1,0,0,0,843,834,1,0,0,0,843,837,1,0,0,
+		0,843,840,1,0,0,0,844,199,1,0,0,0,845,846,5,124,0,0,846,847,5,82,0,0,847,
+		861,3,210,105,0,848,849,5,124,0,0,849,850,5,88,0,0,850,861,3,210,105,0,
+		851,852,5,124,0,0,852,853,5,91,0,0,853,857,3,210,105,0,854,856,3,210,105,
+		0,855,854,1,0,0,0,856,859,1,0,0,0,857,855,1,0,0,0,857,858,1,0,0,0,858,
+		861,1,0,0,0,859,857,1,0,0,0,860,845,1,0,0,0,860,848,1,0,0,0,860,851,1,
+		0,0,0,861,201,1,0,0,0,862,863,5,125,0,0,863,864,5,89,0,0,864,865,3,210,
+		105,0,865,866,3,210,105,0,866,877,1,0,0,0,867,868,5,125,0,0,868,869,5,
+		90,0,0,869,870,3,210,105,0,870,871,3,210,105,0,871,877,1,0,0,0,872,873,
+		5,125,0,0,873,874,3,210,105,0,874,875,3,210,105,0,875,877,1,0,0,0,876,
+		862,1,0,0,0,876,867,1,0,0,0,876,872,1,0,0,0,877,203,1,0,0,0,878,879,5,
+		126,0,0,879,880,3,210,105,0,880,881,5,79,0,0,881,882,3,210,105,0,882,883,
+		3,210,105,0,883,891,1,0,0,0,884,885,5,126,0,0,885,886,3,210,105,0,886,
+		887,3,210,105,0,887,888,3,210,105,0,888,889,3,210,105,0,889,891,1,0,0,
+		0,890,878,1,0,0,0,890,884,1,0,0,0,891,205,1,0,0,0,892,893,5,127,0,0,893,
+		207,1,0,0,0,894,895,5,91,0,0,895,209,1,0,0,0,896,897,7,2,0,0,897,211,1,
+		0,0,0,76,215,218,234,244,254,260,268,277,283,289,291,298,313,329,335,347,
+		353,365,375,399,405,418,420,424,431,433,437,444,449,453,457,466,468,473,
+		475,479,489,493,497,502,508,513,519,524,530,533,539,544,550,556,561,567,
+		572,577,580,586,591,596,603,617,621,633,647,667,685,689,694,696,763,802,
+		808,843,857,860,876,890
 	};
 
 	public static readonly ATN _ATN =

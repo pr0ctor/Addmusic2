@@ -410,11 +410,19 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitRemoteLogicCalls([NotNull] MmlParser.RemoteLogicCallsContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.superLoop"/>.
+	/// Visit a parse tree produced by the <c>BracketSuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.superLoop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitSuperLoop([NotNull] MmlParser.SuperLoopContext context);
+	Result VisitBracketSuperLoop([NotNull] MmlParser.BracketSuperLoopContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>E6SuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.superLoop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitE6SuperLoop([NotNull] MmlParser.E6SuperLoopContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.superLoopContents"/>.
 	/// </summary>
@@ -434,11 +442,19 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitSimpleLoopContents([NotNull] MmlParser.SimpleLoopContentsContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.terminalSuperLoop"/>.
+	/// Visit a parse tree produced by the <c>BracketTerminalSuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.terminalSuperLoop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitTerminalSuperLoop([NotNull] MmlParser.TerminalSuperLoopContext context);
+	Result VisitBracketTerminalSuperLoop([NotNull] MmlParser.BracketTerminalSuperLoopContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>E6TerminalSuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.terminalSuperLoop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitE6TerminalSuperLoop([NotNull] MmlParser.E6TerminalSuperLoopContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.terminalSuperLoopContents"/>.
 	/// </summary>
@@ -556,6 +572,12 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitDdPitchBlendCommand([NotNull] MmlParser.DdPitchBlendCommandContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.ddPitchBlendPreItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDdPitchBlendPreItems([NotNull] MmlParser.DdPitchBlendPreItemsContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.ddPitchBlendItems"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -616,17 +638,17 @@ public interface IMmlVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitE5Tremolo([NotNull] MmlParser.E5TremoloContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.e6SubloopStart"/>.
+	/// Visit a parse tree produced by <see cref="MmlParser.e6SuperLoopStart"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitE6SubloopStart([NotNull] MmlParser.E6SubloopStartContext context);
+	Result VisitE6SuperLoopStart([NotNull] MmlParser.E6SuperLoopStartContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.e6SubloopEnd"/>.
+	/// Visit a parse tree produced by <see cref="MmlParser.e6SuperLoopEnd"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitE6SubloopEnd([NotNull] MmlParser.E6SubloopEndContext context);
+	Result VisitE6SuperLoopEnd([NotNull] MmlParser.E6SuperLoopEndContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.e7Volume"/>.
 	/// </summary>

@@ -669,15 +669,29 @@ public interface IMmlListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitRemoteLogicCalls([NotNull] MmlParser.RemoteLogicCallsContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.superLoop"/>.
+	/// Enter a parse tree produced by the <c>BracketSuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.superLoop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterSuperLoop([NotNull] MmlParser.SuperLoopContext context);
+	void EnterBracketSuperLoop([NotNull] MmlParser.BracketSuperLoopContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.superLoop"/>.
+	/// Exit a parse tree produced by the <c>BracketSuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.superLoop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitSuperLoop([NotNull] MmlParser.SuperLoopContext context);
+	void ExitBracketSuperLoop([NotNull] MmlParser.BracketSuperLoopContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>E6SuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.superLoop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterE6SuperLoop([NotNull] MmlParser.E6SuperLoopContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>E6SuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.superLoop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitE6SuperLoop([NotNull] MmlParser.E6SuperLoopContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.superLoopContents"/>.
 	/// </summary>
@@ -709,15 +723,29 @@ public interface IMmlListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitSimpleLoopContents([NotNull] MmlParser.SimpleLoopContentsContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.terminalSuperLoop"/>.
+	/// Enter a parse tree produced by the <c>BracketTerminalSuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.terminalSuperLoop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterTerminalSuperLoop([NotNull] MmlParser.TerminalSuperLoopContext context);
+	void EnterBracketTerminalSuperLoop([NotNull] MmlParser.BracketTerminalSuperLoopContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.terminalSuperLoop"/>.
+	/// Exit a parse tree produced by the <c>BracketTerminalSuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.terminalSuperLoop"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitTerminalSuperLoop([NotNull] MmlParser.TerminalSuperLoopContext context);
+	void ExitBracketTerminalSuperLoop([NotNull] MmlParser.BracketTerminalSuperLoopContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>E6TerminalSuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.terminalSuperLoop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterE6TerminalSuperLoop([NotNull] MmlParser.E6TerminalSuperLoopContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>E6TerminalSuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.terminalSuperLoop"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitE6TerminalSuperLoop([NotNull] MmlParser.E6TerminalSuperLoopContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.terminalSuperLoopContents"/>.
 	/// </summary>
@@ -913,6 +941,16 @@ public interface IMmlListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitDdPitchBlendCommand([NotNull] MmlParser.DdPitchBlendCommandContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="MmlParser.ddPitchBlendPreItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterDdPitchBlendPreItems([NotNull] MmlParser.DdPitchBlendPreItemsContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MmlParser.ddPitchBlendPreItems"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitDdPitchBlendPreItems([NotNull] MmlParser.DdPitchBlendPreItemsContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.ddPitchBlendItems"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -1013,25 +1051,25 @@ public interface IMmlListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitE5Tremolo([NotNull] MmlParser.E5TremoloContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.e6SubloopStart"/>.
+	/// Enter a parse tree produced by <see cref="MmlParser.e6SuperLoopStart"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterE6SubloopStart([NotNull] MmlParser.E6SubloopStartContext context);
+	void EnterE6SuperLoopStart([NotNull] MmlParser.E6SuperLoopStartContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.e6SubloopStart"/>.
+	/// Exit a parse tree produced by <see cref="MmlParser.e6SuperLoopStart"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitE6SubloopStart([NotNull] MmlParser.E6SubloopStartContext context);
+	void ExitE6SuperLoopStart([NotNull] MmlParser.E6SuperLoopStartContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MmlParser.e6SubloopEnd"/>.
+	/// Enter a parse tree produced by <see cref="MmlParser.e6SuperLoopEnd"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterE6SubloopEnd([NotNull] MmlParser.E6SubloopEndContext context);
+	void EnterE6SuperLoopEnd([NotNull] MmlParser.E6SuperLoopEndContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MmlParser.e6SubloopEnd"/>.
+	/// Exit a parse tree produced by <see cref="MmlParser.e6SuperLoopEnd"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitE6SubloopEnd([NotNull] MmlParser.E6SubloopEndContext context);
+	void ExitE6SuperLoopEnd([NotNull] MmlParser.E6SuperLoopEndContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MmlParser.e7Volume"/>.
 	/// </summary>

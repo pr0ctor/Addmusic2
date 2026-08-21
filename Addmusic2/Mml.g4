@@ -129,7 +129,7 @@ amkVersion : AmkV1
 //     ;
 // soundChannel : Channel channelContents* /*introEnd?*/ channelContents* ;
 soundChannel : Channel channelContents* ;
-introEnd : FSLASH ;
+introEnd : Intro ;
 channelContents: atomics
     | loopers
     | sampleLoadCommand
@@ -137,6 +137,7 @@ channelContents: atomics
     | hexNumber
     ;
 atomics: pitchslide
+    | ddPitchBlendCommand // Needed to be placed here to take precedence over the basic note rule
     | note
     | rest
     | nakedTie
@@ -258,7 +259,9 @@ remoteLogicCalls : callRemoteCode
     ;
 
 // superloop : L2BRACK (atomics | logicCalls | terminalNamedSimpleloop | terminalSimpleloop )* R2BRACK NUMBERS? ;
-superLoop : L2BRACK superLoopContents* R2BRACK NUMBERS? ;
+superLoop : L2BRACK superLoopContents* R2BRACK NUMBERS? # BracketSuperLoop
+    | e6SuperLoopStart superLoopContents* e6SuperLoopEnd # E6SuperLoop
+    ;
 superLoopContents : atomics
     | terminalSimpleLoop
     | logicCalls 
@@ -279,7 +282,9 @@ simpleLoopContents : atomics
     ;
 // simpleloop : LBRACK (atomics | terminalSuperLoop | remoteLogicCalls | hexNumber)* RBRACK NUMBERS? ;
 
-terminalSuperLoop : L2BRACK terminalSuperLoopContents* R2BRACK NUMBERS? ;
+terminalSuperLoop : L2BRACK terminalSuperLoopContents* R2BRACK NUMBERS? # BracketTerminalSuperLoop
+    | e6SuperLoopStart terminalSuperLoopContents* e6SuperLoopEnd # E6TerminalSuperLoop
+    ;
 terminalSuperLoopContents : atomics
     | logicCalls
     | hexNumber
@@ -319,7 +324,7 @@ callRemoteCode : CallRemoteCode ;
 // stopRemoteCode : LPAREN BANG BANG REMOTECODENUMBERS RPAREN ;
 stopRemoteCode : StopRemoteCode ;
 
-callPreviousLoop : STAR NUMBERS? ;
+callPreviousLoop : CallPreviousLoop ;
 // callPreviousLoop : CallPreviousLoop ;
 
 // End Logic Controls
@@ -376,7 +381,8 @@ daInstrument : NDA NUMBERS ;
 dbPan : NDB hexNumber ;
 dcPanFade : NDC hexNumber hexNumber ;
 
-ddPitchBlendCommand : NDD hexNumber ( hexNumber | ddPitchBlendItems ) ;
+ddPitchBlendCommand : ddPitchBlendPreItems NDD hexNumber hexNumber ( hexNumber | ddPitchBlendItems ) ;
+ddPitchBlendPreItems : note | nakedTie ;
 ddPitchBlendItems :  ( octave | raiseOctave | lowerOctave )* note ;
 
 deVibratoStart : NDE hexNumber hexNumber hexNumber ;
@@ -393,8 +399,8 @@ e4GlobalTranspose : NE4 hexNumber ;
 
 e5Tremolo : NE5 hexNumber hexNumber hexNumber ;
 
-e6SubloopStart : NE6 N00 ;
-e6SubloopEnd : NE6 hexNumber ;
+e6SuperLoopStart : NE6 N00 ;
+e6SuperLoopEnd : NE6 hexNumber ;
 
 e7Volume : NE7 hexNumber ;
 e8VolumeFade : NE8 hexNumber hexNumber ;
@@ -551,7 +557,7 @@ COMMAT : '@' ;
 AMPER : '&' ;
 BANG : '!' ;
 PERCENT : '%' ;
-STAR : '*' ;
+fragment STAR : '*' ;
 LBRACE : '{' ;
 RBRACE : '}' ;
 LPAREN : '(' ;
@@ -569,7 +575,7 @@ fragment TIE : '^' ;
 GT : '>' ;
 LT : '<' ;
 COMMA : ',' ;
-FSLASH : '/' ;
+fragment FSLASH : '/' ;
 QMARK : '?' ;
 EQUAL : '=' ;
 SEMICOLON : ';' ;
@@ -644,6 +650,7 @@ Question : QMARK QMARKVALUES ;
 // Pitchslide : ( Note | Rest ) ( AMPER ( Note | Rest ) )+ ;
 Instrument : COMMAT NUMBERS ;
 Pipe : PIPE ;
+Intro : FSLASH ;
 
 LoopName : LPAREN ( NUMBERS | StringLiteral ) RPAREN ;
 RemoteCodeName : LPAREN BANG ( NUMBERS | StringLiteral ) RPAREN ;

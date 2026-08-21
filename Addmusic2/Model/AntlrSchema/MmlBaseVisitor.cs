@@ -649,7 +649,8 @@ public partial class MmlBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// <return>The visitor result.</return>
 	public virtual Result VisitRemoteLogicCalls([NotNull] MmlParser.RemoteLogicCallsContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.superLoop"/>.
+	/// Visit a parse tree produced by the <c>BracketSuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.superLoop"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -657,7 +658,18 @@ public partial class MmlBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitSuperLoop([NotNull] MmlParser.SuperLoopContext context) { return VisitChildren(context); }
+	public virtual Result VisitBracketSuperLoop([NotNull] MmlParser.BracketSuperLoopContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>E6SuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.superLoop"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitE6SuperLoop([NotNull] MmlParser.E6SuperLoopContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.superLoopContents"/>.
 	/// <para>
@@ -689,7 +701,8 @@ public partial class MmlBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// <return>The visitor result.</return>
 	public virtual Result VisitSimpleLoopContents([NotNull] MmlParser.SimpleLoopContentsContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.terminalSuperLoop"/>.
+	/// Visit a parse tree produced by the <c>BracketTerminalSuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.terminalSuperLoop"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -697,7 +710,18 @@ public partial class MmlBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitTerminalSuperLoop([NotNull] MmlParser.TerminalSuperLoopContext context) { return VisitChildren(context); }
+	public virtual Result VisitBracketTerminalSuperLoop([NotNull] MmlParser.BracketTerminalSuperLoopContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>E6TerminalSuperLoop</c>
+	/// labeled alternative in <see cref="MmlParser.terminalSuperLoop"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitE6TerminalSuperLoop([NotNull] MmlParser.E6TerminalSuperLoopContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.terminalSuperLoopContents"/>.
 	/// <para>
@@ -891,6 +915,16 @@ public partial class MmlBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// <return>The visitor result.</return>
 	public virtual Result VisitDdPitchBlendCommand([NotNull] MmlParser.DdPitchBlendCommandContext context) { return VisitChildren(context); }
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="MmlParser.ddPitchBlendPreItems"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitDdPitchBlendPreItems([NotNull] MmlParser.DdPitchBlendPreItemsContext context) { return VisitChildren(context); }
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.ddPitchBlendItems"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
@@ -991,7 +1025,7 @@ public partial class MmlBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// <return>The visitor result.</return>
 	public virtual Result VisitE5Tremolo([NotNull] MmlParser.E5TremoloContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.e6SubloopStart"/>.
+	/// Visit a parse tree produced by <see cref="MmlParser.e6SuperLoopStart"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -999,9 +1033,9 @@ public partial class MmlBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitE6SubloopStart([NotNull] MmlParser.E6SubloopStartContext context) { return VisitChildren(context); }
+	public virtual Result VisitE6SuperLoopStart([NotNull] MmlParser.E6SuperLoopStartContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MmlParser.e6SubloopEnd"/>.
+	/// Visit a parse tree produced by <see cref="MmlParser.e6SuperLoopEnd"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -1009,7 +1043,7 @@ public partial class MmlBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, 
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitE6SubloopEnd([NotNull] MmlParser.E6SubloopEndContext context) { return VisitChildren(context); }
+	public virtual Result VisitE6SuperLoopEnd([NotNull] MmlParser.E6SuperLoopEndContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MmlParser.e7Volume"/>.
 	/// <para>
