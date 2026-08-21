@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Addmusic2.Parsers
 {
@@ -179,6 +180,7 @@ namespace Addmusic2.Parsers
             }
 
             // Finish by transferring required information to the songdata object
+            LoopChannel.ChannelNumber = 8;
             Channels.Add(LoopChannel);
 
             SongData.ChannelData = Channels;
@@ -186,6 +188,11 @@ namespace Addmusic2.Parsers
             SongData.TempoChanges = TempoChanges;
 
             // Calculate the first pass pointers
+
+            if (SongData.SongScope == SongScope.Local)
+            {
+                AddVersionAndEchoAdjustments();
+            }
 
             // CalculateFirstPassPointers(SongData);
 
@@ -362,6 +369,10 @@ namespace Addmusic2.Parsers
                         _loopPointer = (ushort)(_loopPointer + 1);
                         CatalogueUserDefinedInformation(((LoopNode)node).LoopContents);
                     }
+                    else if (node.NodeType == SongNodeType.SuperLoop)
+                    {
+                        CatalogueUserDefinedInformation(((LoopNode)node).LoopContents);
+                    }
                     else if (node.NodeType == SongNodeType.RemoteCode)
                     {
                         var payload = node.Payload as RemoteCodeDefinitionPayload;
@@ -389,57 +400,75 @@ namespace Addmusic2.Parsers
             }
         }
 
+        private void AddVersionAndEchoAdjustments()
+        {
+            var firstChannel = SongData.ChannelData.First();
+            var loopAdjustmentAmount = 0;
+
+            if(SongData.AmkVersion > AddmusicKVersion.Version1)
+            {
+                firstChannel.ChannelData = MagicNumbers.ChannelAdjustmentBytes.Concat(firstChannel.ChannelData).ToList();
+                loopAdjustmentAmount = MagicNumbers.ChannelAdjustmentBytes.Count;
+            }
+
+            if(SongData.AmkVersion == AddmusicKVersion.Version1)
+            {
+                firstChannel.ChannelData = MagicNumbers.AmkVersion1ChannelAdjustmentBytes.Concat(firstChannel.ChannelData).ToList();
+                loopAdjustmentAmount = MagicNumbers.AmkVersion1ChannelAdjustmentBytes.Count;
+            }
+            else if(SongData.AmkParserVersion == AddmusicKParserVersion.Version1)
+            {
+                firstChannel.ChannelData = MagicNumbers.AmkParserVersion1ChannelAdjustmentBytes.Concat(firstChannel.ChannelData).ToList();
+                loopAdjustmentAmount = MagicNumbers.AmkParserVersion1ChannelAdjustmentBytes.Count;
+            }
+            else if (SongData.AmkParserVersion == AddmusicKParserVersion.Version2)
+            {
+                firstChannel.ChannelData = MagicNumbers.AmkParserVersion2ChannelAdjustmentBytes.Concat(firstChannel.ChannelData).ToList();
+                loopAdjustmentAmount = MagicNumbers.AmkParserVersion2ChannelAdjustmentBytes.Count;
+            }
+
+
+            if (SongData.EchoBufferSize > 0 || !SongData.EchoBufferAllocVCMDIsSet || SongData.HasEchoBufferCommand)
+            {
+                //Just put the VCMD in its default place: no need to move it around.
+                //In particular, the $F1 command means that echo writes have been enabled, meaning the special case is irrelevant.
+                firstChannel.ChannelData = MagicNumbers.EchoBufferAdjustmentBytes(Convert.ToByte(SongData.EchoBufferSize)).Concat(firstChannel.ChannelData).ToList();
+                loopAdjustmentAmount += MagicNumbers.EchoBufferAdjustmentBytes(Convert.ToByte(SongData.EchoBufferSize)).Count;
+            }
+            else
+            {
+                var echoBufferChannel = SongData.ChannelData.Find(c => c.ChannelNumber == SongData.EchoBufferAllocVCMDIChannel) ?? throw new AddmusicParserException("Echo Channel missing");
+                var echoAdjustmentBytes = MagicNumbers.EchoBufferAdjustmentBytes(Convert.ToByte(SongData.EchoBufferSize));
+                echoBufferChannel.ChannelData.InsertRange(
+                    SongData.EchoBufferAllocVCMDILocation + echoAdjustmentBytes.Count,
+                    echoAdjustmentBytes
+                );
+
+                echoBufferChannel.LoopLocations.ForEach(ll => ll += (byte)echoAdjustmentBytes.Count);
+                echoBufferChannel.PhraseLocation += (byte)echoAdjustmentBytes.Count;
+                echoBufferChannel.IntroLocation += (byte)echoAdjustmentBytes.Count;
+
+            }
+
+            firstChannel.LoopLocations.ForEach(ll => ll += (byte)loopAdjustmentAmount);
+
+            foreach (var channel in SongData.ChannelData)
+            {
+                channel.PhraseLocation += (byte)loopAdjustmentAmount;
+                channel.IntroLocation += (byte)loopAdjustmentAmount;
+            }
+        }
+
         public void CalculateFirstPassPointers(SongData songData)
         {
             var channels = songData.ChannelData;
-            var firstChannel = songData.ChannelData.First();
+            var firstChannel = channels.First();
             var channelsWithNoData = channels.FindAll(c => c.ChannelData.Count == 0);
             if(channelsWithNoData.Count == channels.Count)
             {
                 _logger.LogError(LogLevel.Error, _messageService.GetErrorNoSongChannelDataToExportMessage(songData.Name), true);
                 throw new AddmusicParserException(_messageService.GetErrorNoSongChannelDataToExportMessage(songData.Name));
             }
-
-            var loopAdjustmentAmount = 0;
-            if(songData.SongScope == SongScope.Local)
-            {
-
-                firstChannel.ChannelData = MagicNumbers.ChannelAdjustmentBytes.Concat(firstChannel.ChannelData).ToList();
-                loopAdjustmentAmount = MagicNumbers.ChannelAdjustmentBytes.Count;
-
-                if(songData.EchoBufferSize > 0 || !songData.EchoBufferAllocVCMDIsSet || songData.HasEchoBufferCommand)
-                {
-                    //Just put the VCMD in its default place: no need to move it around.
-                    //In particular, the $F1 command means that echo writes have been enabled, meaning the special case is irrelevant.
-                    firstChannel.ChannelData = MagicNumbers.EchoBufferAdjustmentBytes(Convert.ToByte(songData.EchoBufferSize)).Concat(firstChannel.ChannelData).ToList();
-                    loopAdjustmentAmount += MagicNumbers.EchoBufferAdjustmentBytes(Convert.ToByte(songData.EchoBufferSize)).Count;
-                }
-                else
-                {
-                    var echoBufferChannel = songData.ChannelData.Find(c => c.ChannelNumber == songData.EchoBufferAllocVCMDIChannel) ?? throw new AddmusicParserException("Echo Channel missing");
-                    var echoAdjustmentBytes = MagicNumbers.EchoBufferAdjustmentBytes(Convert.ToByte(songData.EchoBufferSize));
-                    echoBufferChannel.ChannelData.InsertRange(
-                        songData.EchoBufferAllocVCMDILocation + echoAdjustmentBytes.Count,
-                        echoAdjustmentBytes
-                    );
-
-                    echoBufferChannel.LoopLocations.ForEach(ll => ll += (byte)echoAdjustmentBytes.Count);
-                    echoBufferChannel.PhraseLocation += (byte)echoAdjustmentBytes.Count;
-                    echoBufferChannel.IntroLocation += (byte)echoAdjustmentBytes.Count;
-
-                }
-
-                firstChannel.LoopLocations.ForEach(ll => ll += (byte)loopAdjustmentAmount);
-
-                foreach( var channel in songData.ChannelData)
-                {
-                    channel.PhraseLocation += (byte)loopAdjustmentAmount;
-                    channel.IntroLocation += (byte)loopAdjustmentAmount;
-                }
-            }
-
-            // Add 0 to end of each channel's data
-            songData.ChannelData.ForEach(c => c.ChannelData.Add(0));
 
             // optimize samples stuff? not sure if needed yet
             if(_globalSettings.EnableSampleOpimizations)
@@ -938,8 +967,6 @@ namespace Addmusic2.Parsers
                 return; // no more logic for this node
             }
 
-            // todo optimize group of connected rests
-
             var tempLength = 0;
 
             if(restPayload.ConnectedRests.Count == 0)
@@ -1113,12 +1140,18 @@ namespace Addmusic2.Parsers
             }
             else
             {
-                AddDataToChannel(MagicNumbers.CommandValues.Pan);
-                if(panPayload.PanDuration != -1)
+                if(panPayload.IsHexPanFade)
                 {
-                    AddDataToChannel(Convert.ToByte(panPayload.PanDuration));
+                    AddDataToChannel(MagicNumbers.CommandValues.PanFade);
+                    AddDataToChannel((byte)panPayload.HexDuration);
+                    AddDataToChannel((byte)panPayload.HexFinalPanValue);
                 }
-                AddDataToChannel(Convert.ToByte(panPayload.PanPosition));
+                else
+                {
+                    AddDataToChannel(MagicNumbers.CommandValues.Pan);
+                    AddDataToChannel((byte)panPayload.HexDuration);
+                }
+                
             }
         }
 
@@ -1131,9 +1164,6 @@ namespace Addmusic2.Parsers
             var quantizationValue = quantizationPayload.VolumeNode == null
                 ? Convert.ToByte($"{quantizationPayload.DelayValue}{quantizationPayload.VolumeValue}", 16)
                 : Convert.ToByte(quantizationPayload.DelayValue);
-
-            CurrentChannel.CurrentQuantization = quantizationValue;
-            CurrentChannel.UpdateQuantization = true;
 
             if (InActiveLoop)
             {
@@ -1148,6 +1178,10 @@ namespace Addmusic2.Parsers
                     ActiveLoopInformation.UpdateQuantization = true;
                 }
             }
+
+            // Always update the current channel's quantization when using a quantization node
+            CurrentChannel.CurrentQuantization = quantizationValue;
+            CurrentChannel.UpdateQuantization = true;
         }
 
         // Maybe not used anymore???
@@ -1538,15 +1572,24 @@ namespace Addmusic2.Parsers
 
             //EvaluateSimpleLoopNode(previousNode);
 
-            var loopInformation = NamedLoopDefinitions[previousNode.LoopName];
+            var loopInformation = (previousNode.LoopName.Length > 0)
+                ? NamedLoopDefinitions[previousNode.LoopName]
+                : UnnamedLoopDefinitions.Values.Where(d => d.LoopNode == PreviousLoop).FirstOrDefault() ?? throw new AddmusicParserException("Uncatalogued LoopNode");
 
-            var loopLocation = loopInformation.LoopId;
+            CurrentChannel.UpdateQuantization = true;
+
+            if (InActiveLoop == true)
+            {
+                ActiveLoopInformation.UpdateQuantization = true;
+            }
+
+            var loopLocation = loopInformation.LoopLocation;
             AddDataToChannel(MagicNumbers.CommandValues.Loop);
             //CurrentChannel.LoopLocations.Add(Convert.ToByte(CurrentChannel.ChannelData.Count));
             CurrentChannel.LoopLocations.Add((ushort)CurrentChannel.ChannelData.Count);
             AddDataToChannel((byte)(loopLocation & MagicNumbers.HexCommandMaximum));
             AddDataToChannel((byte)(loopLocation >> 8));
-            AddDataToChannel((byte)(previousNode.Iterations - 1));
+            AddDataToChannel((byte)(previousNode.Iterations));
         }
 
         public void EvaluateSimpleLoopNode(LoopNode simpleLoopNode)
@@ -1565,9 +1608,19 @@ namespace Addmusic2.Parsers
             var loopInformation = (loopName.Length > 0)
                 ? NamedLoopDefinitions[loopName]
                 : UnnamedLoopDefinitions.Values.Where(d => d.LoopNode == simpleLoopNode).FirstOrDefault() ?? throw new AddmusicParserException("Uncatalogued LoopNode");
-            
+            // This is a new loop definition so store the current size of the loop channel as the location
+            //      of this loop's data so it can be referenced later
+            loopInformation.LoopLocation = LoopChannel.ChannelData.Count;
+            loopInformation.CurrentInstrument = CurrentChannel.CurrentInstrument;
+
+            // Toggle Quanitization on current channel
+            loopInformation.UpdateQuantization = true; // likely redundant
+            loopInformation.CurrentQuantization = CurrentChannel.CurrentQuantization;
+            CurrentChannel.UpdateQuantization = true;
+
             if (InActiveSubLoop == true)
             {
+                ActiveLoopInformation.UpdateQuantization = true;
                 ActiveSubLoopInformation = loopInformation;
             }
             else
@@ -1582,15 +1635,8 @@ namespace Addmusic2.Parsers
                 EvaluateNode(node);
             }
 
-            // Finish loop
-            var loopLocation = loopInformation.LoopId;
-            AddDataToChannel(MagicNumbers.CommandValues.Loop);
-            //CurrentChannel.LoopLocations.Add(Convert.ToByte(CurrentChannel.ChannelData.Count));
-            //CurrentChannel.LoopLocations.Add(Convert.ToByte(LoopChannel.ChannelData.Count));
-            CurrentChannel.LoopLocations.Add((ushort)LoopChannel.ChannelData.Count);
-            AddDataToChannel((byte)(loopLocation & MagicNumbers.HexCommandMaximum));
-            AddDataToChannel((byte)(loopLocation >> 8));
-            AddDataToChannel((byte)(simpleLoopNode.Iterations - 1));
+            // Add a 0 to the end of this loop definition
+            AddDataToChannel(0);
 
             // Clean up state and finish loop evaluation
             if (InActiveSubLoop == true)
@@ -1598,20 +1644,36 @@ namespace Addmusic2.Parsers
                 InActiveSubLoop = false;
                 ActiveSubLoopLength = 0;
                 LoopChannel.ChannelData.AddRange(CurrentSubLoopData);
+                // Reset this collection since the list items have been transfered
+                CurrentSubLoopData.Clear();
             }
             else
             {
                 InActiveLoop = false;
                 ActiveLoopLength = 0;
                 LoopChannel.ChannelData.AddRange(CurrentLoopData);
+                // Reset this collection since the list items have been transfered
+                CurrentLoopData.Clear();
             }
             InActiveSimpleLoop = false;
             PreviousLoop = simpleLoopNode;
             PreviousLoopIndex = LoopChannel.ChannelData.Count;
+
+            // Finish loop and store reference info in source channel
+            var loopLocation = loopInformation.LoopLocation;
+            AddDataToChannel(MagicNumbers.CommandValues.Loop);
+            //CurrentChannel.LoopLocations.Add(Convert.ToByte(CurrentChannel.ChannelData.Count));
+            // Store the location of the loop invocation in the current channel
+            CurrentChannel.LoopLocations.Add((ushort)LoopChannel.ChannelData.Count);
+            AddDataToChannel((byte)(loopLocation & MagicNumbers.HexCommandMaximum));
+            AddDataToChannel((byte)(loopLocation >> 8));
+            AddDataToChannel((byte)(simpleLoopNode.Iterations));
         }
 
         public void EvaluateSuperLoopNode(LoopNode superLoopNode)
         {
+            var superLoopPayload = superLoopNode.Payload as SuperLoopPayload ?? throw new AddmusicParserException("Null Payload found");
+
             // Begin Super Loop
             if (InActiveLoop == true)
             {
@@ -1623,15 +1685,23 @@ namespace Addmusic2.Parsers
             var loopInformation = new LoopInformation
             {
                 LoopNode = superLoopNode,
+                CurrentInstrument = CurrentChannel.CurrentInstrument
             };
+            // If the current channel has updates to the quantization, carry that over to the super loop contents
+            loopInformation.UpdateQuantization = true;
+            ;
             if (InActiveSubLoop == true)
             {
                 ActiveSubLoopInformation = loopInformation;
+                loopInformation.CurrentQuantization = ActiveLoopInformation.CurrentQuantization;
             }
             else
             {
                 ActiveLoopInformation = loopInformation;
+                loopInformation.CurrentQuantization = CurrentChannel.CurrentQuantization;
             }
+
+            // Add data to the current channel before handling super loop
 
             AddDataToChannel(MagicNumbers.CommandValues.SuperLoop);
             AddDataToChannel(0x00);
@@ -1645,22 +1715,52 @@ namespace Addmusic2.Parsers
 
             // Finish loop
             AddDataToChannel(MagicNumbers.CommandValues.SuperLoop);
-            AddDataToChannel((byte)(superLoopNode.Iterations - 1));
+            // Super Loop's Iteration Number **does** need to be decremented by 1 unless initialized from a hex command
+            if(superLoopPayload.FromHex == true)
+            {
+                if(InActiveSubLoop)
+                {
+                    ActiveLoopInformation.UpdateQuantization = false;
+                }
+                else
+                {
+                    CurrentChannel.UpdateQuantization = false;
+                }
+                AddDataToChannel((byte)(superLoopNode.Iterations));
+            }
+            else
+            {
+                if (InActiveSubLoop)
+                {
+                    ActiveLoopInformation.UpdateQuantization = true;
+                }
+                else
+                {
+                    CurrentChannel.UpdateQuantization = true;
+                }
+                AddDataToChannel((byte)(superLoopNode.Iterations - 1));
+            }
 
             // Clean up state and finish loop evaluation
             if (InActiveSubLoop == true)
             {
                 InActiveSubLoop = false;
                 ActiveSubLoopLength = 0;
+                // Add the current loop data to the loop that contains this super loop
+                CurrentLoopData.AddRange(CurrentSubLoopData);
+                CurrentSubLoopData.Clear();
             }
             else
             {
                 InActiveLoop = false;
                 ActiveLoopLength = 0;
+                // Don't add the loop data as it was already inserted into the main channel
             }
             InActiveSuperLoop = false;
             //PreviousLoop = superLoopNode;
             //PreviousLoopIndex = LoopChannel.ChannelData.Count;
+
+            //CurrentChannel.UpdateQuantization = true;
         }
 
         public void EvaluateCallLoopDefinitionNode(LoopNode callLoopNode)
@@ -1679,14 +1779,29 @@ namespace Addmusic2.Parsers
                 calledLoopNode.Iterations = callLoopNode.Iterations;
             }
 
+            // Toggle Quantization on the Current Channel
+            CurrentChannel.UpdateQuantization = true;
+            if(InActiveLoop)
+            {
+                if (InActiveSubLoop == true)
+                {
+                    ActiveSubLoopInformation.UpdateQuantization = true;
+                }
+                else
+                {
+                    ActiveLoopInformation.UpdateQuantization = true;
+                }
+            }
+
             //EvaluateLoopNode(calledLoopData);
-            var loopLocation = calledLoopInformation.LoopId;
+            var loopLocation = calledLoopInformation.LoopLocation;
             AddDataToChannel(MagicNumbers.CommandValues.Loop);
             //CurrentChannel.LoopLocations.Add(Convert.ToByte(CurrentChannel.ChannelData.Count));
+            // Store the location of the loop invocation in the current channel
             CurrentChannel.LoopLocations.Add((ushort)CurrentChannel.ChannelData.Count);
             AddDataToChannel((byte)(loopLocation & MagicNumbers.HexCommandMaximum));
             AddDataToChannel((byte)(loopLocation >> 8));
-            AddDataToChannel((byte)(calledLoopNode.Iterations - 1));
+            AddDataToChannel((byte)(calledLoopNode.Iterations));
         }
 
         public void EvaluateRemoteCodeDefinitionNode(LoopNode remoteCodeDefinitionNode)
@@ -1733,11 +1848,24 @@ namespace Addmusic2.Parsers
         {
             var amkPayload = amkNode.Payload as AmkVersionPayload ?? throw new AddmusicParserException("Null Payload found");
 
-            if(amkPayload.AmkVersionType == AmkType.Amm)
+            if (amkPayload.AmkVersionType == AmkType.Am4)
             {
-                AddmusicKVersion = AddmusicKVersion.AMM;
+                AddmusicKVersion = AddmusicKVersion.AM4;
+                SongData.AmkVersion = AddmusicKVersion.AM4;
+                SongData.AmkParserVersion = AddmusicKParserVersion.Version1;
                 return;
             }
+
+            if (amkPayload.AmkVersionType == AmkType.Amm)
+            {
+                AddmusicKVersion = AddmusicKVersion.AMM;
+                SongData.VelocityTable = VelocityTable.SmwVTable;
+                SongData.AmkVersion = AddmusicKVersion.AMM;
+                SongData.AmkParserVersion = AddmusicKParserVersion.Version2;
+                return;
+            }
+
+            // Otherwise this is an Amk # song
 
             AddmusicKVersion = amkPayload.AmkVersion switch
             {
@@ -1747,6 +1875,19 @@ namespace Addmusic2.Parsers
                 "4" => AddmusicKVersion.Version4,
                 _ => throw new AddmusicParserException(_messageService.GetErrorInvalidAmkVersionFoundMessage(amkPayload.AmkVersion)),
             };
+
+            SongData.AmkVersion = AddmusicKVersion;
+            SongData.AmkParserVersion = AddmusicKParserVersion.Version0;
+
+            // Set the proper default velocity table
+            if (AddmusicKVersion == AddmusicKVersion.Version2 || AddmusicKVersion == AddmusicKVersion.Version4)
+            {
+                SongData.VelocityTable = VelocityTable.NspcVTable;
+            }
+            else
+            {
+                SongData.VelocityTable = VelocityTable.SmwVTable;
+            }
         }
 
         public void EvaluatePadNode(DirectiveNode padNode)
@@ -1898,15 +2039,25 @@ namespace Addmusic2.Parsers
 
         public void EvaluateDDPitchBlendNode(HexNode pitchBlendNode)
         {
+            var ddPitchBlendPayload = pitchBlendNode.Payload as DdPitchBlendPayload ?? throw new AddmusicParserException("Null Payload found");
+
+            // Evaluate the starting items as they are not technically in the pitch blend
+            foreach (var noteNode in ddPitchBlendPayload.StartNoteNodeItems)
+            {
+                EvaluateNode(noteNode);
+            }
+            // Add the pitch blend hex command
             AddDataToChannel(Convert.ToByte(pitchBlendNode.HexCommand.Replace("$", ""), 16));
 
-            foreach (var commandValue in pitchBlendNode.HexValues)
+            // Add the hex values used for the command
+            foreach (var commandValue in ddPitchBlendPayload.HexValues)
             {
                 AddDataToChannel(Convert.ToByte(commandValue.Replace("$", ""), 16));
             }
 
+            // Process the blend items (if any)
             var inTriplet = false;
-            foreach (var child in pitchBlendNode.Children)
+            foreach (var child in ddPitchBlendPayload.BlendItems)
             {
                 switch (child.NodeType)
                 {
@@ -3317,7 +3468,20 @@ namespace Addmusic2.Parsers
         {
             var messages = new List<string>();
 
-            foreach (var hexNumber in pitchBlend.HexValues)
+            var ddPitchBlendPayload = pitchBlend.Payload as DdPitchBlendPayload ?? throw new AddmusicParserException("Null Payload found");
+
+            // Check to see if the starting notes are valid
+            foreach (SongNode noteNode in ddPitchBlendPayload.StartNoteNodeItems)
+            {
+                var validationResult = (ValidationResult)ValidateNode(noteNode);
+                if (validationResult.Type != ResultType.Success)
+                {
+                    messages.AddRange(validationResult.Message);
+                }
+            }
+
+            // Validate the hex commands used for the command
+            foreach (var hexNumber in ddPitchBlendPayload.HexValues)
             {
                 if (!Helpers.Helpers.IsHexInRange(Convert.ToByte(hexNumber.Replace("$", ""), 16)))
                 {
@@ -3325,13 +3489,26 @@ namespace Addmusic2.Parsers
                 }
             }
 
-            foreach (var node in pitchBlend.Children)
+            // Validate the blend items that are used after the command (if any)
+            //      Disallow any notes if there has been a quantization used immediately before this pitch blend
+            foreach (var node in ddPitchBlendPayload.BlendItems)
             {
                 var validation = (ValidationResult)ValidateNode(node);
                 if (validation.Type == ResultType.Error ||
                     validation.Type == ResultType.Warning)
                 {
                     messages.AddRange(validation.Message);
+                }
+                // check to see if the quantization has been set and fail if the child node is a note
+                var hasCurrentQuantization = (InActiveLoop == true)
+                    ? ActiveLoopInformation.UpdateQuantization
+                    : (InActiveSubLoop == true)
+                        ? ActiveSubLoopInformation.UpdateQuantization
+                        : CurrentChannel.UpdateQuantization;
+                if(node.NodeType == SongNodeType.Note && hasCurrentQuantization == true)
+                {
+                    validation.Type = ResultType.Error;
+                    messages.Add(_messageService.GetErrorDDPitchBlendEndNoteHasQuantizationMessage());
                 }
             }
 
@@ -3355,11 +3532,19 @@ namespace Addmusic2.Parsers
 
         private void AddDataToChannel(byte dataToAdd)
         {
-            if (InActiveLoop)
+            if(InActiveLoop)
             {
-                if (InActiveSubLoop)
+                if (InActiveSuperLoop)
                 {
-                    CurrentSubLoopData.Add(dataToAdd);
+                    if (InActiveSubLoop)
+                    {
+                        CurrentSubLoopData.Add(dataToAdd);
+                    }
+                    else
+                    {
+                        var currentChannel = Channels.Where(c => c.ChannelNumber == CurrentChannel.ChannelNumber).First();
+                        currentChannel.ChannelData.Add(dataToAdd);
+                    }
                 }
                 else
                 {
@@ -3422,7 +3607,7 @@ namespace Addmusic2.Parsers
 
         private int DivideByTempoRatio(SongNode node, int value, bool isFractionalError)
         {
-            if (TempoRatio == MagicNumbers.DefaultValues.InitialTempoRatio)
+            if (AddmusicKVersion < AddmusicKVersion.Version4 || TempoRatio == MagicNumbers.DefaultValues.InitialTempoRatio)
             {
                 return value;
             }
@@ -3475,13 +3660,13 @@ namespace Addmusic2.Parsers
         {
 
             var length = noteLength;
-            if (useDefaultNoteLength == true || noteLength < 1 || noteLength > MagicNumbers.NoteLengthMaximum)
-            {
-                length = DefaultNoteLength;
-            }
-            else if (hasEquals == true && AddmusicKVersion < AddmusicKVersion.Version4)
+            if (hasEquals == true && AddmusicKVersion < AddmusicKVersion.Version4)
             {
                 return noteLength;
+            }
+            else if (noteLength < 1 || noteLength > MagicNumbers.NoteLengthMaximum)
+            {
+                length = DefaultNoteLength;
             }
             else
             {
