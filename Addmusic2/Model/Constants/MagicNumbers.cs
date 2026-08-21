@@ -101,6 +101,27 @@ namespace Addmusic2.Model.Constants
             0x01,
         };
 
+        public static List<byte> AmkVersion1ChannelAdjustmentBytes = new()
+        {
+            0xFA,
+            0x7F,
+            0x02,
+        };
+
+        public static List<byte> AmkParserVersion1ChannelAdjustmentBytes = new()
+        {
+            0xFA,
+            0x7F,
+            0x04,
+        };
+
+        public static List<byte> AmkParserVersion2ChannelAdjustmentBytes = new()
+        {
+            0xFA,
+            0x7F,
+            0x05,
+        };
+
         public static Func<byte,List<byte>> EchoBufferAdjustmentBytes = (byte bufferSize) =>
         {
             return new List<byte>

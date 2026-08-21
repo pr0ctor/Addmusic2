@@ -150,13 +150,27 @@ namespace Addmusic2.Logic
 
         }
 
+
+        // Performs various Preprocessing steps
+        //      - Searches for comments and replaces them with whitespace
+        //      - Searches for all instances of Replacement patterns in order to consume
+        //          and replace Replacement patterns within the song file
+        //      - Searches for instances of specific preprocessor directives in order
+        //          to pass through an separate preprocessor grammar step
         public string PreProcessSong(string fileData)
         {
-            var matches = Regexes.ReplacementParameterRegex().Matches(fileData);
+            // Normalize line endings for the entire file
+            fileData = fileData.ReplaceLineEndings("\n");
 
-            _logger.LogInformation(LogLevel.Trace, $"Found {matches.Count} matches");
+            // Replace all comments with empty string since comments break up some tokens during the main processing
+            fileData = Regexes.LineCommentRegex().Replace(fileData, string.Empty);
 
-            foreach (Match match in matches)
+            var replacementMatches = Regexes.ReplacementParameterRegex().Matches(fileData);
+
+
+            _logger.LogInformation(LogLevel.Trace, $"Found {replacementMatches.Count} replacement matches");
+
+            foreach (Match match in replacementMatches)
             {
                 var searchValue = match.Groups[1].Value;
                 var replaceValue = match.Groups[2].Value;
@@ -165,6 +179,27 @@ namespace Addmusic2.Logic
 
                 fileData = fileData.Replace(searchValue, replaceValue);
             }
+
+            var validPreprocessorIndicators = new List<string>()
+            {
+                "#if",
+                "#else",
+                "#elseif",
+                "#endif",
+                "#define",
+                "#undef",
+                "#ifdef",
+                "#ifndef",
+                "#error",
+            };
+
+            var preprocessorMatches = Regex.Match(fileData, $"({string.Join("|", validPreprocessorIndicators)})+");
+
+            if( preprocessorMatches.Success && preprocessorMatches.Length > 0 )
+            {
+                // run preprocessor logic and get final parsed filedata
+            }
+
 
             return fileData;
         }

@@ -457,6 +457,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You cannot use a note as the last parameter of the $DD command if you&apos;ve also used the qXX command just before it..
+        /// </summary>
+        internal static string ErrorDDPitchBlendEndNoteHasQuantization {
+            get {
+                return ResourceManager.GetString("ErrorDDPitchBlendEndNoteHasQuantization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Illegal Default Length Command (&quot;l&quot;) value ({0:D}) found. Value must be between {1:D} and {2:D} ..
         /// </summary>
         internal static string ErrorDefaultLengthOutOfRange {

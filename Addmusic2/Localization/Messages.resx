@@ -716,4 +716,8 @@
     <value>The required file ({0}) at path ({1}) was not found.</value>
     <comment>Error for when a required file was requested by not found</comment>
   </data>
+  <data name="ErrorDDPitchBlendEndNoteHasQuantization" xml:space="preserve">
+    <value>You cannot use a note as the last parameter of the $DD command if you've also used the qXX command just before it.</value>
+    <comment>Error for when the last item in a $DD pitch blend command has a note value that will be affected by quantiztion</comment>
+  </data>
 </root>

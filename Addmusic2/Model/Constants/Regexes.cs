@@ -9,6 +9,9 @@ namespace Addmusic2.Model.Constants
 {
     public partial class Regexes
     {
+        [GeneratedRegexAttribute(@"(;[^\n]*)")]
+        public static partial Regex LineCommentRegex();
+
         [GeneratedRegexAttribute(@$"""([^\s=""]+)\s*=\s*([^""]+)""")]
         public static partial Regex ReplacementParameterRegex();
 
@@ -18,10 +21,10 @@ namespace Addmusic2.Model.Constants
         [GeneratedRegexAttribute(@"([a-gA-G])(\+|\-)?\=?([0-9]*)(\.*)(\^\=?[0-9]+\.*)*")]
         public static partial Regex NoteRegex();
 
-        [GeneratedRegexAttribute(@"([rR])\=?([0-9]*)(\.*)(\^\=?[0-9]+\.*)*")]
+        [GeneratedRegexAttribute(@"([rR])\=?([0-9]*)(\.*)\s*(\^\=?[0-9]+\.*)*")]
         public static partial Regex RestRegex();
 
-        [GeneratedRegexAttribute(@"\^\=?([0-9]+)*\.*")]
+        [GeneratedRegexAttribute(@"\^\=?([0-9]+)*\.*\s*")]
         public static partial Regex TieRegex();
     }
 }

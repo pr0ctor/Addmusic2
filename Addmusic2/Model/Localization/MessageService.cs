@@ -1255,6 +1255,14 @@ namespace Addmusic2.Model.Localization
             return localizedString ?? "";
         }
 
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorDDPitchBlendEndNoteHasQuantizationMessage()
+        {
+            LocalizedString localizedString = _localizer["ErrorDDPitchBlendEndNoteHasQuantization"];
+
+            return localizedString ?? "";
+        }
+
         #endregion
 
         #endregion
