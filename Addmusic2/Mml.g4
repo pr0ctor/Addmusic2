@@ -399,8 +399,8 @@ e4GlobalTranspose : NE4 hexNumber ;
 
 e5Tremolo : NE5 hexNumber hexNumber hexNumber ;
 
-e6SuperLoopStart : NE6 N00 ;
-e6SuperLoopEnd : NE6 hexNumber ;
+e6SuperLoopStart : E6Start ;
+e6SuperLoopEnd : E6End ;
 
 e7Volume : NE7 hexNumber ;
 e8VolumeFade : NE8 hexNumber hexNumber ;
@@ -663,6 +663,8 @@ LoadSample : LPAREN StringLiteral COMMA HexNumber RPAREN ;
 
 AmkV1 : AMKV1 ;
 
+E6Start : NFE6 WHITESPACE* NF00 ;
+E6End : NFE6 WHITESPACE* ( (DOLLAR [1-9a-f] [1-9a-f]) | (DOLLAR [0] [1-9a-f]) | (DOLLAR [1-9a-f] [0] )) ;
 
 
 fragment AMK : ('amk') ;
@@ -914,7 +916,7 @@ NUMBERS : NUMBER+ ;
 UNUMBERS : [\-]?NUMBER+ ;
 
 fragment HexDigit : [0-9a-f] ;
-fragment HexDigits : HexDigit+ ;
+fragment HexDigits : HexDigit HexDigit ;
 // HexDigits : HexDigit HexDigit+ ;
 // fragment HexNumber : DOLLAR HexDigits ;
 HexNumber : DOLLAR HexDigits ;

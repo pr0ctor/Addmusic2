@@ -1708,8 +1708,9 @@ namespace Addmusic2.Visitors
         public override ISongNode VisitE6SuperLoop([NotNull] MmlParser.E6SuperLoopContext context)
         {
             var simpleLoopText = context.GetText();
-            var iterationsText = context.e6SuperLoopEnd().hexNumber();
-            var iterations = (iterationsText == null) ? 0 : Convert.ToByte(iterationsText.GetText().Replace("$", ""), 16);
+            var e6EndText = context.e6SuperLoopEnd().E6End();
+            var iterationsText = e6EndText.GetText().Trim()[3..].Trim();
+            var iterations = (iterationsText == null) ? 0 : Convert.ToByte(iterationsText.Replace("$", ""), 16);
 
             var superLoopContents = context.superLoopContents();
 
@@ -1825,8 +1826,9 @@ namespace Addmusic2.Visitors
         public override ISongNode VisitE6TerminalSuperLoop([NotNull] MmlParser.E6TerminalSuperLoopContext context)
         {
             var simpleLoopText = context.GetText();
-            var iterationsText = context.e6SuperLoopEnd().hexNumber();
-            var iterations = (iterationsText == null) ? 0 : Convert.ToByte(iterationsText.GetText().Replace("$", ""), 16);
+            var e6EndText = context.e6SuperLoopEnd().E6End();
+            var iterationsText = e6EndText.GetText().Trim()[3..].Trim();
+            var iterations = (iterationsText == null) ? 0 : Convert.ToByte(iterationsText.Replace("$", ""), 16);
 
             var superLoopContents = context.terminalSuperLoopContents();
 

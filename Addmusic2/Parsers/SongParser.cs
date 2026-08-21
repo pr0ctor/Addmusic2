@@ -1343,6 +1343,8 @@ namespace Addmusic2.Parsers
                 introTempo.TempoChange = -(Tempo);
             }
 
+            PreviousNoteLength = -1;
+
             SongData.HasIntro = true;
             SongData.IntroLength = (int)CurrentChannel.ChannelLength;
 
@@ -3505,7 +3507,10 @@ namespace Addmusic2.Parsers
                     : (InActiveSubLoop == true)
                         ? ActiveSubLoopInformation.UpdateQuantization
                         : CurrentChannel.UpdateQuantization;
-                if(node.NodeType == SongNodeType.Note && hasCurrentQuantization == true)
+                var lastPreItem = ddPitchBlendPayload.StartNoteNodeItems.Last();
+                if(lastPreItem.NodeType == SongNodeType.Quantization 
+                    && node.NodeType == SongNodeType.Note 
+                    && hasCurrentQuantization == true)
                 {
                     validation.Type = ResultType.Error;
                     messages.Add(_messageService.GetErrorDDPitchBlendEndNoteHasQuantizationMessage());
