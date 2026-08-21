@@ -44,6 +44,14 @@ namespace Addmusic2.Model
         public string Path { get; set; } = string.Empty;
         [JsonProperty("type", Required = Required.Always)]
         public SongListItemType Type { get; set; }
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            builder.Append(IntNumber);
+            builder.Append(" - ");
+            builder.Append(Name);
+            return builder.ToString();
+        }
     }
 
     internal class AddmusicSfxList

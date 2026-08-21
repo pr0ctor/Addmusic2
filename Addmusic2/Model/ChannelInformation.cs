@@ -27,5 +27,14 @@ namespace Addmusic2.Model
         public bool NoMusic { get; set; } = false;
 
         public ChannelInformation() { }
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            builder.Append('#');
+            builder.Append(ChannelNumber);
+            builder.Append(" - size = ");
+            builder.Append(ChannelData.Count);
+            return builder.ToString();
+        }
     }
 }
