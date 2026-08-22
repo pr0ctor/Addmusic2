@@ -2064,13 +2064,13 @@ namespace Addmusic2.Parsers
                 switch (child.NodeType)
                 {
                     case SongNodeType.Note:
-                        EvaluateNoteNode((AtomicNode)child, inTriplet, true);
+                        EvaluateNoteNode((AtomicNode)child, inTriplet, default, true);
                         break;
                     case SongNodeType.Rest:
-                        EvaluateRestNode((AtomicNode)child, inTriplet, true);
+                        EvaluateRestNode((AtomicNode)child, inTriplet, default, true);
                         break;
                     case SongNodeType.Tie:
-                        EvaluateTieNode((AtomicNode)child, inTriplet, true);
+                        EvaluateTieNode((AtomicNode)child, inTriplet, default, true);
                         break;
                     default:
                         EvaluateNode(child);
