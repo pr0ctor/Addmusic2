@@ -30,6 +30,7 @@ namespace Addmusic2.Model.Constants
             public static readonly string AMUndoAsmPath = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, AMUndoAsmName);
             public static readonly string TempFinalPatchName = "temppatch" + FileExtensions.Asm;
             public static readonly string TempFinalPatchPath = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, TempFinalPatchName);
+            public static readonly string LogIntermediaryAsmPath = Path.Combine(ExecutionLocations.InstallLocation, FolderNames.LogFolder, StaticFiles.TempAsmFile);
         }
 
         public static class BinFiles
@@ -39,6 +40,7 @@ namespace Addmusic2.Model.Constants
             public static readonly string Sfx1DF9TableBin = Path.Combine(FolderNames.AsmBase, "SFX1DF9Table" + FileExtensions.BinPatchData);
             public static readonly string Sfx1DFCTableBin = Path.Combine(FolderNames.AsmBase, "SFX1DFCTable" + FileExtensions.BinPatchData);
             public static readonly string MainSongDataBin = Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, FolderNames.AsmSNESBin, "main" + FileExtensions.BinPatchData);
+            public static readonly string LogIntermediaryBinPath = Path.Combine(ExecutionLocations.InstallLocation, FolderNames.LogFolder, StaticFiles.TempBinFile);
             public static string FinalMusicDataBin(string filename) => Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, FolderNames.AsmSNESBin, filename);
             public static string FinalSampleBrrDataBin(string filename) => Path.Combine(FolderNames.AsmBase, FolderNames.AsmSNES, FolderNames.AsmSNESBin, filename);
         }

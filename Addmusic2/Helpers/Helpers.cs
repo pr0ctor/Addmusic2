@@ -191,5 +191,26 @@ namespace Addmusic2.Helpers
             return true;
         }
 
+        public static int IndexOfSequenceOptimized<T>(List<T> source, List<T> sequence, int startIndex = 0)
+        {
+            if (sequence.Count == 0) return 0;
+
+            int limit = source.Count - sequence.Count;
+            for (int i = startIndex; i <= limit; i++)
+            {
+                bool match = true;
+                for (int j = 0; j < sequence.Count; j++)
+                {
+                    if (!EqualityComparer<T>.Default.Equals(source[i + j], sequence[j]))
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) return i;
+            }
+            return -1;
+        }
+
     }
 }

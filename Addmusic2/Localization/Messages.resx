@@ -720,4 +720,8 @@
     <value>You cannot use a note as the last parameter of the $DD command if you've also used the qXX command just before it.</value>
     <comment>Error for when the last item in a $DD pitch blend command has a note value that will be affected by quantiztion</comment>
   </data>
+  <data name="ErrorSfxJsrMissingAssociatedAsmNode" xml:space="preserve">
+    <value>The #jsr with label {0} does not have an associated #asm block in the Sound Effect - {1} .</value>
+    <comment>Error for when a #jsr node does not have a #asm node within the current sound effect</comment>
+  </data>
 </root>

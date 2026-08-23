@@ -276,8 +276,9 @@ namespace AsarCLR.Asar191
                     memFiles[i].length = (UIntPtr)value.Length;
                 }
 
-                int newsize = maxromsize();
-                int length = romData.Length;
+                //int newsize = maxromsize();
+                int newsize = 65536;
+                int length = 0;
 
                 if (length < newsize)
                 {
@@ -350,6 +351,175 @@ namespace AsarCLR.Asar191
                 }
             }
         }
+
+
+        /// <summary>
+        /// Applies a patch.
+        /// </summary>
+        /// <param name="patchLocation">The patch location.</param>
+        /// <param name="romData">The rom data. It must not be headered.</param>
+        /// <param name="includePaths">lists additional include paths</param>
+        /// <param name="shouldReset">specifies whether asar should clear out all defines, labels,
+        /// etc from the last inserted file. Setting it to False will make Asar act like the
+        /// currently patched file was directly appended to the previous one.</param>
+        /// <param name="additionalDefines">specifies extra defines to give to the patch</param>
+        /// <param name="stdIncludeFile">path to a file that specifes additional include paths</param>
+        /// <param name="stdDefineFile">path to a file that specifes additional defines</param>
+        /// <param name="warningSettings">specifies enable/disable settings for each warning ID</param>
+        /// <param name="memoryFiles">specifies a mapping for virtual file paths to file data stored
+        /// in memory.</param>
+        /// <param name="generateChecksum">specifies whether asar should generate a checksum. If this
+        /// is null, the default behavior is used.</param>
+        /// <returns>True if no errors.</returns>
+        public static bool patch2(string patchLocation, ref byte[] romData, string[] includePaths = null,
+            bool shouldReset = true, Dictionary<string, string> additionalDefines = null,
+            string stdIncludeFile = null, string stdDefineFile = null,
+            Dictionary<string, bool> warningSettings = null, Dictionary<string, byte[]> memoryFiles = null,
+            bool? generateChecksum = null, int bufferLength = -1, int romLength = -1)
+        {
+            if (includePaths == null)
+            {
+                includePaths = new string[0];
+            }
+
+            if (additionalDefines == null)
+            {
+                additionalDefines = new Dictionary<string, string>();
+            }
+
+            if (warningSettings == null)
+            {
+                warningSettings = new Dictionary<string, bool>();
+            }
+
+            if (memoryFiles == null)
+            {
+                memoryFiles = new Dictionary<string, byte[]>();
+            }
+
+            var includes = new byte*[includePaths.Length];
+            var defines = new RawAsarDefine[additionalDefines.Count];
+            var warnings = new RawWarnSetting[warningSettings.Count];
+            var memFiles = new RawMemoryFile[memoryFiles.Count];
+
+            try
+            {
+                for (int i = 0; i < includePaths.Length; i++)
+                {
+                    includes[i] = (byte*)Marshal.StringToCoTaskMemAnsi(includePaths[i]);
+                }
+
+                var keys = additionalDefines.Keys.ToArray();
+
+                for (int i = 0; i < additionalDefines.Count; i++)
+                {
+                    var name = keys[i];
+                    var value = additionalDefines[name];
+                    defines[i].name = Marshal.StringToCoTaskMemAnsi(name);
+                    defines[i].contents = Marshal.StringToCoTaskMemAnsi(value);
+                }
+
+                var warningKeys = warningSettings.Keys.ToArray();
+
+                for (int i = 0; i < warningSettings.Count; i++)
+                {
+                    var warnId = warningKeys[i];
+                    var value = warningSettings[warnId];
+                    warnings[i].warnid = (byte*)Marshal.StringToCoTaskMemAnsi(warnId);
+                    warnings[i].enabled = value;
+                }
+
+                var memFileKeys = memoryFiles.Keys.ToArray();
+
+                for (int i = 0; i < memoryFiles.Count; i++)
+                {
+                    var path = memFileKeys[i];
+                    var value = memoryFiles[path];
+                    memFiles[i].path = (byte*)Marshal.StringToCoTaskMemAnsi(path);
+                    fixed (byte* buf = &value[0])
+                    {
+                        memFiles[i].buffer = buf;
+                    }
+                    memFiles[i].length = (UIntPtr)value.Length;
+                }
+
+                int newsize = (bufferLength == -1) ? maxromsize() : bufferLength;
+                int length = (romLength == -1) ? 0 : romLength;
+
+                if (length < newsize)
+                {
+                    Array.Resize(ref romData, newsize);
+                }
+
+                bool success;
+
+                fixed (byte* ptr = romData)
+                fixed (byte** includepaths = includes)
+                fixed (RawAsarDefine* additional_defines = defines)
+                fixed (RawWarnSetting* warning_settings = warnings)
+                fixed (RawMemoryFile* memory_files = memFiles)
+                {
+                    var param = new RawPatchParams
+                    {
+                        patchloc = patchLocation,
+                        romdata = ptr,
+                        buflen = newsize,
+                        romlen = &length,
+
+                        should_reset = shouldReset,
+                        includepaths = includepaths,
+                        numincludepaths = includes.Length,
+                        additional_defines = additional_defines,
+                        additional_define_count = defines.Length,
+                        stddefinesfile = stdDefineFile,
+                        stdincludesfile = stdIncludeFile,
+
+                        warning_settings = warning_settings,
+                        warning_setting_count = warnings.Length,
+                        memory_files = memory_files,
+                        memory_file_count = memFiles.Length,
+                        override_checksum_gen = generateChecksum != null,
+                        generate_checksum = generateChecksum ?? false
+                    };
+                    param.structsize = Marshal.SizeOf(param);
+
+                    success = asar_patch_ex(ref param);
+                }
+
+                if (length < newsize)
+                {
+                    Array.Resize(ref romData, length);
+                }
+
+                return success;
+            }
+            finally
+            {
+                for (int i = 0; i < includes.Length; i++)
+                {
+                    Marshal.FreeCoTaskMem((IntPtr)includes[i]);
+                }
+
+                foreach (var define in defines)
+                {
+                    Marshal.FreeCoTaskMem(define.name);
+                    Marshal.FreeCoTaskMem(define.contents);
+                }
+
+                foreach (var warning in warnings)
+                {
+                    Marshal.FreeCoTaskMem((IntPtr)warning.warnid);
+                }
+
+                foreach (var memFile in memFiles)
+                {
+                    Marshal.FreeCoTaskMem((IntPtr)memFile.path);
+                }
+            }
+        }
+
+
+
 
         /// <summary>
         /// Returns the maximum possible size of the output ROM from asar_patch().

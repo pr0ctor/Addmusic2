@@ -612,70 +612,67 @@ namespace Addmusic2.Parsers
                 songData.MainLength -= songData.IntroLength;
             }
 
-            // estimate the true length of the song
-
-            if (songData.GuessLength)
-            {
-
-                var sortedTempoChanges = songData.TempoChanges
-                    .OrderBy(tc => tc.ChannelTick)
-                    .ThenBy(tc => tc.TempoChange)
-                    .ToList();
-
-                var firstTempoChange = sortedTempoChanges.First();
-                if (sortedTempoChanges.Count == 0)
-                {
-                    sortedTempoChanges.Add((0, MagicNumbers.DefaultValues.InitialTempoValue));
-                }
-                else if (firstTempoChange.ChannelTick != 0)
-                {
-                    sortedTempoChanges.Add((0, MagicNumbers.DefaultValues.InitialTempoValue));
-                }
-
-                sortedTempoChanges.Add((totalLength, 0));
-
-                // If there exists some intro segment
-                //      store the info in the intro tracker until the end of the intro is reached
-                //      otherwise store the info in the main tracker as the entire data will be in there
-                var foundIntroEnd = (songData.HasIntro) ? false : true;
-                var introTracker = 0.0;
-                var mainTracker = 0.0;
-                for (int i = 0; i < sortedTempoChanges.Count; i++)
-                {
-                    if (sortedTempoChanges[i].ChannelTick > totalLength)
-                    {
-                        // todo add warning about change after length of song
-                        break;
-                    }
-
-                    if (sortedTempoChanges[i].TempoChange < 0)
-                    {
-                        foundIntroEnd = true;
-                    }
-
-                    var difference = sortedTempoChanges[i + 1].ChannelTick - sortedTempoChanges[i].ChannelTick;
-                    if (foundIntroEnd)
-                    {
-                        introTracker += difference / (2 * Math.Abs(sortedTempoChanges[i].TempoChange));
-                    }
-                    else
-                    {
-                        mainTracker += difference / (2 * Math.Abs(sortedTempoChanges[i].TempoChange));
-                    }
-                }
-
-                songData.Seconds = (int)(Math.Floor(introTracker + (mainTracker * 2) + 0.5));
-                songData.MainSeconds = (int)mainTracker;
-                songData.IntroSeconds = (int)introTracker;
-
-                songData.KnowsLength = true;
-
-            }
-            // Just in case
-            else
+            if(songData.GuessLength == false)
             {
                 songData.KnowsLength = false;
+                return;
             }
+
+            // estimate the true length of the song
+
+            var sortedTempoChanges = songData.TempoChanges
+                .OrderBy(tc => tc.ChannelTick)
+                .ThenBy(tc => tc.TempoChange)
+                .ToList();
+
+            var firstTempoChange = sortedTempoChanges.First();
+            if (sortedTempoChanges.Count == 0)
+            {
+                sortedTempoChanges.Add((0, MagicNumbers.DefaultValues.InitialTempoValue));
+            }
+            else if (firstTempoChange.ChannelTick != 0)
+            {
+                sortedTempoChanges.Add((0, MagicNumbers.DefaultValues.InitialTempoValue));
+            }
+
+            sortedTempoChanges.Add((totalLength, 0));
+
+            // If there exists some intro segment
+            //      store the info in the intro tracker until the end of the intro is reached
+            //      otherwise store the info in the main tracker as the entire data will be in there
+            var foundIntroEnd = (songData.HasIntro) ? false : true;
+            var introTracker = 0.0;
+            var mainTracker = 0.0;
+            for (int i = 0; i < sortedTempoChanges.Count; i++)
+            {
+                if (sortedTempoChanges[i].ChannelTick > totalLength)
+                {
+                    // todo add warning about change after length of song
+                    break;
+                }
+
+                if (sortedTempoChanges[i].TempoChange < 0)
+                {
+                    foundIntroEnd = true;
+                }
+
+                var difference = sortedTempoChanges[i + 1].ChannelTick - sortedTempoChanges[i].ChannelTick;
+                if (foundIntroEnd)
+                {
+                    introTracker += difference / (2 * Math.Abs(sortedTempoChanges[i].TempoChange));
+                }
+                else
+                {
+                    mainTracker += difference / (2 * Math.Abs(sortedTempoChanges[i].TempoChange));
+                }
+            }
+
+            songData.Seconds = (int)(Math.Floor(introTracker + (mainTracker * 2) + 0.5));
+            songData.MainSeconds = (int)mainTracker;
+            songData.IntroSeconds = (int)introTracker;
+
+            songData.KnowsLength = true;
+
         }
 
         #region Node Evalulators

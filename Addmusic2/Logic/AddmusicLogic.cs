@@ -574,12 +574,13 @@ namespace Addmusic2.Logic
                         + _globalSettings.ProgramSize;
 
                     df9Pointers.Add((ushort)pointer);
-                    df9DataTotal += (sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Count);
+                    df9DataTotal += sfx.SoundEffectData.ChannelData.Count;
 
                     allSfxData.AddRange(sfx.SoundEffectData.ChannelData);
                     foreach (var item in sfx.SoundEffectData.CompiledAsmCodeBlocks.Values)
                     {
                         allSfxData.AddRange(item);
+                        df9DataTotal += item.Length;
                     }
                 }
 
@@ -622,12 +623,13 @@ namespace Addmusic2.Logic
                         + _globalSettings.ProgramSize;
 
                     dfcPointers.Add((ushort)pointer);
-                    dfcDataTotal += (sfx.SoundEffectData.ChannelData.Count + sfx.SoundEffectData.CompiledAsmCodeBlocks.Count);
+                    dfcDataTotal += sfx.SoundEffectData.ChannelData.Count;
 
                     allSfxData.AddRange(sfx.SoundEffectData.ChannelData);
                     foreach (var item in sfx.SoundEffectData.CompiledAsmCodeBlocks.Values)
                     {
                         allSfxData.AddRange(item);
+                        dfcDataTotal += item.Length;
                     }
                 }
 
@@ -682,12 +684,12 @@ namespace Addmusic2.Logic
 
             if (_globalSettings.ExportSfx == true)
             {
-                _messageService.GetInfoSoundEffectsNotIncludedMessage();
-                _messageService.GetInfoTotalSizeOfProgramMessage($"0x{newProgramSize:X4}");
+                _logger.LogWarning(LogLevel.Warning, _messageService.GetInfoSoundEffectsNotIncludedMessage());
+                _logger.LogInformation(LogLevel.Information, _messageService.GetInfoTotalSizeOfProgramMessage($"0x{newProgramSize:X4}"));
             }
             else
             {
-                _messageService.GetInfoTotalSizeOfProgramWithSfxMessage($"0x{newProgramSize:X4}");
+                _logger.LogInformation(LogLevel.Information, _messageService.GetInfoTotalSizeOfProgramWithSfxMessage($"0x{newProgramSize:X4}"));
             }
 
             _globalSettings.ProgramSize = newProgramSize;
@@ -736,8 +738,9 @@ namespace Addmusic2.Logic
 
             //var songIndices = songs.Select(s => new (s.Configuration.Number,  s.Configuration.IntNumber, s.Configuration.));
 
-            for (int i = 0; i < songsNumberMax; i++)
+            for (int i = 0; i <= songsNumberMax; i++)
             {
+                var songPointerName = PatchBuilders.SongListPointerName(i.ToString("X2"));
                 var missingCurrentIndex = missingSongs.Contains(i);
                 var song = (missingCurrentIndex) ? null : songs.First(s => s.Configuration.IntNumber == i);
                 if (i % 16 == 0)
@@ -746,16 +749,16 @@ namespace Addmusic2.Logic
                 }
                 if (missingCurrentIndex)
                 {
-                    songPointerListBuilder.Append("$0000");
+                    songPointerListBuilder.Append("$0000, ");
                 }
                 else
                 {
-                    songPointerListBuilder.Append(PatchBuilders.SongListPointerName(i.ToString("X2")));
+                    songPointerListBuilder.Append(songPointerName);
                 }
 
                 songSampleListSize += 2;
 
-                if (i < songsNumberMax && (i % 15 == 0))
+                if (i < songsNumberMax && (i % 15 != 0))
                 {
                     songPointerListBuilder.Append(", ");
                 }
@@ -768,7 +771,7 @@ namespace Addmusic2.Logic
 
                 songSampleListSize++;
 
-                samplePointerListBuilder.Append($"\n{PatchBuilders.SongListPointerName(i.ToString("X2"))}:\n");
+                samplePointerListBuilder.Append($"\n{songPointerName}:\n");
 
                 if (i > highestGlobalSongNumber)
                 {

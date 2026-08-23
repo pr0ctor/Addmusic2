@@ -141,6 +141,8 @@ namespace Addmusic2.Model.Constants
         public static readonly int SamplesNumbersListAddress = 0x70005;
         public static readonly int SongSamplePointersAddress = 0x70008;
 
+        public static readonly int CompiledSoundEffectZeroCountCheck = 20;
+
         public static class CommandValues
         {
             public static readonly byte Tie = 0xC6;

@@ -33,6 +33,11 @@ namespace Addmusic2.Model
             RootNode = rootNode;
         }
 
+        public override string ToString()
+        {
+            return Configuration.Name;
+        }
+
         public void ParseSoundEffect()
         {
             if (RootNode == null)

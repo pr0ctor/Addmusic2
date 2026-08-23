@@ -1,5 +1,6 @@
 ﻿using Addmusic2.Exceptions;
 using Addmusic2.Helpers;
+using Addmusic2.Localization;
 using Addmusic2.Model;
 using Addmusic2.Model.Constants;
 using Addmusic2.Model.Interfaces;
@@ -67,9 +68,35 @@ namespace Addmusic2.Parsers
 
         public SoundEffectData ParseSoundEffectNodes(List<ISongNode> nodes)
         {
-            foreach (SongNode node in nodes)
+            var jsrNodes = nodes
+                .Where(n => n.NodeType == SongNodeType.Jsr)
+                .ToList();
+            var asmNodes = nodes
+                .Where(n => n.NodeType == SongNodeType.Asm)
+                .ToList();
+            var otherNodes = nodes
+                .Except(jsrNodes)
+                .Except(asmNodes)
+                .ToList();
+
+            // Parse the main sound effect data
+
+            foreach (SongNode node in otherNodes)
             {
                 ParseNode(node);
+            }
+
+            // Pase Asm Nodes first, then Jsr nodes
+            //      in order to check that the Jsr nodes have a matching Asm Node
+
+            foreach (SongNode asmNode in asmNodes)
+            {
+                ParseNode(asmNode);
+            }
+
+            foreach (SongNode jsrNode in jsrNodes)
+            {
+                ParseNode(jsrNode);
             }
 
             if(_sfxListItem.Settings.Loop == false)
@@ -88,10 +115,6 @@ namespace Addmusic2.Parsers
         // done at a different point in execution because there isn't a value AramPosition during normal parsing
         public void CompileAsmElements(SoundEffectData soundEffectData)
         {
-            var tempAsmPath = Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempAsmFile);
-            var tempBinPath = Path.Combine(FileNames.ExecutionLocations.InstallLocation, FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempBinFile);
-            new FileInfo(tempAsmPath).Directory?.Create();
-            using var tempAsmWriter = new StreamWriter(tempAsmPath, false);
 
             // Compile the asm blocks
 
@@ -103,10 +126,10 @@ namespace Addmusic2.Parsers
                 var aramPosition = soundEffectData.AramPosition + soundEffectData.CompiledAsmCodeBlocks.Values.Sum(v => v.Length) + channelDataSize;
                 var sfxPatchString = PatchBuilders.BuildSoundEffectAsmPatch(aramPosition, block.Value);
 
-                tempAsmWriter.Write(sfxPatchString.ToCharArray());
+                File.WriteAllText(FileNames.AsmFiles.LogIntermediaryAsmPath, sfxPatchString);
                 var isCompileSuccessful = _romOperations.CompileAsmToBin(
-                    Path.Combine(FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempAsmFile),
-                    Path.Combine(FileNames.FolderNames.LogFolder, FileNames.StaticFiles.TempBinFile)
+                    FileNames.AsmFiles.LogIntermediaryAsmPath,
+                    FileNames.BinFiles.LogIntermediaryBinPath
                 );
 
                 if (!isCompileSuccessful)
@@ -115,10 +138,13 @@ namespace Addmusic2.Parsers
                     throw new AsarExecutionException(_messageService.GetErrorAsarErrorOccurredMessage());
                 }
 
-                //using var tempBinFile = File.Open(tempBinPath, FileMode.OpenOrCreate);
-                var tempBinFileData = File.ReadAllBytes(tempBinPath);
-                var data = new byte[tempBinFileData.Length - MagicNumbers.SfxCompiledBinCodeLocation];
-                Array.Copy(tempBinFileData, MagicNumbers.SfxCompiledBinCodeLocation, data, 0, tempBinFileData.Length - MagicNumbers.SfxCompiledBinCodeLocation);
+                var tempBinFileData = File.ReadAllBytes(FileNames.BinFiles.LogIntermediaryBinPath);
+                // Hacky hack to get the actual compiled data. I think I'm missing something with Asar :(
+                var actualDataEnd = Helpers.Helpers.IndexOfSequenceOptimized<byte>(tempBinFileData.ToList(), new byte[MagicNumbers.CompiledSoundEffectZeroCountCheck].ToList(), MagicNumbers.SfxCompiledBinCodeLocation);
+                var actualDataLength = Math.Abs(tempBinFileData.Length - MagicNumbers.SfxCompiledBinCodeLocation - actualDataEnd);
+                var data = new byte[actualDataLength];
+                Array.Copy(tempBinFileData, MagicNumbers.SfxCompiledBinCodeLocation, data, 0, actualDataLength);
+                //Array.Copy(tempBinFileData, MagicNumbers.SfxCompiledBinCodeLocation, data, 0, tempBinFileData.Length - MagicNumbers.SfxCompiledBinCodeLocation);
                 //tempBinFileData.CopyTo(data, MagicNumbers.SfxCompiledBinCodeLocation);
                 //tempBinFile.Read(data, MagicNumbers.SfxCompiledBinCodeLocation-1, data.Length - 1);
                 var jsrInformation = new JsrInformation
@@ -1038,13 +1064,36 @@ namespace Addmusic2.Parsers
             return specialDirective.NodeType switch
             {
                 // Always Accepted
-                SongNodeType.Asm or
-                SongNodeType.Jsr => new ValidationResult
+                SongNodeType.Jsr => ValidateJsrNode(specialDirective),
+                SongNodeType.Asm => new ValidationResult
                 {
                     Type = ResultType.Success
                 },
                 _ => throw new AddmusicParserException("Invalid Special Directive Node Type found")
             };
+        }
+
+        public IValidationResult ValidateJsrNode(DirectiveNode jsrNode)
+        {
+            var jsrPayload = jsrNode.Payload as SfxJsrPayload ?? throw new AddmusicParserException("Null Payload found");
+            var messages = new List<string>();
+            var jsrName = jsrPayload.JsrLabelName;
+
+            if(!NamedAsmBlocks.Keys.Contains(jsrName))
+            {
+                messages.Add(_messageService.GetErrorSfxJsrMissingAssociatedAsmNodeMessage(jsrName, _sfxListItem.Name));
+            }
+
+            return messages.Count > 0
+                ? new ValidationResult
+                {
+                    Type = ResultType.Error,
+                    Message = messages,
+                }
+                : new ValidationResult
+                {
+                    Type = ResultType.Success,
+                };
         }
 
         #endregion

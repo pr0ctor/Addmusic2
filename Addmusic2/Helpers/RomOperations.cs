@@ -290,16 +290,19 @@ namespace Addmusic2.Helpers
             {
                 { MagicNumbers.AsarWarnings.RelativePathWarning.WarningName, MagicNumbers.AsarWarnings.RelativePathWarning.WarningToggle }
             };
-            var isPatchSuccessful = Asar.patch(sourceFileName,
+            
+            var isPatchSuccessful = Asar.patch2(sourceFileName,
                 ref dataOutArray,
                 default,
-                default,
+                true,
                 default,
                 default,
                 default,
                 warningSettings,
                 default,
-                default
+                default,
+                MagicNumbers.AsmToBinBufferLength,
+                0
             );
 
             var notifications = Asar.getprints();
@@ -342,16 +345,18 @@ namespace Addmusic2.Helpers
                 { MagicNumbers.AsarWarnings.RelativePathWarning.WarningName, MagicNumbers.AsarWarnings.RelativePathWarning.WarningToggle }
             };
 
-            var isPatchSuccessful = Asar.patch(sourceFileName,
+            var isPatchSuccessful = Asar.patch2(sourceFileName,
                 ref romBytes,
                 default,
-                default,
+                true,
                 default,
                 default,
                 default,
                 warningSettings,
                 default,
-                default
+                default,
+                romBytes.Length,
+                0
             );
 
             var notifications = Asar.getprints();

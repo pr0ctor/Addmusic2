@@ -1263,6 +1263,14 @@ namespace Addmusic2.Model.Localization
             return localizedString ?? "";
         }
 
+        [return: NotNullIfNotNull(nameof(_localizer))]
+        public string GetErrorSfxJsrMissingAssociatedAsmNodeMessage(string jsrLabelName, string soundEffectName)
+        {
+            LocalizedString localizedString = _localizer["ErrorSfxJsrMissingAssociatedAsmNode", jsrLabelName, soundEffectName];
+
+            return localizedString ?? "";
+        }
+
         #endregion
 
         #endregion

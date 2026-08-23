@@ -997,6 +997,15 @@ namespace Addmusic2.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The #jsr with label {0} does not have an associated #asm block in the Sound Effect - {1} ..
+        /// </summary>
+        internal static string ErrorSfxJsrMissingAssociatedAsmNode {
+            get {
+                return ResourceManager.GetString("ErrorSfxJsrMissingAssociatedAsmNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Illegal Sfx Volume Command (&quot;v&quot;) fade value ({0:D}) found. Value must be between {1:D} and {2:D} ..
         /// </summary>
         internal static string ErrorSfxVolumeLeftVolumeValueOutOfRange {
