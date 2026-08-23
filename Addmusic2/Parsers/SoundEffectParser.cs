@@ -68,35 +68,26 @@ namespace Addmusic2.Parsers
 
         public SoundEffectData ParseSoundEffectNodes(List<ISongNode> nodes)
         {
-            var jsrNodes = nodes
-                .Where(n => n.NodeType == SongNodeType.Jsr)
-                .ToList();
             var asmNodes = nodes
                 .Where(n => n.NodeType == SongNodeType.Asm)
                 .ToList();
-            var otherNodes = nodes
-                .Except(jsrNodes)
+            var nonAsmNodes = nodes
                 .Except(asmNodes)
                 .ToList();
 
-            // Parse the main sound effect data
-
-            foreach (SongNode node in otherNodes)
-            {
-                ParseNode(node);
-            }
-
-            // Pase Asm Nodes first, then Jsr nodes
-            //      in order to check that the Jsr nodes have a matching Asm Node
+            // Parse Asm Nodes first so the Jsrs can be validated correctly
+            //      because the Jsrs care about location in the sound effect whereas #asm nodes do not
 
             foreach (SongNode asmNode in asmNodes)
             {
                 ParseNode(asmNode);
             }
 
-            foreach (SongNode jsrNode in jsrNodes)
+            // Parse the main sound effect data
+
+            foreach (SongNode node in nonAsmNodes)
             {
-                ParseNode(jsrNode);
+                ParseNode(node);
             }
 
             if(_sfxListItem.Settings.Loop == false)
