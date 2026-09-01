@@ -1,0 +1,49 @@
+---
+sidebar_position: 1
+---
+
+# Notes
+
+## Overview
+
+Notes are the basic unit for songs. Each note is calculated based on the specific note used, its duration, and the current octave.
+
+## Syntax
+
+Examples:
+- `g2`
+- `f+`
+- `c=8..`
+- `a+=48.^8`
+
+Pattern:
+`{Note}{Accidental}{Duration}{.}*{Tie}*`
+
+Breakdown:
+- Note, the symbol of the note to play
+    - `a`,`b`,`c`,`d`,`e`,`f`,`g`
+- Accidental, an optional indicator of whether or not the note is either a "Sharp" or "Flat"
+    - Sharp `+`
+    - Flat `-`
+- Duration, an optional integer value representing the length of note
+    - optional `=`
+    - optional integer value `1`->`192`
+- Dots, optional sequence of dots to <lengthen the note>
+- Ties, optional sequence of ties to <lengthen the note>
+
+## Description
+
+
+
+### Accidentals
+
+### Duration
+
+### Dots and Ties
+
+
+## Considerations
+
+
+
+## <allowed in parser rules>
