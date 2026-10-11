@@ -1,0 +1,45 @@
+---
+sidebar_position: 1
+---
+
+
+# Global Volume (`w`)
+
+## Overview
+
+The Global Volume command sets the volume for the entire song.  
+
+## Syntax
+
+### Global Volume
+
+`w{Volume}`
+
+Where:
+- `Volume` is the volume to set and is an integer `0`(silent)->`255`(loud)
+
+Examples:
+- `w128`
+- `w0`
+
+### Fade to Global Volume
+
+`w{FadeDuration},{Volume}`
+
+Where:
+- `FadeDuration` is the integer duration in ticks `0`->`192` for the duration of the volume fade
+- `Volume` is the integer volume `0`(silent)->`255`(loud) to fade to
+
+Examples:
+- `w100,200`
+
+## Description
+
+The Global Volume command sets the volume for the entire song. Generally this is used at the beginning of the song, before the first channel definition.
+
+
+## Considerations
+
+## Limitations
+
+## <allowed in parser rules>

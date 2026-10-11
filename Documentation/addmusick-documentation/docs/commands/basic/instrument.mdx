@@ -1,0 +1,47 @@
+---
+sidebar_position: 1
+---
+
+
+# Instrument (`@`)
+
+## Overview
+
+The Instrument command changes the current instrument to the instrument represented by the specified number.  
+
+## Syntax
+
+`@{Instrument Number}`
+
+Where `Instrument Number` is an integer between
+- `0` -> `18`
+- `21` -> `29`
+- `30`+ for custom instruments
+
+Examples:
+- `@1`
+- `@22`
+- `@31`
+
+## Description
+
+The Instrument command changes the current instrument to the one represented by the number used. Instruments fall into two categories: Standard and Custom.
+
+### Standard Instruments
+
+Standard Instruments are the instruments between `0->18` and `21->29` and are the regular instruments included with base Super Mario World.
+
+<add table with which instruments are which>
+
+<add tip about the location of the instrument data in files>
+
+### Custom Instruments
+
+Custom Instruments are the instruments `30` or higher and are the instruments defined in the `#instruments`<add link> special directive.
+
+
+## Considerations
+
+## Limitations
+
+## <allowed in parser rules>

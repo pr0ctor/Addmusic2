@@ -1,0 +1,45 @@
+---
+sidebar_position: 1
+---
+
+
+# Default Length (`l`)
+
+## Overview
+
+The Default Length command defines the note length to use when none are specified.  
+
+## Syntax
+
+`l{Length}`
+
+Where:
+- `Length` is the integer tick value `0`->`192`
+
+Examples:
+- `l8`
+- `l48`
+
+## Description
+
+The Default Length command defines the note length in ticks to use when none are specified for following notes. This command does not take up space and only controls how the parser interprets notes, rests, and ties.
+
+### Usage
+
+When defining a note, an optional duration can be provided:
+`b8` or `b=8` 
+and there can be a longer sequence of notes:
+`b8 a8 r8 g8 f8` 
+In these examples, the duration of each of the above notes is `8`.
+
+Since the note duration value is optional, and there may be cases where a sequence of notes all have the same duration, the Default Length command can be used to simplify note definitions and increase MML readability by defining a default length to use in place of defining the duration for each note.
+
+In the previous example, the Default Length command can be used to replace the duration on the notes:
+`l8 b a r g f l4 b a r g f`
+
+
+## Considerations
+
+## Limitations
+
+## <allowed in parser rules>

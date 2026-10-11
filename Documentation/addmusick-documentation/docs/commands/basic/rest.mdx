@@ -1,0 +1,44 @@
+---
+sidebar_position: 1
+---
+
+# Notes
+
+## Overview
+
+Rests are a basic unit for songs. Each Note is calculated based on the specific note used, its duration, and the current octave.
+
+## Syntax
+
+Pattern:
+`r{Duration}{.}*{Tie}*`
+
+Breakdown:
+- Duration, an optional integer value representing the length of note
+    - optional `=`
+    - optional integer value `1`->`192`
+- Dots, optional sequence of dots to <lengthen the note>
+- Ties, optional sequence of ties to <lengthen the note>
+
+Examples:
+- `r2`
+- `f+`
+- `r=8..`
+- `r+=48.^8`
+
+## Description
+
+
+
+### Accidentals
+
+### Duration
+
+### Dots and Ties
+
+
+## Considerations
+
+
+
+## <allowed in parser rules>

@@ -1,0 +1,45 @@
+---
+sidebar_position: 1
+---
+
+
+# Volume (`v`)
+
+## Overview
+
+The Volume command sets the volume for the current channel.  
+
+## Syntax
+
+### Volume
+
+`v{Volume}`
+
+Where:
+- `Volume` is the volume to set and is an integer `0`(silent)->`255`(loud)
+
+Examples:
+- `v128`
+- `v0`
+
+### Fade to Volume
+
+`v{FadeDuration},{Volume}`
+
+Where:
+- `FadeDuration` is the integer duration in ticks `0`->`192` for the duration of the volume fade
+- `Volume` is the integer volume `0`(silent)->`255`(loud) to fade to
+
+Examples:
+- `v100,200`
+
+## Description
+
+The Volume command sets the volume for the current channel.
+
+
+## Considerations
+
+## Limitations
+
+## <allowed in parser rules>
